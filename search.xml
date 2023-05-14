@@ -1,6 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>bandit全关</title>
+    <url>/2023/05/14/bandit%E5%85%A8%E5%85%B3/</url>
+    <content><![CDATA[<h1 id="bandit"><a href="#bandit" class="headerlink" title="bandit"></a>bandit</h1><h2 id="字符作用"><a href="#字符作用" class="headerlink" title="字符作用"></a>字符作用</h2><blockquote>
+<p>| 表示管道，上一条命令的输出，作为下一条命令参数，通常用来过滤&#x2F;汇总数据。</p>
+</blockquote>
+<blockquote>
+<p>&amp;&amp;表示前一条命令执行成功时，才执行后一条命令；反之，前面的命令执行失败，则&amp;&amp;后面的命令不会被执行。</p>
+</blockquote>
+<blockquote>
+<p>&amp;表示任务在后台执行，即使ssh窗口关闭，服务依然会在后台持续运行。</p>
+</blockquote>
+<blockquote>
+<p>||表示上一条命令执行失败后，才执行下一条命令。一旦执行到一条成功的命令，后面用****||****连接的命令，就不会再被执行。</p>
+</blockquote>
+<blockquote>
+<p>＞把正常信息（剔除错误信息）重定向到另一个文件内</p>
+<p><em><strong>*2&gt;*</strong></em> &#x2F;dev&#x2F;null意思就是把错误输出到“黑洞” ，不会显示在屏幕上。</p>
+</blockquote>
+<p>[Linux技巧(六)：命令尾部&amp;的作用 &amp;&amp;、|、||、；、()、&amp;＞、 2＞&amp;1 的用法和区别，很实用_linux &amp;_血煞长虹的博客-CSDN博客](<a href="https://blog.csdn.net/succing/article/details/127355545?ops_request_misc=%7B%22request_id%22:%22168405323416800215011812%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=168405323416800215011812&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-1-127355545-null-null.142%5Ev87%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=linux">https://blog.csdn.net/succing/article/details/127355545?ops_request_misc=%7B%22request%5Fid%22%3A%22168405323416800215011812%22%2C%22scm%22%3A%2220140713.130102334..%22%7D&amp;request_id=168405323416800215011812&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-1-127355545-null-null.142^v87^control_2,239^v2^insert_chatgpt&amp;utm_term=linux</a> |&amp;spm&#x3D;1018.2226.3001.4187)</p>
+<h2 id="level-1"><a href="#level-1" class="headerlink" title="level 1"></a>level 1</h2><p>我用的windows，下载了mobaXterm用于进行ssh连接</p>
+<p>是说level 1的密码呢在readme文件中，用到cat 找出来即可</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230513211057882.png" alt="image-20230513211057882"></p>
+<h2 id="level-2"><a href="#level-2" class="headerlink" title="level 2"></a>level 2</h2><p>exit，然后r，重新建立连接，login as bandit1，密码是上级找到的</p>
+<p>密码在虚线文件名中，这时候cat -就不管用了。指定文件完整路径即可。</p>
+<p><img src="/image-20230513212947940.png" alt="image-20230513212947940"></p>
+<h2 id="level-3"><a href="#level-3" class="headerlink" title="level 3"></a>level 3</h2><p>文件名有空格</p>
+<p>使用引号括起来</p>
+<p><img src="/image-20230513214101452.png" alt="image-20230513214101452"></p>
+<p>aBZ0W5EmUfAf7kHTQeOwd8bauFJ2lAiG</p>
+<h2 id="level-4"><a href="#level-4" class="headerlink" title="level 4"></a>level 4</h2><p>说是在inhere目录下的隐藏文件中</p>
+<p>需要用到ls -a命令查看隐藏</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230513214557871.png" alt="image-20230513214557871"></p>
+<p>2EW7BBsr6aMMoJ2HjW067dm8EgX26xNe</p>
+<h2 id="level-5"><a href="#level-5" class="headerlink" title="level 5"></a>level 5</h2><p>在inhere目录下，只有一个唯一可读的文件</p>
+<p>由于文件名都有规律，且有特殊符号，于是我用了 cat .&#x2F;-file0{0,1,2…9}的方法，也就是在末尾3个之间，再cat .&#x2F;-file07试试，有了</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230513221122380.png" alt="image-20230513221122380"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230513221420135.png" alt="image-20230513221420135"></p>
+<p>lrIWWI6bB37kxfiCQZqUdOIYfr6eEeqR</p>
+<p>正解操作是：</p>
+<p>file .&#x2F;-file* 查看文件类型</p>
+<p>cat .&#x2F;-file07</p>
+<h2 id="level-6"><a href="#level-6" class="headerlink" title="level 6"></a>level 6</h2><p>密码存储文件在inhere目录下，且可读、1033bytes、不可执行</p>
+<p>inhere目录下有将近20个目录，一个个来不太现实，用到du命令</p>
+<p>du : 显示每个文件和目录的磁盘使用空间~~~文件的大小。</p>
+<p>命令参数：</p>
+<p>-a   #显示目录中文件的大小  单位 KB 。</p>
+<p>-b  #显示目录中文件的大小，以字节byte为单位。</p>
+<p>-c  #显示目录中文件的大小，同时也显示总和；单位KB。</p>
+<p>-k 、 -m  #显示目录中文件的大小，-k 单位KB，-m 单位MB.</p>
+<p>-s  #仅显示目录的总值，单位KB。</p>
+<p>-h  #以K  M  G为单位显示，提高可读性~~~（最常用的一个~也可能只用这一个就满足需求了）<br><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230513223236240.png" alt="image-20230513223236240"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230513223206962.png" alt="image-20230513223206962"></p>
+<p>du -a -b</p>
+<p>cat .&#x2F;maybehere07&#x2F;.file2</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230513223351281.png" alt="image-20230513223351281"></p>
+<p>P4L4vucdmLnm8I7Vl7jG1ApGSfjYKqJU</p>
+<h2 id="level-7"><a href="#level-7" class="headerlink" title="level 7"></a>level 7</h2><p>被存在服务器的某处，由用户bandit7所有，bandit6组所有，33bytes</p>
+<p>find基本用法：find [PATH] [option] [action]  </p>
+<p>-user name : 列出文件所有者为name的文件<br>        -group name : 列出文件所属用户组为name的文件<br>        -uid n : 列出文件所有者为用户ID为n的文件<br>        -gid n : 列出文件所属用户组为用户组ID为n的文件  </p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514112457648.png" alt="image-20230514112457648"></p>
+<p>可以使用 <strong>2&gt;&#x2F;dev&#x2F;null</strong> 将错误信息重定向</p>
+<p><code>find / -user bandit7 -group bandit6 -size 33c 2&gt;/dev/null</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514112752119.png" alt="image-20230514112752119"></p>
+<p>参考<a href="https://www.jianshu.com/p/bf8cc6b0efd1">【bandit】WarGame之bandit通关日志 - 简书 (jianshu.com)</a></p>
+<h2 id="level-8"><a href="#level-8" class="headerlink" title="level 8"></a>level 8</h2><p>在data.txt文件中内容为<strong>millionth</strong>的那一行中</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514114655477.png" alt="image-20230514114655477"></p>
+<p>TESKZC0XvTetK0S9xNwm25STk5iWrBvP</p>
+<h2 id="level-9"><a href="#level-9" class="headerlink" title="level 9"></a>level 9</h2><p>在data.txt中，仅出现一次的行文本中</p>
+<p>sort与uniq命令</p>
+<p>sort排序，</p>
+<p>uniq是去掉相邻的重复行，-c统计次数，-u显示不重复的行</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514115858357.png" alt="image-20230514115858357"></p>
+<p>-c找出现次数为1的即可</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514115916436.png" alt="image-20230514115916436"></p>
+<p>参考：<a href="https://www.jianshu.com/p/bf8cc6b0efd1">【bandit】WarGame之bandit通关日志 - 简书 (jianshu.com)</a></p>
+<h2 id="level-10"><a href="#level-10" class="headerlink" title="level 10"></a>level 10</h2><p>在data.txt文件中的少数几个人类可读的字符串中，前面有几个&#x3D;符号</p>
+<p>一般查看有乱码</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514121138624.png" alt="image-20230514121138624"></p>
+<p><code>用strings data.txt</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514121241304.png" alt="image-20230514121241304"></p>
+<h2 id="level-11"><a href="#level-11" class="headerlink" title="level 11"></a>level 11</h2><p>data.txt文件中，但是包含base64编码</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514121610805.png" alt="image-20230514121610805"></p>
+<h2 id="level-12"><a href="#level-12" class="headerlink" title="level 12"></a>level 12</h2><p>data.txt文件中，但是rot13加密</p>
+<p>tr命令：对输入字符进行替换、压缩和删除</p>
+<p>将所有的字符向后移动13位,但要保持大写和小写</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514122106548.png" alt="image-20230514122106548"></p>
+<p>参考：[使用ROT13加密解密_tr解rot13_apersonlikep的博客-CSDN博客](<a href="https://blog.csdn.net/apersonlikep/article/details/89332063?ops_request_misc=%7B%22request_id%22:%22168403789316800182732613%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=168403789316800182732613&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-89332063-null-null.142%5Ev87%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=linux">https://blog.csdn.net/apersonlikep/article/details/89332063?ops_request_misc=%7B%22request%5Fid%22%3A%22168403789316800182732613%22%2C%22scm%22%3A%2220140713.130102334..%22%7D&amp;request_id=168403789316800182732613&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-89332063-null-null.142^v87^control_2,239^v2^insert_chatgpt&amp;utm_term=linux</a> rot13&amp;spm&#x3D;1018.2226.3001.4187)</p>
+<h2 id="level-13"><a href="#level-13" class="headerlink" title="level 13"></a>level 13</h2><p>是data.txt文件，但是反复压缩，十六进制转储。</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514122659959.png" alt="image-20230514122659959"></p>
+<p>xxd命令：转二级制、十六进制</p>
+<p>mv命令：重命名</p>
+<p>gzip&#x2F;bzip2 -d&#x2F;tar -xvf命令：解压缩</p>
+<p>先转二级制</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514123813942.png" alt="image-20230514123813942"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514123825354.png" alt="image-20230514123825354"></p>
+<p>重命名gz、解压</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514123946806.png" alt="image-20230514123946806"></p>
+<p>重命名bz2、解压</p>
+<p><img src="/image-20230514124152671.png" alt="image-20230514124152671"></p>
+<p>重命名gz、解压</p>
+<p><img src="/image-20230514124254797.png" alt="image-20230514124254797"></p>
+<p>重命名tar、解压</p>
+<p><img src="/image-20230514124423926.png" alt="image-20230514124423926"></p>
+<p><img src="/image-20230514124556058.png" alt="image-20230514124556058"></p>
+<p>重命名bz2，解压</p>
+<p><img src="/image-20230514124733776.png" alt="image-20230514124733776"></p>
+<p>重命名tar、解压</p>
+<p><img src="/image-20230514124850246.png" alt="image-20230514124850246"></p>
+<p>重命名gz、解压</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514124956549.png" alt="image-20230514124956549"></p>
+<h2 id="ssh、telnet、nc、openssl、nmap工具篇"><a href="#ssh、telnet、nc、openssl、nmap工具篇" class="headerlink" title="ssh、telnet、nc、openssl、nmap工具篇"></a>ssh、telnet、nc、openssl、nmap工具篇</h2><h2 id="level-14"><a href="#level-14" class="headerlink" title="level 14"></a>level 14</h2><p>在**&#x2F;etc&#x2F;bandit_pass&#x2F;bandit14**中，且只能由bandit14用户读取。且提供了一个私有SSH密钥。</p>
+<!--ssh -i 秘钥文件名称 root@远程IP地址-->
+
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514130400052.png" alt="image-20230514130400052"></p>
+<p>报错了，看不懂，但是看到绿字说22端口登录是不支持的，于是换个端口。</p>
+<p>加了个-p 2220，虽然也报错，但还是提示连到了</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514132248403.png" alt="image-20230514132248403"></p>
+<p>查看即可</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514132359501.png" alt="image-20230514132359501"></p>
+<p>fGrHPx402xGC7U7rXKDaxiWFTOiF0ENq</p>
+<h2 id="level-15"><a href="#level-15" class="headerlink" title="level 15"></a>level 15</h2><p>连接到本机，且端口为30000提交密码</p>
+<p>telnet ip地址 端口</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514133034901.png" alt="image-20230514133034901"></p>
+<p>jN2kgmIXJ6fShzhT2avhotn4Zcka6tnt</p>
+<h2 id="level-16"><a href="#level-16" class="headerlink" title="level 16"></a>level 16</h2><p>在localhost，端口为30001处提交上关密码，且有ssl加密</p>
+<p>openssl：多用途、跨平台密码工具</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514133923601.png" alt="image-20230514133923601"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514133934323.png" alt="image-20230514133934323"></p>
+<p>JQttfApK4SeyHwDlI9SXGR50qclOAil1</p>
+<h2 id="level-17"><a href="#level-17" class="headerlink" title="level 17"></a>level 17</h2>]]></content>
+      <categories>
+        <category>linux</category>
+      </categories>
+      <tags>
+        <tag>linux,ssh,bandit</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>第一篇博客</title>
     <url>/2023/05/12/%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/</url>
     <content><![CDATA[<p>参照了杰克小麻雀所分享的经验而搭建的。</p>
