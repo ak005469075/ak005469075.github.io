@@ -170,7 +170,7 @@
 <p><code>ssh bandit18@localhost -p2220</code></p>
 <p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515133004926.png" alt="image-20230515133004926"></p>
 <p>上图中，rm和chmod也是不允许的操作，查找其他博主的wp，在后面加了“cat  readme”但没效果</p>
-<p><img src="/../../../Typora/img111/image-20230515145336983-1684133695637-1.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515145336983-1684133695637-1.png"></p>
 <p>止步于此，没权限，不搞了。</p>
 ]]></content>
       <categories>
