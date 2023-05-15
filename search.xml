@@ -130,7 +130,49 @@
 <p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514133923601.png" alt="image-20230514133923601"></p>
 <p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514133934323.png" alt="image-20230514133934323"></p>
 <p>JQttfApK4SeyHwDlI9SXGR50qclOAil1</p>
-<h2 id="level-17"><a href="#level-17" class="headerlink" title="level 17"></a>level 17</h2>]]></content>
+<h2 id="level-17"><a href="#level-17" class="headerlink" title="level 17"></a>level 17</h2><p>目的是获取证书，将上一级的密码发送至端口范围为31000到32000的localhost上。1.找出有哪些端口是服务器监听着的；2.找出哪些是使用SSL的；3.只有一个服务器是会给你下一级证书的，其它的只会重复你发给它的。</p>
+<p>知识点：端口扫描</p>
+<p><code>nmap localhost -p310000-320000</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515113201632.png" alt="image-20230515113201632"></p>
+<p><code>openssl s_client -connect localhost:port</code>对上述端口依次尝试，并提交密码</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515114635689.png" alt="image-20230515114635689"></p>
+<p>port为31790时</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515114912840.png" alt="image-20230515114912840"></p>
+<p>可以知道，又是私钥登陆，与ssh -i有关</p>
+<p>存放该私钥。</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515120130800.png" alt="image-20230515120130800"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515120139520.png" alt="image-20230515120139520"></p>
+<p><code>ssh -i /tmp/my111/key bandit17@localhost -p2220</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515120357068.png" alt="image-20230515120357068"></p>
+<p>要设定权限，700，即只有拥有者可以读写。</p>
+<p><code>chmod 700 /tmp/my111/key</code></p>
+<p><img src="/../../../Typora/img111/image-20230515120619059.png" alt="image-20230515120619059"></p>
+<p>成功登入。</p>
+<h2 id="level-17-gt-18"><a href="#level-17-gt-18" class="headerlink" title="level 17-&gt;18"></a>level 17-&gt;18</h2><p>在主目录有两文件<strong>passwords.old and passwords.new</strong>. </p>
+<p>下一级的密码在 <strong>passwords.new</strong>里，并且这个old和new只有一行改动了的。</p>
+<p>​		注意：当登入bandit18时看到”Byebye!”，这和bandit19有关。</p>
+<p>diff命令，比较文件不同。</p>
+<ul>
+<li><p>“|”表示前后2个文件内容有不同</p>
+</li>
+<li><p>“&lt;”表示后面文件比前面文件少了1行内容</p>
+</li>
+<li><p>“&gt;”表示后面文件比前面文件多了1行内容</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515130247402.png" alt="image-20230515130247402"></p>
+</li>
+</ul>
+<p>hga5tuuCLF6fFzUpnagiMN8ssu9LFrdg</p>
+<p>exit -&gt;r</p>
+<p>登入bandit18，输入密码出现：<img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515130727349.png" alt="image-20230515130727349"></p>
+<h2 id="level-18-gt-19"><a href="#level-18-gt-19" class="headerlink" title="level 18-&gt;19"></a>level 18-&gt;19</h2><p>下一级密码在主目录的readme中，但是嘞，有人修改了.bashrc，使得在使用SSH登录时注销。</p>
+<p>考察点：ssh登陆后可以跟命令执行</p>
+<p>所以在bandit17时采用远程登录。</p>
+<p><code>ssh bandit18@localhost -p2220</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515133004926.png" alt="image-20230515133004926"></p>
+<p>上图中，rm和chmod也是不允许的操作，查找其他博主的wp，在后面加了“cat  readme”但没效果</p>
+<p><img src="/../../../Typora/img111/image-20230515145336983-1684133695637-1.png"></p>
+<p>止步于此，没权限，不搞了。</p>
+]]></content>
       <categories>
         <category>linux</category>
       </categories>
@@ -138,6 +180,23 @@
         <tag>linux</tag>
         <tag>ssh</tag>
         <tag>bandit</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>第一篇博客</title>
+    <url>/2023/05/12/%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/</url>
+    <content><![CDATA[<p>参照了杰克小麻雀所分享的经验而搭建的。</p>
+<blockquote>
+<p><a href="https://blog.csdn.net/yushuaigee/article/details/111465155">(112条消息) 从零开始免费搭建自己的博客(一)——本地搭建hexo框架_在k什么框架搭建博客_杰克小麻雀的博客-CSDN博客</a></p>
+</blockquote>
+<p>主题优化参照如下：</p>
+<p><a href="https://shen-yu.gitee.io/2019/ayer/#%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE">Ayer中文说明 | 岛 (gitee.io)</a></p>
+]]></content>
+      <categories>
+        <category>博客搭建及其优化</category>
+      </categories>
+      <tags>
+        <tag>博客经验来源</tag>
       </tags>
   </entry>
   <entry>
@@ -157,22 +216,5 @@
 
 <p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
 ]]></content>
-  </entry>
-  <entry>
-    <title>第一篇博客</title>
-    <url>/2023/05/12/%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/</url>
-    <content><![CDATA[<p>参照了杰克小麻雀所分享的经验而搭建的。</p>
-<blockquote>
-<p><a href="https://blog.csdn.net/yushuaigee/article/details/111465155">(112条消息) 从零开始免费搭建自己的博客(一)——本地搭建hexo框架_在k什么框架搭建博客_杰克小麻雀的博客-CSDN博客</a></p>
-</blockquote>
-<p>主题优化参照如下：</p>
-<p><a href="https://shen-yu.gitee.io/2019/ayer/#%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE">Ayer中文说明 | 岛 (gitee.io)</a></p>
-]]></content>
-      <categories>
-        <category>博客搭建及其优化</category>
-      </categories>
-      <tags>
-        <tag>博客经验来源</tag>
-      </tags>
   </entry>
 </search>
