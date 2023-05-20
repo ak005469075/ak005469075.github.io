@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.1k</span>
+            <span class="post-count">1.2k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">4 分钟</span>
+            <span class="post-count">5 分钟</span>
         </span>
     </span>
 </div>
@@ -204,6 +204,16 @@
 <p>输入admin,welcome</p>
 <p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230516121649512.png" alt="image-20230516121649512"></p>
 <h2 id="5-总结"><a href="#5-总结" class="headerlink" title="5.总结"></a>5.总结</h2><p>当url上各种绕过尝试失效时，应该要联想到其它注入方式，如Cookie注入等。</p>
+<h1 id="三、XSS"><a href="#三、XSS" class="headerlink" title="三、XSS"></a>三、XSS</h1><p>这关进入到了留言板页面，全部输入框都写进xss代码，确实存在。目的是获取cookie。</p>
+<p>给每个框框试了一下</p>
+<script>alert(1)</script>
+
+<p>存在xss漏洞。</p>
+<p>xss平台搭建参照：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/Cl0ud/p/12176961.html">搭建xss-platform平台 - 春告鳥 - 博客园 (cnblogs.com)</a></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230520205909377-1684589650280-1.png"></p>
+<p>再生成payload进行注入即可。</p>
+<p>但是我的平台没收到。</p>
+<p>尝试用dvwa的xss漏洞时，都可以收到，但是封神台上失败。</p>
  
       <!-- reward -->
       

