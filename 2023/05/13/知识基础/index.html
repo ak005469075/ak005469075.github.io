@@ -11,7 +11,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1"
       />
-      <title>第一篇博客 |  小张之栈</title>
+      <title>知识基础 |  小张之栈</title>
   <meta name="generator" content="hexo-theme-ayer">
       
       <link rel="shortcut icon" href="/favicon.ico" />
@@ -64,7 +64,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-第一篇博客"
+  id="post-知识基础"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -75,7 +75,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  第一篇博客
+  知识基础
 </h1>
  
 
@@ -83,11 +83,11 @@
     </header>
      
     <div class="article-meta">
-      <a href="/2023/05/12/%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/" class="article-date">
-  <time datetime="2023-05-12T14:22:22.000Z" itemprop="datePublished">2023-05-12</time>
+      <a href="/2023/05/13/%E7%9F%A5%E8%AF%86%E5%9F%BA%E7%A1%80/" class="article-date">
+  <time datetime="2023-05-12T16:21:20.000Z" itemprop="datePublished">2023-05-13</time>
 </a> 
   <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E5%8F%8A%E5%85%B6%E4%BC%98%E5%8C%96/">博客搭建及其优化</a>
+    <a class="article-category-link" href="/categories/%E7%BD%91%E5%AE%89/">网安</a>
   </div>
   
 <div class="word_count">
@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">79</span>
+            <span class="post-count">2.1k</span>
         </span>
     </span>
 
@@ -104,25 +104,111 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">1 分钟</span>
+            <span class="post-count">7 分钟</span>
         </span>
     </span>
 </div>
  
     </div>
       
+    <div class="tocbot"></div>
+
 
 
 
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p>参照了杰克小麻雀所分享的经验而搭建的。</p>
-<blockquote>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/yushuaigee/article/details/111465155">(112条消息) 从零开始免费搭建自己的博客(一)——本地搭建hexo框架_在k什么框架搭建博客_杰克小麻雀的博客-CSDN博客</a></p>
-</blockquote>
-<p>主题优化参照如下：</p>
-<p><a target="_blank" rel="noopener" href="https://shen-yu.gitee.io/2019/ayer/#%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE">Ayer中文说明 | 岛 (gitee.io)</a></p>
+  <h1 id="一、基础知识"><a href="#一、基础知识" class="headerlink" title="一、基础知识"></a>一、基础知识</h1><h2 id="1-域名"><a href="#1-域名" class="headerlink" title="1.域名"></a>1.域名</h2><p>internet上某台计算机或机组的名称</p>
+<h3 id="二级域名、多级域名"><a href="#二级域名、多级域名" class="headerlink" title="二级域名、多级域名"></a>二级域名、多级域名</h3><p>国际顶级域名下的二级域名：.microsoft.com</p>
+<p>国家顶级域名下的二级域名：.com.cn</p>
+<h2 id="2-DNS"><a href="#2-DNS" class="headerlink" title="2.DNS"></a>2.DNS</h2><p>域名系统（Domain Name System）：域名和IP地址相互映射的一个分布式数据库，使用UDP端口53，对每一级域名长度限制是63个字符，域名总长度不超过253个字符</p>
+<p>当我们向DNS服务器发起解析域名的请求时，DNS服务器首先会查询自己的缓存中有没有该域名，如果缓存中存在该域名，则可以直接返回IP地址。如果缓存中没有，服务器则会以递归的方式层层访问。</p>
+<p>例如：我们要访问<a target="_blank" rel="noopener" href="http://www.baidu/">www.baidu</a>. com，首先我们会先向全球13个根服务器发起请求，询问com域名的地址，然后再向负责com域名的名称服务器发送请求，找到baidu.com，这样层层递归，最终找到我们需要的IP地址。</p>
+<h3 id="本地HOSTS与DNS关系"><a href="#本地HOSTS与DNS关系" class="headerlink" title="本地HOSTS与DNS关系"></a>本地HOSTS与DNS关系</h3><p>Hosts在本地将一些常用的网址域名与其对应的IP地址建立一个关联“数据库”，当我们访问域名时，系统会首先自动从Hosts文件中寻找对应的IP地址，一旦找到，系统会立即打开对应网页，如果没有找到，则系统会再将网址提交DNS域名解析服务器进行IP地址的解析。<br>Hosts地址：C:\Windows\System32\drivers\etc\hosts </p>
+<p>作者：黑战士安全 <a target="_blank" rel="noopener" href="https://www.bilibili.com/read/cv19754086?spm_id_from=333.999.0.0&jump_opus=1">https://www.bilibili.com/read/cv19754086?spm_id_from=333.999.0.0&amp;jump_opus=1</a> 出处：bilibili</p>
+<h3 id="CDN"><a href="#CDN" class="headerlink" title="CDN"></a>CDN</h3><h3 id="CDN是什么"><a href="#CDN是什么" class="headerlink" title="CDN是什么"></a>CDN是什么</h3><p>Content Delivery Network：构建在网络数据上的分布式内容分发网络，提高系统响应速度，也可以一定程度地拦截攻击。</p>
+<p>举例来说，某网站的服务器在A地，E地的用户想要获取服务器的数据，需要跨越很长的距离。这时候的传输速度和路由转发因素，导致访问速度缓慢，所以，如果在E地建立一个CDN服务器，其上缓存了A地服务器的一些数据，那这样的话用户只需访问E地的CDN服务器就能获取相关信息。</p>
+<h3 id="CDN工作过程"><a href="#CDN工作过程" class="headerlink" title="CDN工作过程"></a>CDN工作过程</h3><ol>
+<li><p>dns请求当地local DNS</p>
+</li>
+<li><p>当地local DNS递归的查询服务器的gslb（全局负载均衡；CDN系统总是希望用距离用户最近的设备为其提供服务，这也需要在不同地域部署多个节点。GSLB系统就是解决这个问题的。</p>
+<p>版权声明：本文为CSDN博主「dahuang1016」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/dahuang1016/article/details/105928932%EF%BC%89">https://blog.csdn.net/dahuang1016/article/details/105928932）</a></p>
+</li>
+<li><p>服务器根据local DNS 分配最佳节点，返回ip</p>
+</li>
+<li><p>用户获得最佳接入ip，访问最佳节点。</p>
+</li>
+<li><p>如果该节点没有用户想要获取的内容，则通过内部路由访问上一节点，直到找到文件或到达源站为止。</p>
+</li>
+<li><p>cdn节点缓存该数据，下次请求该文件时可以直接返回。</p>
+</li>
+</ol>
+<p>————————————————<br>版权声明：本文为CSDN博主「码上腾飞」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/Frankltf/article/details/108820315">https://blog.csdn.net/Frankltf/article/details/108820315</a></p>
+<h3 id="CDN与DNS关系"><a href="#CDN与DNS关系" class="headerlink" title="CDN与DNS关系"></a>CDN与DNS关系</h3><p>cdn的就近访问，那就需要知道用户所在位置，好给他分配最优的CDN节点。**&#x3D;&#x3D;所以需要用到DNS定位&#x3D;&#x3D;<strong>。一般的调度方式是，如果调度服务器看到用户使用了E地的LDNS（本地DNS）服务器，</strong>就会认为该用户来自E地**，然后给该用户分配了E地的CDN服务器，让他去访问。</p>
+<p>当然了，其缺点在于，A地的用户使用了E地的LDNS的话，被分配的会是E地的CDN。</p>
+<p>所以引入了<strong>http调度</strong>。</p>
+<p>其原理为：当用户访问我们的服务器时，服务器先分析用户的ip地址，然后服务器给用户返回一个302重定向，将离用户最近的服务器存在location中，用户再去请求这个cdn服务器就能得到最佳的cdn节点。</p>
+<p>不足之处在于，其有一次额外的htttp访问，首次访问的延时较高，访问些小文件有点得不偿失。<strong>所以一般是dns先定位，http的方式来调整偏差。</strong></p>
+<h3 id="常见DNS攻击"><a href="#常见DNS攻击" class="headerlink" title="常见DNS攻击"></a>常见DNS攻击</h3><ul>
+<li>缓存投毒：它是利用虚假Internet地址替换掉域名系统表中的地址，进而制造破坏。</li>
+<li>DNS劫持：是指在劫持的网络范围内拦截域名解析的请求，分析请求的域名，把审查范围以外的请求放行，否则返回假的IP地址或者什么都不做使请求失去响应，其效果就是对特定的网络不能访问或访问的是假网址。（针对面较广）</li>
+<li>域名劫持：域名劫持就是在劫持的网络范围内拦截域名解析的请求，分析请求的域名，把审查范围以外的请求放行，否则直接返回假的IP地址或者什么也不做使得请求失去响应，其效果就是对特定的网址不能访问或访问的是假网址。（针对面窄一点）</li>
+<li>DNS DDOS攻击：通过控制大批僵尸网络利用真实DNS协议栈发起大量域名查询请求，利用工具软件伪造源IP发送海量DNS查询，发送海量DNS查询报文导致网络带宽耗尽而无法传送正常DNS查询请求。</li>
+</ul>
+<p>作者：黑战士安全 <a target="_blank" rel="noopener" href="https://www.bilibili.com/read/cv19754086?spm_id_from=333.999.0.0&jump_opus=1">https://www.bilibili.com/read/cv19754086?spm_id_from=333.999.0.0&amp;jump_opus=1</a> 出处：bilibili</p>
+<h2 id="3-后门"><a href="#3-后门" class="headerlink" title="3.后门"></a>3.后门</h2><h3 id="后门是什么"><a href="#后门是什么" class="headerlink" title="后门是什么"></a>后门是什么</h3><p>通常指那些绕过安全性控制而获取对程序或系统访问权的程序方法。<br>在软件的开发阶段，程序员常常会在软件内创建后门程序以便可以修改程序设计中的缺陷。</p>
+<h3 id="后门的意义"><a href="#后门的意义" class="headerlink" title="后门的意义"></a>后门的意义</h3><p>可以更方便的链接到主机；在获取到主机权限的时候，后门可以充当命令控制台的角色 </p>
+<p>如果后门进入后遇到文件无权限，换目录</p>
+<h2 id="4-WEB"><a href="#4-WEB" class="headerlink" title="4.WEB"></a>4.WEB</h2><h3 id="WEB的组成"><a href="#WEB的组成" class="headerlink" title="WEB的组成"></a>WEB的组成</h3><ul>
+<li>网站源码：分脚本类型，分应用方向</li>
+<li>操作系统：windows、linux</li>
+<li>中间件（搭建平台）：apache iis tomcat nginx 等</li>
+<li>数据库：access mysql mssql oracle sybase db2 postsql 等</li>
+</ul>
+<h3 id="WEB相关漏洞"><a href="#WEB相关漏洞" class="headerlink" title="WEB相关漏洞"></a>WEB相关漏洞</h3><ul>
+<li>WEB 源码类对应漏洞：SQL 注入，上传，XSS，代码执行，变量覆盖，逻辑漏洞，反序列化等</li>
+<li>WEB 中间件对应漏洞：未授权访问，变量覆盖…</li>
+<li>WEB 数据库对应漏洞：弱口令，权限提升…</li>
+<li>WEB 系统层对应漏洞：提权，远程代码执行</li>
+<li>其他第三方对应漏洞</li>
+<li>APP 或 PC 应用结合类</li>
+</ul>
+<p>作者：黑战士安全 <a target="_blank" rel="noopener" href="https://www.bilibili.com/read/cv19754086?spm_id_from=333.999.0.0&jump_opus=1">https://www.bilibili.com/read/cv19754086?spm_id_from=333.999.0.0&amp;jump_opus=1</a> 出处：bilibili</p>
+<h3 id="信息敏感点"><a href="#信息敏感点" class="headerlink" title="信息敏感点"></a>信息敏感点</h3><ul>
+<li><p>敏感目录结构：数据库配置文件，后台目录，模版目录，数据库目录等</p>
+</li>
+<li><p>web脚本类型：ASP,PHP,ASPX,JSP,JAVAWEB 等脚本类型源码</p>
+</li>
+<li><p>应用分类：社交，论坛，门户，第三方，博客等不同的代码机制对应漏洞</p>
+</li>
+<li><p>开源，未开源问题，框架非框架问题，关于 CMS 识别问题及后续等</p>
+</li>
+</ul>
+<h3 id="网站搭建相关知识"><a href="#网站搭建相关知识" class="headerlink" title="网站搭建相关知识"></a>网站搭建相关知识</h3><p>扫描时：域名访问一般只会指向某个目录(子目录)及其内部文件，而IP访问指向根目录，发现的内容更多。</p>
+<p>f12网络数据包会有网站的信息（如中间站、系统等）</p>
+<h3 id="常见文件后缀解析"><a href="#常见文件后缀解析" class="headerlink" title="常见文件后缀解析"></a>常见文件后缀解析</h3><p>主要是类似于一句话木马的后缀限制，如果不行，就换个后缀，这个原理来自中间件的解析？</p>
+<h2 id="5-系统"><a href="#5-系统" class="headerlink" title="5.系统"></a>5.系统</h2><h3 id="识别操作系统"><a href="#识别操作系统" class="headerlink" title="识别操作系统"></a>识别操作系统</h3><p>windows对大小写不敏感，ping值 ttl128左右；而linux敏感，ping值 ttl64左右</p>
+<p>nmap -O ip</p>
+<h3 id="数据库层面"><a href="#数据库层面" class="headerlink" title="数据库层面"></a>数据库层面</h3><h4 id="识别方式"><a href="#识别方式" class="headerlink" title="识别方式"></a>识别方式</h4><ul>
+<li>nmap -O ip</li>
+<li>nmap ip -p 端口，通过端口开发反推数据库</li>
+</ul>
+<h4 id="数据库常见漏洞类型与攻击"><a href="#数据库常见漏洞类型与攻击" class="headerlink" title="数据库常见漏洞类型与攻击"></a>数据库常见漏洞类型与攻击</h4><ul>
+<li>弱口令</li>
+<li>sql注入</li>
+</ul>
+<h3 id="常见数据库结构"><a href="#常见数据库结构" class="headerlink" title="常见数据库结构"></a>常见数据库结构</h3><ul>
+<li>ASP+Access</li>
+<li>php+mysql</li>
+<li>axpx+mssql</li>
+<li>jsp+mssql，oracle</li>
+<li>python+mongodb</li>
+</ul>
+<h3 id="服务器端口"><a href="#服务器端口" class="headerlink" title="服务器端口"></a>服务器端口</h3><ul>
+<li>关系型数据库 –MySQL:3306 –SqlServer:1433 –Oracle:1521</li>
+<li>NOSQL数据库 –MongoDB:27017 –Redis:6379 -memcached:11211</li>
+</ul>
  
       <!-- reward -->
       
@@ -187,12 +273,12 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/12/%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/13/%E7%9F%A5%E8%AF%86%E5%9F%BA%E7%A1%80/" alt="微信分享二维码">
     </div>
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%8D%9A%E5%AE%A2%E7%BB%8F%E9%AA%8C%E6%9D%A5%E6%BA%90/" rel="tag">博客经验来源</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BD%91%E5%AE%89/" rel="tag">网安</a></li></ul>
 
     </footer>
   </div>
@@ -200,15 +286,20 @@
    
   <nav class="article-nav">
     
-      <a href="/2023/05/13/%E7%9F%A5%E8%AF%86%E5%9F%BA%E7%A1%80/" class="article-nav-link">
+      <a href="/2023/05/13/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" class="article-nav-link">
         <strong class="article-nav-caption">上一篇</strong>
         <div class="article-nav-title">
           
-            知识基础
+            渗透测试
           
         </div>
       </a>
     
+    
+      <a href="/2023/05/12/%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">第一篇博客</div>
+      </a>
     
   </nav>
 

