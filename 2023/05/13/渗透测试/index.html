@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">175</span>
+            <span class="post-count">331</span>
         </span>
     </span>
 
@@ -121,7 +121,11 @@
        
   <h2 id="一、基本流程"><a href="#一、基本流程" class="headerlink" title="一、基本流程"></a>一、基本流程</h2><p>目标确认-&gt;信息收集-&gt;漏洞发现-&gt;漏洞利用-&gt;权限维持、内网渗透-&gt;目标获取、痕迹清理</p>
 <h3 id="1、目标确认"><a href="#1、目标确认" class="headerlink" title="1、目标确认"></a>1、目标确认</h3><p>要获取到什么权限</p>
-<h3 id="2-信息收集"><a href="#2-信息收集" class="headerlink" title="2.信息收集"></a>2.信息收集</h3><p>域名、IP、端口、服务端框架、语言、开源情报、防御措施等</p>
+<h3 id="2-信息收集"><a href="#2-信息收集" class="headerlink" title="2.信息收集"></a>2.信息收集</h3><p>基础设施枚举（获取公司在互联网和内部网上的位置；确定公司的安全措施）</p>
+<p>服务枚举（服务版本、服务信息；许多服务有版本历史记录，可以识别主机或服务器上安装的版本是否是真的或新的）</p>
+<p>主机枚举（确定该主机或服务器扮演什么角色以及它与哪些网络组件通信。此外，确定所用服务及用途，以及端口。）</p>
+<p>掠夺（获取敏感信息如员工姓名、客户数据【需要在目标主机上获取到访问权限】）</p>
+<p>域名、IP、端口、服务端框架、语言、开源情报、防御措施等</p>
 <h4 id="域名信息"><a href="#域名信息" class="headerlink" title="域名信息"></a>域名信息</h4><p>正向记录(mx,ns,txt,spf,cname)</p>
 <p>反向查询(whois信息反查:电话、邮箱、姓名)</p>
 <p>备案信息</p>
@@ -131,6 +135,7 @@
 <p>代码审计0day</p>
 <h3 id="4-漏洞利用"><a href="#4-漏洞利用" class="headerlink" title="4.漏洞利用"></a>4.漏洞利用</h3><h4 id="sql注入"><a href="#sql注入" class="headerlink" title="sql注入"></a>sql注入</h4><p>拖库、提权（写文件webshell、MYSQL UDF、sqlserver xp_cmdshell）</p>
 <h4 id="xss"><a href="#xss" class="headerlink" title="xss"></a>xss</h4><p>打管理员cookie、beef框架攻击管理员客户端</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230603172605460.png"></p>
  
       <!-- reward -->
       

