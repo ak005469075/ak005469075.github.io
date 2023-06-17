@@ -11,7 +11,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1"
       />
-      <title>CSRF与SSRF |  小张之栈</title>
+      <title>中间件介绍 |  小张之栈</title>
   <meta name="generator" content="hexo-theme-ayer">
       
       <link rel="shortcut icon" href="/favicon.ico" />
@@ -64,7 +64,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-CSRF与SSRF"
+  id="post-中间件"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -75,7 +75,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  CSRF与SSRF
+  中间件介绍
 </h1>
  
 
@@ -83,11 +83,11 @@
     </header>
      
     <div class="article-meta">
-      <a href="/2023/05/26/CSRF%E4%B8%8ESSRF/" class="article-date">
-  <time datetime="2023-05-26T02:11:37.000Z" itemprop="datePublished">2023-05-26</time>
+      <a href="/2023/06/01/%E4%B8%AD%E9%97%B4%E4%BB%B6/" class="article-date">
+  <time datetime="2023-06-01T02:11:37.000Z" itemprop="datePublished">2023-06-01</time>
 </a> 
   <div class="article-category">
-    <a class="article-category-link" href="/categories/web%E6%BC%8F%E6%B4%9E/">web漏洞</a> / <a class="article-category-link" href="/categories/web%E6%BC%8F%E6%B4%9E/CSRF/">CSRF</a> / <a class="article-category-link" href="/categories/web%E6%BC%8F%E6%B4%9E/CSRF/SSRF/">SSRF</a>
+    <a class="article-category-link" href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/">中间件</a>
   </div>
   
 <div class="word_count">
@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.9k</span>
+            <span class="post-count">91</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">7 分钟</span>
+            <span class="post-count">1 分钟</span>
         </span>
     </span>
 </div>
@@ -119,45 +119,11 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h1 id="CSRF"><a href="#CSRF" class="headerlink" title="CSRF:"></a>CSRF:</h1><h2 id="漏洞解释与原理"><a href="#漏洞解释与原理" class="headerlink" title="漏洞解释与原理"></a>漏洞解释与原理</h2><h3 id="解释："><a href="#解释：" class="headerlink" title="解释："></a>解释：</h3><p>(Cross-site request forgery，跨站请求伪造)：攻击者通过一些技术手段欺骗用户的浏览器去访问一个自己以前认证过的站点并运行一些操作（如发邮件，发消息，甚至财产操作（如转账和购买商品））。因为浏览器之前认证过，所以被访问的站点会觉得这是真正的用户操作而去运行。</p>
-<p>XSS利用站点内的信任用户，而CSRF则通过伪装成受信任用户请求受信任的网站。</p>
-<h3 id="原理："><a href="#原理：" class="headerlink" title="原理："></a>原理：</h3><p>攻击者猜测出了url的所有参数与参数值。</p>
-<p><img src="/../../../Typora/img111/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6Zu254K55pWy5Luj56CB,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center.jpeg" alt="在这里插入图片描述"></p>
-<p>一次csrf攻击的必要步骤：</p>
-<p>1.受害人登录受信任站点A，并在本地生成Cookie</p>
-<p>2.不登出A的情况下，访问危险站点B</p>
-<p>参考：CSDN[零点敲代码]<a target="_blank" rel="noopener" href="http://t.csdn.cn/k7lkP">http://t.csdn.cn/k7lkP</a></p>
-<h2 id="漏洞检测与案例"><a href="#漏洞检测与案例" class="headerlink" title="漏洞检测与案例"></a>漏洞检测与案例</h2><p>pikachu</p>
-<h2 id="防御方案"><a href="#防御方案" class="headerlink" title="防御方案"></a>防御方案</h2><ol>
-<li>当用户发送重要请求时，需要再输入密码</li>
-<li>设置随机token</li>
-<li>检验Referer来源，请求时判断请求链接是否为当前管理员正在使用的页面（比如点击危险的修改密码链接时，管理员需要有修改密码的页面，而不是编辑文章的页面）</li>
-<li>验证码</li>
-<li>限制为只能post请求</li>
+  <h1 id="1-定义"><a href="#1-定义" class="headerlink" title="1.定义"></a>1.定义</h1><p>介于操作系统和应用软件之间，为应用软件提供服务功能的软件，有消息中间件，交易中间件，应用服务器等。由于介于两种软件之间，所以，称为中间件</p>
+<h1 id="2-常见中间件"><a href="#2-常见中间件" class="headerlink" title="2.常见中间件"></a>2.常见中间件</h1><h2 id="1-Tomcat"><a href="#1-Tomcat" class="headerlink" title="1.Tomcat"></a>1.Tomcat</h2><p>包括<strong>站点、连接器、应用上下文、资源</strong>四个部分。</p>
+<ol>
+<li><h3 id="Weblogic"><a href="#Weblogic" class="headerlink" title="Weblogic"></a>Weblogic</h3></li>
 </ol>
-<h1 id="SSRF"><a href="#SSRF" class="headerlink" title="SSRF:"></a>SSRF:</h1><p>SSRF<br>    是什么<br>        SSRF(Server-Side Request Forgery 服务器请求伪造)<br>        目标 ：从外网无法访问的内部系统<br>        原因 ：服务器端提供了从其他服务器应用获取数据的功能且没有对目标地址过滤和限制<br>    挖掘<br>        web功能上<br>            分享<br>                URL地址分享网页内容<br>            转码服务<br>                通过url地址把原地址网页内容调优使其适合手机屏幕浏览<br>            在线翻译<br>                通过url地址翻译对应文本内容<br>            图片加载与下载<br>                通过url地址加载或下载图片<br>            图片、文章收藏功能<br>            未公开的api实现以及其他调用url功能<br>        URL关键字中找<br>            share<br>            wap<br>            url<br>            link<br>            src<br>            source<br>            target<br>            u<br>            3g<br>            display<br>            domain<br>            source(image)url<br>    验证<br>        基本判断<br>            burpsuite抓包<br>            右键打开图片<br>    绕过<br>        子主题 1<br>        子主题 2</p>
-<h2 id="解释：-1"><a href="#解释：-1" class="headerlink" title="解释："></a>解释：</h2><p>这种从其他服务器应用获取数据的功能，可以使用用户指定的URL，web应用可以获取图片，下载文件，读取文件内容等。这个功能如果被恶意使用，没有对目标地址做严格过滤与限制，导致攻击者可以传入任意的地址来让后端服务器对其发起请求,并返回对该目标地址请求的数据。<br>数据流:攻击者—–&gt;服务器—-&gt;目标地址</p>
-<p>SSRF虽然无法直接请求内网的其他主机信息，但是可以借助能访问的服务器，当做跳板，进而进行攻击。（用网站自己打自己内网）</p>
-<h2 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h2><p>1.可以对外网、服务器所在内网、本地进行端口扫描，获取一些服务的banner信息;</p>
-<p>2.攻击运行在内网或本地的应用程序（比如溢出）;</p>
-<p>3.对内网web应用进行指纹识别，通过访问默认文件实现;</p>
-<p>4.攻击内外网的web应用，主要是使用get参数就可以实现的攻击（比如struts2，sqli等）;</p>
-<p>5.利用file协议读取本地文件等。.</p>
-<p>6.各个协议调用探针：http,file,dict,ftp,gopher等</p>
-<p>http:192.168.64.144&#x2F;phpmyadmin&#x2F;<br>file:&#x2F;&#x2F;&#x2F;D:&#x2F;<a target="_blank" rel="noopener" href="http://www.txt/">www.txt</a><br>dict:&#x2F;&#x2F;192.168.64.144:3306&#x2F;info<br><a href="ftp://192.168.64.144/">ftp://192.168.64.144:21</a><br>————————————————</p>
-<p>参考：CSDN[零点敲代码]<a target="_blank" rel="noopener" href="http://t.csdn.cn/sb9kA">http://t.csdn.cn/sb9kA</a></p>
-<h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><p>1.排除法：浏览器f12查看源代码看是否是在本地进行了请求<br>比如：该资源地址类型为 <a target="_blank" rel="noopener" href="http://www.xxx.com/a.php?image=%EF%BC%88%E5%9C%B0%E5%9D%80%EF%BC%89%E7%9A%84%E5%B0%B1%E5%8F%AF%E8%83%BD%E5%AD%98%E5%9C%A8SSRF%E6%BC%8F%E6%B4%9E">http://www.xxx.com/a.php?image=（地址）的就可能存在SSRF漏洞</a><br>2.dnslog等工具进行测试，看是否被访问<br>–可以在盲打后台用例中将当前准备请求的uri 和参数编码成base64，这样盲打后台解码后就知道是哪台机器哪个cgi触发的请求。<br>3.抓包分析发送的请求是不是由服务器的发送的，如果不是客户端发出的请求，则有可能是，接着找存在HTTP服务的内网地址<br>–从漏洞平台中的历史漏洞寻找泄漏的存在web应用内网地址<br>–通过二级域名暴力猜解工具模糊猜测内网地址<br>4.直接返回的Banner、title、content等信息<br>5.留意bool型SSRF<br>————————————————<br>版权声明：本文为CSDN博主「Never say die _」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_45612828/article/details/126193765">https://blog.csdn.net/qq_45612828/article/details/126193765</a></p>
-<h2 id="绕过"><a href="#绕过" class="headerlink" title="绕过"></a>绕过</h2><h3 id="1-绕过IP"><a href="#1-绕过IP" class="headerlink" title="1.绕过IP"></a>1.绕过IP</h3><p>1）使用IPV6地址<br>2）对IP转化成十进制，八进制等，如0177.0.0.01（八进制）<br>3）利用特殊域名。xip.io可以指向任意域名，即127.0.0.1.xip.io，可解析为127.0.0.1<br>4）利用句号。如127。0。0。1<br>5）可以[::]。如http:&#x2F;&#x2F;[::]:80&#x2F;<br>6）利用短网址。比如百度短地址<br>————————————————<br>版权声明：本文为CSDN博主「Never say die _」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_45612828/article/details/126193765">https://blog.csdn.net/qq_45612828/article/details/126193765</a></p>
-<h3 id="2-绕过url解析限制"><a href="#2-绕过url解析限制" class="headerlink" title="2.绕过url解析限制"></a>2.绕过url解析限制</h3><ul>
-<li>1）使用@符号绕过：如<a href="mailto:&#49;&#50;&#55;&#x2e;&#48;&#46;&#48;&#46;&#x31;&#x40;&#101;&#x76;&#105;&#108;&#46;&#99;&#x6f;&#x6d;">&#49;&#50;&#55;&#x2e;&#48;&#46;&#48;&#46;&#x31;&#x40;&#101;&#x76;&#105;&#108;&#46;&#99;&#x6f;&#x6d;</a></li>
-<li>2）利用302跳转，需要一个vps，把302转换的代码部署到vps上，然后去访问，就可跳转到内网中</li>
-</ul>
-<h2 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h2><h3 id="PHP中可能存在ssrf的函数"><a href="#PHP中可能存在ssrf的函数" class="headerlink" title="PHP中可能存在ssrf的函数"></a>PHP中可能存在ssrf的函数</h3><p>1）file_get_contents():把整个文件读入一个字符串中，该函数是用于把文件的内容读入到一个字符串中的首选方法。如果服务器操作系统支持，还会使用内存映射技术来增强性能;支持http(s),file协议，在PHP5.4上测试不支持dict，ghoper协议。<br>2）fsockopen():打开一个网络连接或者一个Unix套接字连接，在PHP5.4上测试只有http协议成功<br>3）curl_exec():用于执行指定的CURL会话，支持的协议比较多，常用于SSRF的协议经过测试都支持，如dict,ghoper,file。有的协议需要一定的条件这点需要注意。<br>————————————————<br>版权声明：本文为CSDN博主「Never say die _」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_45612828/article/details/126193765">https://blog.csdn.net/qq_45612828/article/details/126193765</a></p>
-<h2 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h2><p>1,过滤返回信息，验证远程服务器对请求的响应是比较容易的方法。如果web应用是去获取某一种类型的文件。那么在把返回结果展示给用户之前先验证返回的信息是否符合标准。</p>
-<p>2, 统一错误信息，避免用户可以根据错误信息来判断远端服务器的端口状态。</p>
-<p>3,限制请求的端口为http常用的端口，比如，80,443,8080,8090。</p>
-<p>4,黑名单内网ip。避免应用被用来获取获取内网数据，攻击内网。</p>
-<p>5,禁用不需要的协议。仅仅允许http和https请求。可以防止类似于file:&#x2F;&#x2F;&#x2F;,gopher:&#x2F;&#x2F;,ftp:&#x2F;&#x2F; 等引起的问题。<br>————————————————<br>参考：CSDN[零点敲代码]<a target="_blank" rel="noopener" href="http://t.csdn.cn/sb9kA">http://t.csdn.cn/sb9kA</a></p>
  
       <!-- reward -->
       
@@ -222,12 +188,12 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/26/CSRF%E4%B8%8ESSRF/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/06/01/%E4%B8%AD%E9%97%B4%E4%BB%B6/" alt="微信分享二维码">
     </div>
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSRF/" rel="tag">CSRF</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SSRF/" rel="tag">SSRF</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%B8%AD%E9%97%B4%E4%BB%B6/" rel="tag">中间件</a></li></ul>
 
     </footer>
   </div>
@@ -235,19 +201,19 @@
    
   <nav class="article-nav">
     
-      <a href="/2023/05/29/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" class="article-nav-link">
+      <a href="/2023/06/01/%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%90%AD%E5%BB%BA/" class="article-nav-link">
         <strong class="article-nav-caption">上一篇</strong>
         <div class="article-nav-title">
           
-            php反序列化
+            服务器搭建
           
         </div>
       </a>
     
     
-      <a href="/2023/05/22/%E9%80%BB%E8%BE%91%E8%B6%8A%E6%9D%83/" class="article-nav-link">
+      <a href="/2023/05/31/php/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">逻辑越权</div>
+        <div class="article-nav-title">php语言基础</div>
       </a>
     
   </nav>

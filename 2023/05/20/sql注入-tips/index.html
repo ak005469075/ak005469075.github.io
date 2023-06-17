@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">927</span>
+            <span class="post-count">1.2k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">4 分钟</span>
+            <span class="post-count">5 分钟</span>
         </span>
     </span>
 </div>
@@ -170,7 +170,9 @@
 <p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523132214461.png" alt="image-20230523132214461"></p>
 <p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523132219086.png" alt="image-20230523132219086"></p>
 <h2 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h2><ol>
-<li><p>参数化查询，最好设定传入参数类型，比如是否是数字，如<strong>is_numeric($_GET[‘id’])</strong> ，这样就限制了字符的输入。</p>
+<li><p>参数化查询（数据库服务器在数据库完成SQL指令的编译后，才套用参数运行，因此就算参数中含有有损的指令，也不会被数据库所运行，仅认为它是一个参数。），最好设定传入参数类型，比如是否是数字，<strong>is_numeric($_GET[‘id’])</strong> ，这样就限制了字符的输入。</p>
+</li>
+<li><p>参数长度限制，在PHP下，可用strlen函数检查输入长度</p>
 </li>
 <li><p>函数过滤转义，如addslashes()，它转义一些特殊字符</p>
 </li>
@@ -179,6 +181,11 @@
 <p>这样的话，<strong>admin’ or 1&#x3D;1</strong> 将作为username的值，避免了sql语句的拼接闭合等非法操作。</p>
 </li>
 </ol>
+<p>危险参数过滤：</p>
+<p>1）黑名单过滤：将一些可能用于注入的敏感字符写入黑名单中，如’（单引号）、union、select等，也可能使用正则表达式做过滤，但黑名单可能会有疏漏。</p>
+<p>2）白名单过滤：例如，用数据库中的已知值校对，通常对参数结果进行合法性校验，符合白名单的数据方可显示。</p>
+<p>3）参数转义：对变量默认进行addsalashes（在预定义字符前添加反斜杠），使得SQL注入语句构造失败。</p>
+<p>由于白名单方式要求输出参数有着非常明显的特点，因此适用的业务场景非常有限。总体来说，防护手段仍建议以黑名单+参数转义方式为主，这也是目前针对SQL敏感参数处理的主要方式，以下逐项进行分析。</p>
  
       <!-- reward -->
       
@@ -256,19 +263,19 @@
    
   <nav class="article-nav">
     
-      <a href="/2023/05/20/sql%E6%B3%A8%E5%85%A5%E4%B9%8B%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/" class="article-nav-link">
+      <a href="/2023/05/20/sqli-labs/" class="article-nav-link">
         <strong class="article-nav-caption">上一篇</strong>
         <div class="article-nav-title">
           
-            sql注入之报错注入
+            sqli-labs
           
         </div>
       </a>
     
     
-      <a href="/2023/05/20/sql%E6%B3%A8%E5%85%A5%E6%80%BB%E8%BF%B0/" class="article-nav-link">
+      <a href="/2023/05/20/sql%E6%B3%A8%E5%85%A5%E4%B9%8B%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">sql注入总述</div>
+        <div class="article-nav-title">sql注入之报错注入</div>
       </a>
     
   </nav>

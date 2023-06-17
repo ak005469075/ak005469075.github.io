@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>CSRF与SSRF |  小张之栈</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-CSRF与SSRF"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  CSRF与SSRF
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/06/10/CSRF%E4%B8%8ESSRF/" class="article-date">
+  <time datetime="2023-06-10T01:12:30.000Z" itemprop="datePublished">2023-06-10</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E3%80%8AWEB%E5%AE%89%E5%85%A8%E5%9F%BA%E7%A1%80%E3%80%8B/">《WEB安全基础》</a> / <a class="article-category-link" href="/categories/%E3%80%8AWEB%E5%AE%89%E5%85%A8%E5%9F%BA%E7%A1%80%E3%80%8B/csrf/">csrf</a> / <a class="article-category-link" href="/categories/%E3%80%8AWEB%E5%AE%89%E5%85%A8%E5%9F%BA%E7%A1%80%E3%80%8B/csrf/ssrf/">ssrf</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">6.2k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">23 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="一、CSRF"><a href="#一、CSRF" class="headerlink" title="一、CSRF:"></a>一、CSRF:</h1><h2 id="漏洞解释与原理"><a href="#漏洞解释与原理" class="headerlink" title="漏洞解释与原理"></a>漏洞解释与原理</h2><h3 id="解释："><a href="#解释：" class="headerlink" title="解释："></a>解释：</h3><p>跨站请求伪造（Cross-Site Request Forgery，CSRF），完全不同于XSS攻击。</p>
+<blockquote>
+<p>XSS攻击侧重于获取用户的权限及信息，而CSRF则是攻击者可伪造当前用户的行为，让目标服务器误以为请求由当前用户发起，并利用当前用户权限实现业务请求伪造。</p>
+<p>XSS<strong>利用</strong>站点内的信任用户，而CSRF则通过<strong>伪装</strong>成受信任用户请求受信任的网站。</p>
+</blockquote>
+<p>可见，CSRF侧重于伪造特定用户的请求。</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230617153429031.png"></p>
+<h3 id="原理："><a href="#原理：" class="headerlink" title="原理："></a>原理：</h3><blockquote>
+<p>攻击者先伪造一个页面，该页面功能就是为了<strong>伪造</strong>当前用户请求。</p>
+<p>当用户点击了恶意页面，会<strong>自动</strong>向当前用户的服务器<strong>提交攻击者伪造</strong>的业务请求，这个恶意请求还是<strong>以当前用户的身份</strong>发起的。</p>
+</blockquote>
+<p>CSRF攻击的效果是在当前用户不知情的情况下，以当前用户的身份发送业务请求并执行。</p>
+<h3 id="条件："><a href="#条件：" class="headerlink" title="条件："></a>条件：</h3><p>要攻击形成有效的CSRF攻击必须满足三个条件：</p>
+<p>1）用户处于登录状态。</p>
+<p>2）伪造的链接与正常应用请求链接一致。</p>
+<p>3）后台未对用户业务开展合法性做校验。</p>
+<p><img src="/../../../Typora/img111/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6Zu254K55pWy5Luj56CB,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center.jpeg" alt="在这里插入图片描述"></p>
+<p>一次csrf攻击的必要步骤：</p>
+<p>1.受害人登录受信任站点A，并在本地生成Cookie</p>
+<p>2.不登出A的情况下，访问危险站点B</p>
+<p>参考：CSDN[零点敲代码]<a target="_blank" rel="noopener" href="http://t.csdn.cn/k7lkP">http://t.csdn.cn/k7lkP</a></p>
+<h2 id="漏洞检测与案例"><a href="#漏洞检测与案例" class="headerlink" title="漏洞检测与案例"></a>漏洞检测与案例</h2><p>pikachu csrf</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230617154921395.png" alt="用户lili信息界面"></p>
+<p>我们构造一个代码</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">&quot;Content-Type&quot;</span> <span class="attr">content</span>=<span class="string">&quot;text/html; charset=utf-8&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">center</span>&gt;</span><span class="tag">&lt;<span class="name">h1</span>&gt;</span>图片展示<span class="tag">&lt;/<span class="name">h1</span>&gt;</span><span class="tag">&lt;/<span class="name">center</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">&quot;http://localhost:81/pikachu/vul/csrf/csrfpost/csrf_post_edit.php&quot;</span> <span class="attr">name</span>=<span class="string">&quot;form&quot;</span> <span class="attr">method</span>=</span></span><br><span class="line"><span class="tag"><span class="string">&quot;post&quot;</span> <span class="attr">role</span>=<span class="string">&quot;form&quot;</span>&gt;</span>  //这个action就是pikachu用户的信息修改界面</span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span>  <span class="attr">name</span>=<span class="string">&quot;sex&quot;</span> <span class="attr">value</span>=<span class="string">&quot;CSRF&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span>  <span class="attr">name</span>=<span class="string">&quot;phonenum&quot;</span> <span class="attr">value</span>=<span class="string">&quot;79&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span>  <span class="attr">name</span>=<span class="string">&quot;add&quot;</span> <span class="attr">value</span>=<span class="string">&quot;CSRF&quot;</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span>  <span class="attr">name</span>=<span class="string">&quot;email&quot;</span> <span class="attr">value</span>=<span class="string">&quot;CSRF@csrf&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span>  <span class="attr">name</span>=<span class="string">&quot;submit&quot;</span> <span class="attr">value</span>=<span class="string">&quot;View my pictures&quot;</span>/&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>因为实际情况是让用户点击的。</p>
+<p>我们略过诱骗的部分，假设用户已经点击了。</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230617155415181.png"></p>
+<p>点击一下View my pictures.</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230617161925480.png"></p>
+<p>当然了,get型要容易一些，比如</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"> <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://localhost/CSRF%20DEMO/GET/content.php?user=user&amp;title=csrf&amp;text=oday&quot;</span>&gt;</span>View my Pictures!<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line"> ...</span><br></pre></td></tr></table></figure>
+
+<p>POST请求方式的复杂之处在于需要创建一个隐藏表单，当用户访问时自动提交表单至目标连接，即可实现CSRF攻击</p>
+<h2 id="漏洞场景利用"><a href="#漏洞场景利用" class="headerlink" title="漏洞场景利用"></a>漏洞场景利用</h2><p>虽然属于被动引发，但危害还是有滴。比如：</p>
+<p>1）当用户是管理员时，如果存在CSRF漏洞，则攻击者可根据业务功能特点构造语句，在管理员不知情的情况下发起某项业务请求（如添加账号、删除某篇文章等），并且攻击者构造的请求会以当前管理员的身份发出并执行。</p>
+<p>2）针对个人用户，如果CSRF漏洞配合存储型XSS漏洞，可实现在当前用户页面上嵌入攻击伪造链接，从而大大增加用户点击的可能性，形成触发攻击的隐患。若社交类网站上存在此类问题，则会产生类似蠕虫的攻击效果。</p>
+<p>3）在部分管理系统中，考虑到用户使用系统的便利性，可以在后台Web页面上开发特定功能来实现针对管理系统的参数调整。每次在针对管理系统进行参数调整时，都会向服务器发起一次请求。因此，如果CSRF伪造管理员的高危功能管理请求并诱导管理员执行，那么会对当前系统造成非常大的危害。</p>
+<h2 id="防御方案"><a href="#防御方案" class="headerlink" title="防御方案"></a>防御方案</h2><p>CSRF一般是由于Web系统对当前用户身份的验证不足而造成的，比如目标站点并未对提交的请求做合法校验，导致任意请求均可执行（在用户合法登录的前提下，业务流程正常的请求）。</p>
+<p>常用的防护手段重点在于为关键业务点添加合理的验证方式，以实现对用户合法身份的二次确认。</p>
+<h3 id="1-添加中间环节"><a href="#1-添加中间环节" class="headerlink" title="1.添加中间环节"></a>1.添加中间环节</h3><p>由于攻击者只能仿冒用户发起请求，并不能接收服务器的响应内容，因此可在请求被执行前添加防护措施。主要思路为在发起关键业务的请求时，多添加一步验证环节，并且保证验证环节的内容无法被攻击者获取或碰撞，从而有效避免攻击者伪造请求的情况。这个过程中，常用的方式有以下两种。</p>
+<p>1.添加验证过程</p>
+<blockquote>
+<p>CSRF漏洞可成功利用的一个显著特点是攻击者伪造的用户请求会被服务器实际执行。对此，最有效的手段就是在其中添加一个中间过程，如让用户进行确认，从而可以避免这类问题的出现。</p>
+</blockquote>
+<p>一般效果就是，提交了修改信息，会弹出一个二次确认框，让用户二次确认。攻击者伪造的页面是接收不到这个确认内容的。</p>
+<p>注意的是：确认流程应由页面接受后在前台进行显示，不要利用纯前端的技术来实现，如利用JS代码来实现上述确认功能，否则就会失去原有的意义。</p>
+<p>2.验证码</p>
+<blockquote>
+<p>用户在提交内容时需要输入验证码，利用验证码来确认是否为当前用户发起的请求。验证码对于CSRF攻击防护效果良好，但是验证码最好在关键的业务流程点使用。如果在业务流程中过多使用验证码，会导致用户体验严重下降，直接影响到用户的行为。因此不建议过多使用。</p>
+</blockquote>
+<h3 id="2-验证用户请求合法性"><a href="#2-验证用户请求合法性" class="headerlink" title="2.验证用户请求合法性"></a>2.验证用户请求合法性</h3><p>防护CSRF漏洞的另一个方面是需要对每次请求的合法性进行校验，保证当前由用户发起的请求为用户本人。这是解决CSRF的成因——伪造用户请求的最直接方式。</p>
+<p>1.验证referer</p>
+<blockquote>
+<p>由于CSRF请求发起方为攻击者，因此在referer处，攻击者与当前用户所处的界面完全不同。可通过验证referer值是否合法，即通过验证请求来源的方式确定此次请求是否正常。但是，在某些情况下referer验证存在缺陷，那么可以利用各种伪造的方式实现对referer验证的绕过。推荐利用referer来监控CSRF行为，如果将其用于防御，效果并不一定良好。</p>
+</blockquote>
+<p>2.token</p>
+<blockquote>
+<p>针对CSRF漏洞，在建设Web系统时一般会利用token来识别当前用户身份的真实性。token在当前用户第一次访问某项功能页面时生成，且token是一次性的，在生成完毕后由服务器端发送给客户端。用户端接收到token之后，会在进行下一步业务时提交token，并由服务器进行有效性验证。由于攻击者在CSRF利用时无法获得当前用户的token，导致就算链接发送成功，也会由于没有附带token值，导致针对请求的验证发生错误，当前攻击请求也就无法正常执行。</p>
+</blockquote>
+<p>基础token代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">session_start();  </span><br><span class="line">function token_start() &#123;  </span><br><span class="line">    $_SESSION[&#x27;token&#x27;] = md5(rand(1,10000));  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line">function token_check () &#123;  </span><br><span class="line">    $return = $_REQUEST[&#x27;token&#x27;] === $_SESSION[&#x27;token&#x27;] ? true : false;  </span><br><span class="line">    token_start ();  </span><br><span class="line">    return $return;  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line">//如果token为空则生成一个token  </span><br><span class="line">if(!isset($_SESSION[&#x27;token&#x27;]) || $_SESSION[&#x27;token&#x27;]==&#x27;&#x27;) &#123;  </span><br><span class="line">    token_start ();  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line">if(isset($_POST[&#x27;test&#x27;]))&#123;  </span><br><span class="line">    if(!valid_token())&#123;  </span><br><span class="line">        echo &quot;token fail&quot;;  </span><br><span class="line">    &#125;else&#123;  </span><br><span class="line">        echo &#x27;success，Value:&#x27;.$_POST[&#x27;test&#x27;];  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;  </span><br><span class="line">/*这里利用10000以内的随机数的MD5值作为token（仅作示例），或者利用PHP基于当前时间（微秒）生成唯一ID的函数unipid（）。之后，根据当前用户提交的情况进行token验证及更新。这里可以看到，在每次访问之后都会进行token更新（无论提交成功还是失败）。*/</span><br></pre></td></tr></table></figure>
+
+<p><strong>使用token时需遵循以下原则：</strong></p>
+<p>1）token必须为<strong>一次性</strong>，无论该业务流程执行成功还是失败，在每次用户请求时均重新生成token并在客户端进行更新。</p>
+<p>2）token需有较强的<strong>随机性</strong>，避免采取简单的可预测的方式，使攻击者猜测出token的生成规律，进而导致token失效。</p>
+<h2 id="csrf漏洞总结"><a href="#csrf漏洞总结" class="headerlink" title="csrf漏洞总结"></a>csrf漏洞总结</h2><p>对于XSS攻击，CSRF攻击的原理、攻击目标均不相同，使用条件也较为苛刻。</p>
+<p>与XSS防护不同的是，CSRF防护不会关注对连接、提交参数的过滤，而是重点对业务开展的合法性进行验证，如验证请求是否来自当前用户、在重点功能处添加验证环节、通过token进行验证等。</p>
+<ol>
+<li>当用户发送重要请求时，需要再输入密码</li>
+<li>设置随机token</li>
+<li>检验Referer来源，请求时判断请求链接是否为当前管理员正在使用的页面（比如点击危险的修改密码链接时，管理员需要有修改密码的页面，而不是编辑文章的页面）</li>
+<li>验证码</li>
+<li>限制为只能post请求</li>
+</ol>
+<h1 id="SSRF"><a href="#SSRF" class="headerlink" title="SSRF:"></a>SSRF:</h1><p>SSRF<br>    是什么<br>        SSRF(Server-Side Request Forgery 服务器请求伪造)<br>        目标 ：从外网无法访问的内部系统<br>        原因 ：服务器端提供了从其他服务器应用获取数据的功能且没有对目标地址过滤和限制<br>    挖掘<br>        web功能上<br>            分享<br>                URL地址分享网页内容<br>            转码服务<br>                通过url地址把原地址网页内容调优使其适合手机屏幕浏览<br>            在线翻译<br>                通过url地址翻译对应文本内容<br>            图片加载与下载<br>                通过url地址加载或下载图片<br>            图片、文章收藏功能<br>            未公开的api实现以及其他调用url功能<br>        URL关键字中找<br>            share<br>            wap<br>            url<br>            link<br>            src<br>            source<br>            target<br>            u<br>            3g<br>            display<br>            domain<br>            source(image)url<br>    验证<br>        基本判断<br>            burpsuite抓包<br>            右键打开图片<br>    绕过<br>        子主题 1<br>        子主题 2</p>
+<h2 id="解释：-1"><a href="#解释：-1" class="headerlink" title="解释："></a>解释：</h2><p>服务器端请求伪造（Server-Side Request Forgery，SSRF）是另一种服务器端请求伪造的形式，攻击者可构造由服务器端发起请求的安全漏洞。相对于跨站请求伪造，服务器端请求伪造可让服务器执行一些在用户侧无法实现的效果，如内网探测、加载特定图片和文件等。</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230617153505685.png"></p>
+<p>这种从其他服务器应用获取数据的功能，可以使用用户指定的URL，web应用可以获取图片，下载文件，读取文件内容等。这个功能如果被恶意使用，没有对目标地址做严格过滤与限制，导致攻击者可以传入任意的地址来让后端服务器对其发起请求,并返回对该目标地址请求的数据。<br>数据流:攻击者—–&gt;服务器—-&gt;目标地址</p>
+<p>SSRF虽然无法直接请求内网的其他主机信息，但是可以借助能访问的服务器，当做跳板，进而进行攻击。（用网站自己打自己内网）</p>
+<h2 id="ssrf攻击"><a href="#ssrf攻击" class="headerlink" title="ssrf攻击"></a>ssrf攻击</h2><p>在Web应用中，存在着大量需要由服务器端向第三方发起请求的业务。</p>
+<p>例如，大多数网站具备的天气显示功能，页面首先会获取当前用户的IP地址，并根据IP地址所在的地理位置信息，向<strong>第三方</strong>天气查询服务器发起请求，最后将结果回显给用户。</p>
+<p>这类业务的核心问题在于服务器需根据用户提交的参数进行后续的业务流程，因此如果<strong>用户提交恶意的参数信息，并且服务器未对用户提交的参数进行合法性判断而直接执行后续请求业务，就会导致出现安全隐患，</strong>这也是SSRF漏洞的主要成因。</p>
+<p>SSRF攻击相对于CSRF攻击来说，攻击者需伪造的请求为<strong>服务器端发起的内容。</strong></p>
+<p><strong>前提：</strong></p>
+<blockquote>
+<p>Web服务器存在<strong>向其他服务器发起请求并获取数据的功能</strong>，并且获取<strong>过程中并未</strong>对目标地址进行<strong>安全过滤或加以限制</strong>，<strong>导致服务器的请求被伪造</strong>，进而实现后续的攻击。</p>
+<p>在某种程度上，可认为SSRF漏洞本质上是利用服务器的高权限实现对当前系统敏感信息的访问。</p>
+</blockquote>
+<p>由于SSRF漏洞存在的前提是服务器具有主动发起请求的功能，因此如果能控制服务器的漏洞点，那么就可实现大量针对内网及服务器的各类型探测及攻击。</p>
+<p>《WEB安全基础》所给的可能存在SSRF漏洞缺陷的目标有以下几种</p>
+<blockquote>
+<p>·图片加载与下载功能</p>
+<p>通过URL地址远程加载或下载图片，常见于很多转载行为或远程加载。由于远程加载图片可有效降低当前服务器的资源消耗，因此得到广泛使用。</p>
+<p>·本地处理功能</p>
+<p>例如，业务流程中需要对用户输入的参数进行本地处理，如要获取提交的URL中的header信息等，这类业务都会由服务器发起请求。</p>
+<p>·各类辅助功能</p>
+<p>可针对用户输入的参数添加各类辅助信息，提升参数的可视化效果。</p>
+<p>·图片、文章收藏功能</p>
+<p>将远程地址进行本地保存，这样可让用户在重新发起请求访问时由服务器重新加载远程地址即可。</p>
+<p>以上场景在用户视角理解起来比较抽象。下面通过实际案例讲解SSRF的攻击流程。</p>
+</blockquote>
+<p>百度给出的ssrf攻击效果为</p>
+<blockquote>
+<p>1.可以对外网、服务器所在内网、本地进行端口扫描，获取一些服务的banner信息;</p>
+<p>2.攻击运行在内网或本地的应用程序（比如溢出）;</p>
+<p>3.对内网web应用进行指纹识别，通过访问默认文件实现;</p>
+<p>4.攻击内外网的web应用，主要是使用get参数就可以实现的攻击（比如struts2，sqli等）;</p>
+<p>5.利用file协议读取本地文件等。.</p>
+<p>6.各个协议调用探针：http,file,dict,ftp,gopher等</p>
+<p>http:192.168.64.144&#x2F;phpmyadmin&#x2F;<br>file:&#x2F;&#x2F;&#x2F;D:&#x2F;<a target="_blank" rel="noopener" href="http://www.txt/">www.txt</a><br>dict:&#x2F;&#x2F;192.168.64.144:3306&#x2F;info<br><a href="ftp://192.168.64.144/">ftp://192.168.64.144:21</a></p>
+<p>参考：CSDN[零点敲代码]<a target="_blank" rel="noopener" href="http://t.csdn.cn/sb9kA">http://t.csdn.cn/sb9kA</a></p>
+</blockquote>
+<h2 id="利用场景"><a href="#利用场景" class="headerlink" title="利用场景"></a>利用场景</h2><h4 id="利用SSRF漏洞寻找本地存在的路径"><a href="#利用SSRF漏洞寻找本地存在的路径" class="headerlink" title="利用SSRF漏洞寻找本地存在的路径"></a>利用SSRF漏洞寻找本地存在的路径</h4><p>先构建一个场景，前端输入目标url，服务器用来获取该url的title信息。</p>
+<p>前端代码</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">&quot;lx2.php&quot;</span> <span class="attr">method</span>=<span class="string">&quot;post&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">name</span>=<span class="string">&quot;username&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;password&quot;</span> <span class="attr">name</span>=<span class="string">&quot;pwd&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span> <span class="attr">name</span>=<span class="string">&quot;提交&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>后端代码</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="variable">$ch</span> = <span class="title function_ invoke__">curl_init</span>();</span><br><span class="line">    <span class="variable">$timeout</span> = <span class="number">5</span>;</span><br><span class="line">    <span class="title function_ invoke__">curl_setopt</span> (<span class="variable">$ch</span>, CURLOPT_URL, <span class="variable">$_POST</span>[<span class="string">&#x27;username&#x27;</span>]);</span><br><span class="line">    <span class="title function_ invoke__">curl_setopt</span> (<span class="variable">$ch</span>, CURLOPT_RETURNTRANSFER, <span class="number">1</span>);</span><br><span class="line">    <span class="title function_ invoke__">curl_setopt</span> (<span class="variable">$ch</span>, CURLOPT_CONNECTTIMEOUT, <span class="variable">$timeout</span>);</span><br><span class="line">    <span class="title function_ invoke__">curl_setopt</span>(<span class="variable">$ch</span>, CURLOPT_SSL_VERIFYPEER, <span class="literal">false</span>);</span><br><span class="line">    <span class="variable">$file_contents</span> = <span class="title function_ invoke__">curl_exec</span>(<span class="variable">$ch</span>);</span><br><span class="line">    <span class="title function_ invoke__">curl_close</span>(<span class="variable">$ch</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/&lt;title&gt;(.*)&lt;\/title&gt;/i&quot;</span>,<span class="variable">$file_contents</span>, <span class="variable">$title</span>);</span><br><span class="line">    <span class="keyword">echo</span> <span class="variable">$title</span>[<span class="number">1</span>];</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230617180525427.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230617180615139.png" alt="访问url，获取页面title信息"></p>
+<p>此功能是对输入的URL首先发起请求，并利用正则表达式提取响应内容中的title信息此功能是对输入的URL首先发起请求，并利用正则表达式提取响应内容中的title信息</p>
+<p>如果我访问我本地的路径</p>
+<p><code>http://localhost:81/DVWA/login.php</code></p>
+<p>结果为</p>
+<blockquote>
+<p>Login :: Damn Vulnerable Web Application (DVWA) v1.10 <em>Development</em></p>
+</blockquote>
+<p>在真实的SSRF漏洞利用过程中，攻击者还会逐步修改提交URL的路径内容，以实现对目标服务器本地路径的全面检查。当路径出现title信息时，可判断存在对应内容，并且可通过title内容来判断路径的功能。如果服务页面没有对用户提交的URL进行范围限定，还可尝试对当前内网连接进行请求，并获取内部的信息。</p>
+<h4 id="利用SSRF漏洞来发现内网应用"><a href="#利用SSRF漏洞来发现内网应用" class="headerlink" title="利用SSRF漏洞来发现内网应用"></a>利用SSRF漏洞来发现内网应用</h4><p>这个是说：</p>
+<p>假设有两个内网网段，其中内网1用于模拟正常用户，内网2用于模拟服务器。内网1与内网2无法直接互通，只能利用特定服务器实现应用的开展。假设SSRF环境为真实系统，并且具有内网的访问权限。这里利用漏洞环境进行测试，输入已知的内网服务器地址<a href="http://172.29.152.197:8000并提交，可获取到该URL的title信息（我没有配置，不太懂）">http://172.29.152.197:8000并提交，可获取到该URL的title信息（我没有配置，不太懂）</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_43625917/article/details/104528645?ops_request_misc=&request_id=&biz_id=102&utm_term=SSRF%E6%BC%8F%E6%B4%9E%E6%9D%A5%E5%8F%91%E7%8E%B0%E5%86%85%E7%BD%91%E5%BA%94%E7%94%A8&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-0-104528645.142%5Ev88%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&spm=1018.2226.3001.4187">SSRF漏洞的利用与攻击内网应用_Qwzf的博客-CSDN博客</a></p>
+<p>利用这种方式，可以发现原本攻击者网络不可达的功能页面。<strong>SSRF的主要作用是尽可能获取目标系统的内部信息</strong>，这些信息会为攻击者后续攻击提供非常大的便利。假设未来利用其他漏洞获得内网的访问权限，那么即可根据之前发现的链接来尝试获得更多的信息。</p>
+<p>根据存在SSRF漏洞的不同业务功能环境，SSRF漏洞可实现的攻击效果为：</p>
+<blockquote>
+<p>1）对内网Web应用特征进行发现。</p>
+<p>2）对服务器所在内网进行各类信息探测。</p>
+<p>3）利用File协议读取本地文件。</p>
+<p>4）针对特定目标进行攻击时隐藏攻击发起地址。</p>
+</blockquote>
+<p>总体来说，SSRF漏洞的实际利用方式及利用效果完全受制当前的业务环境。在早期的Web系统中，会存在大量这类需要服务器发起请求的业务功能，但随着互联网应用的快速发展，各类类型的功能趋近于整合，这类需要服务器发起请求的业务功能类型也逐渐减少。而且，SSRF漏洞攻击过程不会直接威胁到系统权限，但仍不能忽视漏洞的威胁。</p>
+<h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><p>1.排除法：浏览器f12查看源代码看是否是在本地进行了请求<br>比如：该资源地址类型为 <a target="_blank" rel="noopener" href="http://www.xxx.com/a.php?image=%EF%BC%88%E5%9C%B0%E5%9D%80%EF%BC%89%E7%9A%84%E5%B0%B1%E5%8F%AF%E8%83%BD%E5%AD%98%E5%9C%A8SSRF%E6%BC%8F%E6%B4%9E">http://www.xxx.com/a.php?image=（地址）的就可能存在SSRF漏洞</a><br>2.dnslog等工具进行测试，看是否被访问<br>–可以在盲打后台用例中将当前准备请求的uri 和参数编码成base64，这样盲打后台解码后就知道是哪台机器哪个cgi触发的请求。<br>3.抓包分析发送的请求是不是由服务器的发送的，如果不是客户端发出的请求，则有可能是，接着找存在HTTP服务的内网地址<br>–从漏洞平台中的历史漏洞寻找泄漏的存在web应用内网地址<br>–通过二级域名暴力猜解工具模糊猜测内网地址<br>4.直接返回的Banner、title、content等信息<br>5.留意bool型SSRF<br>————————————————<br>版权声明：本文为CSDN博主「Never say die _」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_45612828/article/details/126193765">https://blog.csdn.net/qq_45612828/article/details/126193765</a></p>
+<h2 id="绕过"><a href="#绕过" class="headerlink" title="绕过"></a>绕过</h2><h3 id="1-绕过IP"><a href="#1-绕过IP" class="headerlink" title="1.绕过IP"></a>1.绕过IP</h3><p>1）使用IPV6地址<br>2）对IP转化成十进制，八进制等，如0177.0.0.01（八进制）<br>3）利用特殊域名。xip.io可以指向任意域名，即127.0.0.1.xip.io，可解析为127.0.0.1<br>4）利用句号。如127。0。0。1<br>5）可以[::]。如http:&#x2F;&#x2F;[::]:80&#x2F;<br>6）利用短网址。比如百度短地址<br>————————————————<br>版权声明：本文为CSDN博主「Never say die _」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_45612828/article/details/126193765">https://blog.csdn.net/qq_45612828/article/details/126193765</a></p>
+<h3 id="2-绕过url解析限制"><a href="#2-绕过url解析限制" class="headerlink" title="2.绕过url解析限制"></a>2.绕过url解析限制</h3><ul>
+<li>1）使用@符号绕过：如<a href="mailto:&#49;&#50;&#x37;&#46;&#48;&#46;&#x30;&#46;&#x31;&#64;&#101;&#x76;&#x69;&#x6c;&#46;&#99;&#x6f;&#x6d;">&#49;&#50;&#x37;&#46;&#48;&#46;&#x30;&#46;&#x31;&#64;&#101;&#x76;&#x69;&#x6c;&#46;&#99;&#x6f;&#x6d;</a></li>
+<li>2）利用302跳转，需要一个vps，把302转换的代码部署到vps上，然后去访问，就可跳转到内网中</li>
+</ul>
+<h2 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h2><h3 id="PHP中可能存在ssrf的函数"><a href="#PHP中可能存在ssrf的函数" class="headerlink" title="PHP中可能存在ssrf的函数"></a>PHP中可能存在ssrf的函数</h3><p>1）file_get_contents():把整个文件读入一个字符串中，该函数是用于把文件的内容读入到一个字符串中的首选方法。如果服务器操作系统支持，还会使用内存映射技术来增强性能;支持http(s),file协议，在PHP5.4上测试不支持dict，ghoper协议。<br>2）fsockopen():打开一个网络连接或者一个Unix套接字连接，在PHP5.4上测试只有http协议成功<br>3）curl_exec():用于执行指定的CURL会话，支持的协议比较多，常用于SSRF的协议经过测试都支持，如dict,ghoper,file。有的协议需要一定的条件这点需要注意。<br>————————————————<br>版权声明：本文为CSDN博主「Never say die _」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_45612828/article/details/126193765">https://blog.csdn.net/qq_45612828/article/details/126193765</a></p>
+<h2 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h2><blockquote>
+<p>CSRF漏洞与SSRF漏洞的主要区别在于伪造目标的不同。其次，两种角色（客户端、服务器端）主要实现的功能也有非常大的区别。但从漏洞防护视角来看，其防护思路及方式非常相似，重点需要针对请求伪造的问题进行处理。即：</p>
+<p>·用户请求的合法性。</p>
+<p>·服务器行为的合规性。</p>
+</blockquote>
+<p>有效的手段是在业务开展过程中<strong>针对业务的关键点进行重点内容过滤</strong>。相对CSRF漏洞防护方法来说，更推荐在<strong>SSRF防护</strong>方面优先利用<strong>各类黑白名单手段对用户输入的内容进行合法性识别</strong>，并且严格对用户输入参数进行<strong>格式及长度限制</strong>。</p>
+<p>在CSRF漏洞防护中最有效的token防御机制，针对SSRF漏洞则效果较差。</p>
+<p>因为ssrf的攻击过程由攻击者自行控制。</p>
+<p>百度收集的防御手段：</p>
+<blockquote>
+<p>1,过滤返回信息，验证远程服务器对请求的响应是比较容易的方法。如果web应用是去获取某一种类型的文件。那么在把返回结果展示给用户之前先验证返回的信息是否符合标准。</p>
+<p>2, 统一错误信息，避免用户可以根据错误信息来判断远端服务器的端口状态。</p>
+<p>3,限制请求的端口为http常用的端口，比如，80,443,8080,8090。</p>
+<p>4,黑名单内网ip。避免应用被用来获取获取内网数据，攻击内网。</p>
+<p>5,禁用不需要的协议。仅仅允许http和https请求。可以防止类似于file:&#x2F;&#x2F;&#x2F;,gopher:&#x2F;&#x2F;,ftp:&#x2F;&#x2F; 等引起的问题。</p>
+<p>参考：CSDN[零点敲代码]<a target="_blank" rel="noopener" href="http://t.csdn.cn/sb9kA">http://t.csdn.cn/sb9kA</a></p>
+</blockquote>
+<h2 id="ssrf总结"><a href="#ssrf总结" class="headerlink" title="ssrf总结"></a>ssrf总结</h2><p>ssrf通过<strong>欺骗服务器发起请求到攻击者指定的URL</strong>，可以是外部URL或内部网络的URL。</p>
+<p>主要原因在于服务器对用户提供的URL或调用远程服务器的返回信息没有进行验证及过滤，导致传入服务器的数据可能存在其他非正常行为。而且这类非正常行为会被执行和回显。</p>
+<p>针对这类情况，有效的防护手段包括：</p>
+<p>1）双向过滤用户端参数，严格限定输入参数、返回结果的数据类型及内容。</p>
+<p>2）限制请求行为端口，并针对具有服务器请求业务的网络范围进行严格划分。</p>
+<p>3）针对内网地址添加黑\白名单，参考以上实例。</p>
+<p>4）尽可能实现业务集中化调用，并尽量减少这类直接发起主动请求的业务行为。</p>
+<p>针对SSRF漏洞防护，最合理的措施是从开发阶段就针对服务器的主动请求行为进行统一规划及防护，从而有效解决上述问题。</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/06/10/CSRF%E4%B8%8ESSRF/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/csrf/" rel="tag">csrf</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ssrf/" rel="tag">ssrf</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E3%80%8AWEB%E5%AE%89%E5%85%A8%E5%9F%BA%E7%A1%80%E3%80%8B/" rel="tag">《WEB安全基础》</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+    
+      <a href="/2023/06/10/http%E4%B8%8Exss/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">http与xss</div>
+      </a>
+    
+  </nav>
+
+  
+   
+  
+   
+    <script src="https://cdn.staticfile.org/twikoo/1.4.18/twikoo.all.min.js"></script>
+    <div id="twikoo" class="twikoo"></div>
+    <script>
+        twikoo.init({
+            envId: ""
+        })
+    </script>
+ 
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2023
+        <i class="ri-heart-fill heart_icon"></i> 是羽泪云诶
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/favicon.ico" alt="小张之栈"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+ 
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+ 
+<script src="/js/dz.js"></script>
+ 
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>

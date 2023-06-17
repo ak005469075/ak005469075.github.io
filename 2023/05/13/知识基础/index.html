@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">2.1k</span>
+            <span class="post-count">4.2k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">7 分钟</span>
+            <span class="post-count">15 分钟</span>
         </span>
     </span>
 </div>
@@ -209,7 +209,95 @@
 <li>关系型数据库 –MySQL:3306 –SqlServer:1433 –Oracle:1521</li>
 <li>NOSQL数据库 –MongoDB:27017 –Redis:6379 -memcached:11211</li>
 </ul>
- 
+<h1 id="二、网安"><a href="#二、网安" class="headerlink" title="二、网安"></a>二、网安</h1><h2 id="1-OSI七层模型"><a href="#1-OSI七层模型" class="headerlink" title="1.OSI七层模型"></a>1.OSI七层模型</h2><ol>
+<li><p>物理层（Physical Layer）：该层处理物理传输介质上的原始比特流，主要关注传输媒介、电压、电缆规范、接口等问题。</p>
+<p><strong>比特</strong></p>
+</li>
+<li><p>数据链路层（Data Link Layer）：该层负责将物理层提供的比特流划分为数据帧，并检测和纠正传输中的错误。它还处理点对点之间的直接通信，提供链路管理、访问控制和流量控制等功能。</p>
+<p><strong>帧</strong></p>
+</li>
+<li><p>网络层（Network Layer）：该层负责在网络中传输数据包，通过确定最佳路径将数据从发送方传输到接收方。它还处理分组的路由选择、分组转发和拥塞控制等任务。</p>
+<p><strong>数据报</strong></p>
+</li>
+<li><p>传输层（Transport Layer）：该层提供端到端的数据传输服务，确保可靠的数据传输。它负责分段和重组数据，并提供错误检测和纠正、流量控制、拥塞控制以及端口号标识等功能。</p>
+<p><strong>报文段&#x2F;用户数据报</strong></p>
+</li>
+<li><p>会话层（Session Layer）：该层建立、管理和终止应用程序之间的会话连接。它提供了会话控制、同步和对话管理功能，允许应用程序之间进行通信和数据交换。</p>
+</li>
+<li><p>表示层（Presentation Layer）：该层处理数据的表示方式，确保不同系统中数据的兼容性。它负责数据的加密、压缩、解压缩、格式转换以及数据格式的统一表示。</p>
+<p>例如，PC程序与另一台计算机进行通信，其中一台计算机使用扩展二一十进制交换码（EBCDIC），而另一台则使用美国信息交换标准码（ASCII）来表示相同的字符。如有必要，表示层会通过使用一种通格式来实现多种数据格式之间的转换。 　　</p>
+</li>
+<li><p>应用层（Application Layer）：该层是最高级别的层次，提供直接面向用户的网络服务。它包括各种应用程序协议，例如HTTP（超文本传输协议）、SMTP（简单邮件传输协议）、FTP（文件传输协议）等。</p>
+</li>
+</ol>
+<p><img src="/../../../Typora/img111/image-20230613203703899.png"></p>
+<h2 id="2-get与post区别"><a href="#2-get与post区别" class="headerlink" title="2.get与post区别"></a>2.get与post区别</h2><p>HTTP协议中的两种请求方法</p>
+<ol>
+<li><p>数据位置上，GET请求将数据附加在URL的查询参数中，以?后的键值对形式进行传递；POST在请求体上传递，需要抓包。</p>
+</li>
+<li><p>数据长度限制：GET请求对数据长度有限制，因为URL有长度限制，不同浏览器和服务器对长度限制的处理方式不同；而POST请求没有严格的数据长度限制。</p>
+</li>
+<li><p>数据安全性：GET请求中的数据参数会显示在URL中，因此可能被保存在浏览器的历史记录、服务器日志等地方，存在一定的安全风险；POST请求中的数据不会直接显示在URL中，相对更安全。</p>
+</li>
+<li><p>缓存：GET请求可以被浏览器缓存，以提高性能和效率；POST请求默认不会被浏览器缓存，以确保数据的实时性。</p>
+</li>
+<li><p>使用场景：GET请求适合获取资源、查询数据，对于幂等的操作。POST请求适合发送数据、提交表单，对于非幂等的操作。</p>
+</li>
+<li><p>幂等性：GET请求是幂等的，即多次重复请求不会对资源产生影响，只是获取相同的结果；而POST请求通常是非幂等的，多次请求可能会对资源产生不同的影响，例如创建多个资源。</p>
+<blockquote>
+<p>幂等:指对同一操作的多次重复执行产生的结果与单次执行的结果相同。简而言之，无论执行多少次，最终的效果都是一样的。</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="3-Cookies和session的区别"><a href="#3-Cookies和session的区别" class="headerlink" title="3.Cookies和session的区别"></a>3.Cookies和session的区别</h2><p>Cookies是在客户端（通常是Web浏览器）上存储数据的小型文本文件。</p>
+<p>Session是在服务器端存储数据的一种机制。</p>
+<p>区别：</p>
+<ol>
+<li>存储位置：Cookies存储在客户端（用户的计算机）上，而Session数据存储在服务器端。</li>
+<li>数据容量：Cookies通常有大小限制（每个域名和浏览器对Cookies的数量和大小都有限制），而Session可以存储更多的数据。</li>
+<li>安全性：由于Cookies存储在客户端，因此它们容易受到篡改和伪造的风险。为了增加安全性，可以对Cookies进行加密或添加安全标志。相比之下，Session数据存储在服务器上，不容易被窃取或篡改，但仍然需要注意保护SessionID的安全性。</li>
+<li>生命周期：Cookies可以设置过期时间，可以是会话性的（在浏览器关闭后失效）或持久性的（在特定时间后失效）。Session通常在用户关闭浏览器或一段时间不活动后失效。</li>
+</ol>
+<h2 id="4-arp协议的工作原理"><a href="#4-arp协议的工作原理" class="headerlink" title="4.arp协议的工作原理"></a>4.arp协议的工作原理</h2><p>将IP地址映射到物理MAC地址的协议，它在局域网中工作。其主要功能是解决在发送数据包时，通过目标IP地址获取对应的MAC地址的问题。</p>
+<ol>
+<li>主机A发送数据包到目标主机B，但是主机A只知道目标主机B的IP地址。</li>
+<li>主机A首先检查本地的ARP缓存表，看是否已经有目标主机B的IP地址对应的MAC地址。如果有，主机A就可以直接使用这个MAC地址。</li>
+<li>如果ARP缓存表中没有目标主机B的IP地址对应的MAC地址，主机A就需要发送一个ARP请求广播。ARP请求广播是一个<strong>以太网帧</strong>，包含了源主机A的MAC地址、源主机A的IP地址、目标IP地址（即主机B的IP地址）以及一个特殊的目标MAC地址（广播地址：FF:FF:FF:FF:FF:FF）。</li>
+<li>当主机B接收到ARP请求广播后，检查广播中的目标IP地址是否和自己的IP地址匹配。如果匹配，主机B就会发送一个ARP响应给主机A。ARP响应是一个<strong>以太网帧</strong>，包含了源主机B的MAC地址、源主机B的IP地址以及目标主机A的IP地址和MAC地址。</li>
+<li>主机A接收到ARP响应后，将目标主机B的IP地址和MAC地址的映射关系存储在本地的ARP缓存表中，以便将来的通信中可以直接使用。</li>
+<li>主机A收到目标主机B的MAC地址后，可以构建<strong>以太网帧</strong>，并将数据包发送到目标主机B的MAC地址。</li>
+</ol>
+<h3 id="问题17：session-的工作原理"><a href="#问题17：session-的工作原理" class="headerlink" title="问题17：session 的工作原理?"></a>问题17：session 的工作原理?</h3><p><strong>答案：</strong></p>
+<h3 id="问题18：一次完整的HTTP请求过程"><a href="#问题18：一次完整的HTTP请求过程" class="headerlink" title="问题18：一次完整的HTTP请求过程"></a>问题18：一次完整的HTTP请求过程</h3><p><strong>答案：</strong></p>
+<h3 id="问题19：HTTPS和HTTP的区别"><a href="#问题19：HTTPS和HTTP的区别" class="headerlink" title="问题19：HTTPS和HTTP的区别"></a>问题19：HTTPS和HTTP的区别</h3><p><strong>答案：</strong></p>
+<h3 id="问题20：OSI-的七层模型都有哪些"><a href="#问题20：OSI-的七层模型都有哪些" class="headerlink" title="问题20：OSI 的七层模型都有哪些?"></a>问题20：OSI 的七层模型都有哪些?</h3><p><strong>答案：</strong></p>
+<h3 id="问题21：http长连接和短连接的区别"><a href="#问题21：http长连接和短连接的区别" class="headerlink" title="问题21：http长连接和短连接的区别"></a>问题21：http长连接和短连接的区别</h3><p><strong>答案：</strong></p>
+<h3 id="问题22：TCP如何保证可靠传输"><a href="#问题22：TCP如何保证可靠传输" class="headerlink" title="问题22：TCP如何保证可靠传输?"></a>问题22：TCP如何保证可靠传输?</h3><p><strong>答案：</strong></p>
+<h3 id="问题23：常见的状态码有哪些"><a href="#问题23：常见的状态码有哪些" class="headerlink" title="问题23：常见的状态码有哪些?"></a>问题23：常见的状态码有哪些?</h3><p><strong>答案：</strong></p>
+<h3 id="问题24：什么是SSL-https是如何保证数据传输的安全（SSL是怎么工作保证安全的）"><a href="#问题24：什么是SSL-https是如何保证数据传输的安全（SSL是怎么工作保证安全的）" class="headerlink" title="问题24：什么是SSL? https是如何保证数据传输的安全（SSL是怎么工作保证安全的）"></a>问题24：什么是SSL? https是如何保证数据传输的安全（SSL是怎么工作保证安全的）</h3><p><strong>答案：</strong></p>
+<h3 id="问题25：如何保证公钥不被篡改"><a href="#问题25：如何保证公钥不被篡改" class="headerlink" title="问题25：如何保证公钥不被篡改?"></a>问题25：如何保证公钥不被篡改?</h3><p><strong>答案：</strong></p>
+<h3 id="问题26：php爆绝对路径方法"><a href="#问题26：php爆绝对路径方法" class="headerlink" title="问题26：php爆绝对路径方法?"></a>问题26：php爆绝对路径方法?</h3><p><strong>答案：</strong></p>
+<h3 id="问题27：你常用的渗透工具有哪些，最常用的是哪个"><a href="#问题27：你常用的渗透工具有哪些，最常用的是哪个" class="headerlink" title="问题27：你常用的渗透工具有哪些，最常用的是哪个?"></a>问题27：你常用的渗透工具有哪些，最常用的是哪个?</h3><p><strong>答案：</strong></p>
+<h3 id="问题28：xss盲打到内网服务器的利用"><a href="#问题28：xss盲打到内网服务器的利用" class="headerlink" title="问题28：xss盲打到内网服务器的利用"></a>问题28：xss盲打到内网服务器的利用</h3><p><strong>答案：</strong></p>
+<h3 id="问题29：鱼叉式攻击和水坑攻击"><a href="#问题29：鱼叉式攻击和水坑攻击" class="headerlink" title="问题29：鱼叉式攻击和水坑攻击"></a>问题29：鱼叉式攻击和水坑攻击</h3><p><strong>答案：</strong></p>
+<h3 id="问题30：什么是虚拟机逃逸"><a href="#问题30：什么是虚拟机逃逸" class="headerlink" title="问题30：什么是虚拟机逃逸?"></a>问题30：什么是虚拟机逃逸?</h3><p><strong>答案：</strong></p>
+<h3 id="问题31：中间人攻击"><a href="#问题31：中间人攻击" class="headerlink" title="问题31：中间人攻击?"></a>问题31：中间人攻击?</h3><p><strong>答案：</strong></p>
+<h3 id="问题32：TCP三次握手过程"><a href="#问题32：TCP三次握手过程" class="headerlink" title="问题32：TCP三次握手过程?"></a>问题32：TCP三次握手过程?</h3><p><strong>答案：</strong></p>
+<h3 id="问题33：七层模型"><a href="#问题33：七层模型" class="headerlink" title="问题33：七层模型?"></a>问题33：七层模型?</h3><p><strong>答案：</strong></p>
+<h3 id="问题34：对于云安全的理解"><a href="#问题34：对于云安全的理解" class="headerlink" title="问题34：对于云安全的理解"></a>问题34：对于云安全的理解</h3><p><strong>答案：</strong></p>
+<h3 id="问题35：了解过websocket吗"><a href="#问题35：了解过websocket吗" class="headerlink" title="问题35：了解过websocket吗?"></a>问题35：了解过websocket吗?</h3><p><strong>答案：</strong></p>
+<h3 id="问题36：DDOS是什么-有哪些-CC攻击是什么-区别是什么"><a href="#问题36：DDOS是什么-有哪些-CC攻击是什么-区别是什么" class="headerlink" title="问题36：DDOS是什么?有哪些?CC攻击是什么?区别是什么?"></a>问题36：DDOS是什么?有哪些?CC攻击是什么?区别是什么?</h3><p><strong>答案：</strong></p>
+<h3 id="问题37：land攻击是什么"><a href="#问题37：land攻击是什么" class="headerlink" title="问题37：land攻击是什么?"></a>问题37：land攻击是什么?</h3><p><strong>答案：</strong></p>
+<h3 id="问题38：你会如何进行信息收集"><a href="#问题38：你会如何进行信息收集" class="headerlink" title="问题38：你会如何进行信息收集?"></a>问题38：你会如何进行信息收集?</h3><p><strong>答案：</strong></p>
+<h3 id="问题39：什么是CRLF注入攻击"><a href="#问题39：什么是CRLF注入攻击" class="headerlink" title="问题39：什么是CRLF注入攻击?"></a>问题39：什么是CRLF注入攻击?</h3><p><strong>答案：</strong></p>
+<h3 id="问题40：防止XSS，前端后端两个角度"><a href="#问题40：防止XSS，前端后端两个角度" class="headerlink" title="问题40：防止XSS，前端后端两个角度?"></a>问题40：防止XSS，前端后端两个角度?</h3><p><strong>答案：</strong></p>
+<h3 id="问题41：如何防护一个端口的安全"><a href="#问题41：如何防护一个端口的安全" class="headerlink" title="问题41：如何防护一个端口的安全?"></a>问题41：如何防护一个端口的安全?</h3><p><strong>答案：</strong></p>
+<h3 id="问题42：webshell检测思路"><a href="#问题42：webshell检测思路" class="headerlink" title="问题42：webshell检测思路?"></a>问题42：webshell检测思路?</h3><p><strong>答案：</strong></p>
+<h3 id="问题43：GPC是什么-开启了怎么绕过"><a href="#问题43：GPC是什么-开启了怎么绕过" class="headerlink" title="问题43：GPC是什么?开启了怎么绕过"></a>问题43：GPC是什么?开启了怎么绕过</h3><p><strong>答案：</strong></p>
+<h3 id="问题44：web常用的加密算法有什么"><a href="#问题44：web常用的加密算法有什么" class="headerlink" title="问题44：web常用的加密算法有什么"></a>问题44：web常用的加密算法有什么</h3><p><strong>答案：</strong></p>
+<h3 id="问题45：XSS除了获取cookies还能做什么"><a href="#问题45：XSS除了获取cookies还能做什么" class="headerlink" title="问题45：XSS除了获取cookies还能做什么?"></a>问题45：XSS除了获取cookies还能做什么?</h3><p><strong>答案：</strong></p>
+<p> rip协议是什么? rip的工作原理</p>
+<h3 id="问题46：运营商（或其他）网络劫持"><a href="#问题46：运营商（或其他）网络劫持" class="headerlink" title="问题46：运营商（或其他）网络劫持"></a>问题46：运营商（或其他）网络劫持</h3> 
       <!-- reward -->
       
     </div>
@@ -286,19 +374,19 @@
    
   <nav class="article-nav">
     
-      <a href="/2023/05/13/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" class="article-nav-link">
+      <a href="/2023/05/13/vulfocus/" class="article-nav-link">
         <strong class="article-nav-caption">上一篇</strong>
         <div class="article-nav-title">
           
-            渗透测试
+            vulfocus
           
         </div>
       </a>
     
     
-      <a href="/2023/05/12/%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/" class="article-nav-link">
+      <a href="/2023/05/13/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">第一篇博客</div>
+        <div class="article-nav-title">渗透测试</div>
       </a>
     
   </nav>

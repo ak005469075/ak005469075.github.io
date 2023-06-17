@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">801</span>
+            <span class="post-count">972</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">2 分钟</span>
+            <span class="post-count">3 分钟</span>
         </span>
     </span>
 </div>
@@ -121,7 +121,8 @@
        
   <h2 id="1-注入漏洞原理："><a href="#1-注入漏洞原理：" class="headerlink" title="1.注入漏洞原理："></a>1.注入漏洞原理：</h2><p>（Injection）攻击者向应用程序中输入恶意代码，使其执行未经授权的操作。 </p>
 <p>攻击方式：SQL注入、LDAP注入、OS命令注入等。</p>
-<p> 防御方法：使用参数化查询、输入校验和白名单、最小化权限等。</p>
+<p> 防御方法：使用参数化查询&#x2F;预编译(这样缺的只是数据，不会对sql语句造成其他影响，因为sql语句已经通过预编译技术固定下来了)、输入校验和白名单、最小化权限等。</p>
+<p>但是预编译的话，也是存在绕过的，那就是case when绕过。</p>
 <h2 id="2-认证和授权漏洞原理："><a href="#2-认证和授权漏洞原理：" class="headerlink" title="2.认证和授权漏洞原理："></a>2.认证和授权漏洞原理：</h2><p>（Authentication and Authorization） 攻击者绕过或破解应用程序的身份验证和授权机制，以获取未经授权的访问权限。 </p>
 <p>攻击方式：密码猜测、会话劫持、CSRF等。</p>
 <p> 防御方法：强密码策略、多因素身份验证、会话管理、访问控制等。</p>
@@ -138,8 +139,9 @@
 <p>攻击方式：目录遍历、错误页面泄露等。 </p>
 <p>防御方法：安全配置、代码审计、最小化权限等。</p>
 <h2 id="7-跨站脚本攻击漏洞原理："><a href="#7-跨站脚本攻击漏洞原理：" class="headerlink" title="7.跨站脚本攻击漏洞原理："></a>7.跨站脚本攻击漏洞原理：</h2><p>（Cross-Site Scripting (XSS)） 攻击者向应用程序中输入恶意脚本，使其在用户的浏览器中执行。 </p>
+<p>详细解释：例如在表单中提交含有可执行的javascript的内容文本，如果服务器端没有过滤或转义这些脚本，而这些脚本由通过内容的形式发布到了页面上，这个时候如果有其他用户访问这个网页，那么浏览器就会执行这些脚本，从而被攻击，从而获取用户的cookie等信息。</p>
 <p>攻击方式：反射型XSS、存储型XSS等。</p>
-<p> 防御方法：输入校验、输出编码、HTTPOnly标记等。</p>
+<p> 防御方法：输入校验、输出转义、HTTPOnly标记等。</p>
 <h2 id="8-不安全的反序列化漏洞原理："><a href="#8-不安全的反序列化漏洞原理：" class="headerlink" title="8.不安全的反序列化漏洞原理："></a>8.不安全的反序列化漏洞原理：</h2><p>（Insecure Deserialization）应用程序在反序列化数据时未正确验证其完整性和有效性，导致攻击者可以执行未经授权的代码。</p>
 <p> 攻击方式：注入恶意对象等。</p>
 <p> 防御方法：输入验证、使用最新版本的序列化器、最小化权限等。</p>
@@ -236,9 +238,9 @@
       </a>
     
     
-      <a href="/2023/05/13/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" class="article-nav-link">
+      <a href="/2023/05/13/vulfocus/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">渗透测试</div>
+        <div class="article-nav-title">vulfocus</div>
       </a>
     
   </nav>
