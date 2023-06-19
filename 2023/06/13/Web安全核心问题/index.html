@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>Web安全防护体系 |  小张之栈</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-Web安全核心问题"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  Web安全防护体系
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/06/13/Web%E5%AE%89%E5%85%A8%E6%A0%B8%E5%BF%83%E9%97%AE%E9%A2%98/" class="article-date">
+  <time datetime="2023-06-12T16:21:20.000Z" itemprop="datePublished">2023-06-13</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Web%E5%AE%89%E5%85%A8%E9%98%B2%E6%8A%A4%E4%BD%93%E7%B3%BB/">Web安全防护体系</a> / <a class="article-category-link" href="/categories/Web%E5%AE%89%E5%85%A8%E9%98%B2%E6%8A%A4%E4%BD%93%E7%B3%BB/%E3%80%8AWEB%E5%AE%89%E5%85%A8%E5%9F%BA%E7%A1%80%E3%80%8B/">《WEB安全基础》</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">2.4k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">8 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="1-Web安全核心问题"><a href="#1-Web安全核心问题" class="headerlink" title="1.Web安全核心问题"></a>1.Web安全核心问题</h1><p>安全的核心问题是：用户可以提交任意输入，但从安全角度而言，用户所有输入均不可信。</p>
+<p>1）用户侧可<strong>直接修改</strong>浏览器与服务器间<strong>传送的数据结构及内容</strong>。其中包括请求参数、Cookie内容和http消息头等方面。可轻易避开客户端执行的任何安全检测脚本，如各类型验证。</p>
+<p>2）用户侧可在任意环节及功能上<strong>多次重复提交</strong>，并且服务器均会对重复提交的内容按照<strong>同一种逻辑进行处理</strong>，这样给攻击者实现爆破攻击的机会。</p>
+<p>3）用户侧可利用浏览器、相关插件、攻击组件等多重方式<strong>对服务器进行探测</strong>，并且服务器没有有效手段控制用户侧所采用的工具类型。</p>
+<p>4）部分业务逻辑依靠用户输入的参数进行业务开展，如显示用户名、用户自有信息等，从而增加了用户与系统的<strong>交互点</strong>。</p>
+<h1 id="2-实际问题的客观引发因素"><a href="#2-实际问题的客观引发因素" class="headerlink" title="2.实际问题的客观引发因素"></a>2.实际问题的客观引发因素</h1><p>1）不健全的安全开发体系。</p>
+<p>2）开发周期的缩短及功能频繁变更。</p>
+<p>3）开发人员的不稳定性。</p>
+<p>4）运维人员的安全意识不足。</p>
+<h1 id="3-建立基本的安全框架"><a href="#3-建立基本的安全框架" class="headerlink" title="3.建立基本的安全框架"></a>3.建立基本的安全框架</h1><p>攻击者会利用各种具有服务器<strong>交互</strong>的业务功能进行各类攻击尝试，这也是Web漏洞存在的基本特点。因此在安全框架设计上，需重点关注Web应用与用户交互的方式及对应的业务流程。而且，要设计合理的用户交互规范，并对任何不应被信任的数据进行统一的过滤。</p>
+<h2 id="3-1-处理用户交互权限"><a href="#3-1-处理用户交互权限" class="headerlink" title="3.1 处理用户交互权限"></a>3.1 处理用户交互权限</h2><p>在这个过程中，<strong>要具备完整的用户访问行为处理与过滤功能。</strong>通常情况下，可根据用户的<strong>交互行为进行分类</strong>，同时结合用户的<strong>身份权限</strong>进行综合处理，如常见的匿名用户、正常通过验证的用户和管理用户权限。许多情况下，不同用户只允许访问不同的数据，例如各类用户隐私数据、订单信息等内容。</p>
+<p>目前，主流的Web应用使用三层相互关联的安全机制来处理用户访问。</p>
+<p><strong>（1）用户身份验证方式</strong></p>
+<blockquote>
+<p>身份验证机制是Web应用识别用户身份的基本机制，如用户登录功能、利用OAuth授权功能等。在这个过程中，Web应用会重点验证用户的真实身份。如果不采用这类机制，应用程序应将所有用户作为匿名用户对待。目前，大多数Web应用程序采用标准的身份验证模型，即要求用户提交用户名和密码，再由应用程序对其进行核实，确认其合法性。</p>
+</blockquote>
+<p><strong>（2）用户会话管理</strong></p>
+<blockquote>
+<p>当用户通过了Web应用的身份验证方式后，用户可访问当前Web应用并使用对应的功能。在这个过程中，Web应用会收到不同用户发出的访问请求。这期间<strong>Web应用需识别并处理每一名用户提交的各种请求</strong>，并根据用户的身份权限实施有效的访问控制，实现管理用户的会话的功能。</p>
+</blockquote>
+<p>为了实现用户会话管理功能(<em><strong>跟踪用户并保持用户信息的技术</strong></em>)，Web应用在用户身份验证通过后会为每一个用户建立一个<strong>独立的Session</strong>，并向用户生成一个具有标识功能的<strong>令牌</strong>。<strong>Session本身是一组保存在服务器上的数据结构，用于追踪用户与Web应用的交互状态。</strong>这个过程中，Web应用会利用Cookie与Session机制来实现上述功能。</p>
+<p><strong>（3）用户访问行为控制</strong></p>
+<blockquote>
+<p>Web应用需要对每个用户访问的访问请求做出响应。当前两个安全机制运作正常时，Web应用在接收到用户请求后会根据当前用户的身份状态及权限以及业务流程要求来决定响应或拒绝当前的请求。在此基础上，应用程序需要决定是否<strong>授权</strong>用户执行其所请求的操作或访问相关数据。</p>
+</blockquote>
+<h2 id="3-2处理用户输入参数"><a href="#3-2处理用户输入参数" class="headerlink" title="3.2处理用户输入参数"></a>3.2处理用户输入参数</h2><p>在用户输入参数的处理方面，有以下几个方式可供选择：</p>
+<p>（1）利用黑名单过滤用户非法输入参数</p>
+<blockquote>
+<p>Web应用会使用一个<strong>黑名单</strong>来对用户输入的参数进行过滤。黑名单中包含一组在攻击中使用过的已知的字符串或特征。Web应用需阻止任何与黑名单匹配的数据进入，并对不符合黑名单的用户输入参数进行处理。</p>
+</blockquote>
+<p>（2）利用白名单校验用户参数是否为正常输入参数</p>
+<blockquote>
+<p>白名单是一种非常好的用户参数规范校验机制，相对于黑名单来说其过滤效果更加严格。因此<strong>适用于各类对参数格式及内容有着明确要求的业务场景</strong>。Web应用会将接收到的用户参数与白名单定义的规范进行匹配，并在匹配成功后执行后续业务流程。</p>
+</blockquote>
+<p>（3）使用安全的数据方式</p>
+<blockquote>
+<p>以不安全的方式处理用户提交的数据，容易造成Web应用错误地将用户输入参数作为代码执行，是许多Web应用程序漏洞形成的根本原因。在这种状况下，通常不需要确认输入本身的合法性，只要确保处理过程绝对安全，即可避免出现各类漏洞。例如，<strong>在数据库访问过程中使用参数化查询方式</strong>，即可避免绝大部分SQL注入攻击。</p>
+</blockquote>
+<p>（4）用户行为参数检查</p>
+<blockquote>
+<p>在一些业务流程漏洞中，攻击者提交的输入参数与普通的非恶意用户提交的输入参数完全相同，这就会导致上述三种防护手段均会失效。这类行为是因为攻击者提交参数时的目的不同。例如，攻击者可能会修改Web页面隐藏表单字段提交的参数，如订单编号，企图利用修改订单编号来实现访问行为越权。</p>
+<p>因此，<strong>要在后台对用户的输入参数根据业务要求进行二次校验</strong>，方可避免这类问题的出现。</p>
+</blockquote>
+<h2 id="3-3确认用户应用边界"><a href="#3-3确认用户应用边界" class="headerlink" title="3.3确认用户应用边界"></a>3.3确认用户应用边界</h2><p>仅利用JS脚本来检查用户输入内容完全无法保证到达服务器的数据一定符合要求。服务器端应用程序第一次收到用户数据的地方是一个<strong>重要的信任边界</strong>，应用程序需要在此采取措施防御恶意输入。</p>
+<p><strong>边界确认</strong>是一种更加有效的模型。此时，服务器端应用程序的每一个单独组件或功能应将用户输入参数当作潜在的恶意来源。除客户端与服务器之间的外部边界外，Web应用程序在上述每一个信任边界上执行数据合法性确认。</p>
+<h2 id="3-4处理流程规范化"><a href="#3-4处理流程规范化" class="headerlink" title="3.4处理流程规范化"></a>3.4处理流程规范化</h2><p>在确认检查过程中，当需要在<strong>几个步骤中处理用户提交的输入</strong>时，就会出现一个输入处理机制经常遇到的问题，即<strong>如何确认用户数的参数完全合法</strong>。如果不谨慎处理该过程，攻击者就能寻找到有效的绕过方式，使得恶意数据成功避开Web应用的防护机制。例如，Web应用试图通过删除用户输入参数中的某些非法字符或表达式来过滤用户输入参数时，就会出现这种问题。</p>
+<p>以防御某些跨站点脚本攻击的方法为例，应用程序可能会从任何用户提交的数据中删除表达式：</p>
+<hr>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>但攻击者可应用以下输入避开过滤器：</p>
+<hr>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;scr&lt;script&gt;ipt&gt;</span><br></pre></td></tr></table></figure>
+
+<p>数据规范化会造成另外一个问题。当用户浏览器发起HTTP请求时，浏览器会将请求中的用户参数进行各种形式的编码。HTTP协议之所以使用URL编码等方案，是为了能够通过HTTP协议传送不常见的字符与二进制数据。在这个过程中，Web应用<strong>需提前将这类编码数据进行规范的转换</strong>。如果在对用户参数过滤之后再执行编码转换，攻击者就可以通过使用编码方式避开现有的防护机制。</p>
+<p>安全开发流程的核心思想是：在遵循系统功能要求的基础上，需在<strong>系统内部链接、外部传参点等各个环节中，实现标准化的防护方式及业务流程</strong>。重点在于系统交互功能的设计上。这样可在开发阶段降低各类安全风险，一方面可保证系统的稳定运行，另一方面也可减少安全防护的资金投入。</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/06/13/Web%E5%AE%89%E5%85%A8%E6%A0%B8%E5%BF%83%E9%97%AE%E9%A2%98/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web%E5%AE%89%E5%85%A8%E9%98%B2%E6%8A%A4%E4%BD%93%E7%B3%BB/" rel="tag">Web安全防护体系</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E3%80%8AWEB%E5%AE%89%E5%85%A8%E5%9F%BA%E7%A1%80%E3%80%8B/" rel="tag">《WEB安全基础》</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2023/06/18/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E5%BE%A1/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            (no title)
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2023/06/12/WEB%E9%98%B2%E6%8A%A4%E6%8A%80%E6%9C%AF%E4%B8%8E%E4%BD%93%E7%B3%BB/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">WEB防护技术与体系</div>
+      </a>
+    
+  </nav>
+
+  
+   
+  
+   
+    <script src="https://cdn.staticfile.org/twikoo/1.4.18/twikoo.all.min.js"></script>
+    <div id="twikoo" class="twikoo"></div>
+    <script>
+        twikoo.init({
+            envId: ""
+        })
+    </script>
+ 
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2023
+        <i class="ri-heart-fill heart_icon"></i> 是羽泪云诶
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/favicon.ico" alt="小张之栈"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+ 
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+ 
+<script src="/js/dz.js"></script>
+ 
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>
