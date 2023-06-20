@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">59</span>
+            <span class="post-count">2k</span>
         </span>
     </span>
 
@@ -104,13 +104,15 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">1 分钟</span>
+            <span class="post-count">7 分钟</span>
         </span>
     </span>
 </div>
  
     </div>
       
+    <div class="tocbot"></div>
+
 
 
 
@@ -123,6 +125,59 @@
 <p>POST &#x2F;sqli&#x2F;9.php?a&#x3D;1236 HTTP&#x2F;1.1</p>
 </blockquote>
 <p>否则被认为是如HTTP&#x2F;1.1这种独立的数值</p>
+<h2 id="spider模块"><a href="#spider模块" class="headerlink" title="spider模块"></a>spider模块</h2><p>Spider的蜘蛛爬行功能可以帮助我们了解系统的结构，其中Spider爬取到的内容将在Target中展示，如图3-24所示，界面左侧为一个主机和目录树，选择具体某一个分支即可查看对应的请求与响应。</p>
+<h2 id="decode"><a href="#decode" class="headerlink" title="decode"></a>decode</h2><p>Burp中自带的编码解码及散列转换的工具，能对原始数据进行各种编码格式和散列的转换。</p>
+<h2 id="Scanner"><a href="#Scanner" class="headerlink" title="Scanner"></a>Scanner</h2><p>用于自动检测Web系统的各种漏洞。</p>
+<p>分为主动扫描和被动扫描，可以在Target对分支操作，也可以去http history里</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230620144628926.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230620144833459.png"></p>
+<p>扫完后，可以右击Burp Target站点地图选项下的链接，依次选择“issues”→“Report issues”选项，然后导出漏洞报告</p>
+<h3 id="主动扫描"><a href="#主动扫描" class="headerlink" title="主动扫描"></a>主动扫描</h3><p>当使用主动扫描模式时，Burp会向应用发送新的请求并通过Payload验证漏洞。这种模式下的操作会产生大量的请求和应答数据，直接影响服务端的性能，通常用于非生产环境。主动扫描适用于以下这两类漏洞。</p>
+<p>● <strong>客户端的漏洞，如XSS、HTTP头注入、操作重定向。</strong></p>
+<p>● <strong>服务端的漏洞，如SQL注入、命令行注入、文件遍历。</strong></p>
+<p>对第一类漏洞，Burp在检测时会提交input域，然后根据应答的数据进行解析。在检测过程中，Burp会对基础的请求信息进行修改，即根据漏洞的特征对参数进行修改，模拟人的行为，以达到检测漏洞的目的；</p>
+<p>对第二类漏洞，以SQL注入为例，服务端有可能返回数据库错误提示信息，也有可能什么都不反馈。Burp在检测过程中会采用各个技术验证漏洞是否存在，例如诱导时间延迟、强制修改Boolean值、与模糊测试的结果进行比较，以提高漏洞扫描报告的准确性。</p>
+<h3 id="被动扫描"><a href="#被动扫描" class="headerlink" title="被动扫描"></a>被动扫描</h3><p>当使用被动扫描模式时，Burp不会重新发送新的请求，只是对已经存在的请求和应答进行分析，对服务端的检测来说，这比较安全，通常适用于生产环境的检测。一般来说，下列漏洞在被动模式中容易被检测出来。</p>
+<p>● 提交的密码为未加密的明文。</p>
+<p>● 不安全的cookie的属性，例如缺少HttpOnly和安全标志。</p>
+<p>● cookie的范围缺失。</p>
+<p>● 跨域脚本包含和站点引用泄露。</p>
+<p>● 表单值自动填充，尤其是密码。</p>
+<p>● SSL保护的内容缓存。</p>
+<p>● 目录列表。</p>
+<p>● 提交密码后应答延迟。</p>
+<p>● session令牌的不安全传输。</p>
+<p>● 敏感信息泄露，例如内部IP地址、电子邮件地址、堆栈跟踪等信息泄露。</p>
+<p>● 不安全的ViewState的配置。</p>
+<p>● 错误或不规范的Content-Type指令。</p>
+<p>这种扫描避免了平时测试破坏的可能。</p>
+<h2 id="Intruder"><a href="#Intruder" class="headerlink" title="Intruder"></a>Intruder</h2><p>可以对Web应用程序进行自动化攻击，如通过标识符枚举用户名、ID和账户号码，模糊测试，SQL注入，跨站，目录遍历等。</p>
+<p>工作原理是Intruder在原始请求数据的基础上，通过修改各种请求参数获取不同的请求应答。在每一次请求中，Intruder通常会携带一个或多个有效攻击载荷（Payload），在不同的位置进行攻击重放，通过应答数据的比对分析获得需要的特征数据。Burp Intruder通常被应用于以下场景。</p>
+<p>Intruder适用场景如：</p>
+<blockquote>
+<p>● 标识符枚举。Web应用程序经常使用标识符引用用户、账户、资产等数据信息。例如，用户名、文件ID和账户号码。</p>
+<p>● 提取有用的数据。在某些场景下，不是简单地识别有效标识符，而是通过简单标识符提取其他数据。例如，通过用户的个人空间ID获取所有用户在其个人空间的名字和年龄。</p>
+<p>● 模糊测试。很多输入型的漏洞（如SQL注入、跨站点脚本和文件路径遍历）可以通过请求参数提交各种测试字符串，并分析错误消息和其他异常情况，来对应用程序进行检测。受限于应用程序的大小和复杂性，手动执行这个测试是一个耗时且烦琐的过程，因此可以设置Payload，通过Burp Intruder自动化地对Web应用程序进行模糊测试。</p>
+</blockquote>
+<p>一般需要你有很好的字典，才可以有效地进行爆破、遍历。</p>
+<p>它有几个常见的模式</p>
+<blockquote>
+<p>● Sniper模式使用单一的Payload组。它会针对每个位置设置Payload。这种攻击类型适用于对常见漏洞中的<strong>请求参数单独进行Fuzzing测试</strong>的情景。攻击中的请求总数应该是position数量和Payload数量的乘积。</p>
+<p>● Battering ram模式使用单一的Payload组。它会重复Payload并一次性把所有相同的Payload放入指定的位置中。这种攻击适用于需要在请求中<strong>把相同的输入放到多个位置的情景</strong>。请求的总数是Payload组中Payload的总数。</p>
+<p>● Pitchfork模式使用多个Payload组。攻击会同步迭代所有的Payload组，把Payload放入每个定义的位置中。这种攻击类型非常适合<strong>在不同位置中需要插入不同但相似输入的情况</strong>。请求的数量应该是最小的Payload组中的Payload数量。</p>
+<p>● Cluster bomb模式会使用多个Payload组。每个定义的位置中有不同的Payload组。攻击会迭代每个Payload组，每种Payload组合都会被测试一遍。这种攻击适用于在位置中<strong>需要不同且不相关或者未知输入攻击的情景</strong>。攻击请求的总数是各Payload组中Payload数量的乘积。</p>
+</blockquote>
+<p>对Status或Length的返回值进行排序，有不同之处，则认为破解成功</p>
+<p>盲注一般也会依靠这个，但更多是用脚本。</p>
+<h2 id="Repeater"><a href="#Repeater" class="headerlink" title="Repeater"></a>Repeater</h2><p>手动修改、补发个别HTTP请求，并分析它们的响应的工具。它最大的用途就是能和其他Burp Suite工具结合起来使用。可以将目标站点地图、Burp Proxy浏览记录、Burp Intruder的攻击结果，发送到Repeater上，并手动调整这个请求来对漏洞的探测或攻击进行微调。</p>
+<p>bp有四种类型显示数据包</p>
+<p>● Raw主要显示Web请求的raw格式，以纯文本的形式显示数据包，包含请求地址、HTTP协议版本、主机头、浏览器信息、Accept可接受的内容类型、字符集、编码方式、cookie等，可以通过手动修改这些信息，对服务器端进行渗透测试。</p>
+<p>● Params主要显示客户端请求的参数信息，包括GET或者POST请求的参数、cookie参数。可以通过修改这些请求参数完成对服务器端的渗透测试。</p>
+<p>● Headers中显示的是数据包中的头信息，以名称、值的形式显示数据包。</p>
+<p>● Hex对应的是Raw中信息的二进制内容，可以通过Hex编辑器对请求的内容进行修改，在进行00截断时非常好用</p>
+<p>不想重复捕获，要反复测试时，可以将包放进repeater模块。</p>
+<h2 id="Comparer"><a href="#Comparer" class="headerlink" title="Comparer"></a>Comparer</h2><p>提供一个可视化的差异比对功能，来对比分析两次数据之间的区别</p>
+<h2 id="Sequencer"><a href="#Sequencer" class="headerlink" title="Sequencer"></a>Sequencer</h2><p>分析数据样本随机性质量的工具。可以用它测试应用程序的会话令牌（Session token）、密码重置令牌是否可预测等场景，通过Sequencer的数据样本分析，能很好地降低这些关键数据被伪造的风险。</p>
  
       <!-- reward -->
       

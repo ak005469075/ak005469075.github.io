@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.2k</span>
+            <span class="post-count">2.1k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">4 分钟</span>
+            <span class="post-count">8 分钟</span>
         </span>
     </span>
 </div>
@@ -133,8 +133,52 @@
 </ol>
 <h3 id="3-简单用法"><a href="#3-简单用法" class="headerlink" title="3.简单用法"></a>3.简单用法</h3><p>参数为：</p>
 <p>-sS：syn半开扫描，隐蔽性强<br>        -sY：全开扫描，比较准确<br>        -sT：会大量记录日志，慎用<br>        -sP：主机存活才会扫描的ping扫描<br>        -sA：高级扫描，穿透防火墙规则过滤<br>        -sV：版本探针扫描<br>        -Pn：被禁ping扫描方法<br>        -A：全面扫描</p>
+<p>-exclude 除了</p>
+<p>-sO：使用IP protocol扫描确定目标机支持的协议类型。</p>
 <p>nmap ip确定目标主机在线情况及端口基本状况</p>
-<h2 id="二、msf-Metaploit"><a href="#二、msf-Metaploit" class="headerlink" title="二、msf(Metaploit)"></a>二、msf(Metaploit)</h2><h3 id="1-msf是什么"><a href="#1-msf是什么" class="headerlink" title="1.msf是什么"></a>1.msf是什么</h3><p>msf是一个框架，附带数百个已知软件漏洞，是一款专业级漏洞攻击工具。</p>
+<h4 id="扫描单个地址，多个地址，一个范围的地址"><a href="#扫描单个地址，多个地址，一个范围的地址" class="headerlink" title="扫描单个地址，多个地址，一个范围的地址"></a>扫描单个地址，多个地址，一个范围的地址</h4><blockquote>
+<p>namp xxx</p>
+<p>nmap xxx yyy</p>
+<p>nmap xxx-zzz</p>
+</blockquote>
+<h4 id="扫描目标地址所在网段"><a href="#扫描目标地址所在网段" class="headerlink" title="扫描目标地址所在网段"></a>扫描目标地址所在网段</h4><p>nmap 192.168.1.17&#x2F;24</p>
+<h4 id="目标地址的操作系统指纹识别"><a href="#目标地址的操作系统指纹识别" class="headerlink" title="目标地址的操作系统指纹识别"></a>目标地址的操作系统指纹识别</h4><p>nmap –O 192.168.0.105</p>
+<h4 id="目标地址开放的端口对应的服务版本信息"><a href="#目标地址开放的端口对应的服务版本信息" class="headerlink" title="目标地址开放的端口对应的服务版本信息"></a>目标地址开放的端口对应的服务版本信息</h4><p>map-sV 192.168.0.105</p>
+<h4 id="探测防火墙状态"><a href="#探测防火墙状态" class="headerlink" title="探测防火墙状态"></a>探测防火墙状态</h4><p>在实战中，可以利用FIN扫描的方式探测防火墙的状态。FIN扫描用于识别端口是否关闭，收到RST回复说明该端口关闭，否则就是open或filtered状态，</p>
+<p>nmap-sF –T4 192.168.0.105</p>
+<h3 id="4-状态识别"><a href="#4-状态识别" class="headerlink" title="4.状态识别"></a>4.状态识别</h3><p>Nmap输出的是扫描列表，包括端口号、端口状态、服务名称、服务版本及协议。</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230620150540777.png"></p>
+<h3 id="5-进阶使用"><a href="#5-进阶使用" class="headerlink" title="5.进阶使用"></a>5.进阶使用</h3><p>Nmap的脚本主要分为以下几类。</p>
+<p>● Auth：负责处理鉴权证书（绕过鉴权）的脚本。</p>
+<p>● Broadcast：在局域网内探查更多服务的开启情况，如DHCP&#x2F;DNS&#x2F;SQLServer等。</p>
+<p>● Brute：针对常见的应用提供暴力破解方式，如HTTP&#x2F;SMTP等。</p>
+<p>● Default：使用-sC或-A选项扫描时默认的脚本，提供基本的脚本扫描能力。</p>
+<p>● Discovery：对网络进行更多信息的搜集，如SMB枚举、SNMP查询等。</p>
+<p>● Dos：用于进行拒绝服务攻击。</p>
+<p>● Exploit：利用已知的漏洞入侵系统。</p>
+<p>● External：利用第三方的数据库或资源。例如，进行Whois解析。</p>
+<p>● Fuzzer：模糊测试脚本，发送异常的包到目标机，探测出潜在漏洞。</p>
+<p>● Intrusive：入侵性的脚本，此类脚本可能引发对方的IDS&#x2F;IPS的记录或屏蔽。</p>
+<p>● Malware：探测目标机是否感染了病毒、开启后门等信息。</p>
+<p>● Safe：此类与Intrusive相反，属于安全性脚本。</p>
+<p>● Version：负责增强服务与版本扫描功能的脚本。</p>
+<p>● Vuln：负责检查目标机是否有常见漏洞，如MS08-067。</p>
+<h4 id="常用脚本"><a href="#常用脚本" class="headerlink" title="常用脚本"></a>常用脚本</h4><p>用户还可根据需要设置–script&#x3D;类别进行扫描，常用参数如下所示。</p>
+<p>●-sC&#x2F;–script&#x3D;default：使用默认的脚本进行扫描。</p>
+<p>●–script&#x3D;<Lua scripts>：使用某个脚本进行扫描。</p>
+<p>●–script-args&#x3D;key1&#x3D;value1,key2&#x3D;value2······：该参数用于传递脚本里的参数，key1是参数名，该参数对应value1这个值。如有更多的参数，使用逗号连接。</p>
+<p>● –script-args-file&#x3D;filename：使用文件为脚本提供参数。</p>
+<p>●–script-trace：如果设置该参数，则显示脚本执行过程中发送与接收的数据。</p>
+<p>●–script-updatedb：在Nmap的scripts目录里有一个script.db文件，该文件保存了当前Nmap可用的脚本，类似于一个小型数据库，如果我们开启Nmap并调用了此参数，则Nmap会自行扫描scripts目录中的扩展脚本，进行数据库更新。</p>
+<p>●–script-help：调用该参数后，Nmap会输出该脚本对应的脚本使用参数，以及详细的介绍信息。</p>
+<h4 id="弱口令检测"><a href="#弱口令检测" class="headerlink" title="弱口令检测"></a>弱口令检测</h4><p>使用–script&#x3D;auth可以对目标主机或目标主机所在的网段进行应用弱口令检测，</p>
+<p><code>nmap--script=auth 192.168.0.105</code></p>
+<h4 id="暴力破解攻击"><a href="#暴力破解攻击" class="headerlink" title="暴力破解攻击"></a>暴力破解攻击</h4><p><code>nmap--script=brute 192.168.0.105</code></p>
+<h4 id="常见漏洞扫描"><a href="#常见漏洞扫描" class="headerlink" title="常见漏洞扫描"></a>常见漏洞扫描</h4><p><code>nmap--script=vuln 192.168.0.105</code></p>
+<h4 id="应用服务扫描"><a href="#应用服务扫描" class="headerlink" title="应用服务扫描"></a>应用服务扫描</h4><p>如VNC服务</p>
+<p><code>nmap--script=realvnc-auth-bypass 192.168.0.105</code></p>
+<h4 id="探测局域网内更多服务开启情况"><a href="#探测局域网内更多服务开启情况" class="headerlink" title="探测局域网内更多服务开启情况"></a>探测局域网内更多服务开启情况</h4><p><code>nmap –n –p 445--script=broadcast 192.168.0.105</code></p>
+<h4 id="whois解析"><a href="#whois解析" class="headerlink" title="whois解析"></a>whois解析</h4><h2 id="二、msf-Metasploit"><a href="#二、msf-Metasploit" class="headerlink" title="二、msf(Metasploit)"></a>二、msf(Metasploit)</h2><h3 id="1-msf是什么"><a href="#1-msf是什么" class="headerlink" title="1.msf是什么"></a>1.msf是什么</h3><p>msf是一个框架，附带数百个已知软件漏洞，是一款专业级漏洞攻击工具。</p>
 <p>kali已经自带了。</p>
 <h3 id="2-运行环境-1"><a href="#2-运行环境-1" class="headerlink" title="2.运行环境"></a>2.运行环境</h3><p>kali</p>
 <h3 id="3-功能模块"><a href="#3-功能模块" class="headerlink" title="3.功能模块"></a>3.功能模块</h3><ol>
@@ -146,9 +190,12 @@
 </li>
 <li><p>Post （后渗透攻击模块）：收集更多信息或进一步访问被利用的目标系统</p>
 </li>
-<li><p>Encoders（编码模块）</p>
-</li>
-<li><p>将攻击载荷进行编码，来绕过防护软件拦截</p>
+<li><p>Encoders（编码模块）:负责免杀,将攻击载荷进行编码，来绕过防护软件拦截</p>
+<p>● 扫描目标机系统，寻找可用漏洞。</p>
+<p>● 选择并配置一个漏洞利用模块。</p>
+<p>● 选择并配置一个攻击载荷模块。</p>
+<p>● 选择一个编码技术，用来绕过杀毒软件的查杀。</p>
+<p>● 渗透攻击。</p>
 </li>
 </ol>
 <h3 id="4-简单使用（蓝屏攻击）"><a href="#4-简单使用（蓝屏攻击）" class="headerlink" title="4.简单使用（蓝屏攻击）"></a>4.简单使用（蓝屏攻击）</h3><p>靶机可作为winxp，kali作为攻击机，两者同一局域网下。</p>

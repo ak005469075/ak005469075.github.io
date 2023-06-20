@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">331</span>
+            <span class="post-count">3.6k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">1 分钟</span>
+            <span class="post-count">13 分钟</span>
         </span>
     </span>
 </div>
@@ -121,14 +121,136 @@
        
   <h2 id="一、基本流程"><a href="#一、基本流程" class="headerlink" title="一、基本流程"></a>一、基本流程</h2><p>目标确认-&gt;信息收集-&gt;漏洞发现-&gt;漏洞利用-&gt;权限维持、内网渗透-&gt;目标获取、痕迹清理</p>
 <h3 id="1、目标确认"><a href="#1、目标确认" class="headerlink" title="1、目标确认"></a>1、目标确认</h3><p>要获取到什么权限</p>
-<h3 id="2-信息收集"><a href="#2-信息收集" class="headerlink" title="2.信息收集"></a>2.信息收集</h3><p>基础设施枚举（获取公司在互联网和内部网上的位置；确定公司的安全措施）</p>
+<p>2.信息收集</p>
+<p>在信息收集中，最主要的就是收集<strong>服务器的配置信息和网站的敏感信息</strong>，其中包括<strong>域名及子域名信息﹑目标网站系统﹑CMS指纹﹑目标网站真实IP﹑开放的端口等</strong>。换句话说，只要是与目标网站相关的信息，我们都应该去尽量搜集。</p>
+<p>基础设施枚举（获取公司在互联网和内部网上的位置；确定公司的安全措施）</p>
 <p>服务枚举（服务版本、服务信息；许多服务有版本历史记录，可以识别主机或服务器上安装的版本是否是真的或新的）</p>
 <p>主机枚举（确定该主机或服务器扮演什么角色以及它与哪些网络组件通信。此外，确定所用服务及用途，以及端口。）</p>
 <p>掠夺（获取敏感信息如员工姓名、客户数据【需要在目标主机上获取到访问权限】）</p>
 <p>域名、IP、端口、服务端框架、语言、开源情报、防御措施等</p>
-<h4 id="域名信息"><a href="#域名信息" class="headerlink" title="域名信息"></a>域名信息</h4><p>正向记录(mx,ns,txt,spf,cname)</p>
+<h4 id="2-1域名信息"><a href="#2-1域名信息" class="headerlink" title="2.1域名信息"></a>2.1域名信息</h4><p>正向记录(mx,ns,txt,spf,cname)</p>
 <p>反向查询(whois信息反查:电话、邮箱、姓名)</p>
 <p>备案信息</p>
+<h5 id="2-1-1-whois"><a href="#2-1-1-whois" class="headerlink" title="2.1.1 whois"></a>2.1.1 whois</h5><p>Whois就是一个用于查询域名是否已被注册以及注册域名的详细信息的数据库（如域名所有人、域名注册商）。</p>
+<p>注册人的姓名和邮箱信息通常对测试个人站点非常有用，因为我们可以通过搜索引擎和社交网络挖掘出域名所有人的很多信息。对中小站点而言，域名所有人往往就是管理员。</p>
+<p>kali可以在线查，在线Whois查询的常用网站有爱站工具网（<a target="_blank" rel="noopener" href="https://whois.aizhan.com)、站长之家(http//whois.chinaz.com%EF%BC%89%E5%92%8CVirusTotal%EF%BC%88https://www.virustotal.com%EF%BC%89%EF%BC%8C%E9%80%9A%E8%BF%87%E8%BF%99%E4%BA%9B%E7%BD%91%E7%AB%99%E5%8F%AF%E4%BB%A5%E6%9F%A5%E8%AF%A2%E5%9F%9F%E5%90%8D%E7%9A%84%E7%9B%B8%E5%85%B3%E4%BF%A1%E6%81%AF%EF%BC%8C%E5%A6%82%E5%9F%9F%E5%90%8D%E6%9C%8D%E5%8A%A1%E5%95%86%E3%80%81%E5%9F%9F%E5%90%8D%E6%8B%A5%E6%9C%89%E8%80%85%EF%BC%8C%E4%BB%A5%E5%8F%8A%E4%BB%96%E4%BB%AC%E7%9A%84%E9%82%AE%E7%AE%B1%E3%80%81%E7%94%B5%E8%AF%9D%E3%80%81%E5%9C%B0%E5%9D%80%E7%AD%89%E3%80%82">https://whois.aizhan.com）、站长之家（http://whois.chinaz.com）和VirusTotal（https://www.virustotal.com），通过这些网站可以查询域名的相关信息，如域名服务商、域名拥有者，以及他们的邮箱、电话、地址等。</a></p>
+<h5 id="2-1-2-备案信息查询"><a href="#2-1-2-备案信息查询" class="headerlink" title="2.1.2 备案信息查询"></a>2.1.2 备案信息查询</h5><p>网站备案是根据国家法律法规规定，需要网站的所有者向国家有关部门申请的备案，这是国家信息产业部对网站的一种管理，为了防止在网上从事非法的网站经营活动的发生。主要针对国内网站，如果网站搭建在其他国家，则不需要进行备案。</p>
+<p>常用的网站有以下这两个。</p>
+<p>● ICP备案查询网：<a target="_blank" rel="noopener" href="http://www.beianbeian.com./">http://www.beianbeian.com。</a></p>
+<p>● 天眼查：<a target="_blank" rel="noopener" href="http://www.tianyancha.com./">http://www.tianyancha.com。</a></p>
+<h4 id="2-2-收集敏感信息"><a href="#2-2-收集敏感信息" class="headerlink" title="2.2 收集敏感信息"></a>2.2 收集敏感信息</h4><blockquote>
+<p>google搜搜引擎</p>
+<p>github(数据库连接信息、邮箱密码、uc-key、阿里的osskey，有时还可以找到泄露的源代码等。)</p>
+<p>bp的repeater模块(go运行后，右侧的response模块中可以获取一些服务器的信息)</p>
+<p>wy漏洞表查看历史漏洞信息</p>
+</blockquote>
+<h4 id="2-3-收集子域名信息"><a href="#2-3-收集子域名信息" class="headerlink" title="2.3 收集子域名信息"></a>2.3 收集子域名信息</h4><p>主域攻不下来，那就转二级域名。</p>
+<p>子域搜索方法：</p>
+<p><strong>1.子域名检测工具</strong></p>
+<blockquote>
+<p>用于子域名检测的工具主要有<strong>Layer子域名挖掘机</strong>、K8、wydomain、<strong>Sublist3r</strong>、dnsmaper、<strong>subDomainsBrute</strong>、Maltego CE等。</p>
+</blockquote>
+<p><strong>2.搜索引擎枚举</strong></p>
+<blockquote>
+<p>Google语法搜索子域名</p>
+<p>比如site:baidu.com</p>
+</blockquote>
+<p><strong>3.第三方聚合应用枚举</strong></p>
+<blockquote>
+<p>很多第三方服务汇聚了大量DNS数据集，可通过它们检索某个给定域名的子域名。只需在其搜索栏中输入域名，就可检索到相关的域名信息</p>
+<p>DNSdumpster网站（<a target="_blank" rel="noopener" href="https://dnsdumpster.com/%EF%BC%89%E3%80%81%E5%9C%A8%E7%BA%BFDNS%E4%BE%A6%E6%9F%A5%E5%92%8C%E6%90%9C%E7%B4%A2%E7%9A%84%E5%B7%A5%E5%85%B7%E6%8C%96%E6%8E%98%E5%87%BA%E6%8C%87%E5%AE%9A%E5%9F%9F%E6%BD%9C%E8%97%8F%E7%9A%84%E5%A4%A7%E9%87%8F%E5%AD%90%E5%9F%9F%E3%80%82">https://dnsdumpster.com/）、在线DNS侦查和搜索的工具挖掘出指定域潜藏的大量子域。</a></p>
+</blockquote>
+<p><strong>4.证书透明度公开日志枚举</strong></p>
+<blockquote>
+<p>证书透明度（Certificate Transparency,CT）是证书授权机构（CA）的一个项目，证书授权机构会将每个SSL&#x2F;TLS证书发布到公共日志中。一个SSL&#x2F;TLS证书通常包含域名、子域名和邮件地址，这些也经常成为攻击者非常希望获得的有用信息。查找某个域名所属证书的最简单的方法就是使用搜索引擎搜索一些公开的CT日志。</p>
+<p>网站推荐：</p>
+<p>crt.sh:<a target="_blank" rel="noopener" href="https://crt.sh/">https://crt.sh</a></p>
+<p>censys:<a target="_blank" rel="noopener" href="https://censys.io/">https://censys.io</a></p>
+<p>子域名爆破网站（<a target="_blank" rel="noopener" href="https://phpinfo.me/domain%EF%BC%89">https://phpinfo.me/domain）</a></p>
+<p>IP反查绑定域名网站（<a target="_blank" rel="noopener" href="http://dns.aizhan.com)等./">http://dns.aizhan.com）等。</a></p>
+</blockquote>
+<h4 id="2-4-收集常用端口信息"><a href="#2-4-收集常用端口信息" class="headerlink" title="2.4 收集常用端口信息"></a>2.4 收集常用端口信息</h4><p>在渗透测试的过程中，对端口信息的收集是一个很重要的过程，通过扫描服务器开放的<strong>端口以及从该端口判断服务器上存在的服务</strong>，就可以对症下药，便于我们渗透目标服务器。</p>
+<p>所以在端口渗透信息的收集过程中，我们需要关注常见应用的默认端口和在端口上运行的服务。</p>
+<p>最常见的扫描工具就是<strong>Nmap，无状态端口扫描工具Masscan、ZMap和御剑高速TCP端口扫描工具。</strong></p>
+<p>下面是一些服务端口汇总。</p>
+<p><strong>文件共享服务端口</strong></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230620095745239.png" alt="文件共享服务端口"></p>
+<p><strong>远程连接服务端口</strong></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230620095825365.png" alt="远程连接服务端口"></p>
+<p><strong>Web应用服务端口</strong></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230620100023068.png" alt="Web应用服务端口"></p>
+<p><strong>数据库服务端口</strong></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230620100101221.png" alt="数据库服务端口"></p>
+<p><strong>邮件服务端口</strong></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230620100159897.png" alt="邮件服务端口"></p>
+<p><strong>网络常见协议端口</strong></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230620100237114.png" alt="网络常见协议端口"></p>
+<p><strong>特殊服务端口</strong></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230620100307483.png" alt="特殊服务端口"></p>
+<h4 id="2-5-指纹识别"><a href="#2-5-指纹识别" class="headerlink" title="2.5 指纹识别"></a>2.5 指纹识别</h4><p>指纹由于其终身不变性、唯一性和方便性，几乎已成为生物特征识别的代名词。这里所讲的指纹是指<strong>网站CMS指纹识别</strong>、<strong>计算机操作系统及Web容器的指纹识别</strong>等。</p>
+<p>应用程序一般在html、js、css等文件中多多少少会包含一些特征码，比如WordPress在robots.txt中会包含wp-admin、首页index.php中会包含generator&#x3D;wordpress 3.xx，这个特征就是这个CMS的指纹，那么当碰到其他网站也存在此特征时，就可以快速识别出该CMS，所以叫作指纹识别。</p>
+<p>对目标服务器进行指纹识别是相当有必要的，因为只有识别出相应的Web容器或者CMS，才能查找与其相关的漏洞，然后才能进行相应的渗透操作。</p>
+<h5 id="cms"><a href="#cms" class="headerlink" title="cms"></a>cms</h5><p>CMS（Content Management System）又称整站系统或文章系统。在2004年以前，如果想进行网站内容管理，基本上都靠手工维护，但在信息爆炸的时代，完全靠手工完成会相当痛苦。所以就出现了CMS，开发者只要给客户一个软件包，<strong>客户自己安装配置好，就可以定期更新数据来维护网站</strong>，节省了大量的人力和物力。</p>
+<blockquote>
+<p>常见的CMS有Dedecms（织梦）、Discuz、PHPWEB、PHPWind、PHPCMS、ECShop、Dvbbs、SiteWeaver、ASPCMS、帝国、Z-Blog、WordPress等。</p>
+</blockquote>
+<p>代表工具有御剑Web指纹识别、WhatWeb、WebRobo、椰树、轻量WEB指纹识别等，可以快速识别一些主流CMS。</p>
+<p>还有一些在线网站查询CMS</p>
+<blockquote>
+<p>● BugScaner:<a target="_blank" rel="noopener" href="http://whatweb.bugscaner.com/look/%E3%80%82">http://whatweb.bugscaner.com/look/。</a></p>
+<p>● 云悉指纹：<a target="_blank" rel="noopener" href="http://www.yunsee.cn/finger.html%E3%80%82">http://www.yunsee.cn/finger.html。</a></p>
+<p>● 和WhatWeb:<a target="_blank" rel="noopener" href="https://whatweb.net/%E3%80%82">https://whatweb.net/。</a></p>
+</blockquote>
+<h4 id="2-6-查找真实IP"><a href="#2-6-查找真实IP" class="headerlink" title="2.6 查找真实IP"></a>2.6 查找真实IP</h4><p>在渗透测试过程中，目标服务器可能只有一个域名，那么如何通过这个域名来确定目标服务器的真实IP对渗透测试来说就很重要。如果目标服务器不存在CDN，可以直接通过<a target="_blank" rel="noopener" href="http://www.ip138.com获取目标的一些ip及域名信息.如果有cdn,就需要绕过cdn寻找目标服务器的真实ip./">www.ip138.com获取目标的一些IP及域名信息。如果有CDN，就需要绕过CDN寻找目标服务器的真实IP。</a></p>
+<h5 id="2-6-1-目标服务器存在CDN"><a href="#2-6-1-目标服务器存在CDN" class="headerlink" title="2.6.1.目标服务器存在CDN"></a>2.6.1.目标服务器存在CDN</h5><p>CDN即内容分发网络，主要解决因传输距离和不同运营商节点造成的网络速度性能低下的问题。</p>
+<blockquote>
+<p>就是一组在不同运营商之间的对接节点上的高速缓存服务器，把用户经<strong>常访问</strong>的<strong>静态数据资源</strong>（例如静态的html、css、js图片等文件）直接缓存到节点服务器上，当用户再次请求时，会直接分发到在离用户近的节点服务器上响应给用户，当用户<strong>有实际数据交互</strong>时才会从远程Web服务器上响应，这样可以大大提高网站的响应速度及用户体验。</p>
+</blockquote>
+<h5 id="2-6-2-目标是否使用了CDN"><a href="#2-6-2-目标是否使用了CDN" class="headerlink" title="2.6.2 目标是否使用了CDN"></a>2.6.2 目标是否使用了CDN</h5><p>通常会通过ping目标主域，<strong>观察域名的解析情况</strong>，以此来判断其是否使用了CDN。</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230620101005067.png" alt="ping命令"></p>
+<p>还可以利用在线网站17CE（<a target="_blank" rel="noopener" href="https://www.17ce.com)进行全国多地区的ping服务器操作,然后对比每个地区ping出的ip结果,查看这些ip是否一致,**如果都是一样的,极有可能不存在cdn.**如果ip大多不太一样或者规律性很强,可以尝试**查询这些ip的归属地**,判断是否存在cdn.(多地ping)/">https://www.17ce.com）进行全国多地区的ping服务器操作，然后对比每个地区ping出的IP结果，查看这些IP是否一致，**如果都是一样的，极有可能不存在CDN。**如果IP大多不太一样或者规律性很强，可以尝试**查询这些IP的归属地**，判断是否存在CDN。（多地ping）</a></p>
+<h5 id="2-6-3-绕过CDN"><a href="#2-6-3-绕过CDN" class="headerlink" title="2.6.3 绕过CDN"></a>2.6.3 绕过CDN</h5><blockquote>
+<p>● <strong>内部邮箱源</strong>。一般的邮件系统都在内部，没有经过CDN的解析，通过目标网站用户注册或者RSS订阅功能，查看邮件、寻找邮件头中的邮件服务器域名IP,ping这个邮件服务器的域名，就可以获得目标的真实IP（注意，必须是目标自己的邮件服务器，第三方或公共邮件服务器是没有用的）。</p>
+<p>● <strong>扫描网站测试文件</strong>，如phpinfo、test等，从而找到目标的真实IP。</p>
+<p>● <strong>分站域名</strong>。很多网站主站的访问量会比较大，所以主站都是挂CDN的，但是分站可能没有挂CDN，可以通过ping二级域名获取分站IP，可能会出现分站和主站<strong>不是同一个IP但在同一个C段</strong>下面的情况，从而能判断出目标的真实IP段。</p>
+<p>● <strong>国外访问</strong>。国内的CDN往往只对国内用户的访问加速，而国外的CDN就不一定了。因此，通过国外在线代理网站App Synthetic Monitor（<a target="_blank" rel="noopener" href="https://asm.ca.com/en/ping.php%EF%BC%89%E8%AE%BF%E9%97%AE%EF%BC%8C%E5%8F%AF%E8%83%BD%E4%BC%9A%E5%BE%97%E5%88%B0%E7%9C%9F%E5%AE%9E%E7%9A%84IP%EF%BC%8C">https://asm.ca.com/en/ping.php）访问，可能会得到真实的IP，</a></p>
+<p>● <strong>查询域名的解析记录</strong>。也许目标很久以前并没有用过CDN，所以可以通过网站NETCRAFT（<a target="_blank" rel="noopener" href="https://www.netcraft.com/%EF%BC%89%E6%9D%A5%E8%A7%82%E5%AF%9F%E5%9F%9F%E5%90%8D%E7%9A%84IP%E5%8E%86%E5%8F%B2%E8%AE%B0%E5%BD%95%EF%BC%8C%E4%B9%9F%E5%8F%AF%E4%BB%A5%E5%A4%A7%E8%87%B4%E5%88%86%E6%9E%90%E5%87%BA%E7%9B%AE%E6%A0%87%E7%9A%84%E7%9C%9F%E5%AE%9EIP%E6%AE%B5%E3%80%82">https://www.netcraft.com/）来观察域名的IP历史记录，也可以大致分析出目标的真实IP段。</a></p>
+<p>● <strong>如果目标网站有自己的App</strong>，可以尝试利用Fiddler或Burp Suite抓取App的请求，从里面找到目标的真实IP。</p>
+<p>● <strong>绕过CloudFlare CDN查找真实IP</strong>。现在很多网站都使用CloudFlare提供的CDN服务，在确定了目标网站使用CDN后，可以先尝试通过在线网站Cloud FlareWatch（<a target="_blank" rel="noopener" href="http://www.crimeflare.us/cfs.html#box%EF%BC%89%E5%AF%B9CloudFlare%E5%AE%A2%E6%88%B7%E7%BD%91%E7%AB%99%E8%BF%9B%E8%A1%8C%E7%9C%9F%E5%AE%9EIP%E6%9F%A5%E8%AF%A2">http://www.crimeflare.us/cfs.html#box）对CloudFlare客户网站进行真实IP查询</a></p>
+</blockquote>
+<h5 id="2-6-4-验证获取的ip"><a href="#2-6-4-验证获取的ip" class="headerlink" title="2.6.4 验证获取的ip"></a>2.6.4 验证获取的ip</h5><p>如果是Web，最简单的验证方法是直接尝试用IP访问，<strong>看看响应的页面是不是和访问域名返回的一样</strong>；或者在目标段比较大的情况下，借助类似Masscan的工具批扫描对应IP段中所有开了80、443、8080端口的IP，然后逐个尝试IP访问，<strong>观察响应结果是否为目标站点</strong>。</p>
+<h4 id="2-7-收集敏感目录文件"><a href="#2-7-收集敏感目录文件" class="headerlink" title="2.7 收集敏感目录文件"></a>2.7 收集敏感目录文件</h4><p>探测Web目录结构和隐藏的敏感文件是一个必不可少的环节，从中可以获取网站的<strong>后台管理页面</strong>﹑<strong>文件上传界面</strong>，甚至可能<strong>扫描出网站的源代码</strong>。</p>
+<p>针对网站目录的扫描主要有DirBuster、御剑后台扫描珍藏版、wwwscan、Spinder.py（轻量级快速单文件目录后台扫描）、Sensitivefilescan（轻量级快速单文件目录后台扫描）、Weakfilescan（轻量级快速单文件目录后台扫描）等工具。</p>
+<p>或者在线网址：</p>
+<p>WebScan（<a target="_blank" rel="noopener" href="http://www.webscan.cc/%EF%BC%89">http://www.webscan.cc/）</a></p>
+<h4 id="2-8-社会工程学"><a href="#2-8-社会工程学" class="headerlink" title="2.8 社会工程学"></a>2.8 社会工程学</h4><p>攻击者通过操纵人的心理、社交工具或其他手段，诱使受攻击者泄露敏感信息、提供访问权限或执行恶意操作的一种攻击方式。这种攻击利用了人们的信任、好奇心、急迫性或其他心理因素，从而绕过技术安全防护措施。</p>
+<p>常见方式有:</p>
+<blockquote>
+<ul>
+<li>钓鱼攻击：通过伪装成合法的通信或网站，诱使受害者提供个人信息、登录凭证、银行账号等。</li>
+<li>点击劫持攻击：将一个透明的层覆盖在正常网页上，欺骗用户点击某些看似无害的区域，实际上触发了恶意操作。</li>
+<li>假冒身份：冒充信任的个人或机构，通过电话、电子邮件或其他通信方式，欺骗受害者提供敏感信息。</li>
+<li>社交工具欺骗：通过社交媒体、即时通讯应用等，冒充朋友或熟人的身份，获取信息或诱导行为。</li>
+<li>垃圾邮件和钓鱼邮件：通过发送虚假的电子邮件，诱使受害者点击恶意链接、下载恶意附件或提供个人信息。</li>
+</ul>
+<p>还有社工库。</p>
+</blockquote>
+<h2 id="2-漏洞环境搭建"><a href="#2-漏洞环境搭建" class="headerlink" title="2.漏洞环境搭建"></a>2.漏洞环境搭建</h2><p>linux系统LANMP、vulhub</p>
+<p>Windows系统WAMP</p>
+<p>安装一个phpstudy之后，去github找以下靶场，安装进对应www文件夹即可</p>
+<blockquote>
+<p>DVWA</p>
+<p>sql-labs</p>
+<p>xss-labs</p>
+<p>pikachu</p>
+</blockquote>
+<p>还有在线靶场如hack the box</p>
+<h2 id="3-渗透工具"><a href="#3-渗透工具" class="headerlink" title="3.渗透工具"></a>3.渗透工具</h2><h4 id="3-1-sqlmap"><a href="#3-1-sqlmap" class="headerlink" title="3.1 sqlmap"></a>3.1 sqlmap</h4><p>SQLMap是一个自动化的SQL注入工具，其主要功能是扫描、发现并利用给定URL的SQL注入漏洞，内置了很多绕过插件，支持的数据库是MySQL、Oracle、PostgreSQL、Microsoft SQL Server、Microsoft Access、IBM DB2、SQLite、Firebird、Sybase和SAP MaxDB。SQLMap采用了以下5种独特的SQL注入技术。</p>
+<p>● 基于布尔类型的盲注，即可以根据返回页面判断条件真假的注入。</p>
+<p>● 基于时间的盲注，即不能根据页面返回的内容判断任何信息，要用条件语句查看时间延迟语句是否已执行（即页面返回时间是否增加）来判断。</p>
+<p>● 基于报错注入，即页面会返回错误信息，或者把注入的语句的结果直接返回到页面中。</p>
+<p>● 联合查询注入，在可以使用Union的情况下的注入。</p>
+<p>● 堆查询注入，可以同时执行多条语句时的注入。</p>
 <h3 id="3-漏洞发现"><a href="#3-漏洞发现" class="headerlink" title="3.漏洞发现"></a>3.漏洞发现</h3><p>传统漏洞</p>
 <p>框架组件公开漏洞</p>
 <p>口令漏洞</p>
