@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">11.2k</span>
+            <span class="post-count">11.3k</span>
         </span>
     </span>
 
@@ -321,6 +321,9 @@
 <p>基于DOM的XSS攻击往往需要针对具体的JavaScript DOM代码进行分析，并根据实际情况进行XSS攻击的利用。</p>
 <p>实际上构造难度较大，比较少见。</p>
 </blockquote>
+<p>一般例子就是</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230621141439046.png"></p>
+<p>“write”按钮的onclick事件调用了test（）函数。<strong>而在test（）函数中，修改了页面的DOM节点，通过innerHTML把一段用户数据当做HTML写入到页面中</strong>，这就造成了DOM based XSS。</p>
 <h3 id="6-攻击条件"><a href="#6-攻击条件" class="headerlink" title="6.攻击条件"></a>6.攻击条件</h3><p>反射型&#x2F;DOM型跨站攻击均可以理解为：</p>
 <p>服务器接收到数据，并原样返回给用户，整个过程中Web应用并没有自身的存储过程（存入数据库）。这也就导致了攻击无法持久化，仅针对当次请求有效，也就无法直接攻击其他用户。</p>
 <p>当然，这两类攻击也可利用钓鱼、垃圾邮件等手段产生攻击其他用户的效果。但是需在社会工程学的配合下执行。随着目前浏览器的各类过滤措施愈发严格，在实战过程中这类攻击的成功率、效果及危害程度均不高。但我们仍需关注这类风险。</p>

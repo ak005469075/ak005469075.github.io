@@ -83,8 +83,8 @@
     </header>
      
     <div class="article-meta">
-      <a href="/2023/05/31/hack-the-box/" class="article-date">
-  <time datetime="2023-05-31T00:11:37.000Z" itemprop="datePublished">2023-05-31</time>
+      <a href="/2023/06/18/hack-the-box/" class="article-date">
+  <time datetime="2023-06-18T00:11:37.000Z" itemprop="datePublished">2023-06-18</time>
 </a> 
   <div class="article-category">
     <a class="article-category-link" href="/categories/%E9%9D%B6%E5%9C%BA/">靶场</a>
@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">5.6k</span>
+            <span class="post-count">5.7k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">29 分钟</span>
+            <span class="post-count">30 分钟</span>
         </span>
     </span>
 </div>
@@ -219,7 +219,7 @@
 <p>尝试下cody后的东西作为密码</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">svc@busqueda:~$ echo &quot;jh1usoih2bkjaspwe92&quot; | sudo -S -l</span><br><span class="line">echo &quot;jh1usoih2bkjaspwe92&quot; | sudo -S -l</span><br><span class="line">[sudo] password for svc: Matching Defaults entries for svc on busqueda:</span><br><span class="line">    env_reset, mail_badpass,</span><br><span class="line">    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin,</span><br><span class="line">    use_pty</span><br><span class="line"></span><br><span class="line">User svc may run the following commands on busqueda:</span><br><span class="line">    (root) /usr/bin/python3 /opt/scripts/system-checkup.py *</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<p>jh1usoih2bkjaspwe92确实是密码。账号为<a href="mailto:&#115;&#x76;&#99;&#64;&#49;&#x30;&#x2e;&#x31;&#x30;&#46;&#x31;&#x31;&#x2e;&#x32;&#48;&#x38;">&#115;&#x76;&#99;&#64;&#49;&#x30;&#x2e;&#x31;&#x30;&#46;&#x31;&#x31;&#x2e;&#x32;&#48;&#x38;</a>，ssh连接即可。</p>
+<p>jh1usoih2bkjaspwe92确实是密码。账号为<a href="mailto:&#x73;&#x76;&#x63;&#64;&#x31;&#48;&#46;&#49;&#x30;&#x2e;&#x31;&#49;&#46;&#50;&#48;&#56;">&#x73;&#x76;&#x63;&#64;&#x31;&#48;&#46;&#49;&#x30;&#x2e;&#x31;&#49;&#46;&#50;&#48;&#56;</a>，ssh连接即可。</p>
 <h3 id="svc-gt-root"><a href="#svc-gt-root" class="headerlink" title="svc-&gt;root"></a>svc-&gt;root</h3><p>登录进来后</p>
 <p><code>sudo -l</code> 为了看看当前用户可执行的命令</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Matching Defaults entries for svc on busqueda:</span><br><span class="line">    env_reset, mail_badpass,</span><br><span class="line">    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin,</span><br><span class="line">    use_pty</span><br><span class="line"></span><br><span class="line">User svc may run the following commands on busqueda:</span><br><span class="line">    (root) /usr/bin/python3 /opt/scripts/system-checkup.py *</span><br><span class="line"></span><br></pre></td></tr></table></figure>
@@ -358,6 +358,17 @@
 
 
 <p>发现域名sequel.htb与子域名dc.sequel.htb</p>
+<h2 id="3-MonitorsTwo"><a href="#3-MonitorsTwo" class="headerlink" title="3.MonitorsTwo"></a>3.MonitorsTwo</h2><p><code>nmap -Pn 10.10.11.211 </code></p>
+<blockquote>
+<p>22和80</p>
+</blockquote>
+<p>访问</p>
+<p><img src="/../../../Typora/img111/image-20230621162319430.png"></p>
+<p>抓个包</p>
+<blockquote>
+<p>POST &#x2F;index.php HTTP&#x2F;1.1<br>Host: 10.10.11.211<br>User-Agent: Mozilla&#x2F;5.0 (X11; Linux x86_64; rv:102.0) Gecko&#x2F;20100101 Firefox&#x2F;102.0<br>Accept: text&#x2F;html,application&#x2F;xhtml+xml,application&#x2F;xml;q&#x3D;0.9,image&#x2F;avif,image&#x2F;webp,<em>&#x2F;</em>;q&#x3D;0.8<br>Accept-Language: en-US,en;q&#x3D;0.5<br>Accept-Encoding: gzip, deflate<br>Content-Type: application&#x2F;x-www-form-urlencoded<br>Content-Length: 143<br>Origin: <a target="_blank" rel="noopener" href="http://10.10.11.211/">http://10.10.11.211</a><br>Connection: close<br>Referer: <a target="_blank" rel="noopener" href="http://10.10.11.211/index.php">http://10.10.11.211/index.php</a><br>Cookie: Cacti&#x3D;23c13c8cedf59e7ab5692967d58edba1; CactiDateTime&#x3D;Wed Jun 21 2023 16:26:22 GMT+0800 (China Standard Time); CactiTimeZone&#x3D;480<br>Upgrade-Insecure-Requests: 1</p>
+<p>__csrf_magic&#x3D;sid%3A85cdbc25916003d0deb870cb3312ad1f4dbe3b51%2C1687335980&amp;action&#x3D;login&amp;login_username&#x3D;admin123&amp;login_password&#x3D;123&amp;remember_me&#x3D;on</p>
+</blockquote>
  
       <!-- reward -->
       
@@ -422,7 +433,7 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/31/hack-the-box/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/06/18/hack-the-box/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -435,19 +446,19 @@
    
   <nav class="article-nav">
     
-      <a href="/2023/05/31/php/" class="article-nav-link">
+      <a href="/2023/06/18/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E5%BE%A1/" class="article-nav-link">
         <strong class="article-nav-caption">上一篇</strong>
         <div class="article-nav-title">
           
-            php语言基础
+            (no title)
           
         </div>
       </a>
     
     
-      <a href="/2023/05/31/%E5%8F%8D%E5%BC%B9shell/" class="article-nav-link">
+      <a href="/2023/06/13/Web%E5%AE%89%E5%85%A8%E6%A0%B8%E5%BF%83%E9%97%AE%E9%A2%98/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">反弹shell</div>
+        <div class="article-nav-title">Web安全防护体系</div>
       </a>
     
   </nav>

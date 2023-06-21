@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">6k</span>
+            <span class="post-count">6.9k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">21 分钟</span>
+            <span class="post-count">24 分钟</span>
         </span>
     </span>
 </div>
@@ -209,6 +209,42 @@
 <li>关系型数据库 –MySQL:3306 –SqlServer:1433 –Oracle:1521</li>
 <li>NOSQL数据库 –MongoDB:27017 –Redis:6379 -memcached:11211</li>
 </ul>
+<h2 id="6-同源策略"><a href="#6-同源策略" class="headerlink" title="6.同源策略"></a>6.同源策略</h2><p>为了不让浏览器的页面行为发生混乱，浏览器提出了“Origin”（源）这一概念，来自不同Origin的对象无法互相干扰。</p>
+<p>对于JavaScript来说，以下情况被认为是同源与不同源的。</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230621140001811.png"></p>
+<p>影响“源”的因素有：<strong>host</strong>（域名或IP地址，如果是IP地址则看做一个根域名）、<strong>子域名</strong>、<strong>端口</strong>、<strong>协议</strong>。</p>
+<p>两个网页具有相同的协议（比如http或https）、主机名和端口号。换句话说，只有<strong>当两个网页的协议、域名和端口完全相同</strong>，它们才被认为是同源的。</p>
+<p>对于当前页面来说，页面内存放JavaScript文件的域并不重要，重要的是加载JavaScript页面所在的域是什么。</p>
+<p>换言之，a.com通过以下代码：</p>
+<p><code>&lt;script src=http://b.com/b.js &gt;&lt;/script&gt;</code></p>
+<p><img src="/../../../Typora/img111/23410_42_2.jpg" alt="img"></p>
+<p>加载了 b.com 上的b.js，但是b.js <strong>是运行在a.com页面中的</strong>，因此对于当前打开的页面（a.com页面）来说，<strong>b.js的Origin 就应该是 a.com 而非 b.com</strong>。</p>
+<p>跨域访问方案的安全基础就是信任“JavaScript无法控制该HTTP头”</p>
+<h3 id="前端跨域技术"><a href="#前端跨域技术" class="headerlink" title="前端跨域技术"></a>前端跨域技术</h3><p>采取同源策略，浏览器可以有效地限制潜在的跨站点脚本攻击（XSS）和跨站请求伪造（CSRF）等安全威胁。</p>
+<p><strong>这样就引出了一个前端跨域技术。</strong></p>
+<p>1.JSONP（JSON with Padding）</p>
+<blockquote>
+<p>JSONP是一种利用&lt;script&gt;标签的跨域技术。通过动态创建一个&lt;script&gt;标签，src属性指向包含回调函数的远程URL，远程服务器将数据包装在回调函数中返回。由于&lt;script&gt;标签不受同源策略的限制，因此可以在不同域之间进行跨域请求。</p>
+</blockquote>
+<p>2.跨域资源共享（CORS）</p>
+<blockquote>
+<p>CORS是一种基于HTTP头部的机制，允许服务器声明哪些源被授权访问其资源。通过在服务器端设置响应头部中的Access-Control-Allow-Origin字段，可以允许特定源的请求跨域访问。前端代码在发送请求时<strong>，浏览器会自动在请求头中添加Origin字段</strong>，服务器收到请求后会检查Origin字段，并决定是否允许跨域访问。</p>
+</blockquote>
+<p>3.代理服务器</p>
+<blockquote>
+<p>代理服务器是一种将客户端请求转发给目标服务器的中间服务器。</p>
+<p>前端应用可以将跨域请求发送到同源的代理服务器上，然后由代理服务器再向目标服务器发送请求，获取响应后再返回给前端应用。通过这种方式，前端应用绕过了浏览器的同源策略限制。</p>
+</blockquote>
+<p>4.WebSocket</p>
+<blockquote>
+<p>WebSocket是一种在单个TCP连接上进行全双工通信的协议，可以在不受同源策略限制的情况下进行跨域通信。WebSocket建立的连接不受同源策略的限制，因此可以在不同源之间实现实时通信。</p>
+</blockquote>
+<h2 id="7-windows命令"><a href="#7-windows命令" class="headerlink" title="7.windows命令"></a>7.windows命令</h2><blockquote>
+<p>cd</p>
+<p>dir</p>
+<p>net 查看网络Window服务,net start </p>
+<p>netstat 显示网络连接的信息，包括显示活动的TCP连接、路由器和网络接口信息，是一个监控TCP&#x2F;IP网络非常有用的工具，可以让用户得知系统中目前都有哪些网络连接正常。 netstat &#x2F;?获得帮助</p>
+</blockquote>
 <h1 id="二、网安"><a href="#二、网安" class="headerlink" title="二、网安"></a>二、网安</h1><h2 id="1-OSI七层模型"><a href="#1-OSI七层模型" class="headerlink" title="1.OSI七层模型"></a>1.OSI七层模型</h2><ol>
 <li><p>物理层（Physical Layer）：该层处理物理传输介质上的原始比特流，主要关注传输媒介、电压、电缆规范、接口等问题。</p>
 <p><strong>比特</strong></p>
@@ -496,7 +532,7 @@
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BD%91%E5%AE%89/" rel="tag">网安</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%89%8D%E7%AB%AF%E8%B7%A8%E5%9F%9F/" rel="tag">前端跨域</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5/" rel="tag">同源策略</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BD%91%E5%AE%89/" rel="tag">网安</a></li></ul>
 
     </footer>
   </div>

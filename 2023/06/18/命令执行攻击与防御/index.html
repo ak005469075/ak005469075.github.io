@@ -105,7 +105,7 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">title: 命令执行</span><br><span class="line">categories: </span><br><span class="line">- 《WEB安全基础》</span><br><span class="line">- 命令执行</span><br><span class="line">date: 2023-06-11 9:12:30</span><br><span class="line">tags: </span><br><span class="line">- 《WEB安全基础》</span><br><span class="line">- 命令执行</span><br></pre></td></tr></table></figure>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">title:命令执行</span><br><span class="line">categories: </span><br><span class="line">- 《WEB安全基础》</span><br><span class="line">- 命令执行</span><br><span class="line">date: 2023-06-11 9:12:30</span><br><span class="line">tags: </span><br><span class="line">- 《WEB安全基础》</span><br><span class="line">- 命令执行</span><br></pre></td></tr></table></figure>
 
 <h1 id="命令执行"><a href="#命令执行" class="headerlink" title="命令执行"></a>命令执行</h1><p>效果类似包含攻击，主要是由于输入的参数被当成命令来执行。</p>
 <h2 id="远程命令执行漏洞"><a href="#远程命令执行漏洞" class="headerlink" title="远程命令执行漏洞"></a>远程命令执行漏洞</h2><h3 id="1-利用系统函数实现"><a href="#1-利用系统函数实现" class="headerlink" title="1.利用系统函数实现"></a>1.利用系统函数实现</h3><p>在PHP下，允许远程命令执行的函数有eval（）、assert（）、preg_replace（）、call_user_func（）。如果页面中存在上述函数且其参数可被用户控制，同时没有对参数做有效的过滤，那么就可能存在远程命令执行漏洞。</p>
@@ -293,10 +293,19 @@
    
   <nav class="article-nav">
     
+      <a href="/2023/06/19/vulnhub/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            vulnhub
+          
+        </div>
+      </a>
     
-      <a href="/2023/06/13/Web%E5%AE%89%E5%85%A8%E6%A0%B8%E5%BF%83%E9%97%AE%E9%A2%98/" class="article-nav-link">
+    
+      <a href="/2023/06/18/hack-the-box/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">Web安全防护体系</div>
+        <div class="article-nav-title">hack the box</div>
       </a>
     
   </nav>
