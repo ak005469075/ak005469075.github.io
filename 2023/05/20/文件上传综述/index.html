@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">876</span>
+            <span class="post-count">923</span>
         </span>
     </span>
 
@@ -176,6 +176,7 @@
 </li>
 </ul>
 <h4 id="中间件解析漏洞："><a href="#中间件解析漏洞：" class="headerlink" title="中间件解析漏洞："></a>中间件解析漏洞：</h4><p>解析漏洞<br>    Nginx<br>        xxx.jpg%00.php(Nginx&lt;8.03 空字节代码执行漏洞)<br>        fix_pathinfo<br>            &#x2F;1.jpg&#x2F;1.php<br>            &#x2F;1.jpg%00.php<br>            &#x2F;1.jpg&#x2F;%20\0.php<br>    IIS<br>        IIS5.x-IIS6.x<br>            &#x2F;xx.asp&#x2F;xx.jpg<br>            xx.asp;jpg<br>            test.asa test.cer test.cdx<br>        IIS7.5<br>            a.aspx.a;a.aspx.jog.jpg<br>    apache<br>        test.php.php123  从右到左开始判断解析<br>        AddHandler php5-script.php     test2.php.jpg<br>        AddType application&#x2F;x-httpd-php .jpg     即使扩展名是jpg,一样能以php方式执行</p>
+<h2 id="windows特性绕过"><a href="#windows特性绕过" class="headerlink" title="windows特性绕过"></a>windows特性绕过</h2><p>黑名单，但是没有对后缀名进行去”.”处理，利用windows特性，会自动去掉后缀名中最后的”.”，可在后缀名中加”.”绕过：</p>
  
       <!-- reward -->
       
