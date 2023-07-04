@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>漏洞汇总 |  小张之栈</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-漏洞总结"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  漏洞汇总
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/06/29/%E6%BC%8F%E6%B4%9E%E6%80%BB%E7%BB%93/" class="article-date">
+  <time datetime="2023-06-28T16:21:20.000Z" itemprop="datePublished">2023-06-29</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%BC%8F%E6%B4%9E/">漏洞</a> / <a class="article-category-link" href="/categories/%E6%BC%8F%E6%B4%9E/%E4%B8%AD%E9%97%B4%E4%BB%B6%E6%BC%8F%E6%B4%9E/">中间件漏洞</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">5.7k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">21 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="弱口令"><a href="#弱口令" class="headerlink" title="弱口令"></a>弱口令</h1><p>字典爆破</p>
+<h2 id="hacker101-micro-cms2"><a href="#hacker101-micro-cms2" class="headerlink" title="hacker101 micro-cms2"></a>hacker101 micro-cms2</h2><p>username为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">admin&#x27; or 1=1 --  时</span><br></pre></td></tr></table></figure>
+
+<p>登录窗口会提示无效的密码，那需要构造下密码，这是wp，我也不知道怎么尝试出来的</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">admin&#x27; union select &#x27;123&#x27; as password --</span><br><span class="line">123</span><br></pre></td></tr></table></figure>
+
+<h2 id="petshop"><a href="#petshop" class="headerlink" title="petshop"></a>petshop</h2><h1 id="sql注入"><a href="#sql注入" class="headerlink" title="sql注入"></a>sql注入</h1><p>用sqlmap扫</p>
+<h1 id="SSRF"><a href="#SSRF" class="headerlink" title="SSRF"></a>SSRF</h1><p><code>...&amp;url=http://xxx</code></p>
+<p><code>...&amp;url=file:///etc/passwd</code></p>
+<p>修复方案：限制协议和target</p>
+<h1 id="未授权访问"><a href="#未授权访问" class="headerlink" title="未授权访问"></a>未授权访问</h1><p>ldap匿名访问</p>
+<h1 id="逻辑漏洞"><a href="#逻辑漏洞" class="headerlink" title="逻辑漏洞"></a>逻辑漏洞</h1><h2 id="账号注册"><a href="#账号注册" class="headerlink" title="账号注册"></a>账号注册</h2><p>任意注册：验证码仅4位数字，可以爆破</p>
+<p>修复方案：增加验证码长度，且超过一定次数重置</p>
+<h1 id="敏感信息泄露"><a href="#敏感信息泄露" class="headerlink" title="敏感信息泄露"></a>敏感信息泄露</h1><p>登入页面，遇到用户的照片处，右键在新标签处打开，暴露了路径，从而泄露所有用户照片、甚至信息等。</p>
+<p>修复方案：设置访问控制；文件路径保护（哈希）；服务器端代理（客户端与服务端之间有一个代理，通过代理传递信息，这样客户端不会直接访问到服务端）</p>
+<p>重要站点备份文件泄露：比如xxx&#x2F;.svn&#x2F;entries</p>
+<h1 id="越权"><a href="#越权" class="headerlink" title="越权"></a>越权</h1><p>平行越权</p>
+<p>注册两个账号A和B，A,B同时订单，A作为攻击者取消订单时，抓包，参数修改为B的id，将B的订单取消。</p>
+<h2 id="hacker101-postbook"><a href="#hacker101-postbook" class="headerlink" title="hacker101,postbook."></a>hacker101,postbook.</h2><p>1.发布博客时，有一个user_id参数，起到指定某用户的作用，如果改这个id，造成的效果，应该是<strong>以其他用户的名义，发布内容</strong></p>
+<p>2.编辑博客时，url上的id更改后，<strong>会编辑它人的博客内容</strong></p>
+<p>3.删除操作时，url会有id&#x3D;1f0e3dad99908345f7439f8ffabdffc4，其实是md5加密，解密为19；所以需要尝试其他人博客的id，md5替换之后，<strong>删除它人的博客内容</strong></p>
+<p>4.cookie的保持会话，里面有 id&#x3D;1679091c5a880faf6fb5e6087eb1b2dc; md5解密后，内容为6；即代表了该用户，如果改为id&#x3D;1的用户（md5之后），<strong>就能登录id&#x3D;1用户</strong></p>
+<p>5.登录的弱口令user,passwod</p>
+<p>6.f12的form格式</p>
+<p>7.189 * 5</p>
+<h2 id="hackker101-购物车"><a href="#hackker101-购物车" class="headerlink" title="hackker101 购物车"></a>hackker101 购物车</h2><p>1.添加商品，付款时，抓包，post会携带商品的信息列表，其中有price，尝试将price改为0，<strong>金额更改成功</strong></p>
+<p>2.扫一下目录，<strong>有login；那就暴力破解</strong>，哎一个好的字典</p>
+<p>3.？</p>
+<h1 id="未授权访问-1"><a href="#未授权访问-1" class="headerlink" title="未授权访问"></a>未授权访问</h1><p>登入页面，导入文件，下载文件，抓包；更换浏览器对下载链接进行访问。</p>
+<h3 id="hacker101-micro-cms2-1"><a href="#hacker101-micro-cms2-1" class="headerlink" title="hacker101 micro-cms2"></a>hacker101 micro-cms2</h3><p>在编辑api版块，抓包，删除Cookie。</p>
+<h1 id="xss"><a href="#xss" class="headerlink" title="xss"></a>xss</h1><p>日记或者留言（存储性xss）</p>
+<p>构造短连接，用xss平台接收，可以接收到浏览者的cookie等信息</p>
+<h3 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h3><p>hacker101里的，postbook:</p>
+<h1 id="目录遍历"><a href="#目录遍历" class="headerlink" title="目录遍历"></a>目录遍历</h1><p>原理，利用，防御</p>
+<h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p>运行应用程序的服务器上的任意文件。 这可能包括应用程序代码和数据，后端系统的登录信息以及敏感的操作系统文件。</p>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>比如，web显示某些图片时，</p>
+<p><code>&lt;img src=&quot;/loadImage?filename=214.png&quot;&gt;</code></p>
+<p>该图片文件的位置若是被猜解到的话</p>
+<p>比如存在，<code>var/www/images/214.png</code></p>
+<p>可构造如下：</p>
+<p><code>https://www.*****.com/loadImage?filename=../../../etc/passwd</code></p>
+<p>即:<code>/var/www/images/../../../etc/passwd</code>&#x3D;&#x3D;&#x2F;etc&#x2F;passwd</p>
+<h2 id="利用"><a href="#利用" class="headerlink" title="利用"></a>利用</h2><p>1.绝对路径：</p>
+<blockquote>
+<p>由于..&#x2F;被过滤，可直接写filename&#x3D;&#x2F;etc&#x2F;passwd</p>
+</blockquote>
+<p>2.双写..&#x2F;绕过：</p>
+<blockquote>
+<p><code>filename=....//....//....///etc/passwd</code></p>
+<p>….&#x2F;&#x2F;过滤掉一个..&#x2F;还剩下..&#x2F;</p>
+</blockquote>
+<p>3.URL编码绕过:</p>
+<blockquote>
+<p>.  &#x3D;&gt; %2e</p>
+<p>&#x2F;  &#x3D;&gt; %2f</p>
+<p>% &#x3D;&gt; %25 (双重URL编码):即.被过滤了，尝试%2e也被过滤了，尝试%252e，三者是相等的</p>
+</blockquote>
+<ol start="4">
+<li>绝对路径配合..&#x2F;</li>
+</ol>
+<blockquote>
+<p>filename&#x3D;&#x2F;var&#x2F;www&#x2F;images&#x2F;..&#x2F;..&#x2F;..&#x2F;etc&#x2F;passwd</p>
+</blockquote>
+<p>5.截断文件后缀:对文件类型作了限制</p>
+<blockquote>
+<p>&#x2F;etc&#x2F;passwd%00.jpg</p>
+</blockquote>
+<h2 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h2><p>避免将用户提供的输入完全传递给文件系统API。</p>
+<p> 平台文件系统API规范化路径</p>
+<h1 id="war后门"><a href="#war后门" class="headerlink" title="war后门"></a>war后门</h1><h2 id="成因："><a href="#成因：" class="headerlink" title="成因："></a>成因：</h2><p>Tomcat 支持在后台部署war文件，那么可以直接将webshell部署到web目录下</p>
+<h2 id="防御-1"><a href="#防御-1" class="headerlink" title="防御"></a>防御</h2><p>1）在系统上以低权限运行Tomcat应用程序。创建一个专门的 Tomcat服务用户，该用户只能拥有一组最小权限（例如不允许远程登录）。</p>
+<p>2）增加对于本地和基于证书的身份验证，部署账户锁定机制（对于集中式认证，目录服务也要做相应配置）。在CATALINA_HOME&#x2F;conf&#x2F;web.xml文件设置锁定机制和时间超时限制。</p>
+<h1 id="远程命令-x2F-代码执行"><a href="#远程命令-x2F-代码执行" class="headerlink" title="远程命令&#x2F;代码执行"></a>远程命令&#x2F;代码执行</h1><h2 id="成因"><a href="#成因" class="headerlink" title="成因"></a>成因</h2><p>输入过滤不严，使用了不安全命令执行函数</p>
+<h2 id="利用-1"><a href="#利用-1" class="headerlink" title="利用"></a>利用</h2><h3 id="命令执行"><a href="#命令执行" class="headerlink" title="命令执行"></a>命令执行</h3><p>如php代码中直接调用系统函数shell_exec将用户输入的内容拼接进来</p>
+<p>127.0.0.1|ipconfig 页面直接输出了ipconfig的内容。</p>
+<blockquote>
+<p>1.exec():执行一个外部程序</p>
+<p>2.system()<br>输出执行结果，返回最后一行。<br>如果PHP运行在服务器模块中，system()函数还会尝试在每行输出完毕之后，自动刷新web服务器的输出缓存。<br>3.passthru()<br>执行外部程序并且显示原始输出。同exec()函数类似，passthru()函数也是用来执行外部命令的。当所执行的Unix命令输出二进制数据，并且需要直接传送到浏览器的时候，需要用此函数来替代exec()或system()函数。常用来执行诸如pbmplus之类的可以直接输出图像流的命令。<br>4.shell_exec()<br>通过shell环境执行命令，并且将完整的输出以字符串的方式返回。该函数会在错误出现或者程序执行没有输出两种情况下返回NULL，也就是说，没有办法通过该函数检测程序执行失败（可以改用exec）。<br>5.popen()<br>打开一个指向进程的管道，该进程由派生指定的 command 命令执行而产生。返回一个和 fopen() 所返回的相同的文件指针，只不过它是单向的（只能用于读或写），此指针可以用于 fgets()，fgetss() 和 fwrite()。并且必须用 pclose() 来关闭。若出错，则返回 false。<br>6.proc_open()<br>执行一个命令，并且打开用来输入&#x2F;输出的文件指针。</p>
+</blockquote>
+<h3 id="代码执行"><a href="#代码执行" class="headerlink" title="代码执行"></a>代码执行</h3><blockquote>
+<p>eval()            把字符串作为PHP代码执行<br>assert()          检查一个断言是否为 FALSE，可用来执行代码<br>preg_replace()    执行一个正则表达式的搜索和替换<br>call_user_func()  把第一个参数作为回调函数调用<br>call_user_func_array() 调用回调函数，并把一个数组参数作为回调函数的参数<br>array_map()       为数组的每个元素应用回调函数</p>
+</blockquote>
+<h2 id="防御-2"><a href="#防御-2" class="headerlink" title="防御"></a>防御</h2><p>1.尽量不要使用命令执行函数。<br>2.客户端提交的变量在进入执行命令函数前要做好过滤和检测。<br>3.在使用动态函数之前，确保使用的函数是指定的函数之一。<br>4.对PHP语言来说，不能完全控制的危险函数最好不要使用。</p>
+<h1 id="端口漏洞"><a href="#端口漏洞" class="headerlink" title="端口漏洞"></a>端口漏洞</h1><table>
+<thead>
+<tr>
+<th>27017</th>
+<th>mongodb，漏洞：未授权访问</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>27017</td>
+<td>mongodb，漏洞：爆破，未授权</td>
+</tr>
+<tr>
+<td>27018</td>
+<td>mongodb，漏洞：未授权</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>3306</th>
+<th>mysql，漏洞：爆破，拒绝服务，注入</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>3389</td>
+<td>rdp&#x2F;windows远程连接，漏洞：爆破，shift后门，3389漏洞攻击</td>
+</tr>
+</tbody></table>
+<p>3389连接不上的原因：</p>
+<blockquote>
+<p>1.端口更改</p>
+<p>2.防火墙</p>
+<p>3.目标机在内网</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>445</th>
+<th>smb，漏洞：溢出漏洞</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>6379</td>
+<td>redis，漏洞：弱口令，未授权访问</td>
+</tr>
+</tbody></table>
+<p>SMB（全称是Server Message Block）是一个<strong>协议服务器信息块</strong>，它是一种客户机&#x2F;服务器、请求&#x2F;响应协议，通过SMB协议可以在计算机间共享文件、打印机、命名管道等资源，电脑上的<strong>网上邻居</strong>就是靠SMB实现的；SMB协议工作在应用层和会话层，可以用在TCP&#x2F;IP协议之上，SMB使用TCP139端口和TCP445端口。</p>
+<p>永恒之蓝是在Windows的SMB服务处理SMB v1请求时发生的漏洞，这个漏洞导致攻击者在目标系统上可以执行任意代码。通过永恒之蓝漏洞会扫描开放445文件共享端口的Windows机器，无需用户任何操作，只要开机上网，不法分子就能在电脑和服务器中植入勒索软件、远程控制木马、虚拟货币挖矿机等恶意程序。</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_66908617/article/details/128978456">永恒之蓝部分筛选自CSDN博主「小P0~0」的原创文章</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_42430287/article/details/124407613">端口部分筛选自CSDN博主「Bolgzhang」的原创文章</a></p>
+<h1 id="反序列化"><a href="#反序列化" class="headerlink" title="反序列化"></a>反序列化</h1><p>java、shiro、php</p>
+<h1 id="Web中间件"><a href="#Web中间件" class="headerlink" title="Web中间件"></a>Web中间件</h1><h2 id="IIS"><a href="#IIS" class="headerlink" title="IIS"></a>IIS</h2><p>Web（网页）服务组件，其中包括Web服务器、FTP服务器、NNTP服务器和SMTP服务器，分别用于网页浏览、文件传输、新闻服务和邮件发送等方面，它使得在网络（包括互联网和局域网）上发布信息成了一件很容易的事。</p>
+<h3 id="Put漏洞"><a href="#Put漏洞" class="headerlink" title="Put漏洞"></a>Put漏洞</h3><h4 id="成因-1"><a href="#成因-1" class="headerlink" title="成因"></a>成因</h4><p>IIS Server 在 Web 服务扩展中开启了 <strong>WebDAV</strong> ，配置了可以写入的权限，造成<strong>任意文件上传。</strong></p>
+<p>版本： IIS6.0</p>
+<h4 id="利用-2"><a href="#利用-2" class="headerlink" title="利用"></a>利用</h4><p>开启了webDAV的写入权限后，抓包，将GET请求改为OPTIONS，可以看到响应内容有PUT。</p>
+<p>IIS put scanner扫描一下判断是否允许put方法</p>
+<p>使用iiswrite工具进行iis put漏洞测试利用，首先使用PUT方法进行绕过，上传包含<strong>asp</strong>一句话木马的test.txt文件，</p>
+<p>如<code>&lt;%execute(request(&quot;a&quot;))%&gt;</code></p>
+<p>再用MOVE方法，将txt转化为木马文件，</p>
+<p>从而蚁剑，getshell。</p>
+<p>PS:如果网站属性未允许脚本资源访问，MOVE方法修改txt文件会报错。</p>
+<p>可以利用IIS目录解析漏洞，MOVE方式时，将shell.asp改写为<strong>shell.asp;.txt</strong></p>
+<p>蚁剑连接..&#x2F;shell.asp;.txt 即可。</p>
+<h4 id="防御-3"><a href="#防御-3" class="headerlink" title="防御"></a>防御</h4><p>关闭WebDAV和写权限</p>
+<p>禁用访客写入权限</p>
+<h3 id="短文件名猜解"><a href="#短文件名猜解" class="headerlink" title="短文件名猜解"></a>短文件名猜解</h3><h4 id="成因-2"><a href="#成因-2" class="headerlink" title="成因"></a>成因</h4><p>IIS的短文件名机制，可以暴力猜解短文件名，访问构造的某个存在的短文件名，会返回404，访问构造的某个不存在的短文件名，返回400。</p>
+<p>使用的是IIS6.0（&lt;8.0），需要在web服务拓展里开启<strong>ASP.NET</strong></p>
+<h4 id="利用-3"><a href="#利用-3" class="headerlink" title="利用"></a>利用</h4><p>若存在一个文件bbccddee.html以及文件夹webtest_efwef</p>
+<p><code>http://xxx/we\*~1*/a.aspx</code> 返回404</p>
+<p><code>http://xxx/wa\*~1*/a.aspx</code> 返回400 即bad</p>
+<p><strong>最多判断长度为6个</strong>即<em><em>webtes</em>~1</em>&#x2F;a.aspx**</p>
+<p><code>../webtes*~1/a.aspx</code>判断类型，404则表示是文件夹，400表示文件</p>
+<p>可以进而判断文件类型</p>
+<p><code>../bbccdd*~1.a*/a.aspx</code> 返回400</p>
+<p><code>../bbccdd*~1.h*/a.aspx</code>返回404，则</p>
+<p><code>../bbccdd*~1.htm*/a.aspx</code>返回404，则确认后缀为html；<strong>短文件名后缀最长为3。</strong></p>
+<p>同理可猜解到shell.asp;.txt文件， <code>../shella*~1.txt*/a.aspx</code></p>
+<h4 id="防御-4"><a href="#防御-4" class="headerlink" title="防御"></a>防御</h4><p>升级.net framework</p>
+<p>修改注册表禁用短文件名功能</p>
+<p>CMD关闭NTFS 8.3文件格式的支持</p>
+<p>将web文件夹的内容拷贝到另一个位置，如c:\www到d:\w,然后删除原文件夹，再重命名d:\w到c:\www。</p>
+<h4 id="局限性"><a href="#局限性" class="headerlink" title="局限性"></a>局限性</h4><ol>
+<li>此漏洞只能确定前6个字符，如果后面的字符太长、包含特殊字符，很难猜解；</li>
+<li>如果文件名本身太短（无短文件名）也是无法猜解的；</li>
+<li>如果文件名前6位带空格，8.3格式的短文件名会补进，和真实文件名不匹配；</li>
+</ol>
+<h3 id="远程代码执行1"><a href="#远程代码执行1" class="headerlink" title="远程代码执行1"></a>远程代码执行1</h3><h4 id="成因-3"><a href="#成因-3" class="headerlink" title="成因"></a>成因</h4><p>在IIS6.0处理PROPFIND指令的时候，由于对url的长度没有进行有效的长度控制和检查，导致执行memcpy对虚拟路径进行构造的时候，引发栈溢出，从而导致远程代码执行。</p>
+<h4 id="利用-4"><a href="#利用-4" class="headerlink" title="利用"></a>利用</h4><h4 id="防御-5"><a href="#防御-5" class="headerlink" title="防御"></a>防御</h4><p>1）关闭 WebDAV 服务</p>
+<p>2） 使用相关防护设备</p>
+<h3 id="远程代码执行2"><a href="#远程代码执行2" class="headerlink" title="远程代码执行2"></a>远程代码执行2</h3><h4 id="成因-4"><a href="#成因-4" class="headerlink" title="成因"></a>成因</h4><p>iis默认启用内核缓存，执行与请求处理管道中缓存有关的任务。当HTTP协议堆栈（HTTP.sys）<strong>不正确地解析HTTP请求</strong>时会导致IIS远程代码执行漏洞。</p>
+<p>安装了微软IIS 6.0以上的win 7&#x2F;8&#x2F;8.1&#x2F;2008 R2&#x2F;2012&#x2F;2012 R2都受到这个漏洞的影响。</p>
+<h4 id="利用-5"><a href="#利用-5" class="headerlink" title="利用"></a>利用</h4><p>…</p>
+<h4 id="防御-6"><a href="#防御-6" class="headerlink" title="防御"></a>防御</h4><p>打补丁</p>
+<h3 id="解析漏洞"><a href="#解析漏洞" class="headerlink" title="解析漏洞"></a>解析漏洞</h3><h4 id="成因-5"><a href="#成因-5" class="headerlink" title="成因"></a>成因</h4><p>IIS 6.0 在处理含有特殊符号的文件路径时会出现逻辑错误，从而造成文件解析漏洞。这一漏洞有两种完全不同的利用方式：</p>
+<p>&#x2F;test.asp&#x2F;test.jpg</p>
+<p>test.asp;.jpg</p>
+<h4 id="利用1"><a href="#利用1" class="headerlink" title="利用1"></a>利用1</h4><p>第一种是新建一个名为 “test.asp” 的目录，该目录中的任何文件都被 IIS 当作 asp 程序执行（特殊符号是 “&#x2F;” ）</p>
+<h4 id="利用2"><a href="#利用2" class="headerlink" title="利用2"></a>利用2</h4><p>上传名为 “test.asp;.jpg” 的文件，虽然该文件真正的后缀名是 “.jpg”, 但由于含有特殊符号 “;” ，仍会被 IIS 当做 asp 程序执行</p>
+<p><strong>IIS7.5 文件解析漏洞</strong></p>
+<p>test.jpg&#x2F;.php</p>
+<p>URL 中文件后缀是 .php ，便无论该文件是否存在，都直接交给 php 处理。</p>
+<p>即 php 修理文件路径 “test.jpg&#x2F;.php” 得到 ”test.jpg” ，该文件存在，便把该文件作为 php 程序执行了。</p>
+<h4 id="防御-7"><a href="#防御-7" class="headerlink" title="防御"></a>防御</h4><p>1）对新建目录文件名进行过滤，不允许新建包含‘.’的文件</p>
+<p>2）曲线网站后台新建目录的功能，不允许新建目录</p>
+<p>3）限制上传的脚本执行权限，不允许执行脚本</p>
+<p>4）过滤.asp&#x2F;xm.jpg，通过ISApi组件过滤</p>
+<h2 id="Apache"><a href="#Apache" class="headerlink" title="Apache"></a>Apache</h2><p>由于其 跨平台 和安全性被广泛使用，是最流行的Web服务器端软件之一。它快速、可靠并且可通过简单的API扩充，将 Perl&#x2F; Python等 解释器编译到服务器中。</p>
+<h3 id="解析漏洞-1"><a href="#解析漏洞-1" class="headerlink" title="解析漏洞"></a>解析漏洞</h3><h4 id="成因-6"><a href="#成因-6" class="headerlink" title="成因"></a>成因</h4><p>用户配置问题，Apache默认一个文件可以有多个以点分隔的后缀，对于后缀名是从右往左解析。</p>
+<h4 id="利用-6"><a href="#利用-6" class="headerlink" title="利用"></a>利用</h4><p>shell.xxx.yyy，先解析yyy，不存在，再解析xxx</p>
+<h4 id="防御-8"><a href="#防御-8" class="headerlink" title="防御"></a>防御</h4><p>将AddHandler application&#x2F;x-httpd-php .php的配置文件删除。</p>
+<h3 id="目录遍历-1"><a href="#目录遍历-1" class="headerlink" title="目录遍历"></a>目录遍历</h3><h4 id="成因-7"><a href="#成因-7" class="headerlink" title="成因"></a>成因</h4><p>由于配置错误导致的目录遍历。</p>
+<h4 id="利用-7"><a href="#利用-7" class="headerlink" title="利用"></a>利用</h4><p>访问ip地址，可以看到所有文件或目录</p>
+<h4 id="防御-9"><a href="#防御-9" class="headerlink" title="防御"></a>防御</h4><p>修改apache配置文件httpd.conf</p>
+<p>找到Options+Indexes+FollowSymLinks +ExecCGI并修改成 Options-Indexes+FollowSymLinks +ExecCGI 并保存；</p>
+<h2 id="Nginx"><a href="#Nginx" class="headerlink" title="Nginx"></a>Nginx</h2><p>轻量级的 Web 服务器、 反向代理 服务器及 电子邮件（IMAP&#x2F;POP3）代理服务器，并在一个BSD-like 协议下发行。其特点是占有内存少， 并发能力强，事实上nginx的并发能力确实在同类型的网页服务器中表现较好</p>
+<h3 id="文件解析"><a href="#文件解析" class="headerlink" title="文件解析"></a>文件解析</h3><h4 id="成因-8"><a href="#成因-8" class="headerlink" title="成因"></a>成因</h4><p>对任意文件名，在后面添加&#x2F;任意文件名.php的解析漏洞，比如原本文件名是test.jpg，可以添加test.jpg&#x2F;x.php进行解析攻击。会解析为test.php</p>
+<h4 id="利用-8"><a href="#利用-8" class="headerlink" title="利用"></a>利用</h4><p>如果里面刚好写有php代码，会以php文件执行</p>
+<h4 id="防御-10"><a href="#防御-10" class="headerlink" title="防御"></a>防御</h4><p>1） 将php.ini文件中的cgi.fix_pathinfo的值设为0.这样php在解析1.php&#x2F;1.jpg这样的目录时，只要1.jpg不存在就会显示404；</p>
+<p>2） 将&#x2F;etc&#x2F;php5&#x2F;fpm&#x2F;pool.d&#x2F;<a target="_blank" rel="noopener" href="http://www.conf/">www.conf</a>中security.limit_ectensions后面的值设为.php</p>
+<h3 id="目录遍历-2"><a href="#目录遍历-2" class="headerlink" title="目录遍历"></a>目录遍历</h3><p>类似于apache，配置不当造成目录内容的泄露</p>
+<p>将&#x2F;etc&#x2F;nginx&#x2F;sites-avaliable&#x2F;default里的autoindex on改为autoindex off</p>
+<h3 id="CRLF注入"><a href="#CRLF注入" class="headerlink" title="CRLF注入"></a>CRLF注入</h3><h4 id="成因-9"><a href="#成因-9" class="headerlink" title="成因"></a>成因</h4><p>CRLF时“回车+换行”（\r\n）的简称。</p>
+<p>HTTP Header与HTTP Body时用两个CRLF分隔的，浏览器根据两个CRLF来取出HTTP内容并显示出来。</p>
+<p>通过控制HTTP消息头中的字符，注入一些恶意的换行，就能注入一些会话cookie或者html代码，由于Nginx配置不正确，导致注入的代码会被执行。</p>
+<h4 id="利用-9"><a href="#利用-9" class="headerlink" title="利用"></a>利用</h4><p>抓包，在url请求上加入&#x2F;%0d%0a%0d%0a&lt;img src&#x3D;1 onerror&#x3D;alert(&#x2F;xss&#x2F;)&gt;</p>
+<h4 id="防御-11"><a href="#防御-11" class="headerlink" title="防御"></a>防御</h4><p>Nginx的配置文件&#x2F;etc&#x2F;nginx&#x2F;conf.d&#x2F;error1.conf修改为使用不解码的url跳转。</p>
+<h3 id="目录穿越"><a href="#目录穿越" class="headerlink" title="目录穿越"></a>目录穿越</h3><h4 id="成因-10"><a href="#成因-10" class="headerlink" title="成因"></a>成因</h4><p>Nginx反向代理，静态文件存储在&#x2F;home&#x2F;下，而访问时需要在url中输入files，配置文件中&#x2F;files没有用&#x2F;闭合，导致可以穿越至上层目录。</p>
+<h4 id="利用-10"><a href="#利用-10" class="headerlink" title="利用"></a>利用</h4><p>即可以实现目录跳转，显示为</p>
+<p>..&#x2F;</p>
+<p>a&#x2F;</p>
+<p>b&#x2F;</p>
+<p>c&#x2F;</p>
+<p>可以点击第一行，访问其它目录页面</p>
+<h4 id="防御-12"><a href="#防御-12" class="headerlink" title="防御"></a>防御</h4><p>Nginx的配置文件&#x2F;etc&#x2F;nginx&#x2F;conf.d&#x2F;error2.conf的&#x2F;files使用&#x2F;闭合。</p>
+<h2 id="Tomcat"><a href="#Tomcat" class="headerlink" title="Tomcat"></a>Tomcat</h2><p>一个免费的开放源代码的Web 应用服务器，属于轻量级应用 服务器，在中小型系统和并发访问用户不是很多的场合下被普遍使用，是开发和调试JSP 程序的首选。</p>
+<p>Tomcat是Apache 服务器的扩展，但运行时它是独立运行的，所以当运行tomcat 时，它实际上作为一个与Apache 独立的进程单独运行的。</p>
+<h3 id="远程代码执行"><a href="#远程代码执行" class="headerlink" title="远程代码执行"></a>远程代码执行</h3><h4 id="成因-11"><a href="#成因-11" class="headerlink" title="成因"></a>成因</h4><p>Tomcat 运行在Windows 主机上，且启用了 HTTP PUT 请求方法，可通过构造的攻击请求向服务器上传包含任意代码的 JSP 文件，造成任意代码执行。</p>
+<p>影响版本： Apache Tomcat 7.0.0 – 7.0.81</p>
+<h4 id="利用-11"><a href="#利用-11" class="headerlink" title="利用"></a>利用</h4><p>请求方式改为put</p>
+<p>url参数为：&#x2F;122.jsp%20 HTTP&#x2F;1.1</p>
+<p>上传post参数为<code>&lt;%Runtime.getRuntime().exec(request.getParameter(&quot;cmd&quot;));%&gt;</code></p>
+<h4 id="防御-13"><a href="#防御-13" class="headerlink" title="防御"></a>防御</h4><p>1）检测当前版本是否在影响范围内，并禁用PUT方法。</p>
+<p>2）更新并升级至最新版。</p>
+<h3 id="war后门文件部署"><a href="#war后门文件部署" class="headerlink" title="war后门文件部署"></a>war后门文件部署</h3><p>在后台上传包含后门的war包</p>
+<h2 id="jBoss"><a href="#jBoss" class="headerlink" title="jBoss"></a>jBoss</h2><p>jBoss是一个基于J2EE的开发源代码的应用服务器。 JBoss代码遵循LGPL许可，可以在任何商业应用中免费使用。JBoss是一个管理EJB的容器和服务器，支持EJB1.1、EJB 2.0和EJB3的规范。但JBoss核心服务不包括支持servlet&#x2F;JSP的WEB容器，一般与Tomcat或Jetty绑定使用。</p>
+<h3 id="反序列化漏洞"><a href="#反序列化漏洞" class="headerlink" title="反序列化漏洞"></a>反序列化漏洞</h3><h4 id="成因-12"><a href="#成因-12" class="headerlink" title="成因"></a>成因</h4><p>Java序列化，简而言之就是把java对象转化为字节序列的过程。而反序列话则是再把字节序列恢复为java对象的过程，然而就在这一转一变得过程中，程序员的过滤不严格，就可以导致恶意构造的代码的实现。</p>
+<h4 id="利用-12"><a href="#利用-12" class="headerlink" title="利用"></a>利用</h4><p>访问&#x2F;invoker&#x2F;readonly。</p>
+<p>返回500，说明页面存在，此页面有反序列化漏洞</p>
+<p>刷新，改包：请求方式为post，请求数据为右键-&gt;paste from file-&gt;payload.bin</p>
+<h4 id="防御-14"><a href="#防御-14" class="headerlink" title="防御"></a>防御</h4><p>1）不需要http-invoker.sar 组件的用户可直接删除此组件；</p>
+<p>2）用于对 httpinvoker 组件进行访问控制。</p>
+<h3 id="war后门文件部署-1"><a href="#war后门文件部署-1" class="headerlink" title="war后门文件部署"></a>war后门文件部署</h3><h2 id="webLogic"><a href="#webLogic" class="headerlink" title="webLogic"></a>webLogic</h2><p>基于JAVAEE架构的中间件，WebLogic是用于开发、集成、部署和管理大型分布式Web应用、网络应用和数据库应用的Java应用服务器。将Java的动态功能和Java Enterprise标准的安全性引入大型网络应用的开发、集成、部署和管理之中。</p>
+<h3 id="反序列化-1"><a href="#反序列化-1" class="headerlink" title="反序列化"></a>反序列化</h3><h4 id="利用-13"><a href="#利用-13" class="headerlink" title="利用"></a>利用</h4><p>vulhub</p>
+<h4 id="防御-15"><a href="#防御-15" class="headerlink" title="防御"></a>防御</h4><p>升级补丁</p>
+<h3 id="SSRF-1"><a href="#SSRF-1" class="headerlink" title="SSRF"></a>SSRF</h3><h4 id="成因-13"><a href="#成因-13" class="headerlink" title="成因"></a>成因</h4><p>利用该漏洞可以发送任意HTTP请求，进而攻击内网中redis、fastcgi等脆弱组件。</p>
+<h3 id="任意文件上传"><a href="#任意文件上传" class="headerlink" title="任意文件上传"></a>任意文件上传</h3><h3 id="war后门文件部署-2"><a href="#war后门文件部署-2" class="headerlink" title="war后门文件部署"></a>war后门文件部署</h3><h1 id="CVE"><a href="#CVE" class="headerlink" title="CVE"></a>CVE</h1><h2 id="fastjson"><a href="#fastjson" class="headerlink" title="fastjson"></a>fastjson</h2><p>开源JSON解析库，它<strong>可以解析JSON格式的字符串，支持将Java Bean序列化为JSON字符串，也可以从JSON字符串反序列化到JavaBean</strong>。Fastjson<strong>存在远程代码执行漏洞，autotype开关的限制可以被绕过</strong>，链式的反序列化攻击者精心构造反序列化利用链，最终达成远程命令执行的后果。此漏洞本身无法绕过Fastjson的黑名单限制，需要配合不在黑名单中的反序列化利用链才能完成完整的漏洞利用。</p>
+<blockquote>
+<p>根本原因<code>还是Fastjson的</code>autotype<code>功能，此功能可以反序列化的时候人为指定精心设计的类，达成</code>远程<code>命令</code>执行</p>
+</blockquote>
+<h3 id="AutoType功能"><a href="#AutoType功能" class="headerlink" title="AutoType功能"></a>AutoType功能</h3><p>使用各种Json序列化工具的时候，其实在序列化之后很多情况是没有包含任何类信息的，如:</p>
+<blockquote>
+<p>{“fruit”:{“name”:”apple”},”mode”:”online”}</p>
+</blockquote>
+<p>使用时有两种方式：直接转为一个JSONObject，然后通过key值取对应的数据；另外一种就是指定需要转换的对象：</p>
+<p><code>public static &lt;T&gt; T parseObject(String text, Class&lt;T&gt; clazz)</code></p>
+<blockquote>
+<p>将给定的文本（text）解析为指定的类（clazz）的对象，并返回解析后的对象。该方法使用了泛型（Generic）来实现通用性。</p>
+</blockquote>
+<p>这样可以直接拿到类对象。</p>
+<p>然而由于业务中多态的需求，如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">//水果接口类</span><br><span class="line">public interface Fruit &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//通过指定的方式购买水果</span><br><span class="line">public class Buy &#123;</span><br><span class="line">    private String mode;</span><br><span class="line">    private Fruit fruit;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//具体的水果类--苹果</span><br><span class="line">public class Apple implements Fruit &#123;</span><br><span class="line">    private String name;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果只是序列化为没有类信息的json字符串，那么其中的Fruit就无法识别具体的类：</p>
+<blockquote>
+<p> String jsonString &#x3D; “{“fruit”:{“name”:”apple”},”mode”:”online”}”;</p>
+<p> Buy newBuy &#x3D; JSON.parseObject(jsonString, Buy.class);</p>
+<p> Apple newApple &#x3D; (Apple) newBuy.getFruit();</p>
+</blockquote>
+<p>这种情况下直接强转直接报<code>ClassCastException</code>异常；</p>
+<p><strong>为此FastJson引入了autotype功能，：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Apple apple = new Apple();</span><br><span class="line">apple.setName(&quot;apple&quot;);</span><br><span class="line">Buy buy = new Buy(&quot;online&quot;, apple);</span><br><span class="line">String jsonString2 = JSON.toJSONString(buy, SerializerFeature.WriteClassName);</span><br></pre></td></tr></table></figure>
+
+<p><strong>在序列化的时候指定<code>SerializerFeature.WriteClassName</code>即可</strong>，这样序列化之后的json字符串如下所示：</p>
+<p>{“@type”:”com.fastjson.Buy”,”fruit”:{“@type”:”com.fastjson.impl.Apple”,”name”:”apple”},”mode”:”online”}</p>
+<p>这样在反序列化的时候就可以转成具体的实现类；但是就是因为在json字符串中包含了类信息，给了<code>黑客攻击</code>的可能。</p>
+<h2 id="fastjson攻击"><a href="#fastjson攻击" class="headerlink" title="fastjson攻击"></a>fastjson攻击</h2><p>当 Fastjson 在反序列化过程中遇到带有 <code>@type</code> 属性的 JSON 字符串时，它会自动根据 <code>@type</code> 属性的值创建对应的 Java 对象</p>
+<p>攻击者可以构造一个带有恶意 <code>@type</code> 属性的 JSON 字符串，并将其传递给 Fastjson 进行反序列化。当 Fastjson 反序列化该 JSON 字符串时，它会实例化恶意的 Java 类，并执行其中的恶意代码，从而导致远程代码执行漏洞。</p>
+<p>比如 当我们使用 Fastjson 的 <code>JSON.parseObject()</code> 方法对该 JSON 字符串进行反序列化时，Fastjson 会自动创建一个 <code>com.example.EvilClass</code> 的对象，并执行其构造函数中的恶意代码。</p>
+<h2 id="log4j"><a href="#log4j" class="headerlink" title="log4j"></a>log4j</h2><p>即java的一个日志框架。主要是由于JNDI的查找功能。</p>
+<p>log4j在解析特定的日志消息时，会自动执行JNDI查找，攻击者通过构造恶意的 JNDI 地址，其可能指向一个恶意的 LDAP 服务器，攻击者可以在该服务器上设置特殊的响应，以触发远程代码执行。</p>
+<h2 id="shiro原理"><a href="#shiro原理" class="headerlink" title="shiro原理"></a>shiro原理</h2><p>开源的Java安全框架，用于身份认证、授权和会话管理等安全功能</p>
+<ul>
+<li>shiro默认使用了CookieRememberMeManager，其处理cookie的流程是：得到rememberMe的cookie值–&gt;Base64解码–&gt;AES解密–&gt;反序列化 然而AES的密钥是硬编码的，就导致了攻击者可以构造恶意数据造成反序列化的RCE漏洞。</li>
+</ul>
+<p>3.fastjson ，log4j，shiro原理</p>
+<p>5.linux查看进程命令，linux有哪些日志文件，在什么位置</p>
+<h2 id=""><a href="#" class="headerlink" title=""></a></h2> 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/06/29/%E6%BC%8F%E6%B4%9E%E6%80%BB%E7%BB%93/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/war%E5%90%8E%E9%97%A8/" rel="tag">war后门</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%BC%8F%E6%B4%9E/" rel="tag">漏洞</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%9B%AE%E5%BD%95%E9%81%8D%E5%8E%86-%E7%A9%BF%E8%B6%8A/" rel="tag">目录遍历&#x2F;穿越</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%AB%AF%E5%8F%A3%E6%BC%8F%E6%B4%9E/" rel="tag">端口漏洞</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2023/07/01/%E6%8F%90%E6%9D%83%E6%96%B9%E5%BC%8F/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            提权
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2023/06/26/ctfshow/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title"></div>
+      </a>
+    
+  </nav>
+
+  
+   
+  
+   
+    <script src="https://cdn.staticfile.org/twikoo/1.4.18/twikoo.all.min.js"></script>
+    <div id="twikoo" class="twikoo"></div>
+    <script>
+        twikoo.init({
+            envId: ""
+        })
+    </script>
+ 
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2023
+        <i class="ri-heart-fill heart_icon"></i> 是羽泪云诶
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/favicon.ico" alt="小张之栈"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+ 
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+ 
+<script src="/js/dz.js"></script>
+ 
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>

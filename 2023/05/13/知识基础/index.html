@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">8k</span>
+            <span class="post-count">11.1k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">28 分钟</span>
+            <span class="post-count">39 分钟</span>
         </span>
     </span>
 </div>
@@ -246,24 +246,39 @@
 <p>netstat 显示网络连接的信息，包括显示活动的TCP连接、路由器和网络接口信息，是一个监控TCP&#x2F;IP网络非常有用的工具，可以让用户得知系统中目前都有哪些网络连接正常。 netstat &#x2F;?获得帮助</p>
 </blockquote>
 <h1 id="二、网安"><a href="#二、网安" class="headerlink" title="二、网安"></a>二、网安</h1><h2 id="1-OSI七层模型"><a href="#1-OSI七层模型" class="headerlink" title="1.OSI七层模型"></a>1.OSI七层模型</h2><ol>
-<li><p>物理层（Physical Layer）：该层处理物理传输介质上的原始比特流，主要关注传输媒介、电压、电缆规范、接口等问题。</p>
+<li><p>物理层（Physical Layer）：<strong>将接收到的数据转化为比特流</strong>，主要关注传输媒介、电压、电缆规范、接口等问题。</p>
 <p><strong>比特</strong></p>
 </li>
-<li><p>数据链路层（Data Link Layer）：该层负责将物理层提供的比特流划分为数据帧，并检测和纠正传输中的错误。它还处理点对点之间的直接通信，提供链路管理、访问控制和流量控制等功能。</p>
+<li><p>数据链路层（Data Link Layer）：该层负责将物理层提供的<strong>比特流</strong>划分为数据<strong>帧</strong>，<strong>以便于在本地网络中传输</strong>，<strong>在本地网段上使用硬件地址唯一标识主机</strong>，并检测和纠正传输中的错误。它还处理点对点之间的直接通信，提供链路管理、访问控制和流量控制等功能。</p>
 <p><strong>帧</strong></p>
+<blockquote>
+<p>MAC地址 局域网 分段目标 局部地址</p>
+</blockquote>
 </li>
-<li><p>网络层（Network Layer）：该层负责在网络中传输数据包，通过确定最佳路径将数据从发送方传输到接收方。它还处理分组的路由选择、分组转发和拥塞控制等任务。</p>
+<li><p>网络层（Network Layer）：<strong>为传送过来的数据加装IP地址，使得数据段转化为数据包或数据报，用于寻址和路由。指引数据包前进方向。</strong>该层负责在网络中传输数据包，通过确定最佳路径将数据从发送方传输到接收方。它还处理分组的路由选择、分组转发和拥塞控制等任务。</p>
 <p><strong>数据报</strong></p>
+<blockquote>
+<p>协议:IP ICMP</p>
+</blockquote>
 </li>
-<li><p>传输层（Transport Layer）：该层提供端到端的数据传输服务，确保可靠的数据传输。它负责分段和重组数据，并提供错误检测和纠正、流量控制、拥塞控制以及端口号标识等功能。</p>
+<li><p>传输层（Transport Layer）：<strong>提供会话层和网络层之间的传输服务。将会话层数据分段、重组，转化为数据段，提高效率，并在发送方和接收方之间建立一条可靠的连接，确保数据无误传送到网络层。并使用端口号区分应用层的不同应用进程。</strong> 该层提供端到端的数据传输服务，确保可靠的数据传输。它负责分段和重组数据，并提供错误检测和纠正、流量控制、拥塞控制以及端口号标识等功能。</p>
 <p><strong>报文段&#x2F;用户数据报</strong></p>
+<blockquote>
+<p>协议：TCP UDP</p>
+</blockquote>
 </li>
-<li><p>会话层（Session Layer）：该层建立、管理和终止应用程序之间的会话连接。它提供了会话控制、同步和对话管理功能，允许应用程序之间进行通信和数据交换。</p>
+<li><p>会话层（Session Layer）：<strong>组织和协调两个会话进程之间的通信，并对数据交换进行管理。</strong> 该层建立、管理和终止应用程序之间的会话连接。它提供了会话控制、同步和对话管理功能，允许应用程序之间进行通信和数据交换。</p>
+<blockquote>
+<p>会话 全双工&#x2F;半双工</p>
+</blockquote>
 </li>
-<li><p>表示层（Presentation Layer）：该层处理数据的表示方式，确保不同系统中数据的兼容性。它负责数据的加密、压缩、解压缩、格式转换以及数据格式的统一表示。</p>
+<li><p>表示层（Presentation Layer）：<strong>对来自应用层的数据进行处理，有格式处理，压缩解压缩，加密解密，编码，目的是使数据快速传递，安全传递。</strong> 该层处理数据的表示方式，确保不同系统中数据的兼容性。它负责数据的加密、压缩、解压缩、格式转换以及数据格式的统一表示。</p>
 <p>例如，PC程序与另一台计算机进行通信，其中一台计算机使用扩展二一十进制交换码（EBCDIC），而另一台则使用美国信息交换标准码（ASCII）来表示相同的字符。如有必要，表示层会通过使用一种通格式来实现多种数据格式之间的转换。 　　</p>
 </li>
-<li><p>应用层（Application Layer）：该层是最高级别的层次，提供直接面向用户的网络服务。它包括各种应用程序协议，例如HTTP（超文本传输协议）、SMTP（简单邮件传输协议）、FTP（文件传输协议）等。</p>
+<li><p>应用层（Application Layer）：<strong>用户与各应用程序和网络的接口，直接向用户提供服务，完成用户希望在网络上完成的各种工作。</strong> 该层是最高级别的层次，提供直接面向用户的网络服务。</p>
+<blockquote>
+<p>它包括各种应用程序协议，例如HTTP（超文本传输协议）、SMTP（简单邮件传输协议）、FTP（文件传输协议）、SMTP(25,TCP)、DNS(53,UDP),Telnet,SSH等。</p>
+</blockquote>
 </li>
 </ol>
 <p><img src="/../../../Typora/img111/image-20230613203703899.png"></p>
@@ -286,7 +301,11 @@
 </blockquote>
 </li>
 </ol>
-<h2 id="3-Cookies和session的区别"><a href="#3-Cookies和session的区别" class="headerlink" title="3.Cookies和session的区别"></a>3.Cookies和session的区别</h2><p>Cookies是在客户端（通常是Web浏览器）上存储数据的小型文本文件。</p>
+<h2 id="3-Cookies和session的区别"><a href="#3-Cookies和session的区别" class="headerlink" title="3.Cookies和session的区别"></a>3.Cookies和session的区别</h2><ul>
+<li><code>Cookie</code> 机制采用的是在客户端保持状态的方案，用来记录用户的一些信息，也是实现 <code>Session</code> 的一种方式</li>
+<li><code>Session</code> 机制采用的是在服务器端保持状态的方案，用来跟踪用户的状态，可以保存在集群、数据库、文件中</li>
+</ul>
+<p>Cookies是在客户端（通常是Web浏览器）上存储数据的小型文本文件。</p>
 <p>Session是在服务器端存储数据的一种机制。</p>
 <p>区别：</p>
 <ol>
@@ -324,8 +343,15 @@
 <h3 id="问题34：对于云安全的理解"><a href="#问题34：对于云安全的理解" class="headerlink" title="问题34：对于云安全的理解"></a>问题34：对于云安全的理解</h3><p><strong>答案：</strong></p>
 <h3 id="问题35：了解过websocket吗"><a href="#问题35：了解过websocket吗" class="headerlink" title="问题35：了解过websocket吗?"></a>问题35：了解过websocket吗?</h3><p><strong>答案：</strong></p>
 <h3 id="问题36：DDOS是什么-有哪些-CC攻击是什么-区别是什么"><a href="#问题36：DDOS是什么-有哪些-CC攻击是什么-区别是什么" class="headerlink" title="问题36：DDOS是什么?有哪些?CC攻击是什么?区别是什么?"></a>问题36：DDOS是什么?有哪些?CC攻击是什么?区别是什么?</h3><p><strong>答案：</strong></p>
-<h3 id="问题37：land攻击是什么"><a href="#问题37：land攻击是什么" class="headerlink" title="问题37：land攻击是什么?"></a>问题37：land攻击是什么?</h3><p><strong>答案：</strong></p>
-<h3 id="问题38：你会如何进行信息收集"><a href="#问题38：你会如何进行信息收集" class="headerlink" title="问题38：你会如何进行信息收集?"></a>问题38：你会如何进行信息收集?</h3><p><strong>答案：</strong></p>
+<h3 id="问题37：land攻击是什么"><a href="#问题37：land攻击是什么" class="headerlink" title="问题37：land攻击是什么?"></a>问题37：land攻击是什么?</h3><p><strong>答案：</strong> dos攻击中的一种；其 原理是构造数据包，使得源ip与目的ip都是目标ip，让目标机消耗资源。</p>
+<h3 id="问题38：你会如何进行信息收集"><a href="#问题38：你会如何进行信息收集" class="headerlink" title="问题38：你会如何进行信息收集?"></a>问题38：你会如何进行信息收集?</h3><p><strong>答案：</strong>一般是收集域名、子域名、旁站、端口及服务、版本漏洞、敏感目录等等。</p>
+<blockquote>
+<p>svn:3690 svn泄露&#x2F;未授权访问</p>
+<p>weblogic:7001 弱口令</p>
+<p>6379:redis 一般无认证&#x2F;直接访问</p>
+<p>8080:tomcat 弱口令&#x2F;默认口令</p>
+<p>8089:jboss 未授权访问&#x2F;弱口令</p>
+</blockquote>
 <h3 id="问题39：什么是CRLF注入攻击"><a href="#问题39：什么是CRLF注入攻击" class="headerlink" title="问题39：什么是CRLF注入攻击?"></a>问题39：什么是CRLF注入攻击?</h3><p><strong>答案：</strong></p>
 <h3 id="问题40：防止XSS，前端后端两个角度"><a href="#问题40：防止XSS，前端后端两个角度" class="headerlink" title="问题40：防止XSS，前端后端两个角度?"></a>问题40：防止XSS，前端后端两个角度?</h3><p><strong>答案：</strong></p>
 <h3 id="问题41：如何防护一个端口的安全"><a href="#问题41：如何防护一个端口的安全" class="headerlink" title="问题41：如何防护一个端口的安全?"></a>问题41：如何防护一个端口的安全?</h3><p><strong>答案：</strong></p>
@@ -334,7 +360,17 @@
 <h3 id="问题44：web常用的加密算法有什么"><a href="#问题44：web常用的加密算法有什么" class="headerlink" title="问题44：web常用的加密算法有什么"></a>问题44：web常用的加密算法有什么</h3><p><strong>答案：</strong></p>
 <h3 id="问题45：XSS除了获取cookies还能做什么"><a href="#问题45：XSS除了获取cookies还能做什么" class="headerlink" title="问题45：XSS除了获取cookies还能做什么?"></a>问题45：XSS除了获取cookies还能做什么?</h3><p><strong>答案：</strong></p>
 <p> rip协议是什么? rip的工作原理</p>
-<h3 id="问题46：运营商（或其他）网络劫持"><a href="#问题46：运营商（或其他）网络劫持" class="headerlink" title="问题46：运营商（或其他）网络劫持"></a>问题46：运营商（或其他）网络劫持</h3><h1 id="二、计网"><a href="#二、计网" class="headerlink" title="二、计网"></a>二、计网</h1><p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230619125601482.png"></p>
+<h3 id="问题46：运营商（或其他）网络劫持"><a href="#问题46：运营商（或其他）网络劫持" class="headerlink" title="问题46：运营商（或其他）网络劫持"></a>问题46：运营商（或其他）网络劫持</h3><h1 id="APT原理"><a href="#APT原理" class="headerlink" title="APT原理"></a>APT原理</h1><p>APT（高级持续性威胁）的原理是通过利用先进的技术和技巧，对目标系统和网络进行长期、隐蔽的攻击，从而获取机密信息、控制系统或进行破坏。</p>
+<p>APT攻击通常包括以下几个步骤：</p>
+<ol>
+<li>针对目标进行信息搜集：攻击者通过各种手段（如扫描、社会工程学等）获取目标机器和网络的信息，包括系统漏洞、安全配置、网络拓扑结构、用户信息等。</li>
+<li>利用漏洞进行入侵：攻击者利用先进的攻击技术（如零日漏洞、木马程序、社会工程学攻击等）对目标系统进行入侵。</li>
+<li>建立控制通道：攻击者通过植入恶意程序或利用合法的系统服务建立控制通道，以便后续的攻击。</li>
+<li>滞留攻击：攻击者在网络中长期滞留，不断地搜集信息、寻找新的漏洞和攻击机会。</li>
+<li>数据窃取或破坏：一旦攻击者获得所需的信息或控制权，就可能对目标系统和网络进行数据窃取或破坏。</li>
+</ol>
+<p>APT的攻击过程通常需要长达数月至数年的时间，攻击者极为隐蔽，很难被发现和防范。因此，APT被认为是一种非常危险的网络攻击形式。</p>
+<h1 id="二、计网"><a href="#二、计网" class="headerlink" title="二、计网"></a>二、计网</h1><p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230619125601482.png"></p>
 <p>TCP头部格式，重要部分：</p>
 <blockquote>
 <p><strong>序列号</strong>：在建立连接时由计算机生成的随机数作为其初始值，通过 SYN 包传给接收端主机，每发送一次数据，就「累加」一次该「数据字节数」的大小。<strong>用来解决网络包乱序问题。</strong></p>
@@ -463,10 +499,27 @@
 <p>2.SYN队列占满，则启动cookie，net.ipv4.tcp_syncookies &#x3D; 1</p>
 </blockquote>
 <p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/lFnyBaaP3f0eNcKGW5RtCg">图解TCP</a></p>
-<h1 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h1><h2 id="找回密码的地方，存在的漏洞？"><a href="#找回密码的地方，存在的漏洞？" class="headerlink" title="-找回密码的地方，存在的漏洞？"></a>-找回密码的地方，存在的漏洞？</h2><p>1.用户凭证暴力破解<br>1.1 密码找回的凭证太弱，如只需要填入一个四位或者六位的纯数字，就可以重置密码，导致可以暴力破解。</p>
+<h1 id="补充1"><a href="#补充1" class="headerlink" title="补充1"></a>补充1</h1><h2 id="javascript"><a href="#javascript" class="headerlink" title="javascript"></a>javascript</h2><p>js，目的是前端验证；是一门解释性语言、动态语言；类似于c和java的语法结构、严格区分大小写、基于原型的面向对象。</p>
+<p><strong>使用方式：</strong></p>
+<ul>
+<li>标签引用</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;  alert(&quot;Hello,World!&quot;); &lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>文件引用 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">main.html中：</span><br><span class="line">&lt;script src=&quot;main.js&quot;&gt;&lt;/script&gt;</span><br><span class="line">而main.js:</span><br><span class="line">alert(&quot;Hello,World!&quot;);</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><strong>输出：</strong></p>
+<p>1.f12的控制台</p>
+<blockquote>
+<p>consloe.log(“日志”)&#x2F;info&#x2F;warn</p>
+</blockquote>
+<h1 id="补充2"><a href="#补充2" class="headerlink" title="补充2"></a>补充2</h1><h2 id="找回密码的地方，存在的漏洞？"><a href="#找回密码的地方，存在的漏洞？" class="headerlink" title="-找回密码的地方，存在的漏洞？"></a>-找回密码的地方，存在的漏洞？</h2><p>1.用户凭证暴力破解<br>1.1 密码找回的凭证太弱，如只需要填入一个四位或者六位的纯数字，就可以重置密码，导致可以暴力破解。</p>
 <p>2.返回凭证<br>2.1 url返回验证码及token（找回密码凭证发到邮箱中，url中包含用户信息以及凭证，但是这个凭证可以重置任何用户）</p>
 <p>2.2 密码找回凭证在页面中（通过密保问题找回密码、找回密码的答案在网页的源代码中）</p>
 <p>2.3 返回短信验证码</p>
+<p>（抓包更改）</p>
 <p>3.邮箱弱token<br>3.1 时间戳的md5（Unix时间戳）<br>3.2 用户名<br>3.3 服务器时间</p>
 <p>4.用户凭证有效性<br>4.1 短信验证码<br>4.2 邮箱token<br>4.3 重置密码token</p>
 <p>5.重新绑定<br>5.1 手机绑定（任意用户绑上自己可控的安全手机，就可以重置任意人的手机号码了）<br>5.2 邮箱绑定</p>
@@ -477,9 +530,16 @@
 <p>10.注入<br>10.1 在找回密码出存在注入漏洞</p>
 <p>11.Token生成<br>11.1 Token生成可控</p>
 <p>12.注册覆盖<br>12.1 注册重复的用户名（比如注册A，返回用户已存在，把已存在的状态修改为可注册，填写信息提交注册，就可以覆盖A账号）</p>
-<p>13.session覆盖<br>————————————————<br>版权声明：本文为CSDN博主「ihszg」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_45663905/article/details/108429837">https://blog.csdn.net/weixin_45663905/article/details/108429837</a></p>
+<p>13.session覆盖</p>
+<p>————————————————<br>版权声明：本文为CSDN博主「ihszg」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_45663905/article/details/108429837">https://blog.csdn.net/weixin_45663905/article/details/108429837</a></p>
+<p>手机号找回密码，但是验证次数频繁会限制，</p>
+<p>尝试在手机号后面添加不为数字的字符，查看是否过滤</p>
 <h2 id="订单信息的逻辑漏洞"><a href="#订单信息的逻辑漏洞" class="headerlink" title="订单信息的逻辑漏洞"></a>订单信息的逻辑漏洞</h2><p>越权</p>
-<p>改参数</p>
+<p>改参数:</p>
+<blockquote>
+<p>低级分换取高积分商品：选取低级分礼物兑换，提交抓包，改编号为高积分</p>
+<p>支付页面的金额、数量(负数)</p>
+</blockquote>
 <h2 id="http传输过程中存在的安全隐患"><a href="#http传输过程中存在的安全隐患" class="headerlink" title="http传输过程中存在的安全隐患"></a>http传输过程中存在的安全隐患</h2><p>明文传输；</p>
 <p>篡改</p>
 <h2 id="会员系统漏洞"><a href="#会员系统漏洞" class="headerlink" title="会员系统漏洞"></a>会员系统漏洞</h2><p>个人中心的xss、修改信息</p>
@@ -493,6 +553,143 @@
 <p>然而，解析器对注释的处理方式是将注释内容完全忽略，不会将其视为SQL代码的一部分。这为攻击者提供了一种机会，利用注释符号将恶意代码嵌入SQL语句中，并确保其在语法解析阶段不会引发错误。</p>
 </blockquote>
 <p>例子，万能密码，就是利用了内联注释。</p>
+<h2 id="验证码爆破"><a href="#验证码爆破" class="headerlink" title="验证码爆破"></a>验证码爆破</h2><ul>
+<li>验证码暴力破解<ul>
+<li>工具<ul>
+<li><code>Burpsuite</code></li>
+<li><code>Hydra</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>验证码时间、次数测试<ul>
+<li>重复提交携带验证码的数据包，查看返回包，判断次数</li>
+</ul>
+</li>
+<li>验证码客户端回显测试<ul>
+<li>抓包测试，是否有回显，验证码是否会被返回</li>
+</ul>
+</li>
+<li>验证码绕过测试<ul>
+<li>抓包，删除验证码字段，查看是否可以成功发送</li>
+<li>抓包，正常流程下，记录验证码后的数据包，替换目标包中内容，直接发送，查看是否可以直接绕过验证码</li>
+</ul>
+</li>
+</ul>
+<h2 id="csrf-xss-xxe"><a href="#csrf-xss-xxe" class="headerlink" title="csrf\xss\xxe"></a>csrf\xss\xxe</h2><p>xss:跨站脚本攻击，将输入构造成恶意代码，执行时，会实现窃取用户信息等攻击</p>
+<p>修复：实体字符转义、htttponly 禁止js读取cookie、输入时校验、浏览器与we应用端采用相同字符编码</p>
+<p>csrf：跨站请求伪造攻击</p>
+<p>修复：token、二次密码referer校验</p>
+<p>xxe:xml外部实体攻击</p>
+<p>修复：xml解析库在调用时严格禁止对外部实体解析</p>
+<h2 id="java反序列化"><a href="#java反序列化" class="headerlink" title="java反序列化"></a>java反序列化</h2><p>java中的objectoutputstram类的writeobject()方法实现序列化，将对象转化成字节流，便于保存和传输</p>
+<h2 id="shiro反序列化"><a href="#shiro反序列化" class="headerlink" title="shiro反序列化"></a>shiro反序列化</h2><p>apache shrio提供的remember功能，用户登录成功会生成加密并编码的cookie。服务器对此的处理方式是，获取cookie-&gt;base64解码-&gt;aes解密-&gt;反序列化校验</p>
+<p>漏洞利用：aes密钥已知，将恶意代码进行序列化-&gt;加密-&gt;base64编码，形成新cookie。让服务器解析</p>
+<h2 id="ips和ids区别"><a href="#ips和ids区别" class="headerlink" title="ips和ids区别"></a>ips和ids区别</h2><p>​	ips:入侵防御系统，一个安全设施，监视网络及设备网络资料传输行为，即时中断、调整异常传输行为。位于防火墙和网络设备之间。具有检测已知和未知攻击并具有成功防止攻击的能力</p>
+<p>ids：入侵检测系统，部署在网络内部，对内部攻击无能为力，无法反击网络攻击。（基于数据包嗅探技术）</p>
+<h1 id="建立隧道"><a href="#建立隧道" class="headerlink" title="建立隧道"></a>建立隧道</h1><p>一个口子，从外网到内部，即端口转发。</p>
+<p>将内网靶机的xxxx:3389端口转发到边界机的yyyy:8888端口；远程连接边界机</p>
+<h2 id="shell-x2F-webshell"><a href="#shell-x2F-webshell" class="headerlink" title="shell&#x2F;webshell"></a>shell&#x2F;webshell</h2><p>shell:</p>
+<blockquote>
+<p>1.主机的管理员权限(powershell&#x2F;root) </p>
+<p>或</p>
+<ol start="2">
+<li>交互接口，如windows的cmd与linux的终端</li>
+</ol>
+</blockquote>
+<p>webshell:后门，木马</p>
+<h1 id="三、爬虫"><a href="#三、爬虫" class="headerlink" title="三、爬虫"></a>三、爬虫</h1><p>目的是访问网页，提取感兴趣的内容并保存</p>
+<p>流程：</p>
+<p>1.先访问默认url，发出http请求</p>
+<p>2.接收响应内容，解析html结构，提取目标字段</p>
+<p>3.查找网页中的链接，放入待访问队列</p>
+<p>4.提取出访问队列的一个url，并发出http请求</p>
+<p>5.重复2,3步骤</p>
+<h2 id="反爬虫"><a href="#反爬虫" class="headerlink" title="反爬虫"></a>反爬虫</h2><p>robots.txt 指定了可以爬虫的url。</p>
+<p>ua检测:可能使用默认或自定义的User-Agent标识</p>
+<p>ip的频率限制</p>
+<p>验证码验证</p>
+<h1 id="四、风险评估"><a href="#四、风险评估" class="headerlink" title="四、风险评估"></a>四、风险评估</h1><p>三要素：</p>
+<blockquote>
+<p>资产：资产价值</p>
+<p>威胁：威胁主体、影响对象、出现频率、动机等</p>
+<p>脆弱性：资产弱点的严重程度</p>
+</blockquote>
+<p>准备阶段：资产识别、威胁识别、脆弱性识别</p>
+<p>已有安全措施的确认</p>
+<p>风险识别：</p>
+<p>​	风险计算-&gt;</p>
+<h1 id="五、应急响应"><a href="#五、应急响应" class="headerlink" title="五、应急响应"></a>五、应急响应</h1><p>PDCERF模型</p>
+<ul>
+<li>Prepare（准备）：准备用来检测的工具和人</li>
+<li>Detection（检测）：紧急事件监测：包括防火墙、系统、web服务器、IDS&#x2F;WAF&#x2F;SIEM中的日志，不正常或者是执行了越权操作的用户，甚至还有管理员的报告</li>
+<li>Containment（抑制）：首先先控制受害范围，不要让攻击的影响继续蔓延到其他的IT资产和业务环境，切记不要直接一股脑的投入全部精力到封堵后门。紧接着要做的是去寻找根源原因，彻底解决，封堵攻击源，把业务恢复到更张水平</li>
+<li>Eradication（根除）</li>
+<li>Recover（恢复）</li>
+<li>Follow-Up（跟踪）：根据各种监控去确定没有其他的攻击行为和攻击向量，紧接着就是开会反省此次事件，写报告，持续改进工作流程和工作缓解</li>
+</ul>
+<h1 id="六、DDOS"><a href="#六、DDOS" class="headerlink" title="六、DDOS"></a>六、DDOS</h1><p>最基本的攻击方式：利用合理的服务请求来占用过多的服务资源，从而使合法用户无法得到服务的响应。</p>
+<p>被攻击的服务器有以下症状：1、被攻击主机上有大量等待的TCP连接；2、网络中充斥着大量的无用的数据包，源地址为假；3、制造高流量无用数据，造成网络拥塞，使受害主机无法正常和外界通讯；4、利用受害主机提供的服务或传输协议上的缺陷，反复高速的发出特定的服务请求，使受害主机无法及时处理所有正常请求；5、严重时会造成系统死机</p>
+<p>防御预案：</p>
+<ul>
+<li>网络设备设施<ul>
+<li>拼带宽，加大带宽，但是成本太高</li>
+<li>使用硬件防火墙</li>
+<li>选用高性能设备</li>
+</ul>
+</li>
+<li>抗D思想和方案<ul>
+<li>负载均衡：分流</li>
+<li>花钱买流量清洗服务</li>
+<li>CDN：web层，比如cc攻击：分流</li>
+<li>限制连接和请求</li>
+<li>分布式集群防御</li>
+<li>高防：防大部分攻击，udp、大型的cc攻击</li>
+</ul>
+</li>
+<li>预防为主<ul>
+<li>系统漏洞</li>
+<li>系统资源优化：</li>
+<li>过滤不必要的服务和端口</li>
+<li>限制特定流量：检查访问来源做适当限制</li>
+</ul>
+</li>
+</ul>
+<h1 id="七、webshell"><a href="#七、webshell" class="headerlink" title="七、webshell"></a>七、webshell</h1><p>webshell客户端 用于webshell后门和攻击者之间的通信程序，我们可以通过webshell客户端的流量来判断服务器上是否存在Webshell后门。</p>
+<h2 id="流量特征"><a href="#流量特征" class="headerlink" title="流量特征"></a>流量特征</h2><p><strong>中国菜刀</strong>：流量特征比较明显，2011,2014版本中，流量中有的php代码，asp代码是明文形式，jsp代码有固定格式，容易被检测出来。2016版本隐蔽性增强，对php，asp代码增加了混淆，还对ASP代码进行了unicode编码</p>
+<p><strong>蚁剑</strong>：可以对流量进行加密、混淆。但是有些关键代码没有被加密，如：PHP中的ini_set；ASP中的OnError，response等</p>
+<p>蚁剑PHP类WebShell链接流量：</p>
+<p>对php中的某些代码没有加密，例如ini_set，set_time_limit。比较容易被识别</p>
+<p>蚁剑ASP类WebShell：</p>
+<p>OnError ResumeNext，response等没有被加密，是明文的形式，比较容易识别</p>
+<p>execute在蚁剑中被打断混淆了，变成了拼接形式Ex”&amp;cHr(101)&amp;”cute</p>
+<p>蚁剑绕过特征流量：</p>
+<p>蚁剑混淆加密后还有一个比较明显的特征，即为参数名大多以“_0x…&#x3D;”这种形式<br>————————————————<br>版权声明：本文为CSDN博主「Buffedon」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_46684578/article/details/118725385">https://blog.csdn.net/weixin_46684578/article/details/118725385</a></p>
+<h1 id="八、MySQL"><a href="#八、MySQL" class="headerlink" title="八、MySQL"></a>八、MySQL</h1><h2 id="写shell"><a href="#写shell" class="headerlink" title="写shell"></a>写shell</h2><ul>
+<li><code>select &#39;&lt;?php phpinfo()&gt; into outfile &#39;D:/shelltest.php&#39;</code></li>
+<li><code>dumpfile</code></li>
+<li><code>file_put_contents</code></li>
+</ul>
+<h2 id="写shell的条件？"><a href="#写shell的条件？" class="headerlink" title="写shell的条件？"></a>写shell的条件？</h2><ul>
+<li><p>用户权限</p>
+</li>
+<li><p>目录读写权限</p>
+</li>
+<li><p>防止命令执行：<code>disable_functions</code>，禁止了<code>disable_functions=phpinfo,exec,passthru,shell_exec,system,proc_open,popen,curl_exec,curl_multi_exec,parse_ini_file,show_source</code>，但是可以用dl扩展执行命令或者ImageMagick漏洞 </p>
+</li>
+<li><p>open_basedir: 将用户可操作的文件限制在某目录下</p>
+</li>
+</ul>
+<h1 id="九、mongodb、redis未授权"><a href="#九、mongodb、redis未授权" class="headerlink" title="九、mongodb、redis未授权"></a>九、mongodb、redis未授权</h1><h1 id="十、安全加固"><a href="#十、安全加固" class="headerlink" title="十、安全加固"></a>十、安全加固</h1><p>安全加固服务流程是怎么样的？</p>
+<p>1、确定范围：确定资产范围，收集需要加固的信息系统涉及的主机、网络设备、数据库和中间件的信息，完成信息收集；</p>
+<p>2、制定方案：制定安全加固方案，对加固范围内的资产进行安全评估，确认安全现状，制定加固措施形成加固方案；</p>
+<p>3、确认与实施：与客户充分讨论安全加固方案、确认符合企业的需求的方案，实施安全加固方案；</p>
+<p>4、服务交付：输出安全加固报告，保护企业信息安全，保证修复后业务正常运转。</p>
+<p>安全加固主要有以下几个优势：</p>
+<p>1、定制化;根据客户资产情况和需求，量身定制安全加固方案；</p>
+<p>2、保证效果：安全加固方案及实施过程在实施前与客户充分讨论，保证实施效果；</p>
+<p>3、专业服务：提供远程服务，如客户需要可提供驻场服务，保证企业信息安全。</p>
+<p>安全加固可以做主机加固、数据库加固、中间件加固等服务。</p>
  
       <!-- reward -->
       
@@ -562,7 +759,7 @@
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%89%8D%E7%AB%AF%E8%B7%A8%E5%9F%9F/" rel="tag">前端跨域</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5/" rel="tag">同源策略</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BD%91%E5%AE%89/" rel="tag">网安</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/APT/" rel="tag">APT</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DDOS/" rel="tag">DDOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javascript/" rel="tag">javascript</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/shell-webshell/" rel="tag">shell&#x2F;webshell</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/webshell/" rel="tag">webshell</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%89%8D%E7%AB%AF%E8%B7%A8%E5%9F%9F/" rel="tag">前端跨域</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5/" rel="tag">同源策略</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AE%89%E5%85%A8%E5%8A%A0%E5%9B%BA/" rel="tag">安全加固</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/" rel="tag">应急响应</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%88%AC%E8%99%AB/" rel="tag">爬虫</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BD%91%E5%AE%89/" rel="tag">网安</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%A3%8E%E9%99%A9%E8%AF%84%E4%BC%B0/" rel="tag">风险评估</a></li></ul>
 
     </footer>
   </div>
@@ -570,19 +767,19 @@
    
   <nav class="article-nav">
     
-      <a href="/2023/05/13/vulfocus/" class="article-nav-link">
+      <a href="/2023/05/13/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" class="article-nav-link">
         <strong class="article-nav-caption">上一篇</strong>
         <div class="article-nav-title">
           
-            vulfocus
+            渗透测试
           
         </div>
       </a>
     
     
-      <a href="/2023/05/13/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" class="article-nav-link">
+      <a href="/2023/05/12/%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">渗透测试</div>
+        <div class="article-nav-title">第一篇博客</div>
       </a>
     
   </nav>
