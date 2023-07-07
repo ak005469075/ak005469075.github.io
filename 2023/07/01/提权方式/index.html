@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.6k</span>
+            <span class="post-count">1.7k</span>
         </span>
     </span>
 
@@ -139,7 +139,7 @@
 <h2 id="2-1-2提权方式"><a href="#2-1-2提权方式" class="headerlink" title="2.1.2提权方式"></a>2.1.2提权方式</h2><p>一般通过找对应版本的exp，去进行利用</p>
 <p>利用cs工具，监听成功后，去用插件提权</p>
 <p>msf</p>
-<h1 id="Mysql提权"><a href="#Mysql提权" class="headerlink" title="Mysql提权"></a>Mysql提权</h1><h2 id="udf"><a href="#udf" class="headerlink" title="udf"></a>udf</h2><p>拿下一台windows服务器的webshell时，由于webshell权限较低，有些操作无法进行，而此时本地恰好存在mysql数据库，那么udf可能就派上用场了；</p>
+<h1 id="2-2Mysql提权"><a href="#2-2Mysql提权" class="headerlink" title="2.2Mysql提权"></a>2.2Mysql提权</h1><h2 id="udf"><a href="#udf" class="headerlink" title="udf"></a>udf</h2><p>拿下一台windows服务器的webshell时，由于webshell权限较低，有些操作无法进行，而此时本地恰好存在mysql数据库，那么udf可能就派上用场了；</p>
 <p>尝试udf提权，其实质就是<code>以MySQL的身份执行系统命令</code></p>
 <h3 id="条件"><a href="#条件" class="headerlink" title="条件"></a>条件</h3><p>1.secure_file_priv为空，有导入导出权限</p>
 <p>2.有上传目录</p>
@@ -198,6 +198,7 @@
 <p>其实如果目标机设置了<strong>给MySQL的启动用户赋予完全控制mof文件夹以及子文件夹的权限</strong>的话，那就会写入成功。</p>
 <p><strong>同时成功创建了test01管理员组用户</strong></p>
 <p>其实写可以利用现成的mof.php文件，上传上去后，访问，进行一系列输入，自动写入mof文件。</p>
+<h1 id="2-3linux提权"><a href="#2-3linux提权" class="headerlink" title="2.3linux提权"></a>2.3linux提权</h1><p>Suid提权：普通用户去执行 root 权限的操作，而不需要知道 root 的密码<br>第三方软件提权</p>
  
       <!-- reward -->
       
@@ -275,17 +276,17 @@
    
   <nav class="article-nav">
     
-      <a href="/2023/07/01/%E5%AE%89%E5%85%A8%E4%BA%A7%E5%93%81/" class="article-nav-link">
+      <a href="/2023/07/01/%E5%AE%9E%E6%88%98/" class="article-nav-link">
         <strong class="article-nav-caption">上一篇</strong>
         <div class="article-nav-title">
           
-            安全产品
+            实战记录
           
         </div>
       </a>
     
     
-      <a href="/2023/06/29/%E6%BC%8F%E6%B4%9E%E6%80%BB%E7%BB%93/" class="article-nav-link">
+      <a href="/2023/07/01/%E6%BC%8F%E6%B4%9E%E6%80%BB%E7%BB%93/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
         <div class="article-nav-title">漏洞汇总</div>
       </a>

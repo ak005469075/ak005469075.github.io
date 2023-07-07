@@ -83,8 +83,8 @@
     </header>
      
     <div class="article-meta">
-      <a href="/2023/06/29/%E6%BC%8F%E6%B4%9E%E6%80%BB%E7%BB%93/" class="article-date">
-  <time datetime="2023-06-28T16:21:20.000Z" itemprop="datePublished">2023-06-29</time>
+      <a href="/2023/07/01/%E6%BC%8F%E6%B4%9E%E6%80%BB%E7%BB%93/" class="article-date">
+  <time datetime="2023-06-30T16:21:20.000Z" itemprop="datePublished">2023-07-01</time>
 </a> 
   <div class="article-category">
     <a class="article-category-link" href="/categories/%E6%BC%8F%E6%B4%9E/">漏洞</a> / <a class="article-category-link" href="/categories/%E6%BC%8F%E6%B4%9E/%E4%B8%AD%E9%97%B4%E4%BB%B6%E6%BC%8F%E6%B4%9E/">中间件漏洞</a>
@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">5.7k</span>
+            <span class="post-count">6.5k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">21 分钟</span>
+            <span class="post-count">24 分钟</span>
         </span>
     </span>
 </div>
@@ -130,6 +130,10 @@
 <h1 id="SSRF"><a href="#SSRF" class="headerlink" title="SSRF"></a>SSRF</h1><p><code>...&amp;url=http://xxx</code></p>
 <p><code>...&amp;url=file:///etc/passwd</code></p>
 <p>修复方案：限制协议和target</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">原因</span><br><span class="line">服务端提供了从其他服务器应用获取数据的功能且没有对目标地址做过滤与限制。</span><br><span class="line">防御</span><br><span class="line">1.限制协议：仅允许http和https请求。</span><br><span class="line">2.限制IP：避免应用被用来获取内网数据，攻击内网。</span><br><span class="line">3.限制端口:限制请求的端口为http常用的端口，比如，80,443,8080,8090。</span><br><span class="line">4.过滤返回信息:验证远程服务器对请求的响应是比较简单的方法。</span><br><span class="line">统一错误信息:免用户可以根据错误信息来判断远端服务器的端口状态。</span><br><span class="line">有回显</span><br><span class="line">直接通过页面加载出目标资产，可先尝试加载http://www.baidu.com 页面确认有ssrf，如果成功的话，可进一步将百度换成内网IP，通过fuzz扫描内网资产。</span><br><span class="line">无回显</span><br><span class="line">1.先配合dnslog平台，测试dnslog平台能否获取到服务器的访问记录，如果没有对应记录，也可能是服务器不出网造成的，利用时可以通过请求响应时间判断内网资产是否存在，然后再利用内网资产漏洞（比如redis以及常见可RCE的web框架）证明漏洞的有效性。</span><br><span class="line">&quot;... &lt;!ENTITY test SYSTEM &quot;SSRF.xxxx.ceye.io\\aa&quot;&gt; ...&quot;</span><br><span class="line">&quot;... &lt;!ENTITY test SYSTEM &quot;SSRF.lkun0l.dnslog.cn\\aa&quot;&gt; ...&quot;</span><br><span class="line">2.使用burp的collaborator来进行尝试</span><br><span class="line">3.开启apache服务，在存在ssrf处访问http://10.1.1.200(本机服务地址)，查看服务器日志信息，打开日志确定是否被访问,确定是否存在ssrf漏洞。</span><br></pre></td></tr></table></figure>
+
+
+
 <h1 id="未授权访问"><a href="#未授权访问" class="headerlink" title="未授权访问"></a>未授权访问</h1><p>ldap匿名访问</p>
 <h1 id="逻辑漏洞"><a href="#逻辑漏洞" class="headerlink" title="逻辑漏洞"></a>逻辑漏洞</h1><h2 id="账号注册"><a href="#账号注册" class="headerlink" title="账号注册"></a>账号注册</h2><p>任意注册：验证码仅4位数字，可以爆破</p>
 <p>修复方案：增加验证码长度，且超过一定次数重置</p>
@@ -153,6 +157,8 @@
 <h1 id="xss"><a href="#xss" class="headerlink" title="xss"></a>xss</h1><p>日记或者留言（存储性xss）</p>
 <p>构造短连接，用xss平台接收，可以接收到浏览者的cookie等信息</p>
 <h3 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h3><p>hacker101里的，postbook:</p>
+<h1 id="文件上传"><a href="#文件上传" class="headerlink" title="文件上传"></a>文件上传</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">文件上传漏洞是指文件上传功能没有对上传的文件做合理严谨的过滤，导致用户可以利用此功能，上传能被服务端解析执行的文件，并通过此文件获得执行服务端命令的能力</span><br><span class="line">通过利用任意文件上传漏洞可以最快获取WebShell，一般常见有三种情况：</span><br><span class="line">1.站点没有任何防护，且上传点未做安全校验，则可直接上传WebShell文件。</span><br><span class="line">2.站点存在简单防护：</span><br><span class="line">前端校验文件后缀时，可先传允许的文件类型，然后抓包修改文件后缀。</span><br><span class="line">MIME校验时，抓包修改Conten-Type为允许MIME类型。</span><br><span class="line">3.CMS等的通用任意文件上传漏洞：绕过黑白名单、绕过文件内容检测、CMS的文件上传漏洞</span><br><span class="line">绕过waf</span><br><span class="line">1.数据溢出</span><br><span class="line">2.数据阶段：%00截断    </span><br><span class="line">原理：C语言中字符串的结束标识符%00是结束符号，而PHP就是C写的，所以继承了C的特性，所以判断为%00是结束符号不会继续往后执行</span><br><span class="line">3.去掉双引号绕过</span><br><span class="line">4.文件名后缀大小写绕过</span><br><span class="line"></span><br><span class="line">文件上传中include和require的区别</span><br><span class="line">1.加载失败的处理方式及不同</span><br><span class="line">include引入文件失败后会继续执行</span><br><span class="line">require失败后停止执行</span><br><span class="line">2.</span><br><span class="line">Include是有条件包含函数</span><br><span class="line">include &#x27;file.php&#x27;; //file.php不会被引入</span><br><span class="line">Require是无条件包含函数</span><br><span class="line">require &#x27;file.php&#x27;; //file.php将会被引入</span><br><span class="line">3.文件引用方式</span><br><span class="line">Include有返回值</span><br><span class="line">Require没有返回值</span><br></pre></td></tr></table></figure>
+
 <h1 id="目录遍历"><a href="#目录遍历" class="headerlink" title="目录遍历"></a>目录遍历</h1><p>原理，利用，防御</p>
 <h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p>运行应用程序的服务器上的任意文件。 这可能包括应用程序代码和数据，后端系统的登录信息以及敏感的操作系统文件。</p>
 <h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>比如，web显示某些图片时，</p>
@@ -463,7 +469,7 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/06/29/%E6%BC%8F%E6%B4%9E%E6%80%BB%E7%BB%93/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/07/01/%E6%BC%8F%E6%B4%9E%E6%80%BB%E7%BB%93/" alt="微信分享二维码">
     </div>
 </div>
 
