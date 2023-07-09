@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">15.5k</span>
+            <span class="post-count">16k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">56 分钟</span>
+            <span class="post-count">58 分钟</span>
         </span>
     </span>
 </div>
@@ -245,6 +245,34 @@
 <p>net 查看网络Window服务,net start </p>
 <p>netstat 显示网络连接的信息，包括显示活动的TCP连接、路由器和网络接口信息，是一个监控TCP&#x2F;IP网络非常有用的工具，可以让用户得知系统中目前都有哪些网络连接正常。 netstat &#x2F;?获得帮助</p>
 </blockquote>
+<h2 id="8-Cookie、Session、token"><a href="#8-Cookie、Session、token" class="headerlink" title="8.Cookie、Session、token"></a>8.Cookie、Session、token</h2><h3 id="cookie"><a href="#cookie" class="headerlink" title="cookie"></a>cookie</h3><p>Cookie:存在于客户端，保存用户信息；</p>
+<p><strong>作用：</strong></p>
+<p>会话管理、个性化、追踪(用户行为)</p>
+<p><strong>位置：</strong></p>
+<p>内存（浏览器维护，浏览器关闭就消失）；硬盘（有过期时间）</p>
+<p><strong>格式</strong></p>
+<p><code>Set-Cookie: &quot;&lt;name&gt;=&lt;value&gt;[;domain=&lt;domain_name&gt;][;path=&lt;some_path&gt;][;expires=&lt;date&gt;][;&lt;Max-Age&gt;=&lt;age&gt;][;HttpOnly][;secure]&quot;</code></p>
+<h3 id="session"><a href="#session" class="headerlink" title="session"></a>session</h3><p>Session:保存于服务端，服务器针对多用户，一个用户对应一个session</p>
+<p><strong>作用：跟踪会话</strong></p>
+<p><strong>位置</strong></p>
+<p>cookie中的sessionid</p>
+<p>或url重写</p>
+<h3 id="token"><a href="#token" class="headerlink" title="token"></a>token</h3><p>token:<strong>无状态</strong>，<strong>支持跨域</strong>，有效防御csrf，解决session依赖于单个web服务器问题</p>
+<p>是一个全局唯一的字符串，用来唯一识别一个客户端</p>
+<p><strong>原理</strong></p>
+<p>客户端在账户密码登录之后</p>
+<p>服务端接收请求，验证账户密码，成功后，响应一个token</p>
+<p>客户端接收到token，每次向服务器请求资源时，就会携带token过去</p>
+<p>服务端验证token，有效则返回请求数据</p>
+<h4 id="JSON-Web-Token-（JWT）"><a href="#JSON-Web-Token-（JWT）" class="headerlink" title="JSON Web Token （JWT）"></a><strong>JSON Web Token （JWT）</strong></h4><p>通常可以称为 Json 令牌，是<code>RFC 7519</code> 中定义的用于安全的将信息作为 Json 对象进行传输的一种规范，这个规范允许我们使用JWT在用户和服务器之间传递安全可靠的信息</p>
+<p>一个JWT实际上就是一个字符串，它由三部分组成：头部、载荷与签名；<strong>一般针对jwt的攻击是针对载荷。</strong></p>
+<p>载荷部分：</p>
+<p>一般添加用户的相关信息或其他业务需要的必要信息<br>不建议添加敏感信息，因为该部分在客户端可解密<br>进行base64编码，得到载荷</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123; &quot;iss&quot;: &quot;JWT Builder&quot;, </span><br><span class="line">  &quot;iat&quot;: 1416797419, </span><br><span class="line">  &quot;exp&quot;: 1448333419, </span><br><span class="line">  &quot;aud&quot;: &quot;www.example.com&quot;, </span><br><span class="line">  &quot;sub&quot;: &quot;aaa@example.com&quot;, </span><br><span class="line">  &quot;Email&quot;: &quot;aaa@example.com&quot;, </span><br><span class="line">  &quot;Role&quot;: [ &quot;admin&quot;, &quot;user&quot; ] </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>作用</strong></p>
+<p>认证、信息交换</p>
+<hr>
 <h1 id="二、网安"><a href="#二、网安" class="headerlink" title="二、网安"></a>二、网安</h1><h2 id="1-OSI七层模型"><a href="#1-OSI七层模型" class="headerlink" title="1.OSI七层模型"></a>1.OSI七层模型</h2><ol>
 <li><p>物理层（Physical Layer）：<strong>将接收到的数据转化为比特流</strong>，主要关注传输媒介、电压、电缆规范、接口等问题。</p>
 <p><strong>比特</strong></p>
@@ -1056,7 +1084,7 @@
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/APT/" rel="tag">APT</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DDOS/" rel="tag">DDOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javascript/" rel="tag">javascript</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/shell-webshell/" rel="tag">shell&#x2F;webshell</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/webshell/" rel="tag">webshell</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%89%8D%E7%AB%AF%E8%B7%A8%E5%9F%9F/" rel="tag">前端跨域</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5/" rel="tag">同源策略</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AE%89%E5%85%A8%E5%8A%A0%E5%9B%BA/" rel="tag">安全加固</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/" rel="tag">应急响应</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%88%AC%E8%99%AB/" rel="tag">爬虫</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BD%91%E5%AE%89/" rel="tag">网安</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%A3%8E%E9%99%A9%E8%AF%84%E4%BC%B0/" rel="tag">风险评估</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/APT/" rel="tag">APT</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DDOS/" rel="tag">DDOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cookie-session-token-jwt/" rel="tag">cookie&#x2F;session&#x2F;token(jwt)</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javascript/" rel="tag">javascript</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/shell-webshell/" rel="tag">shell&#x2F;webshell</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/webshell/" rel="tag">webshell</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%89%8D%E7%AB%AF%E8%B7%A8%E5%9F%9F/" rel="tag">前端跨域</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5/" rel="tag">同源策略</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AE%89%E5%85%A8%E5%8A%A0%E5%9B%BA/" rel="tag">安全加固</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/" rel="tag">应急响应</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%88%AC%E8%99%AB/" rel="tag">爬虫</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BD%91%E5%AE%89/" rel="tag">网安</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%A3%8E%E9%99%A9%E8%AF%84%E4%BC%B0/" rel="tag">风险评估</a></li></ul>
 
     </footer>
   </div>

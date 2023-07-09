@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">3.6k</span>
+            <span class="post-count">3.9k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">13 分钟</span>
+            <span class="post-count">14 分钟</span>
         </span>
     </span>
 </div>
@@ -120,9 +120,16 @@
     <div class="article-entry" itemprop="articleBody">
        
   <h2 id="一、基本流程"><a href="#一、基本流程" class="headerlink" title="一、基本流程"></a>一、基本流程</h2><p>目标确认-&gt;信息收集-&gt;漏洞发现-&gt;漏洞利用-&gt;权限维持、内网渗透-&gt;目标获取、痕迹清理</p>
-<h3 id="1、目标确认"><a href="#1、目标确认" class="headerlink" title="1、目标确认"></a>1、目标确认</h3><p>要获取到什么权限</p>
-<p>2.信息收集</p>
-<p>在信息收集中，最主要的就是收集<strong>服务器的配置信息和网站的敏感信息</strong>，其中包括<strong>域名及子域名信息﹑目标网站系统﹑CMS指纹﹑目标网站真实IP﹑开放的端口等</strong>。换句话说，只要是与目标网站相关的信息，我们都应该去尽量搜集。</p>
+<h3 id="1、目标确认"><a href="#1、目标确认" class="headerlink" title="1、目标确认"></a>1、目标确认</h3><p>渗透测试的目标和深入程度</p>
+<p>dns&#x2F;cms侦查、子域名枚举、端口扫描、目录遍历、google</p>
+<p>社工:弱口令、数据泄露、whois、邮箱、github、代码注释、钓鱼（邮件、网站）</p>
+<p>公开漏洞：系统漏洞、web漏洞</p>
+<p>漏洞挖掘：服务器、网站、公众号、小程序、app</p>
+<h3 id="2-信息收集"><a href="#2-信息收集" class="headerlink" title="2.信息收集"></a>2.信息收集</h3><p>在信息收集中，最主要的就是收集<strong>服务器的配置信息和网站的敏感信息</strong>，其中包括<strong>域名及子域名信息、目标网站系统、目录扫描(御剑、&#x2F;.git&#x2F;.svn)、CMS指纹﹑目标网站真实IP、C段扫描、端口扫描、中间件版本</strong>。换句话说，只要是与目标网站相关的信息，我们都应该去尽量搜集。</p>
+<blockquote>
+<p>通过脚本语言如idnex.php，判断出网站类型</p>
+<p>.do、.action考虑Struts2漏洞</p>
+</blockquote>
 <p>基础设施枚举（获取公司在互联网和内部网上的位置；确定公司的安全措施）</p>
 <p>服务枚举（服务版本、服务信息；许多服务有版本历史记录，可以识别主机或服务器上安装的版本是否是真的或新的）</p>
 <p>主机枚举（确定该主机或服务器扮演什么角色以及它与哪些网络组件通信。此外，确定所用服务及用途，以及端口。）</p>
@@ -235,17 +242,18 @@
 </ul>
 <p>还有社工库。</p>
 </blockquote>
-<h2 id="2-漏洞环境搭建"><a href="#2-漏洞环境搭建" class="headerlink" title="2.漏洞环境搭建"></a>2.漏洞环境搭建</h2><p>linux系统LANMP、vulhub</p>
-<p>Windows系统WAMP</p>
-<p>安装一个phpstudy之后，去github找以下靶场，安装进对应www文件夹即可</p>
-<blockquote>
-<p>DVWA</p>
-<p>sql-labs</p>
-<p>xss-labs</p>
-<p>pikachu</p>
-</blockquote>
-<p>还有在线靶场如hack the box</p>
-<h2 id="3-渗透工具"><a href="#3-渗透工具" class="headerlink" title="3.渗透工具"></a>3.渗透工具</h2><h4 id="3-1-sqlmap"><a href="#3-1-sqlmap" class="headerlink" title="3.1 sqlmap"></a>3.1 sqlmap</h4><p>SQLMap是一个自动化的SQL注入工具，其主要功能是扫描、发现并利用给定URL的SQL注入漏洞，内置了很多绕过插件，支持的数据库是MySQL、Oracle、PostgreSQL、Microsoft SQL Server、Microsoft Access、IBM DB2、SQLite、Firebird、Sybase和SAP MaxDB。SQLMap采用了以下5种独特的SQL注入技术。</p>
+<p>具体方法，参考<a target="_blank" rel="noopener" href="http://t.csdn.cn/kz56q">csdn思源湖的鱼</a></p>
+<h3 id="3-渗透攻击"><a href="#3-渗透攻击" class="headerlink" title="3.渗透攻击"></a>3.渗透攻击</h3><p>专业的团队会综合以上所有的阶段收集回来的情报，特别是漏洞扫描结果，服务器的配置，防火墙的使用情况，通过分析确定可利用的和待挖掘的漏洞，选择针对性工具使用或开发。</p>
+<h4 id="漏洞挖掘和利用"><a href="#漏洞挖掘和利用" class="headerlink" title="漏洞挖掘和利用"></a>漏洞挖掘和利用</h4><p>验证漏洞是否存在，最终getshell或拿到管理后台</p>
+<p>owasp top10，web基本漏洞。</p>
+<h3 id="4-提权和后门"><a href="#4-提权和后门" class="headerlink" title="4.提权和后门"></a>4.提权和后门</h3><p><a target="_blank" rel="noopener" href="https://fishpond.blog.csdn.net/article/details/109450658">CSDN思源湖的鱼</a></p>
+<h3 id="5-内网攻击"><a href="#5-内网攻击" class="headerlink" title="5.内网攻击"></a>5.内网攻击</h3><p><a target="_blank" rel="noopener" href="https://fishpond.blog.csdn.net/article/details/117286294">CSDN思源湖的鱼</a></p>
+<h3 id="防护"><a href="#防护" class="headerlink" title="防护"></a>防护</h3><p>漏洞自查，周期性自扫；</p>
+<p>权限的检查</p>
+<p>代码审查</p>
+<p>敏感函数的使用</p>
+<p>WAF</p>
+<h2 id="渗透工具"><a href="#渗透工具" class="headerlink" title="渗透工具"></a>渗透工具</h2><h4 id="3-1-sqlmap"><a href="#3-1-sqlmap" class="headerlink" title="3.1 sqlmap"></a>3.1 sqlmap</h4><p>SQLMap是一个自动化的SQL注入工具，其主要功能是扫描、发现并利用给定URL的SQL注入漏洞，内置了很多绕过插件，支持的数据库是MySQL、Oracle、PostgreSQL、Microsoft SQL Server、Microsoft Access、IBM DB2、SQLite、Firebird、Sybase和SAP MaxDB。SQLMap采用了以下5种独特的SQL注入技术。</p>
 <p>● 基于布尔类型的盲注，即可以根据返回页面判断条件真假的注入。</p>
 <p>● 基于时间的盲注，即不能根据页面返回的内容判断任何信息，要用条件语句查看时间延迟语句是否已执行（即页面返回时间是否增加）来判断。</p>
 <p>● 基于报错注入，即页面会返回错误信息，或者把注入的语句的结果直接返回到页面中。</p>
@@ -258,6 +266,16 @@
 <h3 id="4-漏洞利用"><a href="#4-漏洞利用" class="headerlink" title="4.漏洞利用"></a>4.漏洞利用</h3><h4 id="sql注入"><a href="#sql注入" class="headerlink" title="sql注入"></a>sql注入</h4><p>拖库、提权（写文件webshell、MYSQL UDF、sqlserver xp_cmdshell）</p>
 <h4 id="xss"><a href="#xss" class="headerlink" title="xss"></a>xss</h4><p>打管理员cookie、beef框架攻击管理员客户端</p>
 <p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230603172605460.png"></p>
+<h2 id="漏洞环境搭建"><a href="#漏洞环境搭建" class="headerlink" title="漏洞环境搭建"></a>漏洞环境搭建</h2><p>linux系统LANMP、vulhub</p>
+<p>Windows系统WAMP</p>
+<p>安装一个phpstudy之后，去github找以下靶场，安装进对应www文件夹即可</p>
+<blockquote>
+<p>DVWA</p>
+<p>sql-labs</p>
+<p>xss-labs</p>
+<p>pikachu</p>
+</blockquote>
+<p>还有在线靶场如hack the box</p>
  
       <!-- reward -->
       

