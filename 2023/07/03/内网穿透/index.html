@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">3.9k</span>
+            <span class="post-count">4.1k</span>
         </span>
     </span>
 
@@ -146,7 +146,8 @@
 <p>net share 查看本机共享列表和可访问的域共享列表</p>
 <p>wmic share get name,path,status 查找共享列表</p>
 </blockquote>
-<h2 id="域环境"><a href="#域环境" class="headerlink" title="域环境"></a>域环境</h2><blockquote>
+<h2 id="域环境"><a href="#域环境" class="headerlink" title="域环境"></a>域环境</h2><h3 id="域控"><a href="#域控" class="headerlink" title="域控"></a>域控</h3><p>域模式下，至少有一台服务器负责每一台连入网络的电脑和用户的验证工作。</p>
+<blockquote>
 <p>whoami 查看当前权限</p>
 <p>whoami &#x2F;all 获取SID</p>
 <p>net user xxx &#x2F;domain 查询指定用户的详情信息</p>
@@ -257,13 +258,12 @@
 <p> 目的是坐飞机，但是要有机票(TGT)，去购票处(AS)先进行客户端认证一波，拿到TGT，登机时，检票口(TGS)要求出示机票(TGT)，之后，显示座位号(Ticket)，可以坐到座位上</p>
 </blockquote>
 <p>这个理解来自<a target="_blank" rel="noopener" href="http://t.csdn.cn/Ha6pl">CSDN思源湖的鱼</a></p>
-<h3 id="NTLM协议流程"><a href="#NTLM协议流程" class="headerlink" title="NTLM协议流程"></a>NTLM协议流程</h3><p>客户端-&gt;应用服务器									应用服务器-&gt;DC服务器</p>
-<blockquote>
-<p>客户端发起连接请求-&gt;							转发客户端连接请求-&gt;</p>
-<p>转发DC16字节挑战&lt;-								DC发送16字节的挑战&lt;-</p>
-<p>客户端返回24字节的响应-&gt;					转发客户端返回24字节的响应-&gt;</p>
-<p>若通过认证，则允许访问&lt;-					通过认证，则允许访问&lt;-</p>
-</blockquote>
+<h3 id="NTLM协议流程"><a href="#NTLM协议流程" class="headerlink" title="NTLM协议流程"></a>NTLM协议流程</h3><p>采用一种质询&#x2F;应答消息交换模式</p>
+<p>一、用户输入windows账号和密码登录客户端主机。客户端会缓存输入的密码哈希，原始密码被丢弃。成功登录的客户端windows的用户尝试访问服务器资源，发送请求，包含一个明文用户名。</p>
+<p>二、服务器接收该请求，生成16位的随机数，即Challenge，明文发送给对方，并自己保存。</p>
+<p>三、客户端收到challenge，用第一步保存的密码哈希值对其加密，将加密后的challenge发送给服务器。</p>
+<p>四、服务器收到加密的challenge，向DC发送针对客户端的验证请求。包含(客户端用户名、客户端密码<strong>哈希值加密的challenge</strong>和原始的challenge)</p>
+<p>五、DC根据用户名获取该账号的密码哈希值，对原始的challenge加密。比对发送的<strong>加密后的challenge</strong>，一致则通过，否则失败，DC将验证结果发送给服务器，并反馈给客户端。</p>
 <p><strong>NTLM协议的认证过程分为三步：</strong></p>
 <blockquote>
 <p>1、协商：主要用于确认双方协议版本（NTLM v1&#x2F;NTLM v2）</p>
@@ -273,7 +273,7 @@
 <blockquote>
 <p>ps：</p>
 <p>1、Challenge是Server产生的一个16字节的随机数，每次认证随机数都不同</p>
-<p>2、Response的表现形式是Net-NTLM Hash，它是由客户端提供的密码Hash加密Server返回Challenge产生的结果</p>
+<p>2、Response的表现形式是Net-NTLM Hash，它是由客户端提供的密码Hash加密+Server返回Challenge产生的结果(hash+challenge)</p>
 </blockquote>
 <p>NTLM Hash产生：假设我们的密码是admin，那么操作系统会将admin转换为十六进制，经过Unicode转换后，再调用MD4加密算法加密，这个加密结果的十六进制就是NTLM Hash。</p>
 <p>password &#x3D;&#x3D;&gt; hex &#x3D;&#x3D;&gt; Unicode &#x3D;&#x3D;&gt; MD4 &#x3D;&#x3D;&gt; NTLM Hash</p>
@@ -373,7 +373,7 @@
 <blockquote>
 <p>net time &#x2F;domain<br>就是hostname+域名 &#x2F;target:\\WIN-9JJK4CNGD41.xy.com</p>
 </blockquote>
-<p>4.可利用的服务cifs</p>
+<p>4.可利用的服务cifs(windows 文件共享)</p>
 <p>5.获取域控的hash:</p>
 <blockquote>
 <p>mimikatz.exe “privilege::debug” “sekurlsa::logonpasswords” exit &gt;&gt; 2.txt</p>
@@ -471,6 +471,15 @@
 
    
   <nav class="article-nav">
+    
+      <a href="/2023/07/04/%E5%9B%9E%E5%BD%92%E8%AF%BE%E6%9C%AC/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            回归课本
+          
+        </div>
+      </a>
     
     
       <a href="/2023/07/02/%E6%98%A5%E7%A7%8B/" class="article-nav-link">

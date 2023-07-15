@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">609</span>
+            <span class="post-count">972</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">2 分钟</span>
+            <span class="post-count">3 分钟</span>
         </span>
     </span>
 </div>
@@ -120,11 +120,21 @@
     <div class="article-entry" itemprop="articleBody">
        
   <p>作用，原理，部署位置</p>
-<h1 id="一、WAF"><a href="#一、WAF" class="headerlink" title="一、WAF"></a>一、WAF</h1><h2 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h2><p>WAF对请求的内容进行规则匹配、行为分析等识别出恶意行为，并执行相关动作，这些动作包括阻断、记录、告警等。</p>
+<h1 id="一、WF"><a href="#一、WF" class="headerlink" title="一、WF"></a>一、WF</h1><p>基础防火墙</p>
+<p>主要是可实现基本包过滤策略的防火墙，限制对IP:port的访问。</p>
+<p>基本上的实现都是默认情况下关闭所有的通过型访问，只开放允许访问的策略。FW可以拦截低层攻击行为，但对应用层的深层攻击行为无能为力。</p>
+<p> FW部署位置一般为外联出口或者区域性出口位置，对内外流量进行安全隔离。</p>
+<p>公共网络&lt;-边界路由器与核心交换机之间-&gt;(用户工作区、服务器组群)</p>
+<h1 id="二、WAF"><a href="#二、WAF" class="headerlink" title="二、WAF"></a>二、WAF</h1><h2 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h2><p>WAF对请求的内容进行规则匹配、行为分析等识别出恶意行为，并执行相关动作，这些动作包括阻断、记录、告警等。</p>
 <p>流量识别、攻击检测、攻击响应、日志记录</p>
-<h2 id="位置"><a href="#位置" class="headerlink" title="位置"></a>位置</h2><p>工作在web服务器之前，对基于HTTP协议的通信进行检测和识别。通俗的说，WAF类似于地铁站的安检，对于HTTP请求进行快速安全检查，通过解析HTTP数据，在不同的字段分别在特征、规则等维度进行判断，判断的结果作为是否拦截的依据从而决定是否放行。</p>
+<h2 id="位置"><a href="#位置" class="headerlink" title="位置"></a>位置</h2><p><strong>部署时要使WAF尽量靠近WEB服务器</strong>，对基于HTTP协议的通信进行检测和识别。通俗的说，WAF类似于地铁站的安检，对于HTTP请求进行快速安全检查，通过解析HTTP数据，在不同的字段分别在特征、规则等维度进行判断，判断的结果作为是否拦截的依据从而决定是否放行。</p>
 <p>sqlmap可以识别waf种类。</p>
-<h1 id="二、IDS-被动"><a href="#二、IDS-被动" class="headerlink" title="二、IDS(被动)"></a>二、IDS(<strong>被动</strong>)</h1><p>IDS（入侵检测系统）就是依照一定的安全策略，对网络、系统的运行状况进行监视，尽可能发现各种攻击企图、攻击行为或者攻击结果，以保证网络系统资源的机密性、完整性和可用性</p>
+<p> 透明代理模式、反向代理模式、路由代理模式及端口镜像模式。</p>
+<p>前三种模式为线上，串行部署web服务器前端，检测并阻断异常流量。</p>
+<p>端口镜像模式将WAF旁路接在WEB服务器上游的交换机上，只用于检测异常流量。</p>
+<h1 id="三、IDS-被动"><a href="#三、IDS-被动" class="headerlink" title="三、IDS(被动)"></a>三、IDS(<strong>被动</strong>)</h1><p>IDS（入侵检测系统）就是依照一定的安全策略，对网络、系统的运行状况进行监视，尽可能发现各种攻击企图、攻击行为或者攻击结果，以保证网络系统资源的机密性、完整性和可用性</p>
+<p><strong>特点是不阻断任何网络访问，主要以提供报告和事后监督为主</strong></p>
+<p><strong>以旁路为主</strong></p>
 <h2 id="作用-1"><a href="#作用-1" class="headerlink" title="作用"></a>作用</h2><p>实时监测、安全审计、主动响应</p>
 <h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>1.信息收集</p>
 <p>收集的内容包括系统、网络、数据及用户活动的状态和行为</p>
@@ -132,7 +142,9 @@
 <p>模式匹配：收集到的信息与已知的网络入侵和系统误用模式数据库进行比较，从而发现违背安全策略的行为</p>
 <p>统计分析：统计正常使用时的一些测量属性（如访问次数、操作失败 次数和延时等）。测量属性的平均值将被用来与网络、系统的行为进行比 较，任何观察值如果超过了正常值范围，就认为有入侵发生</p>
 <p>完整性分析：主要关注某个文件或对象是否被更改，这经常包括文件和 目录的内容及属性，它在发现被修改成类似特洛伊木马的应用程序方面特 别有效。</p>
-<h1 id="三、IPS（主动）"><a href="#三、IPS（主动）" class="headerlink" title="三、IPS（主动）"></a>三、IPS（主动）</h1><p><strong>本质是增强入侵行为库，检测出后自动进行防御</strong></p>
+<h1 id="四、IPS（主动）"><a href="#四、IPS（主动）" class="headerlink" title="四、IPS（主动）"></a>四、IPS（主动）</h1><p> 解决了IDS无法阻断的问题，基本上以在线模式为主，系统提供多个端口，以透明模式工作。<strong>本质是增强入侵行为库，检测出后自动进行防御</strong>(主要为模式匹配)</p>
+<p>缺点在于<strong>不能主动的学习</strong>攻击方式，对于模式库中不能识别出来的攻击，默认策略是允许访问的。</p>
+<p><strong>常被串接在主干路上</strong></p>
 <h2 id="作用-2"><a href="#作用-2" class="headerlink" title="作用"></a>作用</h2><p>通过直接嵌入到网络流量中，利用一个网络端口接收外部流量，经过检查确认其中不包含异常活动或可疑内容，再通过另一个端口转发给内部系统（实际是对恶意流量进行清洗）。</p>
 <h2 id="原理-1"><a href="#原理-1" class="headerlink" title="原理"></a>原理</h2><p>过滤器，能够防止各种攻击</p>
  
@@ -204,7 +216,7 @@
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/IPS/" rel="tag">IPS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/WAF/" rel="tag">WAF</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/IPS/" rel="tag">IPS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/WAF/" rel="tag">WAF</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/WF/" rel="tag">WF</a></li></ul>
 
     </footer>
   </div>

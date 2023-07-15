@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">6.5k</span>
+            <span class="post-count">6.6k</span>
         </span>
     </span>
 
@@ -274,16 +274,17 @@
 <p>蚁剑连接..&#x2F;shell.asp;.txt 即可。</p>
 <h4 id="防御-3"><a href="#防御-3" class="headerlink" title="防御"></a>防御</h4><p>关闭WebDAV和写权限</p>
 <p>禁用访客写入权限</p>
-<h3 id="短文件名猜解"><a href="#短文件名猜解" class="headerlink" title="短文件名猜解"></a>短文件名猜解</h3><h4 id="成因-2"><a href="#成因-2" class="headerlink" title="成因"></a>成因</h4><p>IIS的短文件名机制，可以暴力猜解短文件名，访问构造的某个存在的短文件名，会返回404，访问构造的某个不存在的短文件名，返回400。</p>
+<h3 id="短文件名猜解"><a href="#短文件名猜解" class="headerlink" title="短文件名猜解"></a>短文件名猜解</h3><h4 id="成因-2"><a href="#成因-2" class="headerlink" title="成因"></a>成因</h4><p>它使用8个字符的文件名，后面跟着句点和三个字符的文件扩展名。文件名超过八个，<strong>则会显示：波浪号+数字表示截断部分</strong></p>
+<p>IIS的短文件名机制，可以暴力猜解短文件名，访问构造的某个存在的短文件名，会返回404(未找到文件或目录)，访问构造的某个不存在的短文件名，返回400(错误请求)。</p>
 <p>使用的是IIS6.0（&lt;8.0），需要在web服务拓展里开启<strong>ASP.NET</strong></p>
 <h4 id="利用-3"><a href="#利用-3" class="headerlink" title="利用"></a>利用</h4><p>若存在一个文件bbccddee.html以及文件夹webtest_efwef</p>
-<p><code>http://xxx/we\*~1*/a.aspx</code> 返回404</p>
-<p><code>http://xxx/wa\*~1*/a.aspx</code> 返回400 即bad</p>
+<p><code>http://xxx/we*~1*/a.aspx</code> 返回404 则存在文件夹</p>
+<p><code>http://xxx/wa*~1*/a.aspx</code> 返回400 即bad，不存在该文件夹</p>
 <p><strong>最多判断长度为6个</strong>即<em><em>webtes</em>~1</em>&#x2F;a.aspx**</p>
 <p><code>../webtes*~1/a.aspx</code>判断类型，404则表示是文件夹，400表示文件</p>
 <p>可以进而判断文件类型</p>
-<p><code>../bbccdd*~1.a*/a.aspx</code> 返回400</p>
-<p><code>../bbccdd*~1.h*/a.aspx</code>返回404，则</p>
+<p><code>../bbccdd*~1.a*/a.aspx</code> 返回400，不是该后缀</p>
+<p><code>../bbccdd*~1.h*/a.aspx</code>返回404，则继续</p>
 <p><code>../bbccdd*~1.htm*/a.aspx</code>返回404，则确认后缀为html；<strong>短文件名后缀最长为3。</strong></p>
 <p>同理可猜解到shell.asp;.txt文件， <code>../shella*~1.txt*/a.aspx</code></p>
 <h4 id="防御-4"><a href="#防御-4" class="headerlink" title="防御"></a>防御</h4><p>升级.net framework</p>
