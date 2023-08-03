@@ -9879,4 +9879,17 @@ echo $get
         <tag>系统日志</tag>
       </tags>
   </entry>
+  <entry>
+    <title>git bash</title>
+    <url>/2023/08/03/git/</url>
+    <content><![CDATA[<p>ssh: Could not resolve hostname github.com: Name or service not known<br>fatal: Could not read from remote repository.</p>
+<p>Please make sure you have the correct access rights<br>and the repository exists.<br>FATAL Something’s wrong. Maybe you can find the solution here: <a href="https://hexo.io/docs/troubleshooting.html">https://hexo.io/docs/troubleshooting.html</a><br>Error: Spawn failed<br>    at ChildProcess.<anonymous> (E:\Myblog\node_modules\hexo-util\lib\spawn.js:51:21)<br>    at ChildProcess.emit (node:events:513:28)<br>    at cp.emit (E:\Myblog\node_modules\cross-spawn\lib\enoent.js:34:29)<br>    at ChildProcess._handle.onexit (node:internal&#x2F;child_process:291:12)</p>
+]]></content>
+      <categories>
+        <category>git</category>
+      </categories>
+      <tags>
+        <tag>git记录</tag>
+      </tags>
+  </entry>
 </search>
