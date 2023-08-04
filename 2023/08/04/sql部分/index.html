@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title> 小张之栈</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-sql部分"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+     
+    <div class="article-meta">
+      <a href="/2023/08/04/sql%E9%83%A8%E5%88%86/" class="article-date">
+  <time datetime="2023-08-04T00:12:01.926Z" itemprop="datePublished">2023-08-04</time>
+</a>   
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">2.4k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">10 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">title: sql语法</span><br><span class="line">categories: </span><br><span class="line">- sql语法</span><br><span class="line">date: 2023-08-4 8:11:37</span><br><span class="line">tags: </span><br><span class="line">- sql语法</span><br></pre></td></tr></table></figure>
+
+<h1 id="一、查询"><a href="#一、查询" class="headerlink" title="一、查询"></a>一、查询</h1><h2 id="1-全表查询"><a href="#1-全表查询" class="headerlink" title="1.全表查询"></a>1.全表查询</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">select * from student</span><br><span class="line">//或者特定字段查询</span><br><span class="line">select name,age from student</span><br></pre></td></tr></table></figure>
+
+
+
+<p>建表语句</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">create table if not exists `student`</span><br><span class="line">(</span><br><span class="line">	`id` integer	not null primary key  AUTOINCREMENT,</span><br><span class="line">	`name` varchar(256)	nut null,</span><br><span class="line">	`age`	int 	null,</span><br><span class="line">	`class_id`	bigint	nut null,</span><br><span class="line">	`score`	double default 0 null,</span><br><span class="line">	`exam_num` int default 0 null</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">insert into	`studenyt` (`name`,`age`,`class_id`,`score`,`exam_num`) </span><br><span class="line">values (&#x27;asd&#x27;,&#x27;12&#x27;,&#x27;1&#x27;,&#x27;256&#x27;,`4`);</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-别名查询"><a href="#2-别名查询" class="headerlink" title="2.别名查询"></a>2.别名查询</h3><p>别名语法 <code>&#123;原始字段名&#125; as &#123;别名&#125;</code> 来为查询结果的列名取一个便于理解的名称。通过使用别名，我们可以更直观地知道查询结果中每一列的含义，方便阅读和使用。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select name as 学生姓名,age as 学生年龄 from student</span><br></pre></td></tr></table></figure>
+
+<p>sql也可以把常量作为列名</p>
+<p>比如 select 200,’啦啦啦’ as hobby</p>
+<blockquote>
+<table>
+<thead>
+<tr>
+<th align="left">200</th>
+<th align="left">hobby</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">200</td>
+<td align="left">啦啦啦</td>
+</tr>
+</tbody></table>
+</blockquote>
+<h3 id="3-常量和运算"><a href="#3-常量和运算" class="headerlink" title="3.常量和运算"></a>3.常量和运算</h3><p>常量指固定的数值或文本，运算则是对这些常量进行数学或字符串操作</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select name,score,score*2 as double_score from student</span><br></pre></td></tr></table></figure>
+
+<p>将分数的2倍额外作为一列，展现出来</p>
+<h2 id="2-条件查询"><a href="#2-条件查询" class="headerlink" title="2.条件查询"></a>2.条件查询</h2><p>只想取表中的部分数据</p>
+<p>用where子句过滤</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select name,score from student where name==&#x27;羽泪云&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>也可以!&#x3D;，&gt;，between</p>
+<h3 id="1-空值"><a href="#1-空值" class="headerlink" title="1.空值"></a>1.空值</h3><p>应用场景，比如筛选出没有参加考试的学生</p>
+<p>用is null筛选出空值的；is not null筛选出不为空的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select name,age,score from student where score is null</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-模糊查询"><a href="#2-模糊查询" class="headerlink" title="2.模糊查询"></a>2.模糊查询</h3><p>比如查询姓氏，以张开头(<code>&#39;张%&#39;</code>)，以X结尾(<code>&#39;%X&#39;</code>)，不包含某个字</p>
+<p>包含那就<code>like</code> ， 不包含那就 <code>not like</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select name,score from student where name not like &#x27;%李%&#x27;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-逻辑运算"><a href="#3-逻辑运算" class="headerlink" title="3.逻辑运算"></a>3.逻辑运算</h3><p>与、或、非</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select name,score from student where name like &#x27;%李%&#x27; or score&gt;500</span><br></pre></td></tr></table></figure>
+
+<h1 id="二、去重"><a href="#二、去重" class="headerlink" title="二、去重"></a>二、去重</h1><p>distinct，单字段去重，或多个字段组合(唯一)去重</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select distinct class_id,exam_num from student</span><br></pre></td></tr></table></figure>
+
+<p>筛选出不重复班级ID和考试编号的组合</p>
+<h1 id="三、排序"><a href="#三、排序" class="headerlink" title="三、排序"></a>三、排序</h1><p>​	order by</p>
+<p>升序 asc ，降序desc</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select name,age,score from student order by score desc,age asc</span><br></pre></td></tr></table></figure>
+
+<p>当第一个字段的值相同时，再按照第二个字段的值进行排序，以此类推。</p>
+<p>按成绩降序排列，如果成绩相同，按年龄升序排列</p>
+<h1 id="四、截断和偏移"><a href="#四、截断和偏移" class="headerlink" title="四、截断和偏移"></a>四、截断和偏移</h1><p>截断：挡住不需要看的部分（分页查询）</p>
+<p>偏移：翻到要查看的位置</p>
+<p>limit n，一次获取n条数据</p>
+<p>limit n,m 从第n条开始，总共获取m条数据；第一条的下标是0</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select name,age from student order by age asc limit 1,3</span><br></pre></td></tr></table></figure>
+
+<h1 id="五、条件分支"><a href="#五、条件分支" class="headerlink" title="五、条件分支"></a>五、条件分支</h1><p>单分支</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CASE WHEN (name = &#x27;鸡哥&#x27;) THEN &#x27;会&#x27; ELSE &#x27;不会&#x27; END AS can_rap</span><br></pre></td></tr></table></figure>
+
+<p>多分支</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">CASE WHEN (条件1) THEN 结果1</span><br><span class="line">	   WHEN (条件2) THEN 结果2</span><br><span class="line">	   ...</span><br><span class="line">	   ELSE 其他结果 END</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">select name,</span><br><span class="line">case when (age&gt;60) then &#x27;老同学&#x27; </span><br><span class="line">    when (age&gt;20) then &#x27;年轻&#x27;</span><br><span class="line">    else &#x27;小同学&#x27; end as age_level</span><br><span class="line">from student</span><br><span class="line">order by name asc</span><br></pre></td></tr></table></figure>
+
+<h1 id="六、时间函数"><a href="#六、时间函数" class="headerlink" title="六、时间函数"></a>六、时间函数</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">-- 获取当前日期</span><br><span class="line">SELECT DATE() AS current_date;</span><br><span class="line"></span><br><span class="line">-- 获取当前日期时间</span><br><span class="line">SELECT DATETIME() AS current_datetime;</span><br><span class="line"></span><br><span class="line">-- 获取当前时间</span><br><span class="line">SELECT TIME() AS current_time;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select name,date() as 当前日期 from student</span><br></pre></td></tr></table></figure>
+
+<h1 id="七、字符串处理"><a href="#七、字符串处理" class="headerlink" title="七、字符串处理"></a>七、字符串处理</h1><p>转换大小写、计算字符串长度以及搜索和替换子字符串等。字符串处理函数可以帮助我们在数据库中对字符串进行加工和转换</p>
+<p>比如姓名，有英文的转大写之类的，length()计算长度</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">select id,name,upper(name) as upper_name from student</span><br><span class="line">where name=&#x27;热dog&#x27;</span><br></pre></td></tr></table></figure>
+
+<h1 id="八、聚合函数"><a href="#八、聚合函数" class="headerlink" title="八、聚合函数"></a>八、聚合函数</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">常见的聚合函数包括：</span><br><span class="line"></span><br><span class="line">COUNT：计算指定列的行数或非空值的数量。</span><br><span class="line">SUM：计算指定列的数值之和。</span><br><span class="line">AVG：计算指定列的数值平均值。</span><br><span class="line">MAX：找出指定列的最大值。</span><br><span class="line">MIN：找出指定列的最小值。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">select sum(score) as total_score,</span><br><span class="line">        avg(score) as avg_score,</span><br><span class="line">        max(score) as max_score,</span><br><span class="line">        min(score) as min_score</span><br><span class="line"> from student</span><br></pre></td></tr></table></figure>
+
+<h1 id="九-分组聚合"><a href="#九-分组聚合" class="headerlink" title="九.分组聚合"></a>九.分组聚合</h1><p>对数据进行分类并对每个分类进行聚合计算的操作。</p>
+<p>应用场景：某个学校可以按照班级将学生分组，并对每个班级进行统计。某个学校可以按照班级将学生分组，并对每个班级进行统计。</p>
+<p>在 SQL 中，通常使用 <code>GROUP BY</code> 关键字对数据进行分组。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select class_id,avg(score) as avg_score from student group by class_id</span><br></pre></td></tr></table></figure>
+
+<p>统计每个班级的平均分</p>
+<h2 id="1-多字段分组"><a href="#1-多字段分组" class="headerlink" title="1.多字段分组"></a>1.多字段分组</h2><p><code>id</code>（学号）、<code>name</code>（姓名）、<code>class_id</code>（班级编号）、<code>exam_num</code>（考试次数）、<code>score</code>（成绩），统计学生表中<strong>每个班级</strong>，<strong>每次考试</strong>的<strong>总</strong>学生<strong>人数</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">select class_id,exam_num,count(*) as total_num </span><br><span class="line">from student</span><br><span class="line">group by class_id,exam_num</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-having-子句"><a href="#2-having-子句" class="headerlink" title="2.having 子句"></a>2.having 子句</h2><p>HAVING 子句用于在分组聚合后对分组进行过滤。它允许我们对分组后的结果进行条件筛选，只保留满足特定条件的分组。</p>
+<p>区别：WHERE 子句用于在 <strong>分组之前</strong> 进行过滤，而 HAVING 子句用于在 <strong>分组之后</strong> 进行过滤。</p>
+<p>示例：</p>
+<p>统计学生表中<strong>班级</strong>的<strong>总成绩</strong>超过 150 分的<strong>班级编号（class_id）和总成绩（total_score）</strong>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">select class_id,sum(score) as total_score  </span><br><span class="line">from student</span><br><span class="line">group by class_id</span><br><span class="line">having total_score&gt;150</span><br></pre></td></tr></table></figure>
+
+<h1 id="进阶："><a href="#进阶：" class="headerlink" title="进阶："></a>进阶：</h1><h2 id="1-关联查询"><a href="#1-关联查询" class="headerlink" title="1.关联查询"></a>1.关联查询</h2><p>假设有一个学生表 <code>student</code>，包含以下字段：<code>id</code>（学号）、<code>name</code>（姓名）、<code>age</code>（年龄）、<code>class_id</code>（班级编号）。还有一个班级表 <code>class</code>，包含以下字段：<code>id</code>（班级编号）、<code>name</code>（班级名称）、<code>level</code>（班级级别）。</p>
+<p>单张表的基础上，获取更多额外数据，比如获取学生表中学生所属的班级信息等。</p>
+<h3 id="cross-join"><a href="#cross-join" class="headerlink" title="cross join"></a>cross join</h3><p><code>CROSS JOIN</code> 是一种简单的关联查询，不需要任何条件来匹配行，它直接将左表的 <strong>每一行</strong> 与右表的 <strong>每一行</strong> 进行组合，返回的结果是两个表的笛卡尔积。</p>
+<p>新建班级语句</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">create table if not exists `class`</span><br><span class="line">(</span><br><span class="line">    `id`       integer          not null primary key AUTOINCREMENT,</span><br><span class="line">    `name`     varchar(256)     not null,</span><br><span class="line">    `level`    varchar(256)     not null,</span><br><span class="line">    `student_num` integer default 0 not null,</span><br><span class="line">    `head_teacher_id` bigint not null</span><br><span class="line">);</span><br><span class="line">insert into `class` (`id`, `name`, `level`, `student_num`, `head_teacher_id`)</span><br><span class="line">values (1, &#x27;唱班&#x27;, &#x27;优&#x27;, 10, 1);</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>示例：</p>
+<p>将学生表和班级表的所有行组合在一起，并返回学生姓名（student_name）、学生年龄（student_age）、班级编号（class_id）以及班级名称（class_name）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">select s.name as student_name,s.age as student_age, </span><br><span class="line">        s.class_id as class_id,</span><br><span class="line">        c.name as class_name</span><br><span class="line">from student s</span><br><span class="line">cross join class c</span><br></pre></td></tr></table></figure>
+
+<h3 id="inner-join"><a href="#inner-join" class="headerlink" title="inner join"></a>inner join</h3><p>它根据两个表之间的关联条件，将满足条件的行组合在一起。</p>
+<p>注意，INNER JOIN 只返回两个表中满足关联条件的<strong>交集部分</strong>，即在两个表中都存在的匹配行。</p>
+<p>即只有两个表之间存在对应关系的数据才会被放到查询结果中。</p>
+<p>示例：</p>
+<p>根据学生表和班级表之间的<strong>班级编号进行匹配</strong>，返回学生姓名（<code>student_name</code>）、学生年龄（<code>student_age</code>）、班级编号（<code>class_id</code>）、班级名称（<code>class_name</code>）、班级级别（<code>class_level</code>）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">select s.name as student_name,</span><br><span class="line">        s.age as student_age,</span><br><span class="line">        s.class_id as class_id,</span><br><span class="line">        c.name as class_name,</span><br><span class="line">        c.level as class_level</span><br><span class="line">from student s</span><br><span class="line">inner join class c on s.class_id==c.id</span><br></pre></td></tr></table></figure>
+
+<h3 id="outer-join"><a href="#outer-join" class="headerlink" title="outer join"></a>outer join</h3><p>它根据指定的关联条件，将两个表中满足条件的行组合在一起，并 <strong>包含没有匹配的行</strong> 。</p>
+<p>在 OUTER JOIN 中，包括 LEFT OUTER JOIN 和 RIGHT OUTER JOIN 两种类型，它们分别表示查询左表和右表的所有行（即使没有被匹配），再加上满足条件的交集部分。</p>
+<p>示例：</p>
+<p>请你编写一个 SQL 查询，根据学生表和班级表之间的班级编号进行匹配，返回学生姓名（<code>student_name</code>）、学生年龄（<code>student_age</code>）、班级编号（<code>class_id</code>）、班级名称（<code>class_name</code>）、班级级别（<code>class_level</code>），要求必须返回所有学生的信息（即使对应的班级编号不存在）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">select s.name as student_name,</span><br><span class="line">        s.age as student_age,</span><br><span class="line">        s.class_id as class_id,</span><br><span class="line">        c.name as class_name,</span><br><span class="line">        c.level as class_level</span><br><span class="line">from student s</span><br><span class="line">outer join class c on s.class_id==c.id</span><br></pre></td></tr></table></figure>
+
+<p> <code>语句错误：RIGHT and FULL OUTER JOINs are not currently supported</code></p>
+<p>错了，用left join</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">select s.name as student_name,</span><br><span class="line">        s.age as student_age,</span><br><span class="line">        s.class_id as class_id,</span><br><span class="line">        c.name as class_name,</span><br><span class="line">        c.level as class_level</span><br><span class="line">from student s</span><br><span class="line">left join class c on s.class_id==c.id</span><br></pre></td></tr></table></figure>
+
+<p>这样的结果就是，即使在班级表中没有记录的班级，也会出现，但是对应的班级表信息为空</p>
+<h2 id="2-子查询"><a href="#2-子查询" class="headerlink" title="2.子查询"></a>2.子查询</h2><p>在一个查询语句内部 <strong>嵌套</strong> 另一个完整的查询语句，内层查询被称为子查询。子查询可以用于获取更复杂的查询结果或者用于过滤数据。</p>
+<p>当执行包含子查询的查询语句时，数据库引擎会首<strong>先执行子查询</strong>，然后将其结果作为条件或数据源来执行<strong>外层查询</strong>。</p>
+<p>示例：</p>
+<p>使用子查询的方式来获取存在对应班级的学生的所有数据，返回学生姓名（<code>name</code>）、分数（<code>score</code>）、班级编号（<code>class_id</code>）字段。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">select name,score,class_id </span><br><span class="line">from student</span><br><span class="line">where class_id in(</span><br><span class="line">    select distinct id</span><br><span class="line">    from class</span><br><span class="line">    where id is not null</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-exsits"><a href="#1-exsits" class="headerlink" title="1.exsits"></a>1.exsits</h3><p>子查询中的一种特殊类型是 “exists” 子查询，用于检查主查询的结果集是否存在满足条件的记录，它返回布尔值（True 或 False），而不返回实际的数据。</p>
+<p>示例：</p>
+<p>请你编写一个 SQL 查询，使用 exists 子查询的方式来获取 <strong>不存在对应班级的</strong> 学生的所有数据，返回学生姓名（<code>name</code>）、年龄（<code>age</code>）、班级编号（<code>class_id</code>）字段。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">select name,</span><br><span class="line">        age,</span><br><span class="line">        class_id</span><br><span class="line">from student</span><br><span class="line">where not exists(</span><br><span class="line">    select 1</span><br><span class="line">    from class</span><br><span class="line">    where student.class_id=class.id</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-组合查询"><a href="#3-组合查询" class="headerlink" title="3.组合查询"></a>3.组合查询</h2><p>组合查询是一种将多个 SELECT 查询结果合并在一起的查询操作。</p>
+<p>包括两种常见的组合查询操作：UNION 和 UNION ALL。</p>
+<ol>
+<li>UNION 操作：它用于将两个或多个查询的结果集合并， <strong>并去除重复的行</strong> 。即如果两个查询的结果有相同的行，则只保留一行。</li>
+<li>UNION ALL 操作：它也用于将两个或多个查询的结果集合并， <strong>但不去除重复的行</strong> 。即如果两个查询的结果有相同的行，则全部保留。</li>
+</ol>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/08/04/sql%E9%83%A8%E5%88%86/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+    
+      <a href="/2023/08/03/git/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">git bash</div>
+      </a>
+    
+  </nav>
+
+  
+   
+  
+   
+    <script src="https://cdn.staticfile.org/twikoo/1.4.18/twikoo.all.min.js"></script>
+    <div id="twikoo" class="twikoo"></div>
+    <script>
+        twikoo.init({
+            envId: ""
+        })
+    </script>
+ 
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2023
+        <i class="ri-heart-fill heart_icon"></i> 是羽泪云诶
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/favicon.ico" alt="小张之栈"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+ 
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+ 
+<script src="/js/dz.js"></script>
+ 
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>
