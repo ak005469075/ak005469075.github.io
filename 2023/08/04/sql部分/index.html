@@ -81,7 +81,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">2.4k</span>
+            <span class="post-count">3.9k</span>
         </span>
     </span>
 
@@ -90,7 +90,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">10 分钟</span>
+            <span class="post-count">15 分钟</span>
         </span>
     </span>
 </div>
@@ -251,6 +251,91 @@
 <li>UNION 操作：它用于将两个或多个查询的结果集合并， <strong>并去除重复的行</strong> 。即如果两个查询的结果有相同的行，则只保留一行。</li>
 <li>UNION ALL 操作：它也用于将两个或多个查询的结果集合并， <strong>但不去除重复的行</strong> 。即如果两个查询的结果有相同的行，则全部保留。</li>
 </ol>
+<p>假设有一个学生表 <code>student</code>，包含以下字段：<code>id</code>（学号）、<code>name</code>（姓名）、<code>age</code>（年龄）、<code>score</code>（分数）、<code>class_id</code>（班级编号）。还有一个新学生表 <code>student_new</code>，包含的字段和学生表完全一致。</p>
+<p>示例：</p>
+<p>获取所有学生表和新学生表的学生姓名（<code>name</code>）、年龄（<code>age</code>）、分数（<code>score</code>）、班级编号（<code>class_id</code>）字段，要求保留重复的学生记录。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">select name,age,score,class_id </span><br><span class="line">from student</span><br><span class="line">union all</span><br><span class="line">select name,age,score,class_id </span><br><span class="line">from student_new</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-开窗函数"><a href="#4-开窗函数" class="headerlink" title="4.开窗函数"></a>4.开窗函数</h2><h3 id="1-sum-over"><a href="#1-sum-over" class="headerlink" title="1.sum over"></a>1.sum over</h3><p>允许我们在查询中进行对分组数据进行计算、 <strong>同时保留原始行的详细信息</strong></p>
+<p>开窗函数可以与聚合函数（如 SUM、AVG、COUNT 等）结合使用，但与普通聚合函数不同，开窗函数不会导致结果集的行数减少。</p>
+<p><code>SUM(计算字段名) OVER (PARTITION BY 分组字段名)</code></p>
+<p>示例：</p>
+<p>返回每个学生的详细信息（字段顺序和原始表的字段顺序一致），并计算每个班级的学生平均分（class_avg_score）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">select </span><br><span class="line">id,</span><br><span class="line">name,</span><br><span class="line">age,</span><br><span class="line">score,</span><br><span class="line">class_id,</span><br><span class="line">avg(score) over (partition by class_id) as class_avg_score</span><br><span class="line">from student</span><br></pre></td></tr></table></figure>
+
+<p>partition by子句按照class_id划分</p>
+<h3 id="2-sum-over-order-by"><a href="#2-sum-over-order-by" class="headerlink" title="2.sum over order by"></a>2.sum over order by</h3><p>sum over order by，可以实现同组内数据的 <strong>累加求和</strong> 。</p>
+<p><code>SUM(计算字段名) OVER (PARTITION BY 分组字段名 ORDER BY 排序字段 排序规则)</code></p>
+<p>应用场景：老师对学生点名，对已点到的学生们的分数进行总和</p>
+<p>示例：</p>
+<p>返回每个学生的详细信息（字段顺序和原始表的字段顺序一致），并且按照分数升序的方式累加计算每个班级的学生总分（class_sum_score）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">select id,name,age,score,class_id,</span><br><span class="line">    sum(score) over (partition by class_id order by score asc)</span><br><span class="line">    as class_sum_score</span><br><span class="line"> from student</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-rank"><a href="#3-rank" class="headerlink" title="3.rank"></a>3.rank</h3><p>用于对查询结果集中的行进行 <strong>排名</strong> 的开窗函数。它可以根据指定的列或表达式对结果集中的行进行排序，并为每一行分配一个排名。在排名过程中，相同的值将被赋予相同的排名，而不同的值将被赋予不同的排名。</p>
+<blockquote>
+<p>当存在并列（相同排序值）时，Rank 会跳过后续排名，并保留相同的排名。</p>
+</blockquote>
+<p>应用场景：Rank 开窗函数的常见用法是在查询结果中查找前几名（Top N）或排名最高的行。</p>
+<p>使用方式：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">RANK() OVER (</span><br><span class="line">  PARTITION BY 列名1, 列名2, ... -- 可选，用于指定分组列</span><br><span class="line">  ORDER BY 列名3 [ASC|DESC], 列名4 [ASC|DESC], ... -- 用于指定排序列及排序方式</span><br><span class="line">) AS rank_column</span><br></pre></td></tr></table></figure>
+
+
+
+<p>示例：</p>
+<p>返回每个学生的详细信息（字段顺序和原始表的字段顺序一致），并且按照分数降序的方式计算每个<strong>班级</strong>内的学生的分数排名（ranking）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">select id,name,age,score,class_id,</span><br><span class="line">        rank() over</span><br><span class="line">        (partition by class_id order by score desc)</span><br><span class="line">        as ranking</span><br><span class="line"> from student</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-row-number"><a href="#4-row-number" class="headerlink" title="4.row_number"></a>4.row_number</h3><p>用于为查询结果集中的每一行 <strong>分配唯一连续排名</strong> 的开窗函数。</p>
+<p>Row_Number 函数为每一行都分配一个唯一的整数值，不管是否存在并列（相同排序值）的情况。每一行都有一个唯一的行号，从 1 开始连续递增。</p>
+<p>语法格式：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ROW_NUMBER() OVER (</span><br><span class="line">  PARTITION BY column1, column2, ... -- 可选，用于指定分组列</span><br><span class="line">  ORDER BY column3 [ASC|DESC], column4 [ASC|DESC], ... -- 用于指定排序列及排序方式</span><br><span class="line">) AS row_number_column</span><br></pre></td></tr></table></figure>
+
+
+
+<p>示例：</p>
+<p>返回每个学生的详细信息（字段顺序和原始表的字段顺序一致），并且按照分数降序的方式给每个班级内的学生分配一个编号（row_number）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">select id,name,age,score,class_id,</span><br><span class="line">    row_number() over</span><br><span class="line">    (partition by class_id order by score desc)</span><br><span class="line">    as row_number</span><br><span class="line"></span><br><span class="line">from student</span><br></pre></td></tr></table></figure>
+
+<p><del>即使呢score相同，也会有连续的row_number，即分个1,2,3排名出来</del> 等下，暂时先放着</p>
+<h3 id="5-lag-x2F-lead"><a href="#5-lag-x2F-lead" class="headerlink" title="5.lag&#x2F;lead"></a>5.lag&#x2F;lead</h3><p>Lag 和 Lead 的作用是获取在<strong>当前行之前</strong>或<strong>之后</strong>的行的值，这两个函数通常在需要<strong>比较相邻行数据</strong>或<strong>进行时间序列分析</strong>时非常有用。</p>
+<p>语法格式：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LAG(column_name, offset, default_value) OVER (PARTITION BY partition_column ORDER BY sort_column)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<ul>
+<li><code>column_name</code>：要获取值的列名。</li>
+<li><code>offset</code>：表示要向上偏移的行数。例如，offset为1表示获取上一行的值，offset为2表示获取上两行的值，以此类推。</li>
+<li><code>default_value</code>：可选参数，用于指定当没有前一行时的默认值。</li>
+<li><code>PARTITION BY</code>和<code>ORDER BY</code>子句可选，用于分组和排序数据。</li>
+</ul>
+</blockquote>
+<p>lead同</p>
+<p>应用场景：比如查看学生某个时期，之前的成绩，之后的成绩</p>
+<p>示例：</p>
+<p>返回每个学生的详细信息（字段顺序和原始表的字段顺序一致），并且按照分数降序的方式获取每个班级内的学生的前一名学生姓名（prev_name）、后一名学生姓名（next_name）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">select id,name,age,score,class_id,</span><br><span class="line">    lag(name,1,null) over (partition by class_id order by score desc) as prev_name,</span><br><span class="line">    lead(name,1,null) over (partition by class_id order by score desc) as next_name</span><br><span class="line">from student</span><br></pre></td></tr></table></figure>
+
+<h1 id="挑战"><a href="#挑战" class="headerlink" title="挑战"></a>挑战</h1><h2 id="1-冒险者与金币"><a href="#1-冒险者与金币" class="headerlink" title="1.冒险者与金币"></a>1.冒险者与金币</h2><p>假设有一家冒险者公会，他们有一张名为 <code>rewards</code> 的表格，用于记录每个冒险者在各个任务中获得的金币奖励情况。</p>
+<p>表格字段如下：</p>
+<ul>
+<li><code>adventurer_id</code>：冒险者ID，唯一标识每个冒险者。</li>
+<li><code>adventurer_name</code>：冒险者姓名。</li>
+<li><code>task_id</code>：任务ID，唯一标识每个任务。</li>
+<li><code>task_name</code>：任务名称。</li>
+<li><code>reward_coins</code>：冒险者在该任务中获得的金币奖励数量。</li>
+</ul>
+<p>请你编写一条 SQL 查询语句，依次输出每个冒险者的 id（<code>adventurer_id</code>）、冒险者姓名（<code>adventurer_name</code>）、获得的总金币奖励（<code>total_reward_coins</code>），并按照总金币奖励从高到低排序，其中只列出总金币奖励排名前 3 的冒险者。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">select distinct adventurer_id,adventurer_name,</span><br><span class="line">    sum(reward_coins) over</span><br><span class="line">    (partition by adventurer_id) as total_reward_coins</span><br><span class="line"> from rewards</span><br><span class="line">order by total_reward_coins desc  </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>怎么输出前三呢</p>
+<p>好吧 <strong>limit</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">select distinct adventurer_id,adventurer_name,</span><br><span class="line">    sum(reward_coins) over</span><br><span class="line">    (partition by adventurer_id) as total_reward_coins</span><br><span class="line"> from rewards</span><br><span class="line">order by total_reward_coins desc limit 3</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>分组聚合</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">select distinct adventurer_id,adventurer_name,</span><br><span class="line">            sum(reward_coins) as total_reward_coins</span><br><span class="line">from rewards</span><br><span class="line">group by adventurer_id,adventurer_name</span><br><span class="line">order by total_reward_coins desc limit 3</span><br></pre></td></tr></table></figure>
+
  
       <!-- reward -->
       
