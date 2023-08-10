@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">11.1k</span>
+            <span class="post-count">24.7k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">43 分钟</span>
+            <span class="post-count">95 分钟</span>
         </span>
     </span>
 </div>
@@ -126,7 +126,7 @@
 
 <p>这就是指针的工作原理</p>
 <p>看下，下面这个，分配内存</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">#include&lt;string.h&gt;</span><br><span class="line">...</span><br><span class="line">int main()&#123;</span><br><span class="line">	</span><br><span class="line">	char *buffer=new char[8];</span><br><span class="line">	memset(buffer,1,8);</span><br><span class="line">	</span><br><span class="line">	//delete[] buffer;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">#include&lt;string.h&gt;</span><br><span class="line">...</span><br><span class="line">int main()&#123;</span><br><span class="line">	</span><br><span class="line">	char *buffer=new char[8];</span><br><span class="line">	memset(buffer,1,8);//将内存的内容设置为指定值</span><br><span class="line">	</span><br><span class="line">	//delete[] buffer;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230804180029168.png" alt="分配8个字节内存"></p>
 <p>开辟了8个字节，存储了一个指向该数据开头的指针</p>
@@ -141,6 +141,8 @@
 <p>栈中的变量：栈往低地址生长，先声明的变量位于高地址</p>
 <h1 id="1-虚函数"><a href="#1-虚函数" class="headerlink" title="1.虚函数"></a>1.虚函数</h1><p><code>virtual 类型 成员函数名 (参数表);</code></p>
 <p>虚函数必须存在于类的继承环境中才有意义</p>
+<p>存在虚函数的类都有一个一维的虚函数表叫虚表，类的对象有一个指向虚表开始的虚指针；</p>
+<p>虚表与类对应；虚表指针和对象对应</p>
 <h2 id="多态"><a href="#多态" class="headerlink" title="多态"></a>多态</h2><p>不同<strong>对象</strong>调用相同的<strong>函数</strong>，但呈现多样的<strong>结果</strong></p>
 <h3 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h3><h4 id="编译时多态"><a href="#编译时多态" class="headerlink" title="编译时多态"></a>编译时多态</h4><p>编译过程中静态确定同名操作与具体对象绑定的关系（函数重载、运算符重载、模板）</p>
 <p>优点：程序运行时函数调用速度快、效率高</p>
@@ -201,9 +203,33 @@
 <blockquote>
 <p>entity<br>132</p>
 </blockquote>
-<h1 id="2-C-中-const、define、static-的区别？"><a href="#2-C-中-const、define、static-的区别？" class="headerlink" title="2.C++中 const、define、static 的区别？"></a>2.C++中 const、define、static 的区别？</h1><p><strong>const</strong> 是单词 constant 的简写，字面意思是<strong>常数</strong>、常量。 用于变量修饰，表明这个变量<strong>不能被修改</strong>；用于指针修饰， 表明指针的指向物<strong>不能被修改</strong>；用于方法修饰，表明这个方法<strong>不会</strong>对对象造成改变。 </p>
-<p><strong>#define</strong> 和另外两个不一样，它属于<strong>宏</strong>，是预处理器的一部分。 预处理是在编译之前的一道，简单地进行字符串替换，它不按照语言的语法，而是直管自己的语法。</p>
-<p> <strong>static</strong> 的定义相对较复杂，用在<strong>全局变量</strong>表明这个变量在每个编译单元有独自的实例；用在函数里的<strong>局部变量</strong>，表明它的生存周期其实是全局变量，但仅在函数内可见；用在<strong>类成员</strong>，表明成员或者方法是类的，而不是对象实例的。</p>
+<h1 id="2-C-中-const、define、static-的区别？"><a href="#2-C-中-const、define、static-的区别？" class="headerlink" title="2.C++中 const、define、static 的区别？"></a>2.C++中 const、define、static 的区别？</h1><h3 id="const"><a href="#const" class="headerlink" title="const"></a>const</h3><p><strong>const</strong> 是单词 constant 的简写，字面意思是<strong>常数</strong>、常量。 用于变量修饰，表明这个变量<strong>不能被修改</strong>；(mutable就是可改)</p>
+<p>用于指针修饰， 表明指针的指向物<strong>不能被修改</strong>；</p>
+<p>用于方法修饰，表明这个方法<strong>不会</strong>对对象造成改变。 </p>
+<p>const修饰指针时，cosnt位置不同，那么修饰对象不同</p>
+<p>int *const p2中 const修饰的是p2的值，即该指针p2的指向不可变，但*p2可读取该指向的变量值</p>
+<p>int const *p1与const int *p1中，const修饰*p1，即*p1的值不可改变，但可以更改p1的指向</p>
+<p>底层指针：指示<strong>指针所指向的变量</strong>是一个<strong>常量</strong></p>
+<h3 id="define"><a href="#define" class="headerlink" title="define"></a>define</h3><p><strong>#define</strong> 和另外两个不一样，它属于<strong>宏</strong>，是预处理器的一部分。</p>
+<p> 预处理是在编译之前的一道，简单地进行字符串替换，它不按照语言的语法，而是直管自己的语法。</p>
+<p>定义的常量没有类型；而const定义的常量有类型名字，且放在静态区域</p>
+<p>#define定义的常量不可以用指针指向；const可以</p>
+<p>#define可以定义简单的函数，const不可以定义函数	</p>
+<h3 id="static"><a href="#static" class="headerlink" title="static"></a>static</h3><p> <strong>static</strong> 的定义相对较复杂，用在<strong>全局变量</strong>表明这个变量在每个编译单元有独自的实例；</p>
+<p>用在函数里的<strong>局部变量</strong>，表明它的生存周期其实是全局变量，但仅在函数内可见；</p>
+<p>用在<strong>类成员</strong>，表明成员或者方法是类的，而不是对象实例的。</p>
+<h4 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h4><ul>
+<li>隐藏：当同时编译多个文件时，所有未加static前缀的全局变量和函数都具有全局可见性</li>
+<li>保持变量内容的持久：存储在静态数据 区的变量会在程序刚开始运行时就完成初始化，也是唯一的一次初始化。</li>
+<li>默认初始化为0（static变量）；全局变量也具备这一属性，因为全局变量也存储在静态数据区。</li>
+<li>c++类成员声明：<ul>
+<li>函数体内static变量的作用范围为该函数体</li>
+<li>模块内的static<strong>全局变量</strong>可以被<strong>模块内所用函数</strong>访问，但不能被模块外其它函数访问</li>
+<li>在模块内的static<strong>函数</strong>只可被这一<strong>模块内的其它函数调用</strong>，这个函数的使用范围被限制在声明它的模块内；</li>
+<li>static成员函数不能被virtual修饰，static成员不属于任何对象或实例，所以加上virtual没有任何实际意义；</li>
+</ul>
+</li>
+</ul>
 <h1 id="3-对于epoll底层结构和原理有什么了解？"><a href="#3-对于epoll底层结构和原理有什么了解？" class="headerlink" title="*3. 对于epoll底层结构和原理有什么了解？"></a>*3. 对于epoll底层结构和原理有什么了解？</h1><p>这啥啊Σ(⊙▽⊙”a</p>
 <p>eventpoll的使用中，经常需要对文件描述符集合进行添加、删除等操作，同时对触发的事件类型进行处理，回调IO事件中的工作函数。</p>
 <p>epoll,<strong>I&#x2F;O多路复用技术</strong>，最大特点是<strong>支持高并发</strong>，从linux内核2.6引入的</p>
@@ -242,6 +268,19 @@
 <li>功能：阻塞一小段时间并等待事件发生，返回事件集合，也就是获取内核的事件通知</li>
 </ul>
 </blockquote>
+<h3 id="与select相比"><a href="#与select相比" class="headerlink" title="与select相比"></a>与select相比</h3><p>网络编程中，当每个线程都要阻塞在 recv 等待对方的请求，如果访问的人多了，线程开的就多了，大量线程都在阻塞，系统运转速度也随之下降。这个时候，你需要多路复用技术。</p>
+<p>select不能应付海量的网站访问，所以需要epoll</p>
+<ul>
+<li><p>select底层采用数组来管理套接字描述符，管理的数量有上限，不超过几千个；</p>
+<p>而epoll使用树和链表来管理，同时管理数量可以更大</p>
+</li>
+<li><p>select不会告诉你到底哪个套接字来了消息，需要轮询；</p>
+<p>epoll直接告诉谁来了消息</p>
+</li>
+<li><p>select进行系统调用，需要把套接字列表在用户空间和内核空间来回拷贝；</p>
+<p>epoll统一在内核管理套接字描述符，无需来回拷贝</p>
+</li>
+</ul>
 <h2 id="来源"><a href="#来源" class="headerlink" title="来源"></a>来源</h2><p>CSDN<a target="_blank" rel="noopener" href="https://me.csdn.net/baidu_41388533">NGC_2070</a></p>
 <h1 id="4-epoll-的-ET-模式和-LT-模式哪个更高效？"><a href="#4-epoll-的-ET-模式和-LT-模式哪个更高效？" class="headerlink" title="4. epoll 的 ET 模式和 LT 模式哪个更高效？"></a>4. epoll 的 ET 模式和 LT 模式哪个更高效？</h1><p>LT(level triggered) 默认&#x2F;缺省的工作方式，同时支持 block和no_block socket。这种工作方式下，内核会通知你一个fd是否就绪，然后才可以对这个就绪的fd进行I&#x2F;O操作。就算你没有任何操作，系统还是会继续提示fd已经就绪，不过这种工作方式出错会比较小，传统的select&#x2F;poll就是这种工作方式的代表。</p>
 <p>ET(edge-triggered) 是高速工作方式，仅支持no_block socket，这种工作方式下，当fd从未就绪变为就绪时，内核会通知fd已经就绪，并且内核认为你知道该fd已经就绪，不会再次通知了，除非因为某些操作导致fd就绪状态发生变化。如果一直不对这个fd进行I&#x2F;O操作，导致fd变为未就绪时，内核同样不会发送更多的通知，因为only once。所以这种方式下，出错率比较高，需要增加一些检测程序。</p>
@@ -359,6 +398,7 @@
 <blockquote>
 <p>Create!<br>Destroy!</p>
 </blockquote>
+<p>注：main函数的花括号是为了让括号内的内容为局部对象，方便测试</p>
 <h2 id="弱指针weak-ptr"><a href="#弱指针weak-ptr" class="headerlink" title="弱指针weak_ptr"></a>弱指针weak_ptr</h2><ul>
 <li>可以和shared_ptr一起使用</li>
 <li>该指针可以被复制，但 <strong>不会增加额外的控制块来计数</strong>，仅仅声明该指针活着</li>
@@ -370,6 +410,7 @@
 
 <p>它指向一个 shared_ptr 管理的对象 . 进行该对象的内存管理的是那个强引用的 shared_ptr ， weak_ptr 只是提供了对管理对象的一个访问手段。</p>
 <h1 id="8-vector-和-list-有什么区别？"><a href="#8-vector-和-list-有什么区别？" class="headerlink" title="8.vector 和 list 有什么区别？"></a>8.vector 和 list 有什么区别？</h1><p> vector 和 built-in 数组类似，它拥有一段<strong>连续的内存空间</strong>，并且起始地址不变，因此它能非常好的支持<strong>随即存取</strong>，即[] 操作符，但由于它的内存空间是连续的，所以在中间进行插入和删除会造成内存块的拷贝，另外，当该数组后的内存空间不够时，需要重新申请一块足够大的内存并进行内存的拷贝。</p>
+<p>它的emplace_back()体现了零拷贝技术，虽然后push_back()作用一样，但不需要调用拷贝构造函数和转移构造函数，而是原地构造该元素</p>
 <p> list 就是数据结构中的双向链表，它的内存空间<strong>可以是不连续的</strong>，通过<strong>指针来进行数据的访问</strong>， 这个特点使得它的随即存取变的非常没有效率，因此它没有提供[]操作符的重载。<strong>支持任意地方的删除和插入</strong></p>
 <p>vector 适用：对象数量变化少，简单对象，随机访问元素频繁；</p>
 <p>list 适用：对象数量变化大，对象复杂，插入和删除频繁</p>
@@ -397,7 +438,7 @@
 <p>交换 - swap</p>
 <p>​        b.swap(a) ;            <em>&#x2F;&#x2F;a向量与b向量进行交换</em></p>
 </blockquote>
-<h1 id="9-C-内存-New-与-malloc-区别是什么？"><a href="#9-C-内存-New-与-malloc-区别是什么？" class="headerlink" title="9. C++内存 New 与 malloc 区别是什么？"></a>9. C++内存 New 与 malloc 区别是什么？</h1><ol>
+<h1 id="9-C-内存-new-与-malloc-区别是什么？"><a href="#9-C-内存-new-与-malloc-区别是什么？" class="headerlink" title="9. C++内存 new 与 malloc 区别是什么？"></a>9. C++内存 new 与 malloc 区别是什么？</h1><ol>
 <li><p>申请的内存所在位置；</p>
 <blockquote>
 <p>new：此操作符分配的内存空间是在自由存储区；</p>
@@ -411,7 +452,7 @@
 </li>
 <li><p>返回类型安全性；</p>
 <blockquote>
-<p>new分配内存成功，则返回对象指针，使用new是类型安全的；而malloc分配成功会返回void*类型指针</p>
+<p>new分配内存成功，则返回<strong>对象类型的指针</strong>，使用new是类型安全的；而malloc分配成功会返回void*类型指针，需要通过强制类型转换</p>
 </blockquote>
 </li>
 <li><p>内存分配失败时的返回值；</p>
@@ -422,7 +463,7 @@
 </li>
 <li><p>是否需要指定的内存大小；</p>
 <blockquote>
-<p>使用malloc为对象指针分配内存，要明确指定分配内存的大小，而new不需要</p>
+<p>使用malloc为对象指针分配内存，要<strong>明确</strong>指定分配内存的大小，而new不需要</p>
 <p>malloc返回的指针还需要进行强制类型转换才赋值给A<em>的指针对象，而使用new则不需要，直接返回的是A</em>的指针。</p>
 </blockquote>
 </li>
@@ -445,7 +486,7 @@
 </li>
 <li><p>是否可以被重载；</p>
 <blockquote>
-<p>new 是操作符，可以被重载，malloc&#x2F;free是库函数，不能被重载</p>
+<p>new 是操作符(需要编译器支持)，可以被重载，malloc&#x2F;free是库函数（头文件支持），不能被重载</p>
 </blockquote>
 </li>
 <li><p>能够直观的重新分配内存；</p>
@@ -459,14 +500,44 @@
 </ol>
 <p>总结：</p>
 <p>malloc给你的就好像一块原始的土地，你要种什么需要自己在土地上来播种</p>
-<p>而new帮你划好了田地的分块（数组），帮你播了种（构造函数），还提供其他的设施给你使用:</p>
+<p>而new帮你划好了田地的分块（数组），帮你播了种（构造函数），还提供其他的设施给你使用</p>
 <p><strong>来源：CSDN</strong> <a target="_blank" rel="noopener" href="http://t.csdn.cn/nQer6">AI浩</a></p>
-<h1 id="10-常量指针和指针常量有什么区别？"><a href="#10-常量指针和指针常量有什么区别？" class="headerlink" title="10.常量指针和指针常量有什么区别？"></a>10.常量指针和指针常量有什么区别？</h1><p>常量指针又叫常指针，可以理解为常量的指针，指向的是一个常量，这个常量是指针的值(地址)，const在前</p>
+<h2 id="有了malloc-x2F-free-为什么还要有new-x2F-delete"><a href="#有了malloc-x2F-free-为什么还要有new-x2F-delete" class="headerlink" title="有了malloc&#x2F;free 为什么还要有new&#x2F;delete"></a>有了malloc&#x2F;free 为什么还要有new&#x2F;delete</h2><p>new 在对象创建的时候执行构造函数&#x2F; delete 销毁的时候执行析构函数</p>
+<h3 id="new的工作原理："><a href="#new的工作原理：" class="headerlink" title="new的工作原理："></a>new的工作原理：</h3><p>先调用operator new函数，申请足够内存(底层用malloc)</p>
+<p>调用类型的构造函数，初始化成员变量</p>
+<p>返回自定义类型指针</p>
+<p>new[] 返回的是元素类型的指针</p>
+<p>new的机制是将内存分配和对象构造组合一起</p>
+<h3 id="delete工作原理"><a href="#delete工作原理" class="headerlink" title="delete工作原理"></a>delete工作原理</h3><p>调用operator delete释放内存(底层用free)</p>
+<p>delete[] 将元素逆序销毁</p>
+<p>delete也是将对象析构和内存释放组合一起</p>
+<p>而allocator将这两部分分开，申请一部分内存，不初始化对象，只有当需要的时候才初始化操作</p>
+<h2 id="被free回收的内存是立即返回操作系统吗"><a href="#被free回收的内存是立即返回操作系统吗" class="headerlink" title="被free回收的内存是立即返回操作系统吗"></a>被free回收的内存是立即返回操作系统吗</h2><p>否，会首先被ptmalloc使用双链表保存起来，并尝试对小块内存合并，当用户下一次申请内存的时候，会尝试从这些内存中寻找合适的返回，就避免了频繁的系统调用，占用过多的系统资源。</p>
+<h1 id="10-常量指针和指针常量有什么区别？"><a href="#10-常量指针和指针常量有什么区别？" class="headerlink" title="10.常量指针和指针常量有什么区别？"></a>10.常量指针和指针常量有什么区别？</h1><p>指向const的指针，指向一个常量项目。<strong>指针指向的数据不能改变，但指针本身可以改变</strong></p>
+<p>对于const指针，指针本身就是常量。<strong>一旦指针使用了某个地址进行初始化，那么它就不能指向除此地址之外的任何其他东西</strong></p>
+<p>来自 精通c++(第9版)</p>
+<h2 id="指针常量"><a href="#指针常量" class="headerlink" title="指针常量"></a>指针常量</h2><p><code>指针常量</code>是一个指针，（即指向常量的指针）指向一个只读常量，这个值因为是常量，所以不能被修改，const在*之前</p>
+<p><code>const int* p //const int是p指向的内容,*表示p是一个指针</code></p>
+<p>注意的是：const适用于p指向的东西；而不是p本身</p>
+<p>虽然常量的地址只能传递给指向const的指针，但是，指向const的指针是可以接收非常量的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">void display(const int *nums,int size)</span><br><span class="line">&#123;</span><br><span class="line">	for(int i=0;i&lt;sizel;i++)</span><br><span class="line">	cout&lt;&lt;*(nums+i)&lt;&lt;&quot; &quot;;</span><br><span class="line">&#125;</span><br><span class="line">...</span><br><span class="line">int size=6;</span><br><span class="line">const int arr1[size]=&#123;1,2,3,4,5,6&#125;;</span><br><span class="line">display(arr1,size);// 1 2 3 4 5 6</span><br><span class="line"></span><br><span class="line">int arr2[size]=&#123;2,4,6,8,10,12&#125;;</span><br><span class="line">display(arr2,size);//2 4 6 8 10 12</span><br></pre></td></tr></table></figure>
+
+<p>应用场景：当编写一个使用指针形参的函数，并且该函数不打算改变形参指向的数据时，将形参设置为一个指向const的指针。</p>
+<p>补充：</p>
+<p>数组名称是指针常量(Pointer Conster)，不能让它们指向除了它们所代表的数组之外的任何东西</p>
+<blockquote>
+<p>int a[20],b[20];</p>
+<p>int *p;</p>
+<p>p&#x3D;a;&#x2F;&#x2F;正确</p>
+<p>a&#x3D;b;&#x2F;&#x2F;错误</p>
+</blockquote>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">int x = 10; </span><br><span class="line">int y = 20;</span><br><span class="line">const int* ptr = &amp;x;</span><br><span class="line">ptr = &amp;y;</span><br><span class="line">//*x=30 //Error</span><br><span class="line">它可以指向不同的常量，但数据不能改</span><br></pre></td></tr></table></figure>
 
-<p>指针常量本质是一个常量，而用指针修饰它。指针常量的值是指针，这个值因为是常量，所以不能被赋值。const在后</p>
+<h2 id="常量指针"><a href="#常量指针" class="headerlink" title="常量指针"></a>常量指针</h2><p><code>常量指针</code>是一个不能给改变指向的指针。指针是一个常量必须初始化，一旦初始化完成，它的值，即这个地址就不能改变，<strong>不能中途改变指向</strong> ，const在*之后，如</p>
+<p><code>int *const p; //*const 表示p是一个常量指针，int是p指向的内容</code></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">int x = 10;</span><br><span class="line">int y = 20;</span><br><span class="line"></span><br><span class="line">int* const ptr = &amp;x; // ptr is a pointer constant to an integer, pointing to x</span><br><span class="line">//ptr = &amp;y; // Error</span><br><span class="line">*x = 30; // Valid</span><br><span class="line">它可以修改数据，但不能修改指向</span><br></pre></td></tr></table></figure>
 
+<h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><p>还有一个指向常量的常量指针，<code>const int *const ptr;//const int是ptr指向的内容，*const表示ptr是一个常量指针</code> <strong>既不可以改变指针指向的内容,也不能再去修改指针指向的地址</strong></p>
 <h1 id="11-map-和-unordered-map-的区别以及适用场景？"><a href="#11-map-和-unordered-map-的区别以及适用场景？" class="headerlink" title="11. map 和 unordered_map 的区别以及适用场景？"></a>11. map 和 unordered_map 的区别以及适用场景？</h1><p>map会自动按键的字典序排序</p>
 <p>unordered_map随机排序，用于查找</p>
 <h1 id="12-静态链接库和动态链接库各自的优缺点分别是什么？"><a href="#12-静态链接库和动态链接库各自的优缺点分别是什么？" class="headerlink" title="12. 静态链接库和动态链接库各自的优缺点分别是什么？"></a>12. 静态链接库和动态链接库各自的优缺点分别是什么？</h1><p>静态链接库的优点：</p>
@@ -591,8 +662,10 @@
 <p>7</p>
 </blockquote>
 <h1 id="17-C-中-final-关键字是做什么的？能否想到更多作用？"><a href="#17-C-中-final-关键字是做什么的？能否想到更多作用？" class="headerlink" title="17.C++中 final 关键字是做什么的？能否想到更多作用？"></a>17.C++中 final 关键字是做什么的？能否想到更多作用？</h1><p>C++11 引入了关键字 final ，按官方的标准是该关键字是 用来标识虚函数不能在子类中被覆盖(override) ，或一个类不能被继承。</p>
-<h1 id="18-对-RPC-框架有什么了解？原理？"><a href="#18-对-RPC-框架有什么了解？原理？" class="headerlink" title="18.对 RPC 框架有什么了解？原理？"></a>18.对 RPC 框架有什么了解？原理？</h1><p>使得远端的一个进程可以调用远端另一个进程所提供的方法</p>
+<h1 id="18-对-RPC-框架有什么了解？原理？"><a href="#18-对-RPC-框架有什么了解？原理？" class="headerlink" title="18.对 RPC 框架有什么了解？原理？"></a>18.对 RPC 框架有什么了解？原理？</h1><p>远程过程调用（Remote Procedure Call ，缩写为RPC）是一个计算机通讯协议</p>
+<p>允许运行于一台计算机的程序调用另一台计算机的子程序，就像调用本地程序一样，无需额外的为这个交互作用编程（无需关注细节）</p>
 <p>RPC用户调用接口 + 具体网络协议。 前者为开发者需要关心的，后者由框架来实现。</p>
+<p>RPC是一种服务器-客户端模式，经典实现是一个通过 发送请求-接收响应 进行信息交互的系统</p>
 <h2 id="引入"><a href="#引入" class="headerlink" title="引入"></a>引入</h2><p>如果有一个数独求解服务器，包含了登陆服务模块、计算求解模块、后台管理模块，开始时服务器可以部署在单机，但是如果用户增多、请求计算量增多，那么就需要<strong>集群</strong>和<strong>分布式</strong>部署架构达到高并发要求</p>
 <h2 id="集群"><a href="#集群" class="headerlink" title="集群"></a>集群</h2><p>将服务器部署到了多台机器上，每一台机器上都是独立的服务器。</p>
 <p>再通过负载均衡服务器进行管理，供用户使用，由此大大增加了服务器的并发负载量。</p>
@@ -642,17 +715,728 @@
 <h2 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h2><h3 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h3><p>Provider：服务提供方，CS 模型中的 Server。<br>Consumer： 调用远程服务服务消费方，CS 模型中的 Client。<br>Registry：服务注册与发现的服务管理中心。<br>Monitor：统计服务的调用次数和调用时间的监控中心。<br>Container：服务运行容器，如 jetty。</p>
 <h3 id="执行过程"><a href="#执行过程" class="headerlink" title="执行过程"></a>执行过程</h3><p>服务容器负责启动，加载，运行服务提供者。<br>服务提供者在启动时，向注册中心注册自己提供的服务，暴露自己的 IP 和端口信息。<br>服务消费者在启动时，向注册中心订阅自己所需的服务。<br>注册中心返回服务提供者列表给消费者，如果有变更，注册中心将基于长连接推送给数据消费者。<br>服务消费者，从提供这地址列表中，基于软负载均衡算法，选一台提供者进行调用，如果调用失败，再选另外一台服务调用。<br>服务消费者和提供者，在内存中累计调用次数和调用时间，定时发送一次统计数据到监控中心。</p>
 <p>来源：CSDN <a target="_blank" rel="noopener" href="http://t.csdn.cn/72BLc">Q.E.D.</a></p>
-<h1 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h1><p>很多时候不会使用using namespace std;（会不容易分辨各类函数来源）</p>
+<h1 id="补充-1"><a href="#补充-1" class="headerlink" title="补充"></a>补充</h1><p>很多时候不会使用using namespace std;（会不容易分辨各类函数来源）</p>
 <p>以vector为例，自己的库定义了一个vector，标准库又有一个，这时候引用using namespace std;</p>
 <p>会出现分歧</p>
 <p>大型程序往往会使用多个独立开发的库，这些库会定义大量的全局名字，如类、函数和模板等，不可避免会出现某些名字相互冲突的情况。命名空间<code>namespace</code>分割了全局命名空间，其中每个命名空间是一个作用域。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">namespace foo &#123;</span><br><span class="line">    class Bar &#123; /*...*/ &#125;;</span><br><span class="line">&#125;  // 命名空间结束后无需分号</span><br></pre></td></tr></table></figure>
 
+<h2 id="c-三大特性"><a href="#c-三大特性" class="headerlink" title="c++三大特性"></a>c++三大特性</h2><p>多态:主要指泛型编程运行时多态；在基类的函数加上virtual关键字，派生类重写该函数，运行时会根据对象的实际类型调用相应的函数。</p>
+<p>多态性，允许将子类类型的指针复制给父类类型的指针</p>
+<p><strong>重载实现编译时多态，虚函数实现运行时多态</strong></p>
+<p>封装：封装隐藏了实现细节，使得代码模块化</p>
+<p>继承:子类继承父类的数据和方法</p>
+<h3 id=""><a href="#" class="headerlink" title=""></a></h3><h2 id="重载与重写的区别"><a href="#重载与重写的区别" class="headerlink" title="重载与重写的区别"></a>重载与重写的区别</h2><p>重载：</p>
+<p>是一个类中多态性的体现， 同一个类中<strong>不同函数</strong>使用相同<strong>函数名</strong>，但<strong>函数的参数个数</strong>和<strong>类型不同</strong>，有<strong>不同的返回类型</strong></p>
+<p>重写：</p>
+<p><strong>子类对父类函数的重新实现</strong>，<strong>函数名和参数与父类一样</strong>，子类与父类<strong>函数体内容不一样</strong>，子类返回类型必须与父类保持一致。</p>
+<h2 id="指针和引用区别"><a href="#指针和引用区别" class="headerlink" title="指针和引用区别"></a>指针和引用区别</h2><p>&amp;叫做地址运算符，*是间接运算符</p>
+<p>int* ptr;&#x2F;&#x2F;这样的书写方式说明ptr数据类型不是int，而是int指针</p>
+<p>cout&lt;&lt;*ptr，这将解引用指针，实际上使用指针指向的值</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">int a=10;</span><br><span class="line">cout&lt;&lt;a&lt;&lt;&quot;,&quot;&lt;&lt;&amp;a&lt;&lt;&quot;,&quot;&lt;&lt;*&amp;a;// 10,0x72fe0c,10</span><br></pre></td></tr></table></figure>
 
 
-<h1 id="来源-1"><a href="#来源-1" class="headerlink" title="来源"></a>来源</h1><p>CSDN博主<a target="_blank" rel="noopener" href="https://blog.csdn.net/Lushengshi/article/details/127580635">「丘比特惩罚陆」</a></p>
+
+<ul>
+<li><p>指针是一个新的<code>变量</code>，存储的是地址，可通过访问这个地址来修改另一个变量；</p>
+<p>引用属于<code>原变量的别名</code>，对引用的任何操作就是对变量本身操作</p>
+</li>
+<li><p>指针可以有多级，引用就一级</p>
+</li>
+<li><p>指针可以为空，引用定义时必须初始化</p>
+</li>
+<li><p>指针初始化后可以改变指向，但引用不可以</p>
+</li>
+<li><p>sizeof指针得到的是该指针的大小，sizeof引用是引用所指向变量的大小</p>
+</li>
+<li><p>指针作为参数传递时(将实参的一个拷贝传递给形参，两者指向的地址相同，但不是同一个变量)，在函数中改变这个变量的指向不影响实参，引用却可以</p>
+<p>(即，指针传参还是值传递，指针本身的值不可改，除非解引用对指向的对象进行操作；</p>
+<p>引用传参，传进来的就是变量本身，因此变量可以修改</p>
+<p>)</p>
+</li>
+<li><p>引用本质是一个指针，占4字节内存；指针是具体的变量，占用存储空间</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">void testPTR(int *p)</span><br><span class="line">&#123;</span><br><span class="line">	int a=12;</span><br><span class="line">	p=&amp;a;</span><br><span class="line">&#125;</span><br><span class="line">void testREFF(int &amp;p)</span><br><span class="line">&#123;</span><br><span class="line">	int a=12;</span><br><span class="line">	p=a;</span><br><span class="line">&#125;</span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">	int a=10;</span><br><span class="line">	int* b=&amp;a;</span><br><span class="line">	testPTR(b);</span><br><span class="line">	cout&lt;&lt;a; //10</span><br><span class="line">	cout&lt;&lt;*b;//10</span><br><span class="line">	——————————————</span><br><span class="line">	a=10;</span><br><span class="line">	testREFF(a);</span><br><span class="line">	cout&lt;&lt;a;//12</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>引用变量</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">void ss(int &amp;a)</span><br><span class="line">&#123;</span><br><span class="line">  a=7;</span><br><span class="line">&#125;</span><br><span class="line">...</span><br><span class="line"> 	int b=5;</span><br><span class="line">    std::cout&lt;&lt;&amp;b&lt;&lt;&quot;,&quot;&lt;&lt;b&lt;&lt;std::endl;</span><br><span class="line">    ss(b);</span><br><span class="line">    std::cout&lt;&lt;&amp;b&lt;&lt;&quot;,&quot;&lt;&lt;b;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>0x72fdec,5<br>0x72fdec,7</p>
+</blockquote>
+<h2 id="结构体为什么要内存对齐"><a href="#结构体为什么要内存对齐" class="headerlink" title="结构体为什么要内存对齐"></a>结构体为什么要内存对齐</h2><p>平台原因，有的平台只能在某些地址处取特定类型的数据，否则抛出硬件异常</p>
+<p>硬件原因，内存对齐之后，cpu内存访问速度大大提升</p>
+<p>1、 分配内存的顺序是按照声明的顺序。</p>
+<p>2、 每个变量<strong>相对于起始位置的偏移量</strong>必须是<strong>该变量类型大小的整数倍</strong>，不是整数倍，则空出内存，直到偏移量是整数倍为止</p>
+<p> 3、 最后整个结构体的大小必须是里面变量类型最大值的整数倍</p>
+<p>添加了#pragma pack(n)后规则就变成了下面这样： </p>
+<p>1、 偏移量要是n和当前变量大小中较小值的整数倍</p>
+<p> 2、 整体大小要是n和最大变量大小中较小值的整数倍</p>
+<p> 3、 n值必须为1,2,4,8…，为其他值时就按照默认的分配规则</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">struct Test&#123;</span><br><span class="line">	int a;//4</span><br><span class="line">	char b;//1</span><br><span class="line">	int c;//4    总共会是9字节吗</span><br><span class="line">&#125;test;</span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">	test.a=1;</span><br><span class="line">	test.b=2;</span><br><span class="line">	test.c=3;</span><br><span class="line">	cout&lt;&lt;sizeof(test)&lt;&lt;endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其实是12字节</p>
+<p>以0x0000为起始地址，32位操作系统讨论</p>
+<table>
+<thead>
+<tr>
+<th>0x01</th>
+<th>0x00</th>
+<th>0x00</th>
+<th>0x00</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>变量a</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>还空了三字节</p>
+<table>
+<thead>
+<tr>
+<th>0x02</th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>变量b</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>0x03</th>
+<th>0x00</th>
+<th>0x00</th>
+<th>0x00</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>变量c</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>对于变量b，c，如果无内存对齐情况，这是5字节</p>
+<p>前4字节</p>
+<table>
+<thead>
+<tr>
+<th>0x02</th>
+<th>0x03</th>
+<th>0x00</th>
+<th>0x00</th>
+</tr>
+</thead>
+<tbody><tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>后1字节</p>
+<table>
+<thead>
+<tr>
+<th>0x00</th>
+</tr>
+</thead>
+</table>
+<p>这样的话，要读取两次，再拼接；而内存对齐，一次读取即可</p>
+<h2 id="传递函数参数，什么时候用指针、引用"><a href="#传递函数参数，什么时候用指针、引用" class="headerlink" title="传递函数参数，什么时候用指针、引用"></a>传递函数参数，什么时候用指针、引用</h2><p>指针：</p>
+<blockquote>
+<ul>
+<li>返回函数内局部变量的内存时。使用指针传参需要开辟内存，用完释放，否则引起内存泄露。而返回局部变量的引用无意义</li>
+</ul>
+</blockquote>
+<p>引用</p>
+<blockquote>
+<ul>
+<li>对栈空间大小比较敏感(比如递归)时用引用，引用传递不需要创建临时变量，开销更小</li>
+<li>类对象作为参数传递要用引用</li>
+</ul>
+</blockquote>
+<h2 id="堆和栈区别"><a href="#堆和栈区别" class="headerlink" title="堆和栈区别"></a>堆和栈区别</h2><p>申请方式</p>
+<blockquote>
+<ul>
+<li>栈由系统自动分配</li>
+<li>堆是自己申请、释放</li>
+</ul>
+</blockquote>
+<p>申请大小限制</p>
+<blockquote>
+<p>栈顶和栈底是之前预设好的，栈是向栈底扩展，大小固定</p>
+<p>堆向高地址扩展，是不连续的内存区域，大小灵活调整(这是由于系统是用链表来存储的空闲内存地址的，自然是不连续的，链表的遍历方向是由低地址向高地址)</p>
+</blockquote>
+<p>申请效率</p>
+<blockquote>
+<p>栈由系统分配，速度快，无碎片 (先进后出，进出一一对应)</p>
+<p>堆有程序员分配，速度慢，有碎片</p>
+</blockquote>
+<p>分配方式和空间大小</p>
+<blockquote>
+<p>堆，动态分配，不连续</p>
+<p>栈，动态、静态都有，连续内存区域</p>
+</blockquote>
+<p>栈空间默认4M，堆区一般1G-4G</p>
+<p>栈就像点菜，申请、使用，快捷，但自由度小</p>
+<p>堆，自己做菜，麻烦，自由度大</p>
+<h2 id="宏定义和函数区别"><a href="#宏定义和函数区别" class="headerlink" title="宏定义和函数区别"></a>宏定义和函数区别</h2><p>1.执行速度</p>
+<blockquote>
+<p>宏在编译时完成替换，被替换的文本参与编译，相当于直接插入了代码；运行时不存在函数调用，执行更快；</p>
+<p>而调用函数，需要跳转到具体调用函数</p>
+</blockquote>
+<p>2.返回值</p>
+<blockquote>
+<p>宏定义相当于在结构中插入代码，无返回值；</p>
+<p>函数调用是有的</p>
+</blockquote>
+<p>3.类型检查</p>
+<blockquote>
+<p>宏定义无类型，不进行类型检查</p>
+<p>函数要</p>
+</blockquote>
+<p>4.宏定义，不是语句，最后不加分号</p>
+<h3 id="宏"><a href="#宏" class="headerlink" title="宏"></a>宏</h3><p>1.预处理阶段：当编译c++代码时，预处理器过一遍c++所以#开头的语句，预编译器将这些代码评估完后给到编译器进行实际的编译</p>
+<p>2.用宏的目的：将代码中的文本替换为其它东西</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> WAIT std::cin.get()</span></span><br><span class="line"><span class="comment">//可以不放分号，否则会加入宏了</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	WAIT;</span><br><span class="line">	<span class="comment">//等价于std::cin.get()</span></span><br><span class="line">	<span class="comment">//当然，这种操作很蠢，只能让自己读懂代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>3.用法1：<code>发送参数</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">#include&lt;iostream&gt;</span><br><span class="line"></span><br><span class="line">#define log(x) std::cout&lt;&lt;x&lt;&lt;std::endl</span><br><span class="line">using namespace std;</span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line">    </span><br><span class="line">    log(&quot;hello&quot;);//输出hello</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>用法2：<code>辅助调试</code></p>
+<p>debug模式下会有很多日志的输出，Release模式下就不需要日志的输出了，正常的方法会删除	很多输出日志的语句或函数。 <strong>宏可以直接取消掉这样的语句</strong></p>
+<p>利用<code>#if,#else,endif</code>实现</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">#include&lt;iostream&gt;</span><br><span class="line"></span><br><span class="line">#define PR_DEBUG 1 </span><br><span class="line">#if PR_DEBUG==1</span><br><span class="line">#define log(x) std::cout&lt;&lt;x&lt;&lt;std::endl </span><br><span class="line">#else</span><br><span class="line">#define log(x) //什么也不定义 无意义</span><br><span class="line">#endif</span><br><span class="line">using namespace std;</span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line">   </span><br><span class="line">    log(&quot;hello&quot;);//当PR_DEBUG 为 1，输出，为0，无输出</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>利用<code>#if 0</code>和<code>#endif</code>删除一段宏</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">#include&lt;iostream&gt;</span><br><span class="line"></span><br><span class="line">#if 0</span><br><span class="line"></span><br><span class="line">#define PR_DEBUG 1 </span><br><span class="line">#if PR_DEBUG==1</span><br><span class="line">#define log(x) std::cout&lt;&lt;x&lt;&lt;std::endl </span><br><span class="line">#else</span><br><span class="line">#define log(x) //什么也不定义 无意义</span><br><span class="line">#endif</span><br><span class="line">using namespace std;</span><br><span class="line"></span><br><span class="line">#endif</span><br><span class="line">int main()&#123;</span><br><span class="line">   </span><br><span class="line">    log(&quot;hello&quot;);</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br><span class="line">//输出 error: &#x27;log&#x27; was not declared in this scope</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="宏和模板的区别"><a href="#宏和模板的区别" class="headerlink" title="宏和模板的区别"></a>宏和模板的区别</h2><p>发生时间不同，宏在预处理阶段就被评估了</p>
+<h2 id="宏和typedef区别"><a href="#宏和typedef区别" class="headerlink" title="宏和typedef区别"></a>宏和typedef区别</h2><p>1.用途</p>
+<blockquote>
+<p>宏主要用于定义常量和书写复杂的内容</p>
+<p>typede定义类型f<strong>别名</strong></p>
+</blockquote>
+<p>2.时间</p>
+<blockquote>
+<p>宏替换发生在编译阶段之前，文本插入替换</p>
+<p>typedef是编译的一部分</p>
+</blockquote>
+<p>3.宏不检查类型，typedef检查数据类型</p>
+<p>4.宏不是语句，末尾不加分号；typedef要</p>
+<p>5.指针的操作不同 ，typedef char * p_char和#define p_char char *区别巨大。</p>
+<h2 id="变量声明和定义区别？"><a href="#变量声明和定义区别？" class="headerlink" title="变量声明和定义区别？"></a>变量声明和定义区别？</h2><ul>
+<li>声明仅仅把变量的声明的<strong>位置及类型</strong>提供给编译器，不分配内存空间</li>
+</ul>
+<p>定义，要在定义的地方为其分配存储空间</p>
+<ul>
+<li>相同变量多处声明（外部变量<strong>extern</strong>） ，但只能在一处定义</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">//变量声明</span><br><span class="line">extern int x;</span><br><span class="line">//变量定义</span><br><span class="line">int x;</span><br><span class="line">int y=10;</span><br></pre></td></tr></table></figure>
+
+<p>总之，变量声明通知编译器变量的存在和类型，而变量定义创建变量，为其分配内存，</p>
+<p>总结：</p>
+<p>声明就是告知一下，你知道有这么个变量或者函数，这个变量的具体值，还有这个函数的函数体，不用知道；就告诉<strong>基本信息</strong>，<strong>需要extern关键字</strong></p>
+<p>定义就是，变量的初始化啊，函数体的<strong>具体实现</strong>啊</p>
+<p>如果是在类中的话</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">class Person &#123;</span><br><span class="line">public:</span><br><span class="line">    Person(); // 成员函数的声明</span><br><span class="line">    void SetName(const std::string&amp; name); // 成员函数的声明</span><br><span class="line">    void SetAge(int age); // 成员函数的声明</span><br><span class="line">    void PrintInfo() const; // 成员函数的声明</span><br><span class="line"></span><br><span class="line">private:</span><br><span class="line">    std::string name_; // 成员变量的声明</span><br><span class="line">    int age_; // 成员变量的声明</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Person::Person() : age_(0) &#123;</span><br><span class="line">    // 构造函数的定义</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void Person::SetName(const std::string&amp; name) &#123;</span><br><span class="line">    name_ = name;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void Person::SetAge(int age) &#123;</span><br><span class="line">    age_ = age;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void Person::PrintInfo() const &#123;</span><br><span class="line">    std::cout &lt;&lt; &quot;Name: &quot; &lt;&lt; name_ &lt;&lt; &quot;, Age: &quot; &lt;&lt; age_ &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="strlen和sizeof区别"><a href="#strlen和sizeof区别" class="headerlink" title="strlen和sizeof区别"></a>strlen和sizeof区别</h2><p>sizeof运算符，结果在编译时得到，所以不能得到运行时分配的存储空间大小；strlen是库函数</p>
+<p>sizeof参数可以是任何数据的类型或数据；strlen的参数只能是字符指针且结尾是’\0’的字符串</p>
+<h2 id="a与-amp-a的区别"><a href="#a与-amp-a的区别" class="headerlink" title="a与&amp;a的区别"></a>a与&amp;a的区别</h2><p>假设数组int a[10] 与int(*p)[10]&#x3D;&amp;a</p>
+<p>a是数组名，是数组首元素地址，*(a+1)&#x3D;a[1]，a相当于&amp;a[0]</p>
+<p>&amp;a是数组的指针，其类型为int(*p)[10]，值就是地址了，如果+1，其实是整个数组的偏移，地址为尾元素的后一个元素地址</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">int main()&#123;</span><br><span class="line">   </span><br><span class="line">    int a[4]=&#123;1,2,3,4&#125;;</span><br><span class="line">    int (*p)[4]=&amp;a;</span><br><span class="line">   </span><br><span class="line">    std::cout&lt;&lt;a&lt;&lt;&quot;,&quot;&lt;&lt;&amp;a&lt;&lt;std::endl;//0x72fdf0,0x72fdf0</span><br><span class="line">   </span><br><span class="line">    std::cout&lt;&lt;*a&lt;&lt;&quot;,&quot;&lt;&lt;*&amp;a[0]&lt;&lt;std::endl;//1,1</span><br><span class="line"></span><br><span class="line">    std::cout&lt;&lt;*(a+1)&lt;&lt;&quot;,&quot;&lt;&lt;*(&amp;a[1])&lt;&lt;std::endl;//2,2</span><br><span class="line">	//也就是说(&amp;a+1)，其实是整个数组的偏移，地址为尾元素的后一个元素地址</span><br><span class="line">    std::cout&lt;&lt;(a+4)&lt;&lt;&quot;,&quot;&lt;&lt;(&amp;a+1)&lt;&lt;std::endl;//0x72fe00,0x72fe00</span><br><span class="line"></span><br><span class="line">    std::cout&lt;&lt;*(a+1)&lt;&lt;&quot;,&quot;&lt;&lt;*(*p+1)&lt;&lt;std::endl;//2,2</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="c-与python"><a href="#c-与python" class="headerlink" title="c++与python"></a>c++与python</h2><p>python是解释执行的脚本语言；c++是在特定平台运行的编译语言</p>
+<p>python缩进区分代码块；c++花括号</p>
+<p>python库多，调用方便，不需要事先定义变量类型，基本数据类型为数字、布尔值、字符串、列表、元组等等</p>
+<h2 id="c-与c"><a href="#c-与c" class="headerlink" title="c++与c"></a>c++与c</h2><p>c没有字符串类型</p>
+<p>c++的new取代了c中的malloc</p>
+<p>c++的控制态输入输出iostream类替代c的stdio函数</p>
+<p>c++允许重载，c不允许</p>
+<p>c++允许重复定义变量，变量定义语句在使用它之前都可以；但c不能重复定义，且必须在函数开头部分</p>
+<p>c++多了关键字 bool、using、namespace等等</p>
+<h3 id="c的特点"><a href="#c的特点" class="headerlink" title="c的特点"></a>c的特点</h3><p>面向过程的结构化语言，易于调试和维护</p>
+<p>表现能力和处理能力极强，可以直接访问内存的物理地址</p>
+<p>c实现了对硬件的编程操作，也适合应用软件的开发</p>
+<h3 id="c-特点"><a href="#c-特点" class="headerlink" title="c++特点"></a>c++特点</h3><p>在c的基础上扩充和完善，使c++兼容了c语言的面向过程特点，又成为了一种面向对象的程序设计语言</p>
+<p>可以使用抽象数据类型进行基于对象的编程</p>
+<p>可以使用多继承、多态进行面向对象的编程</p>
+<p>担负起以模板为特征的泛型化编程</p>
+<h2 id="c-与java"><a href="#c-与java" class="headerlink" title="c++与java"></a>c++与java</h2><h3 id="语言特性"><a href="#语言特性" class="headerlink" title="语言特性"></a>语言特性</h3><p>java完全面向对象，jvm(java虚拟机)安装到任何操作系统上，可移植性强</p>
+<p>java没有指针的概念</p>
+<p>java用接口取代了c++中的抽象类，省却了在实现和维护上的复杂性</p>
+<h3 id="垃圾回收"><a href="#垃圾回收" class="headerlink" title="垃圾回收"></a>垃圾回收</h3><p>c++析构函数回收</p>
+<p>java是内存的分配和回收都是自动的</p>
+<h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h3><p>java在web应用上相比具有优势	，有丰富的框架</p>
+<p>底层程序的编程以及控制方面的编程，c++灵活，有句柄的存在</p>
+<p>java在桌面程序的实用性不如c++;c++可直接编译成exe文件，指针是c++的优势，可以直接对内存操作，但有危险性</p>
+<h2 id="c-的class和struct"><a href="#c-的class和struct" class="headerlink" title="c++的class和struct"></a>c++的class和struct</h2><p>相同</p>
+<blockquote>
+<p>都有成员函数、公有、私有部分</p>
+<p>任何可以用class完成的工作，可以用struct完成</p>
+</blockquote>
+<p>不同点</p>
+<blockquote>
+<p>如果不对成员不指定公私有，struct默认公有。class默认私有</p>
+<p>class默认private继承，struct默认public继承</p>
+</blockquote>
+<h2 id="define与const"><a href="#define与const" class="headerlink" title="define与const"></a>define与const</h2><p>编译阶段</p>
+<blockquote>
+<p>define编译的预处理阶段起作用</p>
+<p>const在编译、运行时起作用</p>
+</blockquote>
+<p>安全性</p>
+<blockquote>
+<p>define只做替换，不做类型检查和计算，不求解</p>
+<p>const常量有数据类型，编译器对其进行类型安全检查</p>
+</blockquote>
+<p>内存占用</p>
+<blockquote>
+<p>define只是将宏名称进行替换，内存中有多个相同的备份；const就一份</p>
+<p>宏定义的数据没有分配内存空间，const定义的变量只是值不能改变，但要分配内存空间</p>
+</blockquote>
+<h2 id="const和static的作用"><a href="#const和static的作用" class="headerlink" title="const和static的作用"></a>const和static的作用</h2><h3 id="static-1"><a href="#static-1" class="headerlink" title="static"></a>static</h3><h4 id="不考虑类的情况"><a href="#不考虑类的情况" class="headerlink" title="不考虑类的情况"></a>不考虑类的情况</h4><p>1.隐藏</p>
+<blockquote>
+<p>不加static的全局变量和函数具有全局可见性，可在其他文件中使用，加了只能在该文件所在的编译模块中使用</p>
+</blockquote>
+<p>2.默认初始化为0</p>
+<blockquote>
+<p>包括未初始化的全局静态变量与局部静态变量</p>
+</blockquote>
+<p>3.静态变量在函数内定义，始终存在，且只进行一次初始化，具有记忆性</p>
+<blockquote>
+<p>作用范围与局部变量相同，函数退出后仍然存在，但不能使用</p>
+</blockquote>
+<p>应用场景：两个全局变量的名字不能一样</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">//在a.cpp中</span><br><span class="line">//int s_var=5;//冲突了</span><br><span class="line">static int s_var=5;</span><br><span class="line">//main.cpp中</span><br><span class="line">int s_var=10;</span><br><span class="line">//或者extern int s_var;</span><br><span class="line">...</span><br><span class="line">cout&lt;&lt;s_var;// 10</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="考虑类"><a href="#考虑类" class="headerlink" title="考虑类"></a>考虑类</h4><p>static成员变量:</p>
+<blockquote>
+<p>只与类关联，不与类的对象关联，定义时要分配空间，不能在类声明中初始化</p>
+<p>必须在类定义体<strong>外部</strong>初始化(为了分配内存)，初始化时不需要标识为static，可以被非static成员函数任意访问</p>
+</blockquote>
+<p>static成员函数:</p>
+<blockquote>
+<p>不具有this指针(本质上，写的所有非static方法都会获得当前类实例作为参数)</p>
+<p>没有类实例</p>
+<p>无法访问类对象的非static成员变量和非static成员函数；</p>
+<p>不能被声明为const、虚函数和volatile；可以被非static成员函数任意访问</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;iostream&gt;</span><br><span class="line">using namespace std;</span><br><span class="line"></span><br><span class="line">struct Entity</span><br><span class="line">&#123;</span><br><span class="line">    static int x;</span><br><span class="line"></span><br><span class="line">    void print()</span><br><span class="line">    &#123;</span><br><span class="line">        cout &lt;&lt; x &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">int Entity::x;</span><br><span class="line"></span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">    Entity e1;</span><br><span class="line">    e1.x = 1;</span><br><span class="line"></span><br><span class="line">    Entity e2;</span><br><span class="line">    e2.x = 2;</span><br><span class="line"></span><br><span class="line">    e1.print();//2</span><br><span class="line">    e2.print();//2</span><br><span class="line"></span><br><span class="line">    cin.get();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>两个实例化对象共享的是同一个变量，正因如此，<strong>通过类实例来引用静态变量是没有意义的</strong></p>
+<p>所以可以这样写：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Entity e1;</span><br><span class="line">   Entity::x = 1;</span><br><span class="line"></span><br><span class="line">   Entity e2;</span><br><span class="line">    Entity::x = 2;</span><br><span class="line"></span><br><span class="line">   e1.print();//2</span><br><span class="line">   e2.print();//2</span><br></pre></td></tr></table></figure>
+
+<p>如果连print()也是静态的话，由于静态函数无实例，可以这样写</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">struct Entity</span><br><span class="line">&#123;</span><br><span class="line">    static int x;</span><br><span class="line"></span><br><span class="line">    static void print()</span><br><span class="line">    &#123;</span><br><span class="line">        cout &lt;&lt; x &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">int Entity::x;</span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">    Entity::x = 1;</span><br><span class="line">    Entity::x= 2;</span><br><span class="line">    Entity::print();//2</span><br><span class="line">    Entity::print();//2</span><br><span class="line"></span><br><span class="line">    cin.get();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当然了，此时将x改为非static，会报错，因为static函数无法访问非静态变量(静态方法无实例)</p>
+<p>所以，静态方法和在类外部编写的方法一样</p>
+<p>如果在类外面写一个print()，访问不到x</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">struct Entity</span><br><span class="line">&#123;</span><br><span class="line">    int x;</span><br><span class="line"></span><br><span class="line">    static void print()</span><br><span class="line">    &#123;</span><br><span class="line">        cout &lt;&lt; x &lt;&lt; endl;  // 报错，不能访问到非静态变量x</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line">//在类外面写一个print()函数</span><br><span class="line">static void print()</span><br><span class="line">&#123;</span><br><span class="line"> cout &lt;&lt; x &lt;&lt; endl;  // 报错，x是什么？没被定义。</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">    Entity e1;</span><br><span class="line">    e1.x = 1;</span><br><span class="line"></span><br><span class="line">    Entity e2;</span><br><span class="line">    e2.x = 2;</span><br><span class="line"></span><br><span class="line">    e1.print();</span><br><span class="line">    e2.print();</span><br><span class="line"></span><br><span class="line">    cin.get();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>下面这种就可以</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">//在类外面写一个print()函数</span><br><span class="line">static void print(Entity e)</span><br><span class="line">&#123;</span><br><span class="line"> cout &lt;&lt; e.x &lt;&lt; endl;  // 成功运行</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="const-1"><a href="#const-1" class="headerlink" title="const"></a>const</h3><ul>
+<li><strong>const首先作用于左边的东西；如果左边没东西，就做用于右边的东西</strong></li>
+<li>const被cherno称为伪关键字，因为它在改变生成代码方面做不了什么。</li>
+<li>const是一个承诺，承诺一些东西是不变的，你是否遵守诺言取决于你自己。我们要保持const是因为这个承诺实际上可以简化很多代码。</li>
+</ul>
+<h4 id="不考虑类"><a href="#不考虑类" class="headerlink" title="不考虑类"></a>不考虑类</h4><p>const常量在定义时 必须初始化，之后无法更改</p>
+<p>const形参可以接收const和非const类型的实参</p>
+<h4 id="考虑类-1"><a href="#考虑类-1" class="headerlink" title="考虑类"></a>考虑类</h4><p>const成员变量:</p>
+<blockquote>
+<p>不能在类定义外部初始化，只能通过构造函数初始化列表进行初始化，并且必须有构造函数；</p>
+<p>不同类对其const数据成员的值可以不同，所以不能在类中初始化</p>
+</blockquote>
+<p>const成员函数：</p>
+<blockquote>
+<p>const对象不可以调用非const成员函数;</p>
+<p>非const对象都可以调用</p>
+<p>不可以改变非mutable数据的值</p>
+</blockquote>
+<p><strong>mutable:该关键字声明的变量可以在const成员函数中被修改</strong></p>
+<h2 id="顶层const和底层const"><a href="#顶层const和底层const" class="headerlink" title="顶层const和底层const"></a>顶层const和底层const</h2><p>顶层const：指的是const修饰的变量本身是一个常量，无法修改，指的是指针，就是*号的右边</p>
+<p>底层const：指的是const修饰的变量所指向的对象是一个常量，指的是所指变量，就是*号的左边</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">int a=10;int* const b1=&amp;a;//顶层const，b1本身是个常量</span><br><span class="line">const int* b2=&amp;a;//底层const，b2本身可变，所指对象是常量</span><br><span class="line">const int b3=20;//顶层const，b3常量不可变</span><br><span class="line">const int* const b4=&amp;a;//前一个const为底层;后一个为顶层,b4不可变</span><br><span class="line">const int&amp; b5=a;//用于声明引用变量，底层const</span><br></pre></td></tr></table></figure>
+
+<p>区分作用：</p>
+<blockquote>
+<p>执行对象拷贝时有限制，常量的底层const不能赋值给非常量的底层const</p>
+<p>使用命令强制类型转换函数const_cast时，只能改变运算对象的底层const</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">const int a;int const a;//定义常量类型a</span><br><span class="line">const int* a;//a为指向int型变量的指针，const在*左侧，表示a指向不可变常量</span><br><span class="line">int *const a;//a指向int型变量，const在*右侧，表示常指针，即该指针初始化后，不可更改指向</span><br></pre></td></tr></table></figure>
+
+<h2 id="数组名与指针的区别"><a href="#数组名与指针的区别" class="headerlink" title="数组名与指针的区别"></a>数组名与指针的区别</h2><blockquote>
+<p>都可以通过增减偏移量来访问数组中的元素</p>
+<p>数组名理解为常指针，所以数组名没有自增自减操作</p>
+<p>数组名做形参传递给调用函数后，失去原有特性，退化为一般指针，可以自增、自减，但sizeof运算符不能得到原数组大小</p>
+</blockquote>
+<h2 id="final和override关键字"><a href="#final和override关键字" class="headerlink" title="final和override关键字"></a>final和override关键字</h2><h3 id="override"><a href="#override" class="headerlink" title="override"></a>override</h3><p>父类中用了虚函数，子类对父类的虚函数进行重写</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">foo</span><span class="params">()</span></span>=<span class="number">0</span>;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">B</span>:<span class="keyword">public</span> A&#123;</span><br><span class="line">	<span class="comment">//void foo()&#123;&#125;也是可以的</span></span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">foo</span><span class="params">()</span> <span class="keyword">override</span></span>&#123;&#125;;<span class="comment">//加了override，如果函数名写错了，编译不通过</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="final"><a href="#final" class="headerlink" title="final"></a>final</h3><p>不希望某个类被继承 or 不希望某个虚函数被重写；可以添加该关键字，一旦添加该关键字的类被继承，或方法被重写，编译报错</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Base</span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">foo</span><span class="params">()</span></span>=<span class="number">0</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>:<span class="keyword">public</span> Base</span><br><span class="line">&#123;</span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">foo</span><span class="params">()</span> <span class="keyword">final</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">B</span> <span class="keyword">final</span>:A&#123;</span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">fool</span><span class="params">()</span></span>; <span class="comment">//error，A里已经final了</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">C</span>:<span class="keyword">public</span> B&#123;<span class="comment">//error，B类final</span></span><br><span class="line"></span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="拷贝初始化与直接初始化"><a href="#拷贝初始化与直接初始化" class="headerlink" title="拷贝初始化与直接初始化"></a>拷贝初始化与直接初始化</h2><p>用于类类型对象时：</p>
+<blockquote>
+<p>直接初始化：</p>
+<p>直接调用与实参匹配的构造函数</p>
+<p>拷贝初始化：</p>
+<p>先使用指定构造函数创建一个临时对象，调用拷贝构造函数将临时对象拷贝到正在创建的对象</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">//直接初始化</span><br><span class="line">  string str1(&quot;i am a string&quot;);</span><br><span class="line">  string str2(str1);</span><br><span class="line"></span><br><span class="line">  //拷贝初始化</span><br><span class="line">  string str3=&quot;I am a string&quot;;</span><br><span class="line">  string str4=str3;//相当于隐身调用拷贝构造函数，而不是复制运算符函数</span><br></pre></td></tr></table></figure>
+
+<p>当然了，拷贝构造函数为private时，语句3,4编译时会报错</p>
+<p>explict修饰构造函数时：如果构造函数存在隐式转化，也报错</p>
+<h3 id="什么时候调用拷贝构造函数"><a href="#什么时候调用拷贝构造函数" class="headerlink" title="什么时候调用拷贝构造函数"></a>什么时候调用拷贝构造函数</h3><p>用类的一个实例化对象去初始化另一个对象的时候 </p>
+<p>函数的参数是类的对象时（非引用传递） </p>
+<p>函数的返回值是函数体内局部对象的类的对象时 ,此时虽然发生（Named return Value优化）NRV优化，但是由于返回方式是值传递，所以会在返回值的地方调用拷贝构造函数</p>
+<h2 id="编译型与解释型语言区别"><a href="#编译型与解释型语言区别" class="headerlink" title="编译型与解释型语言区别"></a>编译型与解释型语言区别</h2><p>执行方面</p>
+<blockquote>
+<p>编译型语言，先用编译器将代码编译成可执行文件如.exe才能执行</p>
+<p>即源程序-&gt;机器指令-&gt;机器运行</p>
+<p>解释型，解释(翻译)一条执行一条</p>
+</blockquote>
+<p>跨平台性</p>
+<blockquote>
+<p>编译型依赖特定平台，不同操作系统下使用不同编译工具进行编译，编译出来的机器代码不同</p>
+<p>解释型移植性好（jvm(java虚拟机)、python虚拟机的强大）</p>
+</blockquote>
+<p>性能</p>
+<blockquote>
+<p>编译型要好一点</p>
+<p>解释型语言中间隔了个虚拟机的存在，运行速度慢了，要求的内存也比较高</p>
+</blockquote>
+<p>总之，编译型，运行快，所需内存小，但跨平台性差</p>
+<p>​			解释型，跨平台性好，但运行慢，内存大</p>
+<h2 id="初始化和赋值的区别"><a href="#初始化和赋值的区别" class="headerlink" title="初始化和赋值的区别"></a>初始化和赋值的区别</h2><p>初始化：创建对象时赋予一个初值，分为直接初始化、拷贝初始化</p>
+<p>赋值：将对象的当前值擦掉，用新值代替</p>
+<p>简单类型来说没区别</p>
+<p>对于类和复杂类型的话</p>
+<p>怎么区分嘞：对象创建的时候就是初始化，未创建对象而对象的值改变就是赋值</p>
+<h2 id="extern-“C”的用法"><a href="#extern-“C”的用法" class="headerlink" title="extern “C”的用法"></a>extern “C”的用法</h2><p>为了在c++代码中正确调用c语言代码，在程序中加上 extern “C”，相当于按照C语言进行编译了</p>
+<p>使用场景：你比如多人协同开发，有人c++，有人c</p>
+<p>使用例子：<a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_58367586/article/details/123015442">https://blog.csdn.net/m0_58367586/article/details/123015442</a></p>
+<h2 id="野指针与悬空指针"><a href="#野指针与悬空指针" class="headerlink" title="野指针与悬空指针"></a>野指针与悬空指针</h2><p>都是指向无效内存区域的</p>
+<p>野指针：</p>
+<p>野指针，指的是没有被初始化过的指针</p>
+<p><code>比如int *p;</code>为了防止出错，可这样 <code>int* p=nullptr;</code></p>
+<p>解决：要么初始化、要么置空</p>
+<p>悬空指针：</p>
+<p>最初指向的内存已经被释放了的指针，如下p和p2都是悬空指针</p>
+<p>解决：释放操作后，及时置空</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">int* p=nullptr;</span><br><span class="line">int* p2=new int;</span><br><span class="line"></span><br><span class="line">p=p2;</span><br><span class="line"></span><br><span class="line">delete p2;</span><br></pre></td></tr></table></figure>
+
+<p>所以，c++引入了智能指针，避免悬空指针的产生</p>
+<h2 id="C-类型安全"><a href="#C-类型安全" class="headerlink" title="C++类型安全"></a>C++类型安全</h2><h3 id="什么是类型安全？"><a href="#什么是类型安全？" class="headerlink" title="什么是类型安全？"></a>什么是类型安全？</h3><p>类型安全很大程度上等价于内存安全，类型安全的代码不会试图访问自己没被授权的区域。</p>
+<h3 id="c-的类型安全"><a href="#c-的类型安全" class="headerlink" title="c++的类型安全"></a>c++的类型安全</h3><p>操作符new返回的指针类型严格与对象匹配，而不是void*</p>
+<p>dynamic_cast比static_cast有更多具体的类型检查</p>
+<p>const关键字(有类型、作用域)代替#define constants(简单的文本替换)</p>
+<h2 id="c-的构造函数"><a href="#c-的构造函数" class="headerlink" title="c++的构造函数"></a>c++的构造函数</h2><p>默认构造函数（无参）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">class Student</span><br><span class="line">&#123;</span><br><span class="line">...</span><br><span class="line">	student()&#123;</span><br><span class="line">	this-&gt;id=1;</span><br><span class="line">	this-&gt;name=&quot;yuleiyun&quot;;</span><br><span class="line">	&#125;</span><br><span class="line">...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>初始化构造函数(有参数)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">student(int a, string str):id(a), name(str)&#123;&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>拷贝构造函数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">student(const student&amp; s)&#123;</span><br><span class="line"> this-&gt;id = s.id;</span><br><span class="line"> this-&gt;name = s.name;</span><br><span class="line"> &#125;; </span><br></pre></td></tr></table></figure>
+
+<p>移动构造函数(move和右值引用)</p>
+<p>委托构造函数</p>
+<p>转换构造函数(形参只有一个，是其他类型变量)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">student(int id)&#123; //将其它类型变量，隐式转换为本类对象</span><br><span class="line"> this-&gt;id = id;</span><br><span class="line"> this-&gt;name = &quot;yuleiyun&quot;;</span><br><span class="line"> &#125;;</span><br></pre></td></tr></table></figure>
+
+<h2 id="浅拷贝与深拷贝-暂略"><a href="#浅拷贝与深拷贝-暂略" class="headerlink" title="浅拷贝与深拷贝(暂略)"></a>浅拷贝与深拷贝(暂略)</h2><p>当进行变量被赋值给另一变量的时候，这是在进行<strong>复制</strong></p>
+<p>浅拷贝只是拷贝基本数据类型(非指针变量)，并没有新开辟一个地址，拷贝的指针和原来的指针指向同一块地址</p>
+<p>如果对象中变量带有指针或引用，再释放浅拷贝的指针资源会出错</p>
+<p>深拷贝不仅拷贝指针，还开辟出一块新的空间用来存放新的值。不会出现浅拷贝出错的情况</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">using namespace std;</span><br><span class="line">class Person&#123;</span><br><span class="line">private:</span><br><span class="line">    int num; </span><br><span class="line">    char* name;</span><br><span class="line">public:</span><br><span class="line">    Person()&#123;</span><br><span class="line">        name=new char(20);</span><br><span class="line">        cout&lt;&lt;&quot;Person&quot;&lt;&lt;endl;</span><br><span class="line">    &#125;;</span><br><span class="line">    ~Person()&#123;</span><br><span class="line">        cout&lt;&lt;&quot;~Person &quot;&lt;&lt;&amp;name&lt;&lt;endl;</span><br><span class="line">        delete name;</span><br><span class="line">        name=NULL;</span><br><span class="line">    &#125;;</span><br><span class="line">    Person(const Person &amp;p)&#123;</span><br><span class="line">        //浅拷贝</span><br><span class="line">        name=p.name;</span><br><span class="line"></span><br><span class="line">        //深拷贝</span><br><span class="line">        // name=new char(20);</span><br><span class="line">        // memcpy(name,p.name,strlen(p.name));</span><br><span class="line">        cout&lt;&lt;&quot;Copy Person&quot;&lt;&lt;endl;</span><br><span class="line">    &#125;;</span><br><span class="line">    void getname()</span><br><span class="line">    &#123;</span><br><span class="line">        cout&lt;&lt;name&lt;&lt;endl;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line">int main()&#123;</span><br><span class="line">    &#123;</span><br><span class="line">        Person p1;</span><br><span class="line">     Person p2(p1);//复制</span><br><span class="line">    // p2.getname();</span><br><span class="line">    &#125;</span><br><span class="line">   </span><br><span class="line">    system(&quot;pause&quot;);</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但是我的浅拷贝没报错</p>
+<h2 id="内联函数与宏定义"><a href="#内联函数与宏定义" class="headerlink" title="内联函数与宏定义"></a>内联函数与宏定义</h2><p>在使用时，宏只做简单字符串替换（编译前）；</p>
+<p>而内联函数可以进行参数类型检查（编译时），且具有返回值</p>
+<p>内联函数在编译时直接将函数代码嵌入到目标代码中，省去函数调用的开销来提高执行效率，并且进行参数类型检查，具有返回值，可以实现重载</p>
+<p>宏定义时要注意书写（参数要括起来）否则容易出现歧义；</p>
+<p>内联函数不会产生歧义，内联函数有类型检测、语法判断等功能，而宏没有</p>
+<h3 id="内联函数使用场景"><a href="#内联函数使用场景" class="headerlink" title="内联函数使用场景"></a>内联函数使用场景</h3><p>使用宏定义的地方都可以inline函数</p>
+<p>作为类成员接口函数来读写类的私有成员或保护成员，提高效率</p>
+<h2 id="大小端存储"><a href="#大小端存储" class="headerlink" title="大小端存储"></a>大小端存储</h2><p>大端：字数据的高字节存储在低地址</p>
+<p>小端：字数据的低字节存储在低地址</p>
+<p>在socket编程中，往往将操作系统使用的小端存储的IP地址转化为大端存储，从而进行网络传输</p>
+<p>例如32字节的0x12345678（高字节-&gt;低字节）</p>
+<p>小端存储方式：</p>
+<table>
+<thead>
+<tr>
+<th>内存地址</th>
+<th>0x2000</th>
+<th>0x2001</th>
+<th>0x2002</th>
+<th>0x2003</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>内存内容</td>
+<td>0x78</td>
+<td>0x56</td>
+<td>0x34</td>
+<td>0x12</td>
+</tr>
+</tbody></table>
+<p>大端存储方式：</p>
+<table>
+<thead>
+<tr>
+<th>内存地址</th>
+<th>0x2000</th>
+<th>0x2001</th>
+<th>0x2002</th>
+<th>0x2003</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>内存内容</td>
+<td>0x12</td>
+<td>0x34</td>
+<td>0x56</td>
+<td>0x78</td>
+</tr>
+</tbody></table>
+<h3 id="代码判断"><a href="#代码判断" class="headerlink" title="代码判断"></a>代码判断</h3><h4 id="1-强制类型转换"><a href="#1-强制类型转换" class="headerlink" title="1.强制类型转换"></a>1.强制类型转换</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">int a=0x1234;//int 与 char的长度不同，int转换成char，只会留下低字节部分</span><br><span class="line">char c=(char)(a);</span><br><span class="line">if(c==0x12)</span><br><span class="line">cout&lt;&lt;&quot;大端&quot;&lt;&lt;endl;</span><br><span class="line">else if(c==0x34)</span><br><span class="line">cout&lt;&lt;&quot;小端&quot;&lt;&lt;endl;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-巧用union联合体"><a href="#2-巧用union联合体" class="headerlink" title="2.巧用union联合体"></a>2.巧用union联合体</h4><h2 id="volatile、mutable和explicit关键字的用法"><a href="#volatile、mutable和explicit关键字的用法" class="headerlink" title="volatile、mutable和explicit关键字的用法"></a>volatile、mutable和explicit关键字的用法</h2><h3 id="volatile"><a href="#volatile" class="headerlink" title="volatile"></a>volatile</h3><p>volatile定义变量的值是易变的，每次用到这个变量的值的时候都要去重新读取这个变量的值，而不是读寄存器内的备份。多线程中被几个任务共享的变量需要定义为volatile类型。</p>
+<p>多线程下：有些变量是用volatile关键字声明的。当两个线程都要用到某一个变量且该变量的值会被改变时，应该用 volatile声明，该关键字的作用是防止优化编译器把变量从内存装入CPU寄存器中。</p>
+<h3 id="mutable"><a href="#mutable" class="headerlink" title="mutable"></a>mutable</h3><p>mutable:可变的、易变的，在C++中，mutable 也是为了突破const的限制而设置的。被mutable修饰的变量，将永远处于可变的状态，即使在一个const 函数中。我们知道，如果类的成员函数不会改变对象的状态，那么这个成员函数一般会声明成const的。 但是，有些时候，我们需要在const函数里面修改一些跟类状态无关的数据成员，那么这个函数就应该被 mutable来修饰，并且放在函数后后面关键字位置。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">class person</span><br><span class="line">&#123;</span><br><span class="line">int m_A;</span><br><span class="line">mutable int m_B;//特殊变量 在常函数里值也可以被修改</span><br><span class="line">public:</span><br><span class="line"> void add() const//在函数里不可修改this指针指向的值 常量指针</span><br><span class="line"> &#123;</span><br><span class="line"> m_A=10;//错误 不可修改值，this已经被修饰为常量指针</span><br><span class="line"> m_B=20;//正确</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br><span class="line">class person</span><br><span class="line">&#123;</span><br><span class="line">int m_A;</span><br><span class="line">mutable int m_B;//特殊变量 在常函数里值也可以被修改</span><br><span class="line">&#125;</span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">const person p;//修饰常对象 不可修改类成员的值</span><br><span class="line">p.m_A=10;//错误，被修饰了指针常量</span><br><span class="line">p.m_B=200;//正确，特殊变量，修饰了mutable</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="explicit"><a href="#explicit" class="headerlink" title="explicit"></a>explicit</h3><p>explicit关键字用来修饰类的<strong>构造函数</strong>，被修饰的构造函数的类，不能发生相应的隐式类型转换，<strong>只能以显示的方式进行类型转换</strong>，注意以下几点： </p>
+<p>explicit 关键字只能用于类内部的构造函数声明上 </p>
+<p>explicit 关键字作用于单个参数的构造函数 </p>
+<p>被explicit修饰的构造函数的类，不能发生相应的隐式类型转换</p>
+<h2 id="c-的异常处理方法"><a href="#c-的异常处理方法" class="headerlink" title="c++的异常处理方法"></a>c++的异常处理方法</h2><p>常见异常：</p>
+<blockquote>
+<p>数组下标越界</p>
+<p>除数为0</p>
+<p>动态分配空间不足</p>
+<p>…</p>
+</blockquote>
+<h3 id="1-try、throw、catch关键字"><a href="#1-try、throw、catch关键字" class="headerlink" title="1.try、throw、catch关键字"></a>1.try、throw、catch关键字</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">#include&lt;iostream&gt;</span><br><span class="line"></span><br><span class="line">using namespace std;</span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line">    double m,n;</span><br><span class="line">    cin&gt;&gt;m&gt;&gt;n;</span><br><span class="line">    try&#123;</span><br><span class="line">        cout&lt;&lt;&quot;before dividing: &quot;&lt;&lt;endl;</span><br><span class="line">        if(n==0) throw -1;//抛出int型异常</span><br><span class="line">        else if(m==0) throw -1.0;//抛出double型异常</span><br><span class="line">        else cout&lt;&lt;m/n&lt;&lt;endl;</span><br><span class="line"></span><br><span class="line">        cout&lt;&lt;&quot;after dividing. &quot;&lt;&lt;endl;</span><br><span class="line">    &#125;</span><br><span class="line">    catch(double d)&#123;</span><br><span class="line">        cout&lt;&lt;&quot;catch (double) &quot;&lt;&lt;d&lt;&lt;endl;</span><br><span class="line">    &#125;</span><br><span class="line">    catch(int c)&#123;</span><br><span class="line">        cout&lt;&lt;&quot;catch (int) &quot;&lt;&lt;c&lt;&lt;endl;</span><br><span class="line">    &#125;</span><br><span class="line">    cout&lt;&lt;&quot;finished. &quot;&lt;&lt;endl;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>输入m&#x3D;1，n&#x3D;0</p>
+<blockquote>
+<p>before dividing:<br>catch (int) -1<br>finished.</p>
+</blockquote>
+<p>输入m&#x3D;0,n&#x3D;1</p>
+<blockquote>
+<p>before dividing:<br>catch (double) -1<br>finished.</p>
+</blockquote>
+<p>输入 m&#x3D;4,n&#x3D;2;</p>
+<blockquote>
+<p>before dividing:<br>2<br>after dividing.<br>finished.</p>
+</blockquote>
+<p>程序的执行流程是：</p>
+<p>先执行try包裹的语句块：</p>
+<p>​		如果执行过程中没有异常发生，则不会进入任何catch包裹的语句块</p>
+<p>如果发生异常， 则使用throw进行异常抛出，再由catch进行捕获，throw可以抛出各种数据类型的信息</p>
+<p>代码中使用的是数字，也可以自定义异常class</p>
+<p>catch根据throw抛出的数据类型进行精确捕获（不会出现类型转换）， 如果匹配不到就直接报错，可以使用catch(…)的方式捕获任何异常（不推荐）</p>
+<p>当然，如果catch了异常，当前函数如果不进行处理，或者已经处理了想通知上一层的调用者，可以在catch里面再throw异常。</p>
+<h3 id="2-函数的异常声明列表"><a href="#2-函数的异常声明列表" class="headerlink" title="2.函数的异常声明列表"></a>2.函数的异常声明列表</h3><p><code>int fun() throw(int,double,A,B,C)&#123;...&#125;;</code></p>
+<h3 id="3-c-标准异常类exception"><a href="#3-c-标准异常类exception" class="headerlink" title="3.c++标准异常类exception"></a>3.c++标准异常类exception</h3><p>bad_typeid：使用typeid运算符，如果其操作数是一个多态类的指针，而该指针的值为 NULL，则会拋 出此异常</p>
+<p>bad_cast：在用 dynamic_cast 进行从多态基类对象（或引用）到派生类的引用的强制类型转换时，如 果转换是不安全的，则会拋出此异常 </p>
+<p>bad_alloc：在用 new 运算符进行动态内存分配时，如果没有足够的内存，则会引发此异常</p>
+<p> out_of_range:用 vector 或 string的at 成员函数根据下标访问元素时，如果下标越界，则会拋出此异常</p>
+<h2 id="形参、实参区别"><a href="#形参、实参区别" class="headerlink" title="形参、实参区别"></a>形参、实参区别</h2><ul>
+<li>形参变量只有在被调用时才分配内存单元，在调用结束时， 即刻释放所分配的内存单元</li>
+<li>实参是一个确定的值(常量、函数、变量、表达式)，获取输入也好、预先赋值也好使实参获得确认值，产生临时变量</li>
+<li>它们在个数、类型上、顺序上严格匹配，否则调用函数出错</li>
+<li>函数调用中数据单向传递，实参-&gt;形参；所以形参的值变化，不影响实参</li>
+<li>当形参、实参不是指针类型：<ul>
+<li>在该函数运行时，形参和实参是不同的变量，他们在内存中位于不同的位置</li>
+<li>形参将实参的内容复制一份，在该函数运行结束的时候形参被释放，而实参内容不会改变</li>
+</ul>
+</li>
+</ul>
+<h2 id="值传递、指针传递、引用传递的区别和效率"><a href="#值传递、指针传递、引用传递的区别和效率" class="headerlink" title="值传递、指针传递、引用传递的区别和效率"></a>值传递、指针传递、引用传递的区别和效率</h2><h3 id="值传递"><a href="#值传递" class="headerlink" title="值传递"></a>值传递</h3><p>形参向函数所属的栈拷贝数据的过程，如果值传递的对象是类对象，耗费一定的时间和空间</p>
+<h3 id="指针传递"><a href="#指针传递" class="headerlink" title="指针传递"></a>指针传递</h3><p>传地址值，同样有一个形参向函数所属栈拷贝数据的过程，但拷贝数据固定为4字节的地址</p>
+<h3 id="引用传递"><a href="#引用传递" class="headerlink" title="引用传递"></a>引用传递</h3><p>同样有上述拷贝过程，但是针对地址的，为该数据所在地址起了一个别名</p>
+<h2 id="静态变量什么时候初始化"><a href="#静态变量什么时候初始化" class="headerlink" title="静态变量什么时候初始化"></a>静态变量什么时候初始化</h2><h2 id="const关键字作用"><a href="#const关键字作用" class="headerlink" title="const关键字作用"></a>const关键字作用</h2><ul>
+<li>防止变量改变，防止指针更改指向</li>
+<li>修饰形参，在函数内部不能修改</li>
+<li>对于类的成员函数，const修饰表示常函数，不能修改类的成员变量；类的常对象只能访问类的常成员函数</li>
+<li>对于类的成员函数，必须指定其返回值为const类型，使得其返回值不为左值</li>
+<li>const成员函数可以访问 非const对象的非const或const数据成员、const对象内的所有数据成员</li>
+<li>非const成员函数不能访问const对象的任意数据成员</li>
+<li>引用或指针传递函数调用时，因为函数内部可以改变引用或指针所指向的变量，用const修饰形参才是实在地保护了实参所指向变量</li>
+</ul>
+<h2 id="类的继承"><a href="#类的继承" class="headerlink" title="类的继承"></a>类的继承</h2><p>子类或派生类</p>
+<p>特点为：</p>
+<p>子类拥有父类所有属性和方法</p>
+<p>子类可以拥有父类没有的属性和方法</p>
+<p>子类对象可以当做父类对象使用</p>
+<h2 id="c-编译过程"><a href="#c-编译过程" class="headerlink" title="c++编译过程"></a>c++编译过程</h2><p>预处理-&gt;编译-&gt;汇编-&gt;链接</p>
+<h3 id="预处理"><a href="#预处理" class="headerlink" title="预处理"></a>预处理</h3><p>预处理，对伪指令(以#开头的指令，如：宏定义、条件编译(#if #endif)、头文件)和特殊符号（注释、三元符）处理</p>
+<p>预处理指令包括(#include、#define、#pragma)</p>
+<h3 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h3><p>编译器，对上步的文件词法分析、语法分析、语义分析，生成汇编代码文件</p>
+<h3 id="汇编"><a href="#汇编" class="headerlink" title="汇编"></a>汇编</h3><p>汇编器，将汇编代码转化为机器可执行的二进制代码(机器码)，并生成目标文件</p>
+<h3 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h3><p>链接器，解决多个文件之间符号引用问题；</p>
+<p>因为编译时，编译器只对单个文件进行处理，如果该文件需要引用到其他文件中的符号的话，比如全局变量或调用某个库函数中的函数，需要由链接器把所有的目标文件链接到一起才能确定最终地址，生成最终可执行文件</p>
+<p><img src="/../../../Typora/img111/image-20230810125208966.png"></p>
+<h2 id="c-内存的5个区"><a href="#c-内存的5个区" class="headerlink" title="c++内存的5个区"></a>c++内存的5个区</h2><p>1、栈：内存由编译器在<strong>需要时自动分配和释放</strong>。通常用来存储局部变量和函数参数。（为运行函数而分配的局部变量、函数参数、返回地址等存放在栈区）。</p>
+<p>栈运算分配内置于处理器的指令集中，效率很高，但是分配的内存容量有限。</p>
+<p>2、堆：内存使用<strong>new进行分配，使用delete或delete[]释放</strong>。如果未能对内存进行正确的释放，会造成内存泄漏。但在程序结束时，会由操作系统自动回收。</p>
+<p>3、 自由存储区：使用malloc进行分配，使用free进行回收。<strong>和堆类似</strong>。</p>
+<p>4、全局&#x2F;静态存储区：全局变量和静态变量被分配到同一块内存中，C语言中区分初始化和未初始化的，C++中不再区分了。（全局变量、静态数据、常量存放在全局数据区），使用静态关键字static声明，在静态存储区申请一个静态变量</p>
+<p>5、 常量存储区：存储常量，不允许被修改。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int* p=new int[5];</span><br></pre></td></tr></table></figure>
+
+<p>看到new，说明分配了一块堆内存；而指针p嘞，分配的是一块栈内存；</p>
+<p>该语句是：在栈内存中存放了一个指向一块堆内存的指针p，调用operator new 分配内存，然后返回这块内存的首地址，放入栈中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">int a = 0; //全局初始化区</span><br><span class="line">char *p1; //全局未初始化区</span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">    int b; //栈</span><br><span class="line">    char s[] = &quot;abc&quot;; //栈</span><br><span class="line">    char *p2; //栈</span><br><span class="line">    char *p3 = &quot;123456&quot;; //123456\0在常量区，p3在栈上。</span><br><span class="line">    static int c = 0; //全局（静态）初始化区</span><br><span class="line">    p1 = (char *)malloc(10);</span><br><span class="line">    p2 = (char *)malloc(20);</span><br><span class="line">    //分配得来得10和20字节的区域就在堆区。</span><br><span class="line">    strcpy(p1, &quot;123456&quot;); //123456\0放在常量区，编译器可能会将它与p3所指向的&quot;123456&quot;优化成一个地方。</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="c-没有垃圾回收机制"><a href="#c-没有垃圾回收机制" class="headerlink" title="c++没有垃圾回收机制"></a>c++没有垃圾回收机制</h2><p>首先，实现一个垃圾回收器会带来额外的空间和时间开销。你需要开辟一定的空间保存指针的引用计 数和对他们进行标记mark。然后需要单独开辟一个线程在空闲的时候进行free操作。 垃圾回收会使得C++不适合进行很多底层的操作。</p>
+<h2 id="malloc、realloc、calloc"><a href="#malloc、realloc、calloc" class="headerlink" title="malloc、realloc、calloc"></a>malloc、realloc、calloc</h2><ol>
+<li><p>malloc函数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">void* malloc(unsigned int num_size);</span><br><span class="line">int *p = malloc(20*sizeof(int));申请20个int类型的空间；</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>calloc函数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">void* calloc(size_t n,size_t size);</span><br><span class="line">int *p = calloc(20, sizeof(int));</span><br></pre></td></tr></table></figure>
+
+<p>省去了人为空间计算；malloc申请的空间的值是随机初始化的，calloc申请的空间的值是初始化为0的；</p>
+</li>
+<li><p>realloc函数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">void realloc(void *p, size_t new_size)</span><br></pre></td></tr></table></figure>
+
+<p>给动态分配的空间分配额外的空间，用于扩充容量。</p>
+</li>
+</ol>
+<h2 id="类成员初始化方式？构造函数的执行顺序-？为什么用成员初始化列表-会快一些？"><a href="#类成员初始化方式？构造函数的执行顺序-？为什么用成员初始化列表-会快一些？" class="headerlink" title="类成员初始化方式？构造函数的执行顺序 ？为什么用成员初始化列表 会快一些？"></a>类成员初始化方式？构造函数的执行顺序 ？为什么用成员初始化列表 会快一些？</h2><ol>
+<li><p>赋值初始化，通过在函数体内进行赋值初始化；</p>
+</li>
+<li><p>列表初始化，在冒号后使用初始化列表进行初始化。 </p>
+<p>这两种方式的主要区别在于：</p>
+<p> 对于在<strong>函数体中初始化</strong>，是在所有的<strong>数据成员被分配内存空间后</strong>才进行的；</p>
+<p><code>相当于一次默认构造+一次赋值</code></p>
+<p> <strong>列表初始化是</strong>给数据成员<strong>分配内存空间时</strong>就进行初始化，就是说分配一个数据成员只要冒号后有此数据成员的赋值表达式(此表达式必须是括号赋值表达式),那么分配了内存空间后在进入函数体之前给数据成员赋值，就是说初始化这个数据成员此时函数体还未执行。</p>
+<p><code>相当于一次赋值操作</code></p>
+<p><code>其相比赋值初始化而言，少了调用构造函数的过程</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">class test&#123;</span><br><span class="line">private:</span><br><span class="line">	string val;</span><br><span class="line">	test* tep;</span><br><span class="line">	</span><br><span class="line">public:</span><br><span class="line">	test()//赋值初始化</span><br><span class="line">	&#123;</span><br><span class="line">	this.val=&quot;yuleiyun&quot;;</span><br><span class="line">	this-&gt;tep=nullptr;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	test(string s):val(s),tep(nullptr)&#123;&#125;//列表初始化</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>一个派生类构造函数的执行顺序如下：</p>
+<p> ① 虚拟基类的构造函数（多个虚拟基类则按照继承的顺序执行构造函数）</p>
+<p> ② 基类的构造函数（多个普通基类也按照继承的顺序执行构造函数）</p>
+<p> ③ 类类型的成员对象的构造函数（按照初始化顺序）</p>
+<p> ④ 派生类自己的构造函数。</p>
+</li>
+</ol>
+<p>方法一是在构造函数当中做赋值的操作，</p>
+<p>而方法二是做纯粹的初始化操作</p>
+<p>我们都知道，C++的赋值操作是会产生临时对象的。临时对象的出现会降低程序的效率。</p>
+<h2 id="string与c的char"><a href="#string与c的char" class="headerlink" title="string与c的char*"></a>string与c的char*</h2><p>string是对char*的封装，string包含了char*数组的属性</p>
+<p>string可以进行动态扩展</p>
+<h2 id="内存泄露"><a href="#内存泄露" class="headerlink" title="*内存泄露"></a>*内存泄露</h2><p>一般指堆的内存泄露，使用malloc、new分配完内存，使用完后，程序必须调用相应的free或delete释放该内存块，否则，这块内存就不能被访问，从而造成系统内存资源的浪费</p>
+<h3 id="避免内存泄露："><a href="#避免内存泄露：" class="headerlink" title="避免内存泄露："></a>避免内存泄露：</h3><p>1.计数法:使用new或malloc时，该计数++，delete或free时，该计数–，程序执行完打印这个计数，不为0则存在内存泄露</p>
+<p>2.将基类的析构函数声明为虚函数</p>
+<p>3.保证new&#x2F;delete、malloc&#x2F;free的成对出现</p>
+<p>4.智能指针自动化地管理动态分配的内存资源</p>
+<h2 id="强制类型转换"><a href="#强制类型转换" class="headerlink" title="强制类型转换"></a>强制类型转换</h2><h3 id="reinterpret-cast"><a href="#reinterpret-cast" class="headerlink" title="reinterpret_cast"></a>reinterpret_cast</h3><p>reinterpret_cast (expression):type-id 必须是一个指针、引用、算术类型、函数指针或者成员指针。它可以用于类型之间进行强制转 换。</p>
+<h3 id="const-cast"><a href="#const-cast" class="headerlink" title="const_cast"></a>const_cast</h3><p>const_cast (expression) 该运算符用来修改类型的const或volatile属性。除了const 或volatile修饰之外， type_id和expression的类型是一样的。 一般修改底指针</p>
+<h3 id="static-cast"><a href="#static-cast" class="headerlink" title="static_cast"></a>static_cast</h3><p>static_cast &lt; type-id &gt; (expression) 该运算符把expression转换为type-id类型，但没有运行时类型检查来保证转换的安全性。</p>
+<p>用于基本数据类型之间的转换，如把int转换成char，把int转换成enum。</p>
+<h3 id="dynamic-cast"><a href="#dynamic-cast" class="headerlink" title="dynamic_cast"></a>dynamic_cast</h3><p>有类型检查，基类向派生类转换比较安全，但是派生类向基类转换则不太安全</p>
+<p>dynamic_cast (expression) 该运算符把expression转换成type-id类型的对象。type-id 必须是类的指针、类的引用或者void*</p>
+<h2 id="c-函数调用的压栈过程"><a href="#c-函数调用的压栈过程" class="headerlink" title="c++函数调用的压栈过程"></a>c++函数调用的压栈过程</h2><p>函数的调用过程：</p>
+<p> 1）从栈空间分配存储空间 </p>
+<p>2）从实参的存储空间复制值到形参栈空间 </p>
+<p>3）进行运算</p>
+<p>形参在函数未调用之前都是没有分配存储空间的，在函数调用结束之后，形参弹出栈空间，清除形参空间</p>
+<p>数组作为参数的函数调用方式是地址传递，形参和实参都指向相同的内存空间，调用完成后，形参指针被销毁，但是所指向的内存空间依然存在，不能也不会被销毁</p>
+<p>当函数有多个返回值的时候，不能用普通的 return 的方式实现，需要通过传回地址的形式进行，即地址&#x2F; 指针传递。</p>
+<h2 id="浮点数比较"><a href="#浮点数比较" class="headerlink" title="浮点数比较"></a>浮点数比较</h2><p>浮点数的精度是有限，通过相减取绝对值，并与预设的精度比较</p>
+<h2 id="类的对象建立"><a href="#类的对象建立" class="headerlink" title="类的对象建立"></a>类的对象建立</h2><p>main函数中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Test a;//静态建立，那就是存在栈上，销毁什么的自动</span><br><span class="line">Test *b=new Test();//因为new，那就是在堆上，new Test()返回是Test对象的指针，销毁需要手动delete</span><br></pre></td></tr></table></figure>
+
+<h2 id="组合与继承"><a href="#组合与继承" class="headerlink" title="组合与继承"></a>组合与继承</h2><h3 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h3><p>优点：子类重写父类方法实现扩展</p>
+<p>缺点：</p>
+<p>父类的内部细节对子类来说可见</p>
+<p>是高耦合关系，如果父类的方法有修改，比如参数个数，子类必须做出相应调整</p>
+<h3 id="组合"><a href="#组合" class="headerlink" title="组合"></a>组合</h3><p>将A类的对象作为B类的成员变量</p>
+<p>优点：</p>
+<p>所包含的对象的内部细节不可见</p>
+<p>低耦合，修改了包含对象的代码，不需要修改当前对象类的代码</p>
+<p>缺点：</p>
+<p>容易产生过多的对象</p>
+<p>必须对接口仔细定义</p>
+<h2 id="函数指针"><a href="#函数指针" class="headerlink" title="函数指针"></a>函数指针</h2><p>意义：希望在同一个函数中通过<strong>使用相同的形参</strong>在<strong>不同的时间</strong>使用产生<strong>不同的效果</strong></p>
+<p>函数指针指向的是特殊的数据类型，函数的类型是由其返回的数据类型和其参数列表共同决定的，而函数的名称则不是其类型的一部分。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int (*pf)(const int&amp;, const int&amp;); </span><br></pre></td></tr></table></figure>
+
+<p> 上面的pf就是一个函数指针，指向所有<strong>返回类型为int</strong>，并带有两个const int&amp;参数的函数。注意*pf两边的括号是必须的</p>
+<p>否则就是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int *pf(const int&amp;, const int&amp;);</span><br></pre></td></tr></table></figure>
+
+<p>而这声明了一个函数pf，其**返回类型为int ***， 带有两个const int&amp;参数。</p>
+<h2 id="结构体变量比较相等"><a href="#结构体变量比较相等" class="headerlink" title="结构体变量比较相等"></a>结构体变量比较相等</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">struct foo &#123;</span><br><span class="line"> int a;</span><br><span class="line"> int b;</span><br><span class="line"> bool operator==(const foo&amp; rhs) *//* *操作运算符重载*</span><br><span class="line"> &#123;</span><br><span class="line"> return( a == rhs.a) &amp;&amp; (b == rhs.b);</span><br><span class="line"> &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="c-访问权限和继承权限"><a href="#c-访问权限和继承权限" class="headerlink" title="c++访问权限和继承权限"></a>c++访问权限和继承权限</h2><p>① public:用该关键字修饰的成员表示公有成员，该成员不仅可以在类内可以被访问，在类外也是可以被访问的，是类对外提供的可访问接口； </p>
+<p>② private:用该关键字修饰的成员表示私有成员，该成员仅在类内可以被访问，在类体外是隐藏状态；</p>
+<p> ③ protected:用该关键字修饰的成员表示保护成员，保护成员在类体外同样是隐藏状态，但是对于该类的派生类来说，相当于公有成员，在派生类中可以被访问。</p>
+<p>三种继承方式 </p>
+<p>① 若继承方式是public，基类成员在派生类中的访问权限保持不变，也就是说，基类中的成员访问权 限，在派生类中仍然保持原来的访问权限； </p>
+<p>② 若继承方式是private，基类所有成员在派生类中的访问权限都会变为私有(private)权限；</p>
+<p> ③ 若继承方式是protected，基类的共有成员和保护成员在派生类中的访问权限都会变为保护(protected) 权限，私有成员在派生类中的访问权限仍然是私有(private)权限。</p>
+<h2 id="strcpy和memcpy的区别是什么"><a href="#strcpy和memcpy的区别是什么" class="headerlink" title="strcpy和memcpy的区别是什么"></a>strcpy和memcpy的区别是什么</h2><p>1、复制的内容不同。</p>
+<p>strcpy只能复制字符串，而memcpy可以复制任意内容，例如字符数组、整型、结构体、类等。 </p>
+<p>2、复制的方法不同。</p>
+<p><strong>strcpy</strong>不需要指定长度，它遇到被复制字符的串结束符”\0”才结束，所以<strong>容易溢出</strong>。memcpy则是根据其第3个参数决定复制的长度。 </p>
+<p>3、用途不同。</p>
+<p>通常在复制字符串时用strcpy，而需要复制其他类型数据时则一般用memcpy</p>
+<h2 id="空类，默认添加哪些函数"><a href="#空类，默认添加哪些函数" class="headerlink" title="空类，默认添加哪些函数"></a>空类，默认添加哪些函数</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1) Empty(); // 缺省构造函数//</span><br><span class="line">2) Empty( const Empty&amp; ); // 拷贝构造函数//</span><br><span class="line">3) ~Empty(); // 析构函数//</span><br><span class="line">4) Empty&amp; operator=( const Empty&amp; ); // 赋值运算符//</span><br></pre></td></tr></table></figure>
+
+<h2 id="静态绑定与动态绑定"><a href="#静态绑定与动态绑定" class="headerlink" title="静态绑定与动态绑定"></a>静态绑定与动态绑定</h2><p>对象的静态类型：对象在声明时采用的类型，编译期确定</p>
+<p>对象的动态类型：目前所指对象的类型。运行期觉得，对象的动态类型可以更改，静态类型无法更改</p>
+<p>静态绑定：绑定对象静态类型</p>
+<p>动态绑定</p>
+<h2 id="c-编译模块是什么"><a href="#c-编译模块是什么" class="headerlink" title="c++编译模块是什么"></a>c++编译模块是什么</h2><h2 id="什么是全局静态变量和局部静态变量"><a href="#什么是全局静态变量和局部静态变量" class="headerlink" title="什么是全局静态变量和局部静态变量"></a>什么是全局静态变量和局部静态变量</h2><h2 id="c-线程池"><a href="#c-线程池" class="headerlink" title="c++线程池"></a>c++线程池</h2><h1 id="来源-1"><a href="#来源-1" class="headerlink" title="来源"></a>来源</h1><p>CSDN博主<a target="_blank" rel="noopener" href="https://blog.csdn.net/Lushengshi/article/details/127580635">「丘比特惩罚陆」</a></p>
 <p>知识补充来源：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/553387258">知乎笔记</a></p>
-<h1 id=""><a href="#" class="headerlink" title=""></a></h1> 
+<p>为什么c++很少用于后端开发：</p>
+<p>与java和python相比，c++缺乏像Spring和Django这种web框架，也没有一个像 J2EE 或 Servlet API 这样的标准。</p>
+<p>c++适用于高性能和实时系统，如游戏开发、图形处理和科学计算等领域</p>
+<p>而Web后端开发的重点是数据处理和业务逻辑</p>
+<p>此外，web开发的工作是处理字符串，比如url，http头啊，输出的html、js啊，确实其它的语言，java、c#或者是python，处理字符串很容易，都有自带的库，随便调用一下，比如split这种方法。c++明显在这方面弱</p>
+<p>说是没有自动垃圾回收器，即GC</p>
+<p>然后嘞，web开发的都是解释性语言，c#,java等，解释性语言移植性要高些，c++这种编译性依赖特定平台</p>
+<p>对计算量大又想高效的前后端应用，C++可能会合适。且Web Assembly已经全面落户最新的Chrome、Firefox、Edge、Safari等主流浏览器。可以将C++源码编译成wasm二进制文件直接在浏览器里高速运行（使用Emscripten编译更加便捷）。对很多前端应用来说，使用C++加速可能并没有必要。但是如果想要在前端产品中加入机器视觉，自然语言处理，机器学习等模块，WebAssembly将成为一个极好的选择。</p>
+<p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/26782196/answer/2946648596?utm_id=0">知乎</a></p>
+<p><a target="_blank" rel="noopener" href="https://six.club/article/2775">sixclub</a></p>
+ 
       <!-- reward -->
       
     </div>
