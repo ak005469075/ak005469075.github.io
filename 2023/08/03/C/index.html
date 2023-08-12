@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">25.5k</span>
+            <span class="post-count">27.8k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">99 分钟</span>
+            <span class="post-count">109 分钟</span>
         </span>
     </span>
 </div>
@@ -141,8 +141,9 @@
 <p>栈中的变量：栈往低地址生长，先声明的变量位于高地址</p>
 <h1 id="1-虚函数"><a href="#1-虚函数" class="headerlink" title="1.虚函数"></a>1.虚函数</h1><p><code>virtual 类型 成员函数名 (参数表);</code></p>
 <p>虚函数必须存在于类的继承环境中才有意义</p>
-<p>存在虚函数的类都有一个一维的虚函数表叫虚表，类的对象有一个指向虚表开始的虚指针；</p>
+<p>存在虚函数的类都有一个一维的虚函数表叫虚表，类的对象有一个指向虚表开始的虚指针，占4&#x2F;8字节；</p>
 <p>虚表与类对应；虚表指针和对象对应</p>
+<p>定义一个函数为虚函数，是为了允许基类指针调用子类的这个函数</p>
 <h2 id="多态"><a href="#多态" class="headerlink" title="多态"></a>多态</h2><p>不同<strong>对象</strong>调用相同的<strong>函数</strong>，但呈现多样的<strong>结果</strong></p>
 <h3 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h3><h4 id="编译时多态"><a href="#编译时多态" class="headerlink" title="编译时多态"></a>编译时多态</h4><p>编译过程中静态确定同名操作与具体对象绑定的关系（函数重载、运算符重载、模板）</p>
 <p>优点：程序运行时函数调用速度快、效率高</p>
@@ -216,8 +217,9 @@
 <p>#define定义的常量不可以用指针指向；const可以</p>
 <p>#define可以定义简单的函数，const不可以定义函数	</p>
 <h3 id="static"><a href="#static" class="headerlink" title="static"></a>static</h3><p> <strong>static</strong> 的定义相对较复杂，用在<strong>全局变量</strong>表明这个变量在每个编译单元有独自的实例；</p>
-<p>用在函数里的<strong>局部变量</strong>，表明它的生存周期其实是全局变量，但仅在函数内可见；</p>
+<p>用在函数里的<strong>局部变量</strong>，表明它的生存周期其实是全局变量，但仅在函数内可见；(可用来统计函数调用次数)</p>
 <p>用在<strong>类成员</strong>，表明成员或者方法是类的，而不是对象实例的。</p>
+<p>静态成员不占用类的大小，普通函数也不占用</p>
 <h4 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h4><ul>
 <li>隐藏：当同时编译多个文件时，所有未加static前缀的全局变量和函数都具有全局可见性</li>
 <li>保持变量内容的持久：存储在静态数据 区的变量会在程序刚开始运行时就完成初始化，也是唯一的一次初始化。</li>
@@ -301,14 +303,37 @@
 <blockquote>
 <p>x: 8<br>refx: 8<br>x: 28<br>refx: 28</p>
 </blockquote>
-<p>有一个值为10的int变量，声明一个左值引用并使用初始化它。现在，指的是与相同的内存位置。<code>x``refX``x``refX``x</code></p>
-<p>对 所做的任何更改<code>refX</code>也会影响 的值，<code>x</code>因为它们引用相同的内存位置。在示例中，当我们修改<code>refX</code>，它也会修改的值<code>x</code>。</p>
+<p>在这个示例中，<code>refx</code> 是一个引用，它引用了变量 <code>x</code>。左值引用允许你通过 <code>refx</code> 修改 <code>x</code> 的值，因为引用绑定后，对引用的修改实际上是对被引用变量的修改。</p>
+<p>需要注意的是，一旦引用绑定到某个变量，它会一直引用该变量，不能重新绑定到其他变量。因此，左值引用一般在绑定后不会再改变其引用对象。</p>
 <p>左值引用在 C++ 中用于多种目的，例如通过函数引用传递变量、运算符重载以及为现有变量创建别名。</p>
 <h2 id="右值"><a href="#右值" class="headerlink" title="右值"></a>右值</h2><p>就是临时量，无地址（或者有地址，但访问不到，只是一个临时量），没有存储空间而短暂存在的值</p>
 <h2 id="右值引用"><a href="#右值引用" class="headerlink" title="右值引用"></a>右值引用</h2><p>c++11出现的</p>
 <p>右值引用不能绑定到左值，可以通过常引用或右值引用延长右值的生命周期。</p>
 <p>“有名字的右值引用”是左值</p>
 <p>定义需要使用&amp;&amp;</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int&amp;&amp; rref = 42; // rref 是一个右值引用，绑定到临时右值 42</span><br></pre></td></tr></table></figure>
+
+<p><code>rref</code> 是一个右值引用，它可以绑定到一个临时右值，如字面值或表达式计算的结果。右值引用通常用于实现移动语义和完美转发（perfect forwarding），允许有效地管理资源并将参数传递到其他函数，同时避免不必要的数据复制。</p>
+<p>需要注意的是，与左值引用不同，右值引用可以绑定到临时对象，但不能绑定到具有名称的左值。右值引用通常在函数参数中使用，例如在移动构造函数和移动赋值运算符中。</p>
+<h3 id="1-string-foo-2-void-bar-string-amp-s-为什么下面的操作非法1-bar-foo-2-bar-“hello-world”"><a href="#1-string-foo-2-void-bar-string-amp-s-为什么下面的操作非法1-bar-foo-2-bar-“hello-world”" class="headerlink" title="1 string foo( ); 2 void bar(string &amp; s); 为什么下面的操作非法1 bar(foo( )); 2 bar(“hello world”);"></a>1 string foo( ); 2 void bar(string &amp; s); 为什么下面的操作非法1 bar(foo( )); 2 bar(“hello world”);</h3><ol>
+<li><p><strong>Rvalue vs. Lvalue:</strong> 在 C++ 中，表达式可以被分为右值（Rvalue）和左值（Lvalue）。右值是临时的、不可修改的值，左值是可寻址的、可修改的值。函数返回的临时对象通常是右值，而具有名称的变量是左值。在 <code>bar(foo());</code> 中，<code>foo()</code> 返回一个临时的 <code>string</code> 对象，因此它是一个右值。</p>
+</li>
+<li><p><strong>Const Reference and Non-Const Reference:</strong> 函数参数可以是 const 引用（const reference）或非 const 引用。<code>string&amp; s</code> 表示非 const 引用，而 <code>const string&amp; s</code> 表示 const 引用。</p>
+</li>
+<li><p><code>bar(foo());</code>: 在这个操作中，<code>foo()</code> 返回的是右值，但 <code>bar</code> 函数的参数要求是非 const 引用，而右值不能直接绑定到非 const 引用，因此这个操作是非法的。</p>
+</li>
+<li><p><code>bar(&quot;hello world&quot;);</code>: <code>&quot;hello world&quot;</code> 是一个字符串字面量，它是右值，而 <code>bar</code> 函数的参数要求是非 const 引用，同样不能直接绑定到非 const 引用，因此这个操作也是非法的。</p>
+</li>
+</ol>
+<p>解决：</p>
+<ol>
+<li>修改 <code>bar</code> 函数参数为 <code>const string&amp; s</code>，以允许将右值（临时对象）绑定到 const 引用参数。</li>
+<li>在 <code>foo</code> 调用后创建一个命名的 <code>string</code> 变量，然后将这个变量传递给 <code>bar</code> 函数，因为左值可以绑定到非 const 引用参数。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">void bar(const string&amp; s);</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">    string fooResult = foo();</span><br><span class="line">    bar(fooResult); // 合法，将左值传递给非 const 引用参数</span><br><span class="line"></span><br><span class="line">    bar(&quot;hello world&quot;); // 合法，将右值传递给 const 引用参数</span><br><span class="line"></span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
 <h2 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h2><p>可以取地址的，有名字的就是<strong>左值</strong></p>
 <p>不能取地址的，没名字的就是<strong>右值</strong></p>
 <p>int a&#x3D;b+c;&#x2F;&#x2F;a左值，变量名为a，&amp;a为其地址；b+c表达式、函数int func()返回值是右值</p>
@@ -763,7 +788,7 @@
 <p>引用传参，传进来的就是变量本身，因此变量可以修改</p>
 <p>)</p>
 </li>
-<li><p>引用本质是一个指针，占4字节内存；指针是具体的变量，占用存储空间</p>
+<li><p>引用本身不是一种数据类型，不占用存储单元；指针是具体的变量，占用存储空间</p>
 </li>
 </ul>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">void testPTR(int *p)</span><br><span class="line">&#123;</span><br><span class="line">	int a=12;</span><br><span class="line">	p=&amp;a;</span><br><span class="line">&#125;</span><br><span class="line">void testREFF(int &amp;p)</span><br><span class="line">&#123;</span><br><span class="line">	int a=12;</span><br><span class="line">	p=a;</span><br><span class="line">&#125;</span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">	int a=10;</span><br><span class="line">	int* b=&amp;a;</span><br><span class="line">	testPTR(b);</span><br><span class="line">	cout&lt;&lt;a; //10</span><br><span class="line">	cout&lt;&lt;*b;//10</span><br><span class="line">	——————————————</span><br><span class="line">	a=10;</span><br><span class="line">	testREFF(a);</span><br><span class="line">	cout&lt;&lt;a;//12</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -774,6 +799,19 @@
 <blockquote>
 <p>0x72fdec,5<br>0x72fdec,7</p>
 </blockquote>
+<h3 id="引用作为函数返回类型"><a href="#引用作为函数返回类型" class="headerlink" title="引用作为函数返回类型"></a>引用作为函数返回类型</h3><p><code>int&amp; jisuan(int x)&#123;&#125;</code></p>
+<blockquote>
+<ol>
+<li><strong>避免复制：</strong> 使用引用作为返回类型可以避免在函数调用时进行数据的复制操作。当返回引用时，实际上是将调用方的变量和函数内部的对象绑定在一起，而不是创建一个新的副本。这可以提高程序的性能，尤其是当返回的对象很大时。</li>
+<li><strong>允许修改：</strong> 返回引用使调用方能够修改原始对象。这在需要从函数内部修改调用方的变量时非常有用，特别是在函数内部修改一个对象而不需要使用指针的情况下。</li>
+<li><strong>链式调用：</strong> 使用引用作为返回类型，可以实现链式调用。这在某些情况下可以使代码更加清晰和简洁。例如，很多标准库的操作就采用了链式调用的方式。</li>
+<li><strong>传递信息：</strong> 引用作为返回类型可以传递更多的信息，如返回一个布尔值来指示函数执行的成功与否。这种情况下，函数可以直接修改调用方提供的变量来传递额外的信息。</li>
+</ol>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span> <span class="type">int</span>  a=<span class="number">4</span>;</span><br><span class="line"> <span class="number">2</span> <span class="function"><span class="type">int</span>  &amp;<span class="title">f</span><span class="params">(<span class="type">int</span>  x)</span></span></span><br><span class="line"><span class="function"> 3 </span>&#123;</span><br><span class="line"> <span class="number">4</span>     a = a + x;</span><br><span class="line"> <span class="number">5</span>     <span class="keyword">return</span>  a;</span><br><span class="line"> <span class="number">6</span> &#125;</span><br><span class="line"> <span class="number">7</span> <span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"> 8 </span>&#123;</span><br><span class="line"> <span class="number">9</span>     <span class="type">int</span> t = <span class="number">5</span>;</span><br><span class="line"><span class="number">10</span>     cout&lt;&lt;<span class="built_in">f</span>(t)&lt;&lt;endl;  <span class="comment">//a = 9</span></span><br><span class="line"><span class="number">11</span>     <span class="built_in">f</span>(t) = <span class="number">20</span>;           <span class="comment">//a = 20</span></span><br><span class="line"><span class="number">12</span>     cout&lt;&lt;<span class="built_in">f</span>(t)&lt;&lt;endl;  <span class="comment">//t = 5,a = 25</span></span><br><span class="line"><span class="number">13</span>     t = <span class="built_in">f</span>(t);            <span class="comment">//a = 30 t = 30</span></span><br><span class="line"><span class="number">14</span>     cout&lt;&lt;<span class="built_in">f</span>(t)&lt;&lt;endl;  <span class="comment">//t = 60</span></span><br><span class="line"><span class="number">15</span>     <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"><span class="number">16</span> &#125;</span><br></pre></td></tr></table></figure>
+
+
+
 <h2 id="结构体为什么要内存对齐"><a href="#结构体为什么要内存对齐" class="headerlink" title="结构体为什么要内存对齐"></a>结构体为什么要内存对齐</h2><p>平台原因，有的平台只能在某些地址处取特定类型的数据，否则抛出硬件异常</p>
 <p>硬件原因，内存对齐之后，cpu内存访问速度大大提升</p>
 <p>1、 分配内存的顺序是按照声明的顺序。</p>
@@ -1107,6 +1145,10 @@
 <p>数组名理解为常指针，所以数组名没有自增自减操作</p>
 <p>数组名做形参传递给调用函数后，失去原有特性，退化为一般指针，可以自增、自减，但sizeof运算符不能得到原数组大小</p>
 </blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">1 char a[] = &quot;hello world&quot;;</span><br><span class="line"> 2 char *p = a;</span><br><span class="line"> 3 </span><br><span class="line"> 4 //计算数组和指针的内存容量</span><br><span class="line"> 5 cout&lt;&lt; sizeof(a) &lt;&lt; endl; // 12 字节</span><br><span class="line"> 6 cout&lt;&lt; sizeof(p) &lt;&lt; endl; // 4 字节</span><br><span class="line"> 7 </span><br><span class="line"> 8 //数组作为函数参数传递</span><br><span class="line"> 9 void Func(char a[100])//数组退化成指针</span><br><span class="line">10 &#123;</span><br><span class="line">11     cout&lt;&lt; sizeof(a) &lt;&lt; endl; // 4 字节而不是100 字节</span><br><span class="line">12 &#125;</span><br></pre></td></tr></table></figure>
+
+
+
 <h2 id="final和override关键字"><a href="#final和override关键字" class="headerlink" title="final和override关键字"></a>final和override关键字</h2><h3 id="override"><a href="#override" class="headerlink" title="override"></a>override</h3><p>父类中用了虚函数，子类对父类的虚函数进行重写</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">foo</span><span class="params">()</span></span>=<span class="number">0</span>;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">B</span>:<span class="keyword">public</span> A&#123;</span><br><span class="line">	<span class="comment">//void foo()&#123;&#125;也是可以的</span></span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">foo</span><span class="params">()</span> <span class="keyword">override</span></span>&#123;&#125;;<span class="comment">//加了override，如果函数名写错了，编译不通过</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
@@ -1431,12 +1473,13 @@
 <p><strong>strcpy</strong>不需要指定长度，它遇到被复制字符的串结束符”\0”才结束，所以<strong>容易溢出</strong>。memcpy则是根据其第3个参数决定复制的长度。 </p>
 <p>3、用途不同。</p>
 <p>通常在复制字符串时用strcpy，而需要复制其他类型数据时则一般用memcpy</p>
-<h2 id="空类，默认添加哪些函数"><a href="#空类，默认添加哪些函数" class="headerlink" title="空类，默认添加哪些函数"></a>空类，默认添加哪些函数</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1) Empty(); // 缺省构造函数//</span><br><span class="line">2) Empty( const Empty&amp; ); // 拷贝构造函数//</span><br><span class="line">3) ~Empty(); // 析构函数//</span><br><span class="line">4) Empty&amp; operator=( const Empty&amp; ); // 赋值运算符//</span><br></pre></td></tr></table></figure>
+<h2 id="空类，默认添加哪些函数"><a href="#空类，默认添加哪些函数" class="headerlink" title="*空类，默认添加哪些函数"></a>*空类，默认添加哪些函数</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1) Empty(); // 缺省构造函数//</span><br><span class="line">2) Empty( const Empty&amp; ); // 拷贝构造函数//</span><br><span class="line">3) ~Empty(); // 析构函数//</span><br><span class="line">4) Empty&amp; operator=( const Empty&amp; ); // 赋值运算符//</span><br></pre></td></tr></table></figure>
 
 <h2 id="静态绑定与动态绑定"><a href="#静态绑定与动态绑定" class="headerlink" title="静态绑定与动态绑定"></a>静态绑定与动态绑定</h2><p>对象的静态类型：对象在声明时采用的类型，编译期确定</p>
 <p>对象的动态类型：目前所指对象的类型。运行期觉得，对象的动态类型可以更改，静态类型无法更改</p>
 <p>静态绑定：绑定对象静态类型</p>
 <p>动态绑定：</p>
+<h2 id="C-中哪些运算符不能重载？"><a href="#C-中哪些运算符不能重载？" class="headerlink" title="C++中哪些运算符不能重载？"></a><strong>C++中哪些运算符不能重载？</strong></h2><p>1 .（成员访问运算符）<br>2 .*（成员指针访问运算符）<br>3 ::（域运算符）<br>4 sizeof关键字<br>5 ?:（条件运算符）</p>
 <h2 id="c-编译模块是什么"><a href="#c-编译模块是什么" class="headerlink" title="c++编译模块是什么"></a>c++编译模块是什么</h2><h2 id="什么是全局静态变量和局部静态变量"><a href="#什么是全局静态变量和局部静态变量" class="headerlink" title="什么是全局静态变量和局部静态变量"></a>什么是全局静态变量和局部静态变量</h2><h2 id="c-线程池"><a href="#c-线程池" class="headerlink" title="c++线程池"></a>c++线程池</h2><h2 id="技术面（gg）"><a href="#技术面（gg）" class="headerlink" title="技术面（gg）"></a>技术面（gg）</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">char a[] = &quot;hello world&quot;;</span><br><span class="line">   char *p = a;</span><br><span class="line">   cout &lt;&lt; sizeof(a) &lt;&lt; endl; </span><br><span class="line">   cout &lt;&lt; sizeof(p) &lt;&lt; endl;</span><br><span class="line">   return 0;</span><br></pre></td></tr></table></figure>
 
 <blockquote>
@@ -1465,7 +1508,80 @@
 <p>28</p>
 <p>输出false</p>
 </blockquote>
-<h1 id="来源-1"><a href="#来源-1" class="headerlink" title="来源"></a>来源</h1><p>CSDN博主<a target="_blank" rel="noopener" href="https://blog.csdn.net/Lushengshi/article/details/127580635">「丘比特惩罚陆」</a></p>
+<h3 id="总结-3"><a href="#总结-3" class="headerlink" title="总结"></a>总结</h3><p>任何东西都不是速成的，知识需要时间去检验，空有理论，没有实际应用，白搭</p>
+<h2 id="技术二面-gg"><a href="#技术二面-gg" class="headerlink" title="技术二面(gg)"></a>技术二面(gg)</h2><h2 id="-1"><a href="#-1" class="headerlink" title=""></a></h2><h3 id="友元"><a href="#友元" class="headerlink" title="友元"></a>友元</h3><p>关键字friend</p>
+<p><a target="_blank" rel="noopener" href="http://t.csdn.cn/Oa7kU">CSDN</a></p>
+<h3 id="一个空类会自动初始化多少函数"><a href="#一个空类会自动初始化多少函数" class="headerlink" title="一个空类会自动初始化多少函数"></a>一个空类会自动初始化多少函数</h3><p>除了构造和析构</p>
+<p>还有拷贝构造函数</p>
+<p>复制运算符</p>
+<h3 id="赋值初始化和拷贝初始化-记不清了"><a href="#赋值初始化和拷贝初始化-记不清了" class="headerlink" title="赋值初始化和拷贝初始化(记不清了)"></a>赋值初始化和拷贝初始化(记不清了)</h3><h3 id="基类的析构函数设置为虚函数有什么用"><a href="#基类的析构函数设置为虚函数有什么用" class="headerlink" title="基类的析构函数设置为虚函数有什么用"></a>基类的析构函数设置为虚函数有什么用</h3><p>释放基类的析构函数同时，释放派生类的析构函数</p>
+<h3 id="栈和队列区别"><a href="#栈和队列区别" class="headerlink" title="栈和队列区别"></a>栈和队列区别</h3><p>栈先进后出；队列先进先出</p>
+<p>栈表的一端插入和删除；队列一端进一端出</p>
+<p>栈只能取顶部元素，遍历数据的同时要为数据开辟临时空间；队列无需开辟空间，遍历速度稍快</p>
+<h3 id="能重载吗"><a href="#能重载吗" class="headerlink" title="*能重载吗"></a>*能重载吗</h3><p>不可以</p>
+<h3 id="操作符重载用过吗"><a href="#操作符重载用过吗" class="headerlink" title="操作符重载用过吗"></a>操作符重载用过吗</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">bool operator()(pair&lt;int,int&gt; &amp;a, pair&lt;int,int&gt;&amp;b)&#123;</span><br><span class="line">      return a.second &lt; b.second;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="static在类里，在类外，有什么区别"><a href="#static在类里，在类外，有什么区别" class="headerlink" title="static在类里，在类外，有什么区别"></a>static在类里，在类外，有什么区别</h3><p>类里的static存在哪里，存在<strong>数据段</strong>。</p>
+<h3 id="析构函数如果，会发生什么-记不清了"><a href="#析构函数如果，会发生什么-记不清了" class="headerlink" title="析构函数如果，会发生什么(记不清了)"></a>析构函数如果，会发生什么(记不清了)</h3><p>崩溃</p>
+<h3 id="C-为什么面向对象-具体说明一下"><a href="#C-为什么面向对象-具体说明一下" class="headerlink" title="C++为什么面向对象(具体说明一下)"></a>C++为什么面向对象(具体说明一下)</h3><p>我答的是多态、封装和继承</p>
+<h3 id="继承是什么关系"><a href="#继承是什么关系" class="headerlink" title="继承是什么关系"></a>继承是什么关系</h3><p>类与类</p>
+<h3 id="嵌套和继承的区别"><a href="#嵌套和继承的区别" class="headerlink" title="嵌套和继承的区别"></a>嵌套和继承的区别</h3><p>嵌套类是一个在另一个类的内部定义的类。它在外部类中具有作用域限制，可以访问外部类的私有成员。嵌套类通常用于实现某个类的内部辅助功能或数据结构。这可以帮助保持代码的整洁性，因为嵌套类的实现细节不会暴露给外部世界。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">class Outer &#123;</span><br><span class="line">public:</span><br><span class="line">    class Nested &#123;</span><br><span class="line">    public:</span><br><span class="line">        void nestedMethod() &#123;</span><br><span class="line">            // 可以访问外部类的成员</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">private:</span><br><span class="line">    int privateMember;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">    Outer::Nested nestedObj;</span><br><span class="line">    nestedObj.nestedMethod();</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="写个双向链表的插入实现-gg"><a href="#写个双向链表的插入实现-gg" class="headerlink" title="写个双向链表的插入实现(gg)"></a>写个双向链表的插入实现(gg)</h3><p>哇，基础不牢，地动山摇</p>
+<p>双向链表的实现，惭愧，这个基础没记住</p>
+<p>当时写的这玩意儿</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">List* insert(List* head,int p,int q)</span><br><span class="line">   &#123;</span><br><span class="line">       List* p1=head;</span><br><span class="line">       while(p1)</span><br><span class="line">       &#123;</span><br><span class="line">           if(p1&gt;val==p)</span><br><span class="line">           &#123;</span><br><span class="line">           /*h-&gt;p&lt;-q----&gt;h</span><br><span class="line">              &lt;- -&gt;</span><br><span class="line">               */</span><br><span class="line">               List* p2=new List(q);</span><br><span class="line">               /* p-&gt;end</span><br><span class="line">                   </span><br><span class="line">                    */</span><br><span class="line">               </span><br><span class="line">               p1-&gt;end=p2;</span><br><span class="line">               p2-&gt;pre=p1;</span><br><span class="line">               p2-&gt;end=head;</span><br><span class="line">               p2=nullptr;</span><br><span class="line">               break;</span><br><span class="line">           &#125;</span><br><span class="line">           p1=p1-&gt;end;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230812222457210.png" alt="image-20230812222457210"></p>
+<p>以插入角度来讲，p后面加入q，我们考虑一下，在p与p-&gt;next结点中间插入q，需要满足什么</p>
+<blockquote>
+<p>q结点与p-&gt;next结点先完成互指：</p>
+<p>p-&gt;next-&gt;pre&#x3D;q;</p>
+<p>q-&gt;next&#x3D;p-&gt;next;</p>
+<p>p结点再与q结点完成互指：</p>
+<p>p-&gt;next&#x3D;q;</p>
+<p>q-&gt;pre&#x3D;p;</p>
+</blockquote>
+<p>如果p是第一个节点怎么办捏</p>
+<blockquote>
+<p>q-&gt;next&#x3D;nullptr;</p>
+<p>p-&gt;next&#x3D;q;</p>
+<p>q-&gt;pre&#x3D;p;</p>
+</blockquote>
+<p>如果p是尾结点</p>
+<blockquote>
+<p>List* tem&#x3D;p-&gt;pre;</p>
+<p>p-&gt;pre&#x3D;q;</p>
+<p>p-&gt;next&#x3D;nullptr;</p>
+<p>tem-&gt;next&#x3D;q;</p>
+<p>q-&gt;pre&#x3D;tem;</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">List* insert(List* &amp;head,int p,int q)</span><br><span class="line">    &#123;</span><br><span class="line">    </span><br><span class="line">        List* p1=head;</span><br><span class="line">        while(p1-&gt;next)</span><br><span class="line">        &#123;</span><br><span class="line">            if(p1-&gt;val==p)</span><br><span class="line">            &#123;</span><br><span class="line">                List* qq=new List(q);</span><br><span class="line">                p1-&gt;next-&gt;pre=qq;</span><br><span class="line">                qq-&gt;next=p1-&gt;next;</span><br><span class="line"></span><br><span class="line">                qq-&gt;pre=p1;</span><br><span class="line">                p1-&gt;next=qq;</span><br><span class="line"></span><br><span class="line">                return head;</span><br><span class="line">            &#125;</span><br><span class="line">            p1=p1-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>完善判空，还有尾结点情况</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">if (!head) &#123;</span><br><span class="line">       head = new List(0);</span><br><span class="line">       head-&gt;next = head;</span><br><span class="line">       head-&gt;pre = head;</span><br><span class="line">       return head;</span><br><span class="line">   &#125;</span><br><span class="line">    List* p1=head;</span><br><span class="line">       while(p1-&gt;next)</span><br><span class="line">       &#123;</span><br><span class="line">           if(p1-&gt;val==p)</span><br><span class="line">           &#123;</span><br><span class="line">               List* qq=new List(q);</span><br><span class="line">               qq-&gt;next=p1-&gt;next;</span><br><span class="line">               qq-&gt;pre=p1;</span><br><span class="line">			</span><br><span class="line">			if(p1-&gt;next)&#123;</span><br><span class="line">			p1-&gt;next-&gt;pre=qq;</span><br><span class="line">			&#125;</span><br><span class="line">               p1-&gt;next=qq;</span><br><span class="line"></span><br><span class="line">               return head;</span><br><span class="line">           &#125;</span><br><span class="line">           p1=p1-&gt;next;</span><br><span class="line">       &#125;</span><br><span class="line">       return head;</span><br><span class="line">   </span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="来个判断字符串包含-gg"><a href="#来个判断字符串包含-gg" class="headerlink" title="来个判断字符串包含(gg)"></a>来个判断字符串包含(gg)</h3><p>哇，基础不牢，地动山摇</p>
+<p>当时脑抽写了这个，啧</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">for(int i=0;i&lt;s1.size();i++)</span><br><span class="line">   &#123;</span><br><span class="line">       st.insert(s1[i]);</span><br><span class="line">   &#125;</span><br><span class="line">   for(int i=0;i&lt;s2.size();i++)</span><br><span class="line">   &#123;</span><br><span class="line">       if(st.count(s2[i])) tem+=st-&gt;first;</span><br><span class="line">   &#125;</span><br><span class="line">   if(tem==s2) return true;</span><br><span class="line">   return false;</span><br></pre></td></tr></table></figure>
+
+<p>之后口头的时候提到了substr函数的实现方式</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">for(int i=0;i&lt;s1.size();i++)</span><br><span class="line"> &#123;</span><br><span class="line">      if(s1.substr(i,s2.size())==s2) return true;</span><br><span class="line"> &#125;</span><br><span class="line"> return false;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="c-标准库函数有了解吗"><a href="#c-标准库函数有了解吗" class="headerlink" title="c++标准库函数有了解吗"></a>c++标准库函数有了解吗</h2><p>stl嘛，容器那些，面试官只是回了：行</p>
+<h3 id="总结-4"><a href="#总结-4" class="headerlink" title="总结"></a>总结</h3><p>空中楼阁；基础不牢，地动山摇</p>
+<p>c++的应用，面试官说是很多，鸿蒙开发就是c；至于桌面应用是应用层的关系</p>
+<p>面试官说，设计模式的重要性；基础掌握；思想逻辑；算法一定要知道基础；系统设计框架：生产者和消费者</p>
+<h3 id="-2"><a href="#-2" class="headerlink" title=""></a></h3><h1 id="来源-1"><a href="#来源-1" class="headerlink" title="来源"></a>来源</h1><p>CSDN博主<a target="_blank" rel="noopener" href="https://blog.csdn.net/Lushengshi/article/details/127580635">「丘比特惩罚陆」</a></p>
 <p>知识补充来源：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/553387258">知乎笔记</a></p>
 <p>为什么c++很少用于后端开发：</p>
 <p>与java和python相比，c++缺乏像Spring和Django这种web框架，也没有一个像 J2EE 或 Servlet API 这样的标准。</p>
