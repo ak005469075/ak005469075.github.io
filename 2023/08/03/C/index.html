@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">27.8k</span>
+            <span class="post-count">27.9k</span>
         </span>
     </span>
 
@@ -1525,7 +1525,36 @@
 
 <h3 id="static在类里，在类外，有什么区别"><a href="#static在类里，在类外，有什么区别" class="headerlink" title="static在类里，在类外，有什么区别"></a>static在类里，在类外，有什么区别</h3><p>类里的static存在哪里，存在<strong>数据段</strong>。</p>
 <h3 id="析构函数如果，会发生什么-记不清了"><a href="#析构函数如果，会发生什么-记不清了" class="headerlink" title="析构函数如果，会发生什么(记不清了)"></a>析构函数如果，会发生什么(记不清了)</h3><p>崩溃</p>
-<h3 id="C-为什么面向对象-具体说明一下"><a href="#C-为什么面向对象-具体说明一下" class="headerlink" title="C++为什么面向对象(具体说明一下)"></a>C++为什么面向对象(具体说明一下)</h3><p>我答的是多态、封装和继承</p>
+<h3 id="C-为什么面向对象-具体说明一下"><a href="#C-为什么面向对象-具体说明一下" class="headerlink" title="C++为什么面向对象(具体说明一下)"></a>C++为什么面向对象(具体说明一下)</h3><p>我答的是多态、封装和继承，这是特点</p>
+<p>面向过程：主要是指功能的行为，以函数为单位，怎么做</p>
+<blockquote>
+<p>把大象关进冰箱</p>
+<p>1.开箱</p>
+<p>2.把大象关进去</p>
+<p>3.关箱</p>
+</blockquote>
+<p>面向对象：主要是指具备了功能的对象，考虑谁去做</p>
+<blockquote>
+<p>三个主体：人、冰箱、大象</p>
+<p>冰箱{</p>
+<p>​	open(){}</p>
+<p>​	close(){}</p>
+<p>};</p>
+<p>大象{</p>
+<p>​	进冰箱(){}</p>
+<p>};</p>
+<p>人{</p>
+<p>​	打开(冰箱){</p>
+<p>​	冰箱.open();</p>
+<p>}</p>
+<p>​	送(大象){</p>
+<p>​	大象.进冰箱();</p>
+<p>}</p>
+<p> 关闭(冰箱){</p>
+<p>​	冰箱.close():</p>
+<p>}</p>
+<p>};</p>
+</blockquote>
 <h3 id="继承是什么关系"><a href="#继承是什么关系" class="headerlink" title="继承是什么关系"></a>继承是什么关系</h3><p>子类与父类之间的关系是“是一个”（is-a）关系，即子类是父类的一种特殊类型</p>
 <h3 id="嵌套和继承的区别"><a href="#嵌套和继承的区别" class="headerlink" title="嵌套和继承的区别"></a>嵌套和继承的区别</h3><p>嵌套类是一个在另一个类的内部定义的类。它在外部类中具有作用域限制，可以访问外部类的私有成员。嵌套类通常用于实现某个类的内部辅助功能或数据结构。这可以帮助保持代码的整洁性，因为嵌套类的实现细节不会暴露给外部世界。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">class Outer &#123;</span><br><span class="line">public:</span><br><span class="line">    class Nested &#123;</span><br><span class="line">    public:</span><br><span class="line">        void nestedMethod() &#123;</span><br><span class="line">            // 可以访问外部类的成员</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">private:</span><br><span class="line">    int privateMember;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">    Outer::Nested nestedObj;</span><br><span class="line">    nestedObj.nestedMethod();</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
