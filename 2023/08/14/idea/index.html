@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">582</span>
+            <span class="post-count">2.5k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">2 分钟</span>
+            <span class="post-count">11 分钟</span>
         </span>
     </span>
 </div>
@@ -122,8 +122,8 @@
   <h1 id="1-pom-xml爆红"><a href="#1-pom-xml爆红" class="headerlink" title="1.pom.xml爆红"></a>1.pom.xml爆红</h1><p>选了type为：maven，依赖仅spring web;</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Could not find artifact org.springframework.boot:spring-boot-starter-parent:pom:3.1.2.RELEASE in central (https://repo.maven.apache.org/maven2)</span><br><span class="line"></span><br><span class="line">Project &#x27;org.springframework.boot:spring-boot-starter-parent:3.1.2.RELEASE&#x27; not found </span><br><span class="line"> </span><br></pre></td></tr></table></figure>
 
-<p><img src="/../../../Typora/img111/image-20230817125715171.png" alt="image-20230817125715171"></p>
-<p><img src="/../../../Typora/img111/image-20230817151646560.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230817125715171.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230817151646560.png"></p>
 <p>但是嘞，依旧没成功</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">No archetype found in remote catalog. Defaulting to internal catalog</span><br></pre></td></tr></table></figure>
 
@@ -144,9 +144,10 @@
 <p>反正，我还是有字符和括号的问题，删删改改就行了。最终完成了。</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>1.IDEA版本与maven版本是否兼容</p>
 <p>2.pom.xml文件中内容格式是否正确(标签是区分大小写的哈、符号啊、空格啊该删删，该改改)</p>
-<h1 id="2-maven依赖全红"><a href="#2-maven依赖全红" class="headerlink" title="2.maven依赖全红"></a>2.maven依赖全红</h1><p><img src="/../../../Typora/img111/image-20230817225322577.png" alt="image-20230817225322577"></p>
+<h1 id="2-maven依赖全红"><a href="#2-maven依赖全红" class="headerlink" title="2.maven依赖全红"></a>2.maven依赖全红</h1><p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230817225322577.png"></p>
 <p>刚处理完问题1，蹦出来这个</p>
 <p>好好好</p>
+<p>第二天打开，reload了maven，是好的</p>
 <h1 id="3-jrebel热部署"><a href="#3-jrebel热部署" class="headerlink" title="3.jrebel热部署"></a>3.jrebel热部署</h1><p>对idea.properties文件设置后，打开idea</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">he IDE cannot create the directory.</span><br><span class="line">Possible reason: parent directory is read-only or the user lacks necessary permissions.</span><br><span class="line"></span><br><span class="line">If you have modified the &#x27;idea.config.path&#x27; property, please make sure it is correct,</span><br><span class="line">otherwise, please re-install the IDE.</span><br><span class="line"></span><br><span class="line">-----</span><br><span class="line">Location: C:\Program Files\JetBrains\.IntelliJ IDEA 2020.1.2\config</span><br><span class="line">java.nio.file.AccessDeniedException: C:\Program Files\JetBrains\.IntelliJ IDEA 2020.1.2</span><br></pre></td></tr></table></figure>
 
@@ -156,9 +157,46 @@
 <p>激活jrebel ↓</p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/zhuzbYR/article/details/111460716">https://blog.csdn.net/zhuzbYR/article/details/111460716</a></p>
 <h1 id="4-jrebel-debug"><a href="#4-jrebel-debug" class="headerlink" title="4.jrebel debug"></a>4.jrebel debug</h1><p>Disconnected from the target VM, address: ‘127.0.0.1:64680’, transport: ‘socket’</p>
+<p>法1：<code>netstat -ano|findstr xxxx</code></p>
+<p>如果没有端口占用，不会显示；</p>
+<p>如果该端口被占用，会有至少一个连接信息，一般找到是LISTENING的网络连接以及其后一列的进程号PID。<br>使用命令：tasklist|findstr 你找到的PID，从进程列表中查找包含指定字符串的进程。<br>使用命令：taskkill &#x2F;pid 你找到的PID -f，根据PID杀死进程</p>
 <p>启动的VM参数太小导致JRebel检测不通过，直接终止本次启动，所以在Server config中补充VM Options即可</p>
+<p>help-&gt;edit custom vm-&gt; 将参数改大点，比如我的VM options <code> -Djava.awt.headless=true -Xms2048m -Xmx2048m</code>，但是没用</p>
+<p>与防火墙也没有关系</p>
+<p>通过在logback中设置一下，打印出debug信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">Error starting ApplicationContext. To display the conditions report re-run your application with &#x27;debug&#x27; enabled.</span><br><span class="line">2023-08-18 14:01:07 [ERROR][org.springframework.boot.SpringApplication][reportFailure][819] - Application run failed</span><br><span class="line">org.springframework.beans.factory.BeanCreationException: Error creating bean with name &#x27;sqlSessionFactory&#x27; defined in class path resource [org/mybatis/spring/boot/autoconfigure/MybatisAutoConfiguration.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [org.apache.ibatis.session.SqlSessionFactory]: Factory method &#x27;sqlSessionFactory&#x27; threw exception; nested exception is org.springframework.core.NestedIOException: Failed to parse mapping resource: &#x27;class path resource [com/cxs/allmodel/mapper]&#x27;; nested exception is java.io.FileNotFoundException: class path resource [com/cxs/allmodel/mapper] cannot be opened because it does not exist</span><br><span class="line">	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:658)</span><br><span class="line">	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:638)</span><br><span class="line">	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1352)</span><br><span class="line">	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1195)</span><br><span class="line">	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:582)</span><br><span class="line">	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)</span><br><span class="line">	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)</span><br><span class="line">	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)</span><br><span class="line">	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)</span><br><span class="line">	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)</span><br><span class="line">	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:944)</span><br><span class="line">	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:918)</span><br><span class="line">	at org.springframework.context.support.AbstractApplicationContext.__refresh(AbstractApplicationContext.java:583)</span><br><span class="line">	at org.springframework.context.support.AbstractApplicationContext.jrLockAndRefresh(AbstractApplicationContext.java:41002)</span><br><span class="line">	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:42008)</span><br><span class="line">	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:145)</span><br><span class="line">	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:730)</span><br><span class="line">	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:412)</span><br><span class="line">	at org.springframework.boot.SpringApplication.run(SpringApplication.java:302)</span><br><span class="line">	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1301)</span><br><span class="line">	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1290)</span><br><span class="line">	at com.easypan.Easypanapplication.main(Easypanapplication.java:16)</span><br><span class="line">Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [org.apache.ibatis.session.SqlSessionFactory]: Factory method &#x27;sqlSessionFactory&#x27; threw exception; nested exception is org.springframework.core.NestedIOException: Failed to parse mapping resource: &#x27;class path resource [com/cxs/allmodel/mapper]&#x27;; nested exception is java.io.FileNotFoundException: class path resource [com/cxs/allmodel/mapper] cannot be opened because it does not exist</span><br><span class="line">	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:185)</span><br><span class="line">	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:653)</span><br><span class="line">	... 21 common frames omitted</span><br><span class="line">Caused by: org.springframework.core.NestedIOException: Failed to parse mapping resource: &#x27;class path resource [com/cxs/allmodel/mapper]&#x27;; nested exception is java.io.FileNotFoundException: class path resource [com/cxs/allmodel/mapper] cannot be opened because it does not exist</span><br><span class="line">	at org.mybatis.spring.SqlSessionFactoryBean.buildSqlSessionFactory(SqlSessionFactoryBean.java:523)</span><br><span class="line">	at org.mybatis.spring.SqlSessionFactoryBean.afterPropertiesSet(SqlSessionFactoryBean.java:380)</span><br><span class="line">	at org.mybatis.spring.SqlSessionFactoryBean.getObject(SqlSessionFactoryBean.java:547)</span><br><span class="line">	at org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration.sqlSessionFactory(MybatisAutoConfiguration.java:153)</span><br><span class="line">	at org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration$$EnhancerBySpringCGLIB$$1.CGLIB$sqlSessionFactory$2(&lt;generated&gt;)</span><br><span class="line">	at org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration$$EnhancerBySpringCGLIB$$1$$FastClassBySpringCGLIB$$1.invoke(&lt;generated&gt;)</span><br><span class="line">	at org.springframework.cglib.proxy.MethodProxy.invokeSuper(MethodProxy.java:244)</span><br><span class="line">	at org.springframework.context.annotation.ConfigurationClassEnhancer$BeanMethodInterceptor.intercept(ConfigurationClassEnhancer.java:331)</span><br><span class="line">	at org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration$$EnhancerBySpringCGLIB$$1.sqlSessionFactory(&lt;generated&gt;)</span><br><span class="line">	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)</span><br><span class="line">	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)</span><br><span class="line">	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)</span><br><span class="line">	at java.lang.reflect.Method.invoke(Method.java:498)</span><br><span class="line">	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:154)</span><br><span class="line">	... 22 common frames omitted</span><br><span class="line">Caused by: java.io.FileNotFoundException: class path resource [com/cxs/allmodel/mapper] cannot be opened because it does not exist</span><br><span class="line">	at org.springframework.core.io.ClassPathResource.getInputStream(ClassPathResource.java:199)</span><br><span class="line">	at org.mybatis.spring.SqlSessionFactoryBean.buildSqlSessionFactory(SqlSessionFactoryBean.java:519)</span><br><span class="line">	... 35 common frames omitted</span><br><span class="line">Disconnected from the target VM, address: &#x27;127.0.0.1:57842&#x27;, transport: &#x27;socket&#x27;</span><br><span class="line"></span><br><span class="line">Process finished with exit code 1</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>问题是由于无法找到名为 <code>com/cxs/allmodel/mapper</code> 的类路径资源导致的。这通常意味着 MyBatis 无法找到指定的 Mapper 接口和映射文件。当然，这和虚拟机连接失败没关系</p>
+<p>但是最后再看了看，和MyBaits有关，但我目前仅仅是测试web是否成功，后来才知道application.properties中有和MyBaits有关的配置，但我实际上没有使用，给注释掉，终于成功啦！！！</p>
 <p><a target="_blank" rel="noopener" href="https://www.freesion.com/article/8686658191/">https://www.freesion.com/article/8686658191/</a></p>
 <p><a target="_blank" rel="noopener" href="http://t.csdn.cn/yFDJe">http://t.csdn.cn/yFDJe</a></p>
+<p>发送GET请求到路径”&#x2F;test”时，该端点会返回字符串”test”作为响应</p>
+<h1 id="5-文件夹爆红"><a href="#5-文件夹爆红" class="headerlink" title="5.文件夹爆红"></a>5.文件夹爆红</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@SpringBootApplication(scanBasePackages = &#123;&quot;com.easypan&quot;&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>easypan爆红，</p>
+<p>这个就是命名包名为com.easypan的时候，它真的创建了一个文件夹为com.easypan；而不是自动创建com&#x2F;easypan；所以需要自己去将文件夹改一下</p>
+<h1 id="6-用idea自带的database工具连接mysql时"><a href="#6-用idea自带的database工具连接mysql时" class="headerlink" title="6.用idea自带的database工具连接mysql时"></a>6.用idea自带的database工具连接mysql时</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Server returns invalid timezone. Need to set &#x27;serverTimezone&#x27; property.</span><br><span class="line">Set time zone</span><br></pre></td></tr></table></figure>
+
+<p>因为安装的mysql驱动版本高了，是8.0的，改为5.1的吧</p>
+<p>或在url后添加 <code>?serverTimezone=[GMT]</code></p>
+<h1 id="7-Driver-class-‘com-mysql-cj-jdbc-Driver’-not-found"><a href="#7-Driver-class-‘com-mysql-cj-jdbc-Driver’-not-found" class="headerlink" title="7.Driver class ‘com.mysql.cj.jdbc.Driver’ not found"></a>7.Driver class ‘com.mysql.cj.jdbc.Driver’ not found</h1><p>com.mysql.jdbc.Driver是MySQL 5.x版本中的驱动程序类。它已经过时，不再被推荐使用，因为它不支持最新的JDBC规范，并且可能存在安全漏洞。</p>
+<p>com.mysql.cj.jdbc.Driver是MySQL 8.0版本中的默认驱动程序类。它支持最新的JDBC规范，并提供更好的性能、扩展性和安全性。此外，它还包括了一些新特性，例如支持Unicode字符集和多语言处理等能。</p>
+<p>所以我MySQL 5.7确实用不了cj的class</p>
+<h1 id="8-plugins什么插件都搜不到"><a href="#8-plugins什么插件都搜不到" class="headerlink" title="8.plugins什么插件都搜不到"></a>8.plugins什么插件都搜不到</h1><p><a target="_blank" rel="noopener" href="https://plugins.jetbrains.com/">https://plugins.jetbrains.com/</a></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230818210500627.png"></p>
+<h1 id="知识点"><a href="#知识点" class="headerlink" title="知识点"></a>知识点</h1><h2 id="DAO-x2F-ENTITY-x2F-SERVICE-x2F-CONTROLLER"><a href="#DAO-x2F-ENTITY-x2F-SERVICE-x2F-CONTROLLER" class="headerlink" title="DAO&#x2F;ENTITY&#x2F;SERVICE&#x2F;CONTROLLER"></a>DAO&#x2F;ENTITY&#x2F;SERVICE&#x2F;CONTROLLER</h2><p>1、DAO层： 持久层 主要与数据库进行交互</p>
+<p>DAO层主要是做数据持久层的工作，主要与数据库进行交互。</p>
+<p>DAO层首先会创建DAO接口，接着就可以在模块中就可以调用DAO 的接口进行数据业务的而处理，并且不用关注此接口的具体实现类是哪一个类。DAO 层的数据源和数据库连接的参数都是在配置文件中进行配置的。</p>
+<p>2、Entity层： 实体层 数据库在项目中的类</p>
+<p>3、Service层：业务层 控制业务</p>
+<p>Service层主要负责业务模块的逻辑应用设计。和DAO层一样都是先设计放接口的类，再创建实现的类，然后在配置文件中进行配置其实现的关联。接下来就可以在service层调用接口进行业务逻辑应用的处理。</p>
+<p>封装Service层的业务逻辑有利于业务逻辑的独立性和重复利用性。</p>
+<p>4、Controller层： 控制层 控制业务逻辑</p>
+<p>Controller层负责具体的业务模块流程的控制，其实就是与前台互交，把前台传进来的参数进行处理，controller层主要调用Service层里面的接口控制具体的业务流程，控制的配置也需要在配置文件中进行。</p>
+<p>5、View层： 此层与控制层结合比较紧密，需要二者结合起来协同工发。View层主要负责前台jsp页面的表示</p>
+<p>Conroller层和Service层的区别是：Controlle层负责具体的业务模块流程的控制;Service层负责业务模块的逻辑应用设计;</p>
+<p>总结：在具体的项目中，其流程为：Controller层调用Service层的方法，Service层调用Dao层中的方法，其中调用的参数是使用Entity层进行传递的。总的来说这样每层做什么的分类只是为了使业务逻辑更加清晰，写代码更加方便，所以有时候也需要根据具体情况来，但是大体的都是这样处理的，因为它其实就是提供一种规则，让你把相同类型的代码放在一起，这样就形成了层次，从而达到分层解耦、复用、便于测试和维护的目的。</p>
+<p>————————————————<br>版权声明：本文为CSDN博主「吴沐珂」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/whz199511/article/details/81532593">https://blog.csdn.net/whz199511/article/details/81532593</a></p>
  
       <!-- reward -->
       
@@ -246,9 +284,9 @@
       </a>
     
     
-      <a href="/2023/08/13/%E5%A0%86%E6%A0%88/" class="article-nav-link">
+      <a href="/2023/08/14/%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E5%AE%9E%E7%8E%B0/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">堆/栈/RAII</div>
+        <div class="article-nav-title">智能指针</div>
       </a>
     
   </nav>

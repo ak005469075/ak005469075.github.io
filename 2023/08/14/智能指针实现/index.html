@@ -11,7 +11,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1"
       />
-      <title> 小张之栈</title>
+      <title>智能指针 |  小张之栈</title>
   <meta name="generator" content="hexo-theme-ayer">
       
       <link rel="shortcut icon" href="/favicon.ico" />
@@ -71,11 +71,25 @@
   data-scroll-reveal
 >
   <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  智能指针
+</h1>
+ 
+
+      
+    </header>
      
     <div class="article-meta">
-      <a href="/2023/08/15/%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E5%AE%9E%E7%8E%B0/" class="article-date">
-  <time datetime="2023-08-15T08:32:50.393Z" itemprop="datePublished">2023-08-15</time>
-</a>   
+      <a href="/2023/08/14/%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E5%AE%9E%E7%8E%B0/" class="article-date">
+  <time datetime="2023-08-13T19:21:20.000Z" itemprop="datePublished">2023-08-14</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/C/">C++</a> / <a class="article-category-link" href="/categories/C/%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/">智能指针</a>
+  </div>
+  
 <div class="word_count">
     <span class="post-time">
         <span class="post-meta-item-icon">
@@ -105,9 +119,7 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">title: 智能指针</span><br><span class="line">date: 2023-08-14 03:21:20</span><br><span class="line">categories: </span><br><span class="line">- C++</span><br><span class="line">- 智能指针</span><br><span class="line">tags: </span><br><span class="line">- C++</span><br><span class="line">- 智能指针</span><br></pre></td></tr></table></figure>
-
-<h1 id="意义"><a href="#意义" class="headerlink" title="意义"></a>意义</h1><p>智能指针简化资源的管理，从根本上消除资源(内存)泄露的可能；实质上是RAII资源管理功能的自然展现。</p>
+  <h1 id="意义"><a href="#意义" class="headerlink" title="意义"></a>意义</h1><p>智能指针简化资源的管理，从根本上消除资源(内存)泄露的可能；实质上是RAII资源管理功能的自然展现。</p>
 <h1 id="代码1"><a href="#代码1" class="headerlink" title="代码1"></a>代码1</h1><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum class</span> <span class="title class_">shape_type</span> &#123;</span><br><span class="line">circle</span><br><span class="line">,</span><br><span class="line">triangle,</span><br><span class="line">rectangle,</span><br><span class="line">…</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">shape</span> &#123; … &#125;;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">circle</span> : <span class="keyword">public</span> shape &#123; … &#125;;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">triangle</span> : <span class="keyword">public</span> shape &#123; … &#125;;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">rectangle</span> : <span class="keyword">public</span> shape &#123; … &#125;;</span><br><span class="line"><span class="function">shape* <span class="title">create_shape</span><span class="params">(shape_type type)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">…</span><br><span class="line"><span class="keyword">switch</span> (type) &#123;</span><br><span class="line"><span class="keyword">case</span> shape_type::circle:</span><br><span class="line"><span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">circle</span>(…);</span><br><span class="line"><span class="keyword">case</span> shape_type::triangle:</span><br><span class="line"><span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">triangle</span>(…);</span><br><span class="line"><span class="keyword">case</span> shape_type::rectangle:</span><br><span class="line"><span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">rectangle</span>(…);</span><br><span class="line">…</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>为了确保在使用 create_shape 的返回值时不会发生内存泄漏</p>
@@ -227,21 +239,32 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/08/15/%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E5%AE%9E%E7%8E%B0/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/08/14/%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E5%AE%9E%E7%8E%B0/" alt="微信分享二维码">
     </div>
 </div>
 
 <div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/" rel="tag">智能指针</a></li></ul>
+
     </footer>
   </div>
 
    
   <nav class="article-nav">
     
+      <a href="/2023/08/14/idea/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            idea事件排查
+          
+        </div>
+      </a>
     
-      <a href="/2023/08/14/yunpan%E9%A1%B9%E7%9B%AE/" class="article-nav-link">
+    
+      <a href="/2023/08/13/%E5%A0%86%E6%A0%88/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">云盘项目</div>
+        <div class="article-nav-title">堆/栈/RAII</div>
       </a>
     
   </nav>
