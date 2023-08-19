@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">2.9k</span>
+            <span class="post-count">3k</span>
         </span>
     </span>
 
@@ -197,6 +197,10 @@
 <h2 id="解决方案："><a href="#解决方案：" class="headerlink" title="解决方案："></a>解决方案：</h2><p><strong>反斜杠漏了啊</strong></p>
 <p>​	alias  D:&#x2F;phpstudy_pro&#x2F;WWW&#x2F;sqli<code>/</code>; 不要丢最后一个反斜杠</p>
 <p><img src="/../../../Typora/img111/image-20230819123728492.png"></p>
+<h2 id="四、nodejs的冲突"><a href="#四、nodejs的冲突" class="headerlink" title="四、nodejs的冲突"></a>四、nodejs的冲突</h2><p>开发设计的时候要求node版本16.17</p>
+<p>当时配置hexo的是v18.</p>
+<p>使用旧版本的nodejs导致了hexo进行博客更新出问题，G!!!!</p>
+<h2 id="解决方案-1"><a href="#解决方案-1" class="headerlink" title="解决方案"></a>解决方案</h2><p>更新博客用新的，设计时用旧的</p>
 <h1 id="知识点"><a href="#知识点" class="headerlink" title="知识点"></a>知识点</h1><h2 id="DAO-x2F-ENTITY-x2F-SERVICE-x2F-CONTROLLER"><a href="#DAO-x2F-ENTITY-x2F-SERVICE-x2F-CONTROLLER" class="headerlink" title="DAO&#x2F;ENTITY&#x2F;SERVICE&#x2F;CONTROLLER"></a>DAO&#x2F;ENTITY&#x2F;SERVICE&#x2F;CONTROLLER</h2><p>1、DAO层： 持久层 主要与数据库进行交互</p>
 <p>DAO层主要是做数据持久层的工作，主要与数据库进行交互。</p>
 <p>DAO层首先会创建DAO接口，接着就可以在模块中就可以调用DAO 的接口进行数据业务的而处理，并且不用关注此接口的具体实现类是哪一个类。DAO 层的数据源和数据库连接的参数都是在配置文件中进行配置的。</p>
