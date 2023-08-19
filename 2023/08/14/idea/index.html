@@ -87,7 +87,7 @@
   <time datetime="2023-08-14T00:12:30.000Z" itemprop="datePublished">2023-08-14</time>
 </a> 
   <div class="article-category">
-    <a class="article-category-link" href="/categories/idea/">idea</a> / <a class="article-category-link" href="/categories/idea/nginx/">nginx</a> / <a class="article-category-link" href="/categories/idea/nginx/vscode/">vscode</a>
+    <a class="article-category-link" href="/categories/idea/">idea</a> / <a class="article-category-link" href="/categories/idea/nginx/">nginx</a> / <a class="article-category-link" href="/categories/idea/nginx/vscode/">vscode</a> / <a class="article-category-link" href="/categories/idea/nginx/vscode/hexo/">hexo</a>
   </div>
   
 <div class="word_count">
@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">3k</span>
+            <span class="post-count">3.1k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">13 分钟</span>
+            <span class="post-count">14 分钟</span>
         </span>
     </span>
 </div>
@@ -199,8 +199,19 @@
 <p><img src="/../../../Typora/img111/image-20230819123728492.png"></p>
 <h2 id="四、nodejs的冲突"><a href="#四、nodejs的冲突" class="headerlink" title="四、nodejs的冲突"></a>四、nodejs的冲突</h2><p>开发设计的时候要求node版本16.17</p>
 <p>当时配置hexo的是v18.</p>
-<p>使用旧版本的nodejs导致了hexo进行博客更新出问题，G!!!!</p>
-<h2 id="解决方案-1"><a href="#解决方案-1" class="headerlink" title="解决方案"></a>解决方案</h2><p>更新博客用新的，设计时用旧的</p>
+<p>使用旧版本的nodejs导致了hexo进行博客更新出问题，而且yaml格式还乱序了，G!!!!</p>
+<p>好好好，这样玩是吧</p>
+<h2 id="解决方案-1"><a href="#解决方案-1" class="headerlink" title="解决方案"></a>解决方案</h2><p>我就用旧的来，再装一遍吧 <code>npm install -g hexo-cli</code></p>
+<h2 id="Please-make-sure-you-have-the-correct-access-rights-and-the-repository-exists"><a href="#Please-make-sure-you-have-the-correct-access-rights-and-the-repository-exists" class="headerlink" title="Please make sure you have the correct access rights and the repository exists."></a>Please make sure you have the correct access rights and the repository exists.</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Please make sure you have the correct access rights and the repository exists.</span><br><span class="line">FATAL Something&#x27;s wrong. Maybe you can find the solution here: https://hexo.io/docs/troubleshooting.html</span><br><span class="line">Error: Spawn failed</span><br><span class="line">    at ChildProcess.&lt;anonymous&gt; (E:\Myblog\node_modules\hexo-util\lib\spawn.js:51:21)</span><br><span class="line">    at ChildProcess.emit (node:events:513:28)</span><br><span class="line">    at ChildProcess.cp.emit (E:\Myblog\node_modules\cross-spawn\lib\enoent.js:34:29)</span><br><span class="line">    at Process.ChildProcess._handle.onexit (node:internal/child_process:291:12)</span><br></pre></td></tr></table></figure>
+
+<p>是git服务器没有发现存储本地的ssh密钥</p>
+<p>也就是说，删了一遍已安装的node.js，把公钥忘了呗</p>
+<h3 id="解决方案-2"><a href="#解决方案-2" class="headerlink" title="解决方案"></a>解决方案</h3><p>$ git config user.name ，幸好，这些还记着的</p>
+<p><code>$ ssh -T git@github.com</code></p>
+<blockquote>
+<p>ssh: connect to host github.com port 22: Connection  timed out</p>
+</blockquote>
+<p>重新生成ssh</p>
 <h1 id="知识点"><a href="#知识点" class="headerlink" title="知识点"></a>知识点</h1><h2 id="DAO-x2F-ENTITY-x2F-SERVICE-x2F-CONTROLLER"><a href="#DAO-x2F-ENTITY-x2F-SERVICE-x2F-CONTROLLER" class="headerlink" title="DAO&#x2F;ENTITY&#x2F;SERVICE&#x2F;CONTROLLER"></a>DAO&#x2F;ENTITY&#x2F;SERVICE&#x2F;CONTROLLER</h2><p>1、DAO层： 持久层 主要与数据库进行交互</p>
 <p>DAO层主要是做数据持久层的工作，主要与数据库进行交互。</p>
 <p>DAO层首先会创建DAO接口，接着就可以在模块中就可以调用DAO 的接口进行数据业务的而处理，并且不用关注此接口的具体实现类是哪一个类。DAO 层的数据源和数据库连接的参数都是在配置文件中进行配置的。</p>
@@ -296,7 +307,7 @@
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/idea/" rel="tag">idea</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/" rel="tag">nginx</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/vscode/" rel="tag">vscode</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/idea/" rel="tag">idea</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/" rel="tag">nginx</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/vscode/" rel="tag">vscode</a></li></ul>
 
     </footer>
   </div>
