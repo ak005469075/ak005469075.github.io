@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.2k</span>
+            <span class="post-count">1.9k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">5 分钟</span>
+            <span class="post-count">9 分钟</span>
         </span>
     </span>
 </div>
@@ -170,7 +170,7 @@
 
 <p>然后数据库的url由于是easypan?…</p>
 <p>那么数据库就要建立一个easypan</p>
-<p><img src="/../../../Typora/img111/image-20230817224137160.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230817224137160.png"></p>
 <h4 id="logback-spring-xml"><a href="#logback-spring-xml" class="headerlink" title="logback-spring.xml"></a>logback-spring.xml</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">日志的配置</span><br></pre></td></tr></table></figure>
 
 
@@ -183,7 +183,7 @@
 <p>对入口类进行jrebel debug运行</p>
 <p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230818150051246.png" alt="目前项目构造"></p>
 <p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230818145910815.png"></p>
-<h1 id="登录注册"><a href="#登录注册" class="headerlink" title="登录注册"></a>登录注册</h1><h2 id="数据库设计"><a href="#数据库设计" class="headerlink" title="数据库设计"></a>数据库设计</h2><p>在navicat工具中去新建表，然后给表进行注释，并添加对应的列，进行相应注释</p>
+<h1 id="登录注册"><a href="#登录注册" class="headerlink" title="登录注册"></a>登录注册</h1><h2 id="1-数据库设计"><a href="#1-数据库设计" class="headerlink" title="1.数据库设计"></a>1.数据库设计</h2><p>在navicat工具中去新建表，然后给表进行注释，并添加对应的列，进行相应注释</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `user_info` (</span><br><span class="line">  `user_id` varchar(15) NOT NULL COMMENT &#x27;用户ID&#x27;,</span><br><span class="line">  `nick_name` varchar(20) DEFAULT NULL COMMENT &#x27;昵称&#x27;,</span><br><span class="line">  `email` varchar(150) DEFAULT NULL COMMENT &#x27;邮箱&#x27;,</span><br><span class="line">  `qq_open_id` varchar(35) DEFAULT NULL COMMENT &#x27;qqid&#x27;,</span><br><span class="line">  `qq_image` varchar(150) DEFAULT NULL COMMENT &#x27;qq头像&#x27;,</span><br><span class="line">  `password` varchar(32) DEFAULT NULL COMMENT &#x27;密码&#x27;,</span><br><span class="line">  `join_time` datetime DEFAULT NULL COMMENT &#x27;创建时间&#x27;,</span><br><span class="line">  `last_login_time` datetime DEFAULT NULL COMMENT &#x27;最近登录时间&#x27;,</span><br><span class="line">  `status` tinyint(1) DEFAULT NULL COMMENT &#x27;0:禁用,1:启用&#x27;,</span><br><span class="line">  `use_space` bigint(20) DEFAULT NULL COMMENT &#x27;云盘使用空间，单位byte&#x27;,</span><br><span class="line">  `total_space` bigint(20) DEFAULT NULL,</span><br><span class="line">  PRIMARY KEY (`user_id`)</span><br><span class="line">) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT=&#x27;用户信息&#x27;;</span><br></pre></td></tr></table></figure>
 
 <p>再把索引建立一下</p>
@@ -191,9 +191,9 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `user_info` (</span><br><span class="line">  `user_id` varchar(15) NOT NULL COMMENT &#x27;用户ID&#x27;,</span><br><span class="line">  `nick_name` varchar(20) DEFAULT NULL COMMENT &#x27;昵称&#x27;,</span><br><span class="line">  `email` varchar(150) DEFAULT NULL COMMENT &#x27;邮箱&#x27;,</span><br><span class="line">  `qq_open_id` varchar(35) DEFAULT NULL COMMENT &#x27;qqid&#x27;,</span><br><span class="line">  `qq_image` varchar(150) DEFAULT NULL COMMENT &#x27;qq头像&#x27;,</span><br><span class="line">  `password` varchar(32) DEFAULT NULL COMMENT &#x27;密码&#x27;,</span><br><span class="line">  `join_time` datetime DEFAULT NULL COMMENT &#x27;创建时间&#x27;,</span><br><span class="line">  `last_login_time` datetime DEFAULT NULL COMMENT &#x27;最近登录时间&#x27;,</span><br><span class="line">  `status` tinyint(1) DEFAULT NULL COMMENT &#x27;0:禁用,1:启用&#x27;,</span><br><span class="line">  `use_space` bigint(20) DEFAULT NULL COMMENT &#x27;云盘使用空间，单位byte&#x27;,</span><br><span class="line">  `total_space` bigint(20) DEFAULT NULL COMMENT &#x27;总空间&#x27;,</span><br><span class="line">  PRIMARY KEY (`user_id`),</span><br><span class="line">  UNIQUE KEY `key_email` (`email`),</span><br><span class="line">  UNIQUE KEY `key_qq_open_id` (`qq_open_id`),</span><br><span class="line">  UNIQUE KEY `key_nick_name` (`nick_name`)</span><br><span class="line">) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT=&#x27;用户信息&#x27;;</span><br></pre></td></tr></table></figure>
 
 <p>之后貌似就涉及到了，如何用IDEA去实现<strong>根据表内容自动生成实体类</strong>了</p>
-<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1EN4y1c7sL?p=3&vd_source=c49e37118f69c7a5b34915b73d1b78ab">https://www.bilibili.com/video/BV1EN4y1c7sL?p=3&amp;vd_source=c49e37118f69c7a5b34915b73d1b78ab</a></p>
+<p>B站 <a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1EN4y1c7sL?p=3&vd_source=c49e37118f69c7a5b34915b73d1b78ab">老罗</a></p>
 <p>CSDN <a target="_blank" rel="noopener" href="http://t.csdn.cn/1TDDt">二木成林</a></p>
-<p>CSDN <a href="">新晨Zeng</a></p>
+<p>CSDN <a target="_blank" rel="noopener" href="http://t.csdn.cn/C0jtX">新晨Zeng</a>（是一种方法参考，但没有用这个）</p>
 <h3 id="自动设计类"><a href="#自动设计类" class="headerlink" title="自动设计类"></a>自动设计类</h3><p>首先，navicat写好了表，且对每一列注释好，对表名也有注释</p>
 <p>IDEA，去利用自带的database工具进行连接mysql，（先安装相应driver），再连接对应数据库</p>
 <p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230818205450585.png"></p>
@@ -201,7 +201,8 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--mybatis--&gt;</span><br><span class="line">    &lt;dependency&gt;</span><br><span class="line">      &lt;groupId&gt;org.mybatis.spring.boot&lt;/groupId&gt;</span><br><span class="line">      &lt;artifactId&gt;mybatis-spring-boot-starter&lt;/artifactId&gt;</span><br><span class="line">      &lt;version&gt;$&#123;mybatis.version&#125;&lt;/version&gt;</span><br><span class="line">    &lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
 
 <p>下载easycode插件去自动生成代码</p>
-<p>CSDN <a target="_blank" rel="noopener" href="http://t.csdn.cn/tggmc">ShaneHolmes</a></p>
+<p>CSDN <a target="_blank" rel="noopener" href="http://t.csdn.cn/tggmc">ShaneHolmes</a>（我看的这个）</p>
+<p>CSDN <a target="_blank" rel="noopener" href="http://t.csdn.cn/Q3hAX">Darren Gong</a>（maven依赖和application.properties参考这个）</p>
 <p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230818211324027.png"></p>
 <p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230818211538456.png"></p>
 <p>为了加注解的话</p>
@@ -210,8 +211,42 @@
 
 <p>Dao层上加入 <code>@Mapper</code></p>
 <p>启动类上加入<code>@MapperScan(&quot;com.easypan.dao&quot;)</code></p>
-<p>插入一行数据后，jrebel debug，访问得</p>
+<p>插入一行数据后，jrebel debug启动类，访问得</p>
 <p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230818221155117.png"></p>
+<h2 id="2-部署前端"><a href="#2-部署前端" class="headerlink" title="2.部署前端"></a>2.部署前端</h2><h3 id="下载nginx"><a href="#下载nginx" class="headerlink" title="下载nginx"></a>下载nginx</h3><p>我之前练习注入靶场的时候，下载了小皮phpstudy，我就用它自带的nginx吧</p>
+<h3 id="下载前端编译程序"><a href="#下载前端编译程序" class="headerlink" title="下载前端编译程序"></a>下载前端编译程序</h3><h3 id="编译nginx"><a href="#编译nginx" class="headerlink" title="编译nginx"></a>编译nginx</h3><p>更改nginx的nginx.conf配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">  server &#123;</span><br><span class="line">      listen       8000;#访问端口</span><br><span class="line">      #listen       somename:8080;</span><br><span class="line">      server_name  easypan.yuleiyun.com;</span><br><span class="line">charset utf-8;</span><br><span class="line"></span><br><span class="line">      location / &#123;  #路由规则</span><br><span class="line">	alias  D:/phpstudy_pro/WWW/sqli/; #将代码项目build后放进sqli 真实静态资源的路径</span><br><span class="line">          #root   html; #root 以location块名称为文件夹下的路径</span><br><span class="line">          # root 和 alias 取其1即可</span><br><span class="line">          </span><br><span class="line">          index  index.html index.htm; #index 首页设置</span><br><span class="line">      &#125;</span><br><span class="line">location /api &#123;</span><br><span class="line">	#alias </span><br><span class="line">          proxy_pass http://localhost:7090/api;# 跨域访问</span><br><span class="line">	proxy_set_header x-forwarded-for $remote_addr;#客户端ip remote_addr</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>关于那个<code>server_name  easypan.yuleiyun.com</code>；</p>
+<p>可以下载一个工具switchHost，用来对<strong>127.0.0.1 easypan.yuleiyun.com</strong>的映射</p>
+<p><img src="/../../../Typora/img111/image-20230819122440494.png" alt="更改host映射"></p>
+<p><img src="/../../../Typora/img111/image-20230819113900493.png" alt="image-20230819113900493"></p>
+<p>关于配置文件的详解，参考 CSDN <a target="_blank" rel="noopener" href="http://t.csdn.cn/z1KEm">皮卡丘的猫</a>，以及<a target="_blank" rel="noopener" href="http://t.csdn.cn/zEQwv">另一条</a></p>
+<p>在nginx所在文件夹，shift+鼠标右键，启动powershell</p>
+<p><code>start .\nginx.exe</code> 启动</p>
+<p> <code>.\nginx.exe -s reload</code> 每修改一次conf，执行一次</p>
+<p><code>.\nginx.exe -s stop</code> &#x2F;&#x2F;停止</p>
+<p><img src="/../../../Typora/img111/image-20230819123842755.png" alt="访问得"></p>
+<p><strong>D:&#x2F;phpstudy_pro&#x2F;WWW&#x2F;sqli&#x2F;目录下肯定有一个html或htm文件的</strong></p>
+<p>CSDN <a target="_blank" rel="noopener" href="http://t.csdn.cn/I17OW">普通网友</a></p>
+<h2 id="3-前端转战vs-code"><a href="#3-前端转战vs-code" class="headerlink" title="3.前端转战vs code"></a>3.前端转战vs code</h2><p>先构建项目，下载<a target="_blank" rel="noopener" href="https://nodejs.org/download/release/v16.20.0/">node.js</a></p>
+<p>此处为v16.17.0版本</p>
+<p>我之前下过node，cmd输入where node，找到路径，删掉，下载对应版本node，添加环境变量即可</p>
+<p>(题外话)：删除了原版本的node后，在git中用hexo更新博客，发现没有该命令了，只能重新<code>npm install -g hexo-cli</code>了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">PS E:\myworkspace_front&gt; node -v</span><br><span class="line">v16.17.0</span><br><span class="line">PS E:\myworkspace_front&gt; npm config get registry</span><br><span class="line">https://registry.npm.taobao.org/</span><br><span class="line">PS E:\myworkspace_front&gt; npm config set registry https://registry.npmmirror.com</span><br><span class="line">PS E:\myworkspace_front&gt; npm init vite@latest easypan-front</span><br><span class="line">Need to install the following packages:</span><br><span class="line">  create-vite@4.4.1</span><br><span class="line">Ok to proceed? (y)</span><br><span class="line">√ Select a framework: » Vue</span><br><span class="line">√ Select a variant: » Customize with create-vue ↗</span><br><span class="line">Need to install the following packages:</span><br><span class="line">  create-vue@3.7.2</span><br><span class="line">Ok to proceed? (y) y</span><br><span class="line"></span><br><span class="line">//构建项目</span><br><span class="line">PS E:\myworkspace_front&gt; npm init vite@latest easypan-front</span><br><span class="line">√ Select a framework: » Vue</span><br><span class="line">√ Select a variant: » Customize with create-vue ↗</span><br><span class="line"></span><br><span class="line">Vue.js - The Progressive JavaScript Framework</span><br><span class="line"></span><br><span class="line">√ Add TypeScript? ... No</span><br><span class="line">√ Add JSX Support? ... No</span><br><span class="line">√ Add Vue Router for Single Page Application development? ...  Yes</span><br><span class="line">√ Add Vitest for Unit Testing? ... No </span><br><span class="line">√ Add an End-to-End Testing Solution? » No</span><br><span class="line">√ Add ESLint for code quality? ... No </span><br><span class="line"></span><br><span class="line">Scaffolding project in E:\myworkspace_front\easypan-front...</span><br><span class="line"></span><br><span class="line">Done. Now run:</span><br><span class="line"></span><br><span class="line">  cd easypan-front</span><br><span class="line">  npm install</span><br><span class="line">  npm run dev</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">//安装项目依赖</span><br><span class="line">PS E:\myworkspace_front&gt; cd .\easypan-front\</span><br><span class="line">PS E:\myworkspace_front\easypan-front&gt; </span><br><span class="line">npm install @highlightjs/vue-plugin @moefe/vue-aplayer aplayer axios docx-preview dplayer element-plus highlight.js hls.js js-md5 sass sass-loader spark-md5 vue-clipboard3 vue-cookies vue-pdf-embed vue-router vue3-pdfjs xlsx --save</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>可以看到文件夹</p>
+<p><img src="/../../../Typora/img111/image-20230819233243788.png"></p>
+<p>之后<code>npm run dev</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">VITE v4.4.9  ready in 3323 ms</span><br><span class="line"></span><br><span class="line">➜  Local:   http://127.0.0.1:5173/</span><br><span class="line">➜  Network: use --host to expose</span><br><span class="line">➜  press h to show help</span><br></pre></td></tr></table></figure>
+
+<p>对vite.config.js进行修改，可以自定义端口，不用5173</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">resolve: &#123;</span><br><span class="line">    alias: &#123;</span><br><span class="line">      &#x27;@&#x27;: fileURLToPath(new URL(&#x27;./src&#x27;, import.meta.url))</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  server:&#123;</span><br><span class="line">    port:1079,</span><br><span class="line">    hmr:true,</span><br><span class="line">    proxy:&#123;</span><br><span class="line">      &quot;/api&quot;:&#123;</span><br><span class="line">        target:&quot;http://localhost:7090&quot;,</span><br><span class="line">        changeOrigin:true,</span><br><span class="line">        pathRewrite:&#123;</span><br><span class="line">          &quot;^api&quot;:&quot;/api&quot;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>访问127.0.0.1:1079</p>
+<p><img src="/../../../Typora/img111/image-20230819233857781.png" alt="访问前端"></p>
  
       <!-- reward -->
       
@@ -292,7 +327,7 @@
     
       <a href="/2023/08/14/idea/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">idea事件排查</div>
+        <div class="article-nav-title">开发问题收集</div>
       </a>
     
   </nav>
