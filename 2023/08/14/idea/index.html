@@ -11,7 +11,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1"
       />
-      <title>开发问题收集 |  小张之栈</title>
+      <title>开发问题收集及知识点 |  小张之栈</title>
   <meta name="generator" content="hexo-theme-ayer">
       
       <link rel="shortcut icon" href="/favicon.ico" />
@@ -75,7 +75,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  开发问题收集
+  开发问题收集及知识点
 </h1>
  
 
@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">3.7k</span>
+            <span class="post-count">4.3k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">17 分钟</span>
+            <span class="post-count">20 分钟</span>
         </span>
     </span>
 </div>
@@ -184,6 +184,9 @@
 <p>所以我MySQL 5.7确实用不了cj的class</p>
 <h2 id="8-plugins什么插件都搜不到"><a href="#8-plugins什么插件都搜不到" class="headerlink" title="8.plugins什么插件都搜不到"></a>8.plugins什么插件都搜不到</h2><p><a target="_blank" rel="noopener" href="https://plugins.jetbrains.com/">https://plugins.jetbrains.com/</a></p>
 <p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230818210500627.png"></p>
+<h2 id="9-启动类启动失败"><a href="#9-启动类启动失败" class="headerlink" title="9.启动类启动失败"></a>9.启动类启动失败</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Error occurred during initialization of VM</span><br><span class="line">Could not reserve enough space for object heap</span><br></pre></td></tr></table></figure>
+
+<p>我是把run-&gt;edit configu.. 设置的vm options参数删除了，或许是因为参数太大，改小一点就可以了</p>
 <h1 id="二、vscode"><a href="#二、vscode" class="headerlink" title="二、vscode"></a>二、vscode</h1><h2 id="node-v，npm-v未识别"><a href="#node-v，npm-v未识别" class="headerlink" title="node -v，npm-v未识别"></a>node -v，npm-v未识别</h2><p>在vscode终端下使用node -v，npm-v未识别（但在cmd上是可以的，证明已配置了全局变量）</p>
 <h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><p>以管理员身份运行vscode</p>
 <p><strong>但实际上，我只是重启了下vscode，就好了</strong></p>
@@ -224,8 +227,13 @@
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_62159662/article/details/125156695">https://blog.csdn.net/m0_62159662/article/details/125156695</a></p>
 <h1 id="五、picgo上传失败"><a href="#五、picgo上传失败" class="headerlink" title="五、picgo上传失败"></a>五、picgo上传失败</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"> &quot;statusCode&quot;: 0,</span><br><span class="line">  &quot;message&quot;: &quot;connect ETIMEDOUT 20.205.243.168:443&quot;,</span><br><span class="line">  &quot;stack&quot;: &quot;Error: connect ETIMEDOUT 20.205.243.168:443\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1146:16)&quot;,</span><br><span class="line">  &quot;response&quot;: &#123;</span><br><span class="line">    &quot;status&quot;: 0,</span><br><span class="line">    &quot;statusCode&quot;: 0,</span><br><span class="line">    &quot;body&quot;: &quot;&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
 
-<p><img src="/../../../Typora/img111/image-20230820100906475.png"></p>
-<h2 id="解决方案-3"><a href="#解决方案-3" class="headerlink" title="解决方案"></a>解决方案</h2><p>未解决，还是出现在node上哈？</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230820100906475.png"></p>
+<h2 id="解决方案-3"><a href="#解决方案-3" class="headerlink" title="解决方案"></a>解决方案</h2><p>去picGo配置代理和镜像地址</p>
+<p>上传代理为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1:7890</span><br></pre></td></tr></table></figure>
+
+
+
 <h1 id="六、vue"><a href="#六、vue" class="headerlink" title="六、vue"></a>六、vue</h1><h2 id="1-”-x2F-lib-x2F-locale-x2F-lang-x2F-zh-cn”"><a href="#1-”-x2F-lib-x2F-locale-x2F-lang-x2F-zh-cn”" class="headerlink" title="1.”.&#x2F;lib&#x2F;locale&#x2F;lang&#x2F;zh-cn”"></a>1.”.&#x2F;lib&#x2F;locale&#x2F;lang&#x2F;zh-cn”</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Internal server error: No known conditions for &quot;./lib/locale/lang/zh-cn&quot; specifier in &quot;element-plus&quot; package</span><br></pre></td></tr></table></figure>
 
 <h2 id="解决方案-4"><a href="#解决方案-4" class="headerlink" title="解决方案"></a>解决方案</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">import zhCn from &quot;element-plus/es/locale/lang/zh-cn&quot;;</span><br></pre></td></tr></table></figure>
@@ -269,11 +277,29 @@
 <p>Conroller层和Service层的区别是：Controlle层负责具体的业务模块流程的控制;Service层负责业务模块的逻辑应用设计;</p>
 <p>总结：在具体的项目中，其流程为：Controller层调用Service层的方法，Service层调用Dao层中的方法，其中调用的参数是使用Entity层进行传递的。总的来说这样每层做什么的分类只是为了使业务逻辑更加清晰，写代码更加方便，所以有时候也需要根据具体情况来，但是大体的都是这样处理的，因为它其实就是提供一种规则，让你把相同类型的代码放在一起，这样就形成了层次，从而达到分层解耦、复用、便于测试和维护的目的。</p>
 <p>————————————————<br>版权声明：本文为CSDN博主「吴沐珂」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/whz199511/article/details/81532593">https://blog.csdn.net/whz199511/article/details/81532593</a></p>
+<h2 id="子传父参数"><a href="#子传父参数" class="headerlink" title="子传父参数"></a>子传父参数</h2><p><strong>1、子组件通过emit传输<br>2、通过自定义组件传输</strong></p>
+<p>对于第一种方法：</p>
+<p>首先emit多用于点击事件。</p>
+<p>假设父组件中内容如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div class=&quot;hello&quot;&gt;</span><br><span class="line">    &lt;h2&gt;我是父组件,我需要建立一些参数&lt;/h2&gt;</span><br><span class="line">    &lt;h3&gt;我所在地的名称是:&#123;&#123; msg &#125;&#125;&lt;/h3&gt;</span><br><span class="line">    &lt;span&gt;&lt;mHome @showCityName=&quot;updateCityName&quot; /&gt;&lt;/span&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">import mHome from &quot;@/views/Home.vue&quot;;</span><br><span class="line">export default &#123;</span><br><span class="line">  components: &#123;</span><br><span class="line">    mHome,</span><br><span class="line">  &#125;,</span><br><span class="line">  data() &#123;</span><br><span class="line">    return &#123;</span><br><span class="line">      msg: &quot;北京&quot;,</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;,</span><br><span class="line">  methods: &#123;</span><br><span class="line">    updateCityName(data) &#123;</span><br><span class="line">      this.msg = data.msg;</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>子组件中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div class=&quot;home&quot;&gt;</span><br><span class="line">    &lt;h1&gt;我是子组件&lt;/h1&gt;</span><br><span class="line">    &lt;h2 @click=&quot;change(&#x27;武汉&#x27;)&quot;&gt;测试其emit组件&lt;/h2&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">// @ is an alias to /src</span><br><span class="line">export default &#123;</span><br><span class="line">  methods: &#123;</span><br><span class="line">    change(val) &#123;</span><br><span class="line">      let data = &#123;</span><br><span class="line">        msg: val,</span><br><span class="line">      &#125;;</span><br><span class="line">      this.$emit(&quot;showCityName&quot;, data);</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>（1）需要在其子组件中定义e m i t 事 件 </p>
+<p>（ 2 ）emit的传递子组件和父组件的函数名 <strong>showCityName</strong> 需要保持一致<br>————————————————<br>版权声明：本文为CSDN博主「chengwy_1」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/chengwy_1/article/details/120237776">https://blog.csdn.net/chengwy_1/article/details/120237776</a></p>
 <h2 id="nginx"><a href="#nginx" class="headerlink" title="nginx"></a>nginx</h2><h3 id="关于root和alias还有-x2F"><a href="#关于root和alias还有-x2F" class="headerlink" title="关于root和alias还有&#x2F;"></a>关于root和alias还有&#x2F;</h3><p>nginx优先匹配&#x2F;多的</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">location /pic/&#123;</span><br><span class="line">         alias picture/pic/;</span><br><span class="line">     &#125;</span><br><span class="line"> location /pic/ps/&#123;</span><br><span class="line">         root picture;</span><br><span class="line">     &#125;</span><br></pre></td></tr></table></figure>
 
 <p>假如访问…&#x2F;pic&#x2F;ps&#x2F;1.jpg，优先匹配第二个，是<strong>root</strong>，则…<code>/picture</code>&#x2F;pic&#x2F;ps&#x2F;1.jpg，即<strong>在前面加上</strong></p>
 <p>假如访问…&#x2F;pic&#x2F;1.jpg，匹配第一个，是<strong>alias</strong>，则…<code>/picture/pic</code>&#x2F;1.jpg，即<strong>直接替换</strong></p>
+<h1 id="yunpan项目"><a href="#yunpan项目" class="headerlink" title="yunpan项目"></a>yunpan项目</h1><h2 id="1-为什么我配置的邮箱是-x31-50-51-x40-x71-x71-46-x63-111-x6d-，但是前端设置任何邮箱都可以发送验证码"><a href="#1-为什么我配置的邮箱是-x31-50-51-x40-x71-x71-46-x63-111-x6d-，但是前端设置任何邮箱都可以发送验证码" class="headerlink" title="1.为什么我配置的邮箱是&#x31;&#50;&#51;&#x40;&#x71;&#x71;&#46;&#x63;&#111;&#x6d;，但是前端设置任何邮箱都可以发送验证码"></a>1.为什么我配置的邮箱是<a href="mailto:&#x31;&#50;&#51;&#x40;&#x71;&#x71;&#46;&#x63;&#111;&#x6d;">&#x31;&#50;&#51;&#x40;&#x71;&#x71;&#46;&#x63;&#111;&#x6d;</a>，但是前端设置任何邮箱都可以发送验证码</h2><p>且，即使是正确的邮箱，也没有收到信息</p>
+<h3 id="Answer"><a href="#Answer" class="headerlink" title="Answer:"></a>Answer:</h3><p>考虑前端验证和后端验证</p>
+<p>此处采用的后端验证，实现两个方法：</p>
+<p>1.在服务类接口实现中，判断前端输入的验证码是否正确</p>
+<p>2.再去指定邮箱发送随机码</p>
+<h1 id="2-注册功能时，后端出现请求参数错误"><a href="#2-注册功能时，后端出现请求参数错误" class="headerlink" title="2.注册功能时，后端出现请求参数错误"></a>2.注册功能时，后端出现请求参数错误</h1><p>考虑是前端的表单参数名与后端的对应方法所采用参数名不一致，可能是大小写的不一致。</p>
+<p><img src="/../../../Typora/img111/image-20230831134445772.png"></p>
  
       <!-- reward -->
       
