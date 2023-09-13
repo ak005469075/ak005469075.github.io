@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">16k</span>
+            <span class="post-count">17.3k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">58 分钟</span>
+            <span class="post-count">63 分钟</span>
         </span>
     </span>
 </div>
@@ -120,11 +120,22 @@
     <div class="article-entry" itemprop="articleBody">
        
   <h1 id="一、基础知识"><a href="#一、基础知识" class="headerlink" title="一、基础知识"></a>一、基础知识</h1><h2 id="1-域名"><a href="#1-域名" class="headerlink" title="1.域名"></a>1.域名</h2><p>internet上某台计算机或机组的名称</p>
+<h3 id="顶级域名"><a href="#顶级域名" class="headerlink" title="顶级域名"></a>顶级域名</h3><p>com</p>
+<p>cn</p>
 <h3 id="二级域名、多级域名"><a href="#二级域名、多级域名" class="headerlink" title="二级域名、多级域名"></a>二级域名、多级域名</h3><p>国际顶级域名下的二级域名：.microsoft.com</p>
 <p>国家顶级域名下的二级域名：.com.cn</p>
-<h2 id="2-DNS"><a href="#2-DNS" class="headerlink" title="2.DNS"></a>2.DNS</h2><p>域名系统（Domain Name System）：域名和IP地址相互映射的一个分布式数据库，使用UDP端口53，对每一级域名长度限制是63个字符，域名总长度不超过253个字符</p>
+<h2 id="2-DNS"><a href="#2-DNS" class="headerlink" title="2.DNS"></a>2.DNS</h2><p>主机域名转化为ip地址，属于<strong>应用层协议</strong>，使用<strong>UDP传输</strong></p>
+<p>域名系统（Domain Name System）：域名和IP地址相互映射的一个分布式数据库，使用UDP端口53，对每一级域名长度限制是63个字符，域名总长度不超过253个字符</p>
 <p>当我们向DNS服务器发起解析域名的请求时，DNS服务器首先会查询自己的缓存中有没有该域名，如果缓存中存在该域名，则可以直接返回IP地址。如果缓存中没有，服务器则会以递归的方式层层访问。</p>
 <p>例如：我们要访问<a target="_blank" rel="noopener" href="http://www.baidu/">www.baidu</a>. com，首先我们会先向全球13个根服务器发起请求，询问com域名的地址，然后再向负责com域名的名称服务器发送请求，找到baidu.com，这样层层递归，最终找到我们需要的IP地址。</p>
+<ul>
+<li>主机向本地域名服务器查询一般<strong>递归</strong>查询</li>
+<li>本地域名服务器向根域名服务器查询一般<strong>迭代</strong>查询</li>
+</ul>
+<blockquote>
+<p>1)当用户输入域名时，浏览器先检查自己的缓存中是否 这个域名映射的ip地址，有解析结束。<br>2）若没命中，则检查操作系统缓存（如Windows的hosts）中有没有解析过的结果，有解析结束。<br>3）若无命中，则请求本地域名服务器解析（ LDNS）。<br>4）若LDNS没有命中就直接跳到根域名服务器请求解析。根域名服务器返回给LDNS一个 主域名服务器<br>地址。<br>5） 此时LDNS再发送请求给上一步返回的gTLD（ 通用顶级域）， 接受请求的gTLD查找并返回这个域名<br>对应的Name Server的地址<br>6） Name Server根据映射关系表找到目标ip，返回给LDNS<br>7） LDNS缓存这个域名和对应的ip， 把解析的结果返回给用户，用户根据TTL值缓存到本地系统缓存<br>中，域名解析过程至此结束</p>
+</blockquote>
+<p><img src="/../../../Typora/img111/image-20230911195733656.png"></p>
 <h3 id="本地HOSTS与DNS关系"><a href="#本地HOSTS与DNS关系" class="headerlink" title="本地HOSTS与DNS关系"></a>本地HOSTS与DNS关系</h3><p>Hosts在本地将一些常用的网址域名与其对应的IP地址建立一个关联“数据库”，当我们访问域名时，系统会首先自动从Hosts文件中寻找对应的IP地址，一旦找到，系统会立即打开对应网页，如果没有找到，则系统会再将网址提交DNS域名解析服务器进行IP地址的解析。<br>Hosts地址：C:\Windows\System32\drivers\etc\hosts </p>
 <p>作者：黑战士安全 <a target="_blank" rel="noopener" href="https://www.bilibili.com/read/cv19754086?spm_id_from=333.999.0.0&jump_opus=1">https://www.bilibili.com/read/cv19754086?spm_id_from=333.999.0.0&amp;jump_opus=1</a> 出处：bilibili</p>
 <h3 id="CDN"><a href="#CDN" class="headerlink" title="CDN"></a>CDN</h3><h3 id="CDN是什么"><a href="#CDN是什么" class="headerlink" title="CDN是什么"></a>CDN是什么</h3><p>Content Delivery Network：构建在网络数据上的分布式内容分发网络，提高系统响应速度，也可以一定程度地拦截攻击。</p>
@@ -245,14 +256,17 @@
 <p>net 查看网络Window服务,net start </p>
 <p>netstat 显示网络连接的信息，包括显示活动的TCP连接、路由器和网络接口信息，是一个监控TCP&#x2F;IP网络非常有用的工具，可以让用户得知系统中目前都有哪些网络连接正常。 netstat &#x2F;?获得帮助</p>
 </blockquote>
-<h2 id="8-Cookie、Session、token"><a href="#8-Cookie、Session、token" class="headerlink" title="8.Cookie、Session、token"></a>8.Cookie、Session、token</h2><h3 id="cookie"><a href="#cookie" class="headerlink" title="cookie"></a>cookie</h3><p>Cookie:存在于客户端，保存用户信息；</p>
+<h2 id="8-Cookie、Session、token"><a href="#8-Cookie、Session、token" class="headerlink" title="8.Cookie、Session、token"></a>8.Cookie、Session、token</h2><p>cookie与session都是客户端与服务器之间保持状态的解决方案</p>
+<h3 id="cookie"><a href="#cookie" class="headerlink" title="cookie"></a>cookie</h3><p>Cookie:存在于客户端，保存用户信息；</p>
 <p><strong>作用：</strong></p>
 <p>会话管理、个性化、追踪(用户行为)</p>
 <p><strong>位置：</strong></p>
 <p>内存（浏览器维护，浏览器关闭就消失）；硬盘（有过期时间）</p>
 <p><strong>格式</strong></p>
 <p><code>Set-Cookie: &quot;&lt;name&gt;=&lt;value&gt;[;domain=&lt;domain_name&gt;][;path=&lt;some_path&gt;][;expires=&lt;date&gt;][;&lt;Max-Age&gt;=&lt;age&gt;][;HttpOnly][;secure]&quot;</code></p>
-<h3 id="session"><a href="#session" class="headerlink" title="session"></a>session</h3><p>Session:保存于服务端，服务器针对多用户，一个用户对应一个session</p>
+<h3 id="session"><a href="#session" class="headerlink" title="session"></a>session</h3><p>工作原理是客户端登录完成之后，服务器会创建对应的 session，session 创建完之后，会把session 的 id 发送给客户端，客户端再存储到浏览器中。</p>
+<p>这样客户端每次访问服务器时，都会带着<br>sessionid，服务器拿到 sessionid 之后，在内存找到与之对应的 session 这样就可以正常工作了。</p>
+<p>Session:保存于服务端，服务器针对多用户，一个用户对应一个session</p>
 <p><strong>作用：跟踪会话</strong></p>
 <p><strong>位置</strong></p>
 <p>cookie中的sessionid</p>
@@ -353,8 +367,42 @@
 </ol>
 <h3 id="问题17：session-的工作原理"><a href="#问题17：session-的工作原理" class="headerlink" title="问题17：session 的工作原理?"></a>问题17：session 的工作原理?</h3><p><strong>答案：</strong></p>
 <h3 id="问题18：一次完整的HTTP请求过程"><a href="#问题18：一次完整的HTTP请求过程" class="headerlink" title="问题18：一次完整的HTTP请求过程"></a>问题18：一次完整的HTTP请求过程</h3><p><strong>答案：</strong></p>
+<p>域名解析 –&gt; 发起TCP的3次握手 –&gt; 建立TCP连接后发起http请求 –&gt; 服务器响应http请求，浏览器得到<br>html代码 –&gt; 浏览器解析html代码，并请求html代码中的资源（如js、css、图片等） –&gt; 浏览器对页面<br>进行渲染呈现给用户</p>
 <h3 id="问题19：HTTPS和HTTP的区别"><a href="#问题19：HTTPS和HTTP的区别" class="headerlink" title="问题19：HTTPS和HTTP的区别"></a>问题19：HTTPS和HTTP的区别</h3><p><strong>答案：</strong></p>
+<p>1.HTTP协议传输的数据都是<strong>未加密</strong>的，也就是<strong>明文</strong>的，因此使用HTTP协议传输隐私信息非常不安全；HTTPS协议是由SSL+HTTP协议构建的可进行<strong>加密传输</strong>、<strong>身份认证</strong>的网络协议，要比http协议安全。</p>
+<ol start="2">
+<li>https协议需要到<strong>ca申请证书</strong>，一般免费证书较少，因而需要一定费用。</li>
+</ol>
+<p>3.http和https使用的是完全不同的连接方式，用的端口也不一样，前者是80，后者是443。</p>
 <h3 id="问题20：OSI-的七层模型都有哪些"><a href="#问题20：OSI-的七层模型都有哪些" class="headerlink" title="问题20：OSI 的七层模型都有哪些?"></a>问题20：OSI 的七层模型都有哪些?</h3><p><strong>答案：</strong></p>
+<p>物理层：</p>
+<blockquote>
+<p>利用传输介质为数据链路层提供物理连接，实现比特流的透明传输。</p>
+</blockquote>
+<p>数据链路层：</p>
+<blockquote>
+<p>接收来自物理层的位流形式的数据，并封装成帧，传送到上一层</p>
+</blockquote>
+<p>网络层：</p>
+<blockquote>
+<p>将网络地址翻译成对应的物理地址，并通过路由选择算法为分组通过通信子网选择最适当的路径。</p>
+</blockquote>
+<p>传输层：</p>
+<blockquote>
+<p>在源端与目的端之间提供可靠的透明数据传输</p>
+</blockquote>
+<p>会话层：</p>
+<blockquote>
+<p>负责在网络中的两节点之间建立、维持和终止通信</p>
+</blockquote>
+<p>表示层：</p>
+<blockquote>
+<p>处理用户信息的表示问题，数据的编码，压缩和解压缩，数据的加密和解密</p>
+</blockquote>
+<p>应用层：</p>
+<blockquote>
+<p>为用户的应用进程提供网络通信服务</p>
+</blockquote>
 <h3 id="问题21：http长连接和短连接的区别"><a href="#问题21：http长连接和短连接的区别" class="headerlink" title="问题21：http长连接和短连接的区别"></a>问题21：http长连接和短连接的区别</h3><p><strong>答案：</strong></p>
 <h3 id="问题22：TCP如何保证可靠传输"><a href="#问题22：TCP如何保证可靠传输" class="headerlink" title="问题22：TCP如何保证可靠传输?"></a>问题22：TCP如何保证可靠传输?</h3><p><strong>答案：</strong></p>
 <h3 id="问题23：常见的状态码有哪些"><a href="#问题23：常见的状态码有哪些" class="headerlink" title="问题23：常见的状态码有哪些?"></a>问题23：常见的状态码有哪些?</h3><p><strong>答案：</strong></p>
@@ -384,11 +432,16 @@
 <h3 id="问题40：防止XSS，前端后端两个角度"><a href="#问题40：防止XSS，前端后端两个角度" class="headerlink" title="问题40：防止XSS，前端后端两个角度?"></a>问题40：防止XSS，前端后端两个角度?</h3><p><strong>答案：</strong></p>
 <h3 id="问题41：如何防护一个端口的安全"><a href="#问题41：如何防护一个端口的安全" class="headerlink" title="问题41：如何防护一个端口的安全?"></a>问题41：如何防护一个端口的安全?</h3><p><strong>答案：</strong></p>
 <h3 id="问题42：webshell检测思路"><a href="#问题42：webshell检测思路" class="headerlink" title="问题42：webshell检测思路?"></a>问题42：webshell检测思路?</h3><p><strong>答案：</strong></p>
+<p>静态检测：匹配特征码，特征值，危险函数<br>动态检测：WAF、IDS等设备<br>日志检测：通过IP访问规律，页面访问规律筛选<br>文件完整性监控</p>
 <h3 id="问题43：GPC是什么-开启了怎么绕过"><a href="#问题43：GPC是什么-开启了怎么绕过" class="headerlink" title="问题43：GPC是什么?开启了怎么绕过"></a>问题43：GPC是什么?开启了怎么绕过</h3><p><strong>答案：</strong></p>
+<p>GPC：<br>php.ini配置文件中的magic_quotes_gpc，实现为get、post、cookie传入的单引号、双引号、反斜线、<br>NULL字符添加反斜线<br>绕过：<br>PHP5的GPC对$_SERVER的忽略，可在http请求头注入<br>二次注入<br>宽字节注入</p>
 <h3 id="问题44：web常用的加密算法有什么"><a href="#问题44：web常用的加密算法有什么" class="headerlink" title="问题44：web常用的加密算法有什么"></a>问题44：web常用的加密算法有什么</h3><p><strong>答案：</strong></p>
 <h3 id="问题45：XSS除了获取cookies还能做什么"><a href="#问题45：XSS除了获取cookies还能做什么" class="headerlink" title="问题45：XSS除了获取cookies还能做什么?"></a>问题45：XSS除了获取cookies还能做什么?</h3><p><strong>答案：</strong></p>
-<p> rip协议是什么? rip的工作原理</p>
-<h3 id="问题46：运营商（或其他）网络劫持"><a href="#问题46：运营商（或其他）网络劫持" class="headerlink" title="问题46：运营商（或其他）网络劫持"></a>问题46：运营商（或其他）网络劫持</h3><h1 id="APT原理"><a href="#APT原理" class="headerlink" title="APT原理"></a>APT原理</h1><p>APT（高级持续性威胁）的原理是通过利用先进的技术和技巧，对目标系统和网络进行长期、隐蔽的攻击，从而获取机密信息、控制系统或进行破坏。</p>
+<h3 id="问题46：运营商（或其他）网络劫持"><a href="#问题46：运营商（或其他）网络劫持" class="headerlink" title="问题46：运营商（或其他）网络劫持"></a>问题46：运营商（或其他）网络劫持</h3><p>运营商劫持：广告投放<br>DNS劫持：通过各种手段篡改DNS，劫持网络</p>
+<h3 id="rip协议是什么-rip的工作原理"><a href="#rip协议是什么-rip的工作原理" class="headerlink" title="rip协议是什么? rip的工作原理"></a>rip协议是什么? rip的工作原理</h3><h3 id="虚拟机逃逸"><a href="#虚拟机逃逸" class="headerlink" title="虚拟机逃逸"></a>虚拟机逃逸</h3><p>利用虚拟机软件或者虚拟机中运行的软件的漏洞进行攻击，以达到攻击或控制虚拟机宿主操作系统的目<br>的</p>
+<h3 id="云安全的理解"><a href="#云安全的理解" class="headerlink" title="云安全的理解"></a>云安全的理解</h3><p>融合了并行处理、网格计算、未知病毒行为判断等新兴技术和概念，通过网状的大量客户端对网络中软件行为的异常监测，获取互联网中木马、恶意程序的最新信息，传送到Server端进行自动分析和处理，<br>再把病毒和木马的解决方案分发到每一个客户端</p>
+<h3 id="CRLF注入攻击"><a href="#CRLF注入攻击" class="headerlink" title="CRLF注入攻击"></a>CRLF注入攻击</h3><p>通过“回车”和“换行”字符注入HTTP流，实现网站篡改、跨站脚本、劫持等。</p>
+<h1 id="APT原理"><a href="#APT原理" class="headerlink" title="APT原理"></a>APT原理</h1><p>APT（高级持续性威胁）的原理是通过利用先进的技术和技巧，对目标系统和网络进行长期、隐蔽的攻击，从而获取机密信息、控制系统或进行破坏。</p>
 <p>APT攻击通常包括以下几个步骤：</p>
 <ol>
 <li>针对目标进行信息搜集：攻击者通过各种手段（如扫描、社会工程学等）获取目标机器和网络的信息，包括系统漏洞、安全配置、网络拓扑结构、用户信息等。</li>
@@ -661,7 +714,17 @@
 <li>Recover（恢复）</li>
 <li>Follow-Up（跟踪）：根据各种监控去确定没有其他的攻击行为和攻击向量，紧接着就是开会反省此次事件，写报告，持续改进工作流程和工作缓解</li>
 </ul>
-<h1 id="六、DDOS"><a href="#六、DDOS" class="headerlink" title="六、DDOS"></a>六、DDOS</h1><p>最基本的攻击方式：利用合理的服务请求来占用过多的服务资源，从而使合法用户无法得到服务的响应。</p>
+<h1 id="六、DDOS"><a href="#六、DDOS" class="headerlink" title="六、DDOS"></a>六、DDOS</h1><p>最基本的攻击方式：<strong>利用合理的服务请求来占用过多的服务资源</strong>，从而使合法用户无法得到服务的响应。</p>
+<p>主要方式</p>
+<blockquote>
+<p>ddos:</p>
+<p>SYN Flood<br>UDP Flood<br>ICMP Flood<br>Connection Flood<br>HTTP Get<br>UDP DNS Query Flood</p>
+<p>CC攻击：<br>模拟多个正常用户不停地访问如论坛这些需要大量数据操作的页面，造成服务器资源的浪费，CPU长时<br>间处于100%，网络拥塞</p>
+</blockquote>
+<p>两者区别：</p>
+<blockquote>
+<p>CC攻击网页，DDOS攻击服务器，更难防御<br>CC门槛较低，DDOS需要大量服务器<br>CC持续时间长，DDOS产生的影响大</p>
+</blockquote>
 <p>被攻击的服务器有以下症状：1、被攻击主机上有大量等待的TCP连接；2、网络中充斥着大量的无用的数据包，源地址为假；3、制造高流量无用数据，造成网络拥塞，使受害主机无法正常和外界通讯；4、利用受害主机提供的服务或传输协议上的缺陷，反复高速的发出特定的服务请求，使受害主机无法及时处理所有正常请求；5、严重时会造成系统死机</p>
 <p>防御预案：</p>
 <ul>
