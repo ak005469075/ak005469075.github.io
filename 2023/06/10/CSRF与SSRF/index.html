@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">7.2k</span>
+            <span class="post-count">7.5k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">26 分钟</span>
+            <span class="post-count">28 分钟</span>
         </span>
     </span>
 </div>
@@ -135,7 +135,7 @@
 <p>1）用户处于登录状态。</p>
 <p>2）伪造的链接与正常应用请求链接一致。</p>
 <p>3）后台未对用户业务开展合法性做校验。</p>
-<p><img src="/../../../Typora/img111/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6Zu254K55pWy5Luj56CB,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center.jpeg" alt="在这里插入图片描述"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/watermark%252Ctype_d3F5LXplbmhlaQ%252Cshadow_50%252Ctext_Q1NETiBA6Zu254K55pWy5Luj56CB%252Csize_20%252Ccolor_FFFFFF%252Ct_70%252Cg_se%252Cx_16"></p>
 <p>一次csrf攻击的必要步骤：</p>
 <p>1.受害人登录受信任站点A，并在本地生成Cookie</p>
 <p>2.不登出A的情况下，访问危险站点B</p>
@@ -209,7 +209,7 @@
 <p>Web服务器存在<strong>向其他服务器发起请求并获取数据的功能</strong>，并且获取<strong>过程中并未</strong>对目标地址进行<strong>安全过滤或加以限制</strong>，<strong>导致服务器的请求被伪造</strong>，进而实现后续的攻击。</p>
 <p>在某种程度上，可认为SSRF漏洞本质上是利用服务器的高权限实现对当前系统敏感信息的访问。</p>
 </blockquote>
-<p>由于SSRF漏洞存在的前提是服务器具有主动发起请求的功能，因此如果能控制服务器的漏洞点，那么就可实现大量针对内网及服务器的各类型探测及攻击。</p>
+<p>由于SSRF漏洞存在的前提是服务器具有<strong>主动发起请求</strong>的功能，因此如果能控制服务器的漏洞点，那么就可实现大量针对内网及服务器的各类型探测及攻击。</p>
 <p>《WEB安全基础》所给的可能存在SSRF漏洞缺陷的目标有以下几种</p>
 <blockquote>
 <p>·图片加载与下载功能</p>
@@ -237,6 +237,18 @@
 <li>危害：SSRF攻击的危害主要在于攻击者可以利用受影响的服务器来访问内部网络资源、绕过防火墙访问外部服务、执行远程代码等，导致数据泄露、服务器劫持等问题。</li>
 <li>防护措施：SSRF攻击的防护措施包括对用户输入进行严格过滤和验证、限制服务器请求的目标地址、使用白名单控制外部访问、限制服务器访问权限等。</li>
 </ul>
+<h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><p><em>20230903更新</em></p>
+<p>攻击者无法直接访问目标机器 2 的服务</p>
+<p>目标机器 1 能够访问目标机器 2 的服务</p>
+<p>目标机器 1 <strong>暴露</strong>了访问目标机器 2 的方式，攻击者能够<strong>利用</strong></p>
+<p>所以，不同于客户端与服务端交流时，服务端发起的响应包</p>
+<p>比如一个网站的后端服务器需要与其他服务器交互来获取数据或与第三方服务进行通信，如果没有适当的安全措施，就会暴露这个啦</p>
+<h2 id="检测"><a href="#检测" class="headerlink" title="检测"></a>检测</h2><p><em>20230903更新</em></p>
+<ol>
+<li>因为 SSRF 漏洞是让服务器发送请求的安全漏洞，所以可以通过抓包分析发送的<strong>请求是否是由服务器的发送</strong>的(见特点所述)，从而来判断是否存在 SSRF 漏洞</li>
+<li>在页面源码中查找访问的资源地址 ，如果该资源地址类型为 <code>www.baidu.com/xxx.php?image=</code><strong>（地址）</strong>的就可能存在 SSRF 漏洞</li>
+</ol>
+<p>ps:来源<a target="_blank" rel="noopener" href="https://www.geekby.site/2021/01/ssrf%E6%BC%8F%E6%B4%9E%E7%9B%B8%E5%85%B3/">Geekby</a></p>
 <h2 id="利用场景"><a href="#利用场景" class="headerlink" title="利用场景"></a>利用场景</h2><h4 id="利用SSRF漏洞寻找本地存在的路径"><a href="#利用SSRF漏洞寻找本地存在的路径" class="headerlink" title="利用SSRF漏洞寻找本地存在的路径"></a>利用SSRF漏洞寻找本地存在的路径</h4><p>先构建一个场景，前端输入目标url，服务器用来获取该url的title信息。</p>
 <p>前端代码</p>
 <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">&quot;lx2.php&quot;</span> <span class="attr">method</span>=<span class="string">&quot;post&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">name</span>=<span class="string">&quot;username&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;password&quot;</span> <span class="attr">name</span>=<span class="string">&quot;pwd&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span> <span class="attr">name</span>=<span class="string">&quot;提交&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
@@ -269,9 +281,10 @@
 <h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><p>1.排除法：浏览器f12查看源代码看是否是在本地进行了请求<br>比如：该资源地址类型为 <a target="_blank" rel="noopener" href="http://www.xxx.com/a.php?image=%EF%BC%88%E5%9C%B0%E5%9D%80%EF%BC%89%E7%9A%84%E5%B0%B1%E5%8F%AF%E8%83%BD%E5%AD%98%E5%9C%A8SSRF%E6%BC%8F%E6%B4%9E">http://www.xxx.com/a.php?image=（地址）的就可能存在SSRF漏洞</a><br>2.dnslog等工具进行测试，看是否被访问<br>–可以在盲打后台用例中将当前准备请求的uri 和参数编码成base64，这样盲打后台解码后就知道是哪台机器哪个cgi触发的请求。<br>3.抓包分析发送的请求是不是由服务器的发送的，如果不是客户端发出的请求，则有可能是，接着找存在HTTP服务的内网地址<br>–从漏洞平台中的历史漏洞寻找泄漏的存在web应用内网地址<br>–通过二级域名暴力猜解工具模糊猜测内网地址<br>4.直接返回的Banner、title、content等信息<br>5.留意bool型SSRF<br>————————————————<br>版权声明：本文为CSDN博主「Never say die _」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_45612828/article/details/126193765">https://blog.csdn.net/qq_45612828/article/details/126193765</a></p>
 <h2 id="绕过"><a href="#绕过" class="headerlink" title="绕过"></a>绕过</h2><h3 id="1-绕过IP"><a href="#1-绕过IP" class="headerlink" title="1.绕过IP"></a>1.绕过IP</h3><p>1）使用IPV6地址<br>2）对IP转化成十进制，八进制等，如0177.0.0.01（八进制）<br>3）利用特殊域名。xip.io可以指向任意域名，即127.0.0.1.xip.io，可解析为127.0.0.1<br>4）利用句号。如127。0。0。1<br>5）可以[::]。如http:&#x2F;&#x2F;[::]:80&#x2F;<br>6）利用短网址。比如百度短地址<br>————————————————<br>版权声明：本文为CSDN博主「Never say die _」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_45612828/article/details/126193765">https://blog.csdn.net/qq_45612828/article/details/126193765</a></p>
 <h3 id="2-绕过url解析限制"><a href="#2-绕过url解析限制" class="headerlink" title="2.绕过url解析限制"></a>2.绕过url解析限制</h3><ul>
-<li>1）使用@符号绕过：如<a href="mailto:&#x31;&#x32;&#x37;&#x2e;&#48;&#x2e;&#x30;&#46;&#x31;&#x40;&#x65;&#x76;&#105;&#x6c;&#x2e;&#99;&#x6f;&#x6d;">&#x31;&#x32;&#x37;&#x2e;&#48;&#x2e;&#x30;&#46;&#x31;&#x40;&#x65;&#x76;&#105;&#x6c;&#x2e;&#99;&#x6f;&#x6d;</a></li>
+<li>1）使用@符号绕过：如<a href="mailto:&#49;&#50;&#x37;&#x2e;&#48;&#46;&#x30;&#46;&#x31;&#x40;&#101;&#118;&#105;&#x6c;&#x2e;&#99;&#x6f;&#x6d;">&#49;&#50;&#x37;&#x2e;&#48;&#46;&#x30;&#46;&#x31;&#x40;&#101;&#118;&#105;&#x6c;&#x2e;&#99;&#x6f;&#x6d;</a></li>
 <li>2）利用302跳转，需要一个vps，把302转换的代码部署到vps上，然后去访问，就可跳转到内网中</li>
 </ul>
+<h3 id="3-DNS重绑定攻击"><a href="#3-DNS重绑定攻击" class="headerlink" title="3.DNS重绑定攻击"></a>3.DNS重绑定攻击</h3><p><a target="_blank" rel="noopener" href="https://www.geekby.site/2021/01/ssrf%E6%BC%8F%E6%B4%9E%E7%9B%B8%E5%85%B3/">Geekby’s Blog</a></p>
 <h2 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h2><h3 id="PHP中可能存在ssrf的函数"><a href="#PHP中可能存在ssrf的函数" class="headerlink" title="PHP中可能存在ssrf的函数"></a>PHP中可能存在ssrf的函数</h3><p>1）file_get_contents():把整个文件读入一个字符串中，该函数是用于把文件的内容读入到一个字符串中的首选方法。如果服务器操作系统支持，还会使用内存映射技术来增强性能;支持http(s),file协议，在PHP5.4上测试不支持dict，ghoper协议。<br>2）fsockopen():打开一个网络连接或者一个Unix套接字连接，在PHP5.4上测试只有http协议成功<br>3）curl_exec():用于执行指定的CURL会话，支持的协议比较多，常用于SSRF的协议经过测试都支持，如dict,ghoper,file。有的协议需要一定的条件这点需要注意。<br>————————————————<br>版权声明：本文为CSDN博主「Never say die _」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_45612828/article/details/126193765">https://blog.csdn.net/qq_45612828/article/details/126193765</a></p>
 <h2 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h2><blockquote>
 <p>CSRF漏洞与SSRF漏洞的主要区别在于伪造目标的不同。其次，两种角色（客户端、服务器端）主要实现的功能也有非常大的区别。但从漏洞防护视角来看，其防护思路及方式非常相似，重点需要针对请求伪造的问题进行处理。即：</p>
@@ -288,6 +301,7 @@
 <p>3,限制请求的端口为http常用的端口，比如，80,443,8080,8090。</p>
 <p>4,黑名单内网ip。避免应用被用来获取获取内网数据，攻击内网。</p>
 <p>5,禁用不需要的协议。仅仅允许http和https请求。可以防止类似于file:&#x2F;&#x2F;&#x2F;,gopher:&#x2F;&#x2F;,ftp:&#x2F;&#x2F; 等引起的问题。</p>
+<p>6.在URL中提供host，进行DNS解析，获取到解析的IP，检测该IP是否合法</p>
 <p>参考：CSDN[零点敲代码]<a target="_blank" rel="noopener" href="http://t.csdn.cn/sb9kA">http://t.csdn.cn/sb9kA</a></p>
 </blockquote>
 <h2 id="ssrf总结"><a href="#ssrf总结" class="headerlink" title="ssrf总结"></a>ssrf总结</h2><p>ssrf通过<strong>欺骗服务器发起请求到攻击者指定的URL</strong>，可以是外部URL或内部网络的URL。</p>

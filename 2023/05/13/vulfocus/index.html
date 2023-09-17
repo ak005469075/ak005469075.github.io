@@ -87,7 +87,7 @@
   <time datetime="2023-05-12T16:21:20.000Z" itemprop="datePublished">2023-05-13</time>
 </a> 
   <div class="article-category">
-    <a class="article-category-link" href="/categories/vulfocus%E9%9D%B6%E5%9C%BA/">vulfocus靶场</a>
+    <a class="article-category-link" href="/categories/vulfocus%E9%9D%B6%E5%9C%BA/">vulfocus靶场</a> / <a class="article-category-link" href="/categories/vulfocus%E9%9D%B6%E5%9C%BA/ssti/">ssti</a>
   </div>
   
 <div class="word_count">
@@ -125,7 +125,7 @@
 <p>渲染函数在渲染的时候，往往对用户输入的变量不做渲染。</p>
 <p>例如：<code>&#123;&#123;&#125;&#125;</code>在Jinja2中作为变量包裹标识符，Jinja2在渲染的时候会把<code>&#123;&#123;&#125;&#125;</code>包裹的内容当做变量解析替换。比如<code>&#123;&#123;1+1&#125;&#125;</code>会被解析成<code>2</code>。如此一来就可以实现如同sql注入一样的注入漏洞。</p>
 <h2 id="3-ssti类型"><a href="#3-ssti类型" class="headerlink" title="3.ssti类型"></a>3.ssti类型</h2><p>网站模板引擎有jinja2、tornado、smarty、twig等等</p>
-<p><img src="/../../../Typora/img111/image-20230614094024200.png" alt="ssti类型"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230614094024200.png" alt="ssti类型"></p>
 <h2 id="4-常用类"><a href="#4-常用类" class="headerlink" title="4.常用类"></a>4.常用类</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">__class__用来查看变量所属的类，格式为变量.__class__</span><br><span class="line"></span><br><span class="line">eg:&gt;&gt;&gt; &#123;&#125;.__class__</span><br><span class="line">&lt;class &#x27;dict&#x27;&gt;</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">__bases__用来查看类的基类，注意是类的基类，所以格式为变量.__class__.__bases__</span><br><span class="line">同时也能加上数组，比如变量.__class__.__bases__[0]来获得第一个基类。</span><br><span class="line"></span><br><span class="line">eg:&gt;&gt;&gt; &#123;&#125;.__class__.__bases__</span><br><span class="line">(&lt;class &#x27;object&#x27;&gt;,)</span><br></pre></td></tr></table></figure>

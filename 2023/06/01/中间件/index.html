@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">91</span>
+            <span class="post-count">637</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">1 分钟</span>
+            <span class="post-count">2 分钟</span>
         </span>
     </span>
 </div>
@@ -119,11 +119,35 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h1 id="1-定义"><a href="#1-定义" class="headerlink" title="1.定义"></a>1.定义</h1><p>介于操作系统和应用软件之间，为应用软件提供服务功能的软件，有消息中间件，交易中间件，应用服务器等。由于介于两种软件之间，所以，称为中间件</p>
-<h1 id="2-常见中间件"><a href="#2-常见中间件" class="headerlink" title="2.常见中间件"></a>2.常见中间件</h1><h2 id="1-Tomcat"><a href="#1-Tomcat" class="headerlink" title="1.Tomcat"></a>1.Tomcat</h2><p>包括<strong>站点、连接器、应用上下文、资源</strong>四个部分。</p>
-<ol>
-<li><h3 id="Weblogic"><a href="#Weblogic" class="headerlink" title="Weblogic"></a>Weblogic</h3></li>
-</ol>
+  <h1 id="0x01-定义"><a href="#0x01-定义" class="headerlink" title="0x01.定义"></a>0x01.定义</h1><p>Web 服务器：提供 Web 服务器的软件或<strong>主机</strong>，即 Web 服务器软件或者装有 Web 服务器软件的计算机。</p>
+<p>Web 中间件：提供系统软件与应用软件之间连接的软件，Web 中间件是提供 web 应用软件和系统软件连接的软件的总称。</p>
+<p>Web 容器：容器是中间件的一种，它给处于其中的应用程序组件提供从一个环境，使应用程序直接与容器中的环境变量进行交互而不必关注其他的系统问题。Web 容器用于给处于其中的应用程序组件提供一个环境。</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230915152500326.png"></p>
+<h1 id="0x02-常见中间件"><a href="#0x02-常见中间件" class="headerlink" title="0x02.常见中间件"></a>0x02.常见中间件</h1><h2 id="2-1-Apache安全"><a href="#2-1-Apache安全" class="headerlink" title="2.1.Apache安全"></a>2.1.Apache安全</h2><h3 id="2-1-1-apache配置错误"><a href="#2-1-1-apache配置错误" class="headerlink" title="2.1.1 apache配置错误"></a>2.1.1 apache配置错误</h3><h4 id="2-1-1-1-原理"><a href="#2-1-1-1-原理" class="headerlink" title="2.1.1.1 原理"></a>2.1.1.1 原理</h4><p><code>AddHandler application/x-httpd-php .php</code></p>
+<p>AddHandler 为相应的文件扩展名指定处理程序，上述的配置意味着将扩展名为 <code>.php</code> 的文件交给 x-httpd-php 程序处理</p>
+<p>Apache 识别文件扩展名是从后往前的，如果遇到了无法识别的扩展名会接着往前识别，遇到第一个可以识别的扩展名作为该文件的扩展名</p>
+<h4 id="2-1-1-2-配置"><a href="#2-1-1-2-配置" class="headerlink" title="2.1.1.2 配置"></a>2.1.1.2 配置</h4><h5 id="修改conf文件"><a href="#修改conf文件" class="headerlink" title="修改conf文件"></a>修改conf文件</h5><p>添加或修改AddHandler语句</p>
+<h5 id="创建-htaccess"><a href="#创建-htaccess" class="headerlink" title="创建.htaccess"></a>创建.htaccess</h5><p>在kali终端下，</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/var/www/html<span class="comment"># echo AddHandler application/x-httpd-php .php &gt; .htaccess</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-1-1-3-漏洞利用"><a href="#2-1-1-3-漏洞利用" class="headerlink" title="2.1.1.3 漏洞利用"></a>2.1.1.3 漏洞利用</h4><p>有多个后缀可通过的情况下，只要有一个文件含有 <code>.php</code>即可，那么可以利用这种 <code>绕过上传白名单的解析漏洞</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://exmample.com/index.php.jpg</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-1-2-apache-换行解析漏洞"><a href="#2-1-2-apache-换行解析漏洞" class="headerlink" title="2.1.2 apache 换行解析漏洞"></a>2.1.2 apache 换行解析漏洞</h3><h4 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h4><p>漏洞编号：CVE-2017-15715</p>
+<p>影响版本：Apache 2.4.10 - 2.4.29</p>
+<p>漏洞利用：文件上传</p>
+<p>漏洞名称：换行解析漏洞</p>
+<h4 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h4><p><code>%0A</code>表示换行, <code>0d</code>是回车哈</p>
+<p>访问1.php%0A文件-&gt;apache找到该文件后-&gt;匹配该文件的后缀为.php-&gt;使用apache调用解释器解析文件</p>
+<p>ps:</p>
+<blockquote>
+<p>因为正则时，匹配的是php$，以.php结尾</p>
+</blockquote>
+<h4 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_FILES</span>[<span class="string">&#x27;file&#x27;</span>])) &#123;</span><br><span class="line">    <span class="variable">$name</span> = <span class="title function_ invoke__">basename</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;name&#x27;</span>]);</span><br><span class="line">    <span class="variable">$ext</span> = <span class="title function_ invoke__">pathinfo</span>(<span class="variable">$name</span>, PATHINFO_EXTENSION);</span><br><span class="line">    <span class="keyword">if</span>(<span class="title function_ invoke__">in_array</span>(<span class="variable">$ext</span>, [<span class="string">&#x27;php&#x27;</span>, <span class="string">&#x27;php3&#x27;</span>, <span class="string">&#x27;php4&#x27;</span>, <span class="string">&#x27;php5&#x27;</span>, <span class="string">&#x27;phtml&#x27;</span>, <span class="string">&#x27;pht&#x27;</span>])) &#123;</span><br><span class="line">        <span class="keyword">exit</span>(<span class="string">&#x27;bad file&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="title function_ invoke__">move_uploaded_file</span>(<span class="variable">$_FILES</span>[<span class="string">&#x27;file&#x27;</span>][<span class="string">&#x27;tmp_name&#x27;</span>], <span class="string">&#x27;./&#x27;</span> . <span class="variable">$name</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>访问.. &#x2F;1.php%0a，发现不拦截</p>
+<h2 id="2-2-Tomcat"><a href="#2-2-Tomcat" class="headerlink" title="2.2.Tomcat"></a>2.2.Tomcat</h2><h3 id="Tomcat配置错误"><a href="#Tomcat配置错误" class="headerlink" title="Tomcat配置错误"></a>Tomcat配置错误</h3><h3 id="Tomcat弱口令"><a href="#Tomcat弱口令" class="headerlink" title="Tomcat弱口令"></a>Tomcat弱口令</h3><h2 id="2-3-Nginx"><a href="#2-3-Nginx" class="headerlink" title="2.3.Nginx"></a>2.3.Nginx</h2><h3 id="Nginx配置错误"><a href="#Nginx配置错误" class="headerlink" title="Nginx配置错误"></a>Nginx配置错误</h3><h4 id="CRLF注入"><a href="#CRLF注入" class="headerlink" title="CRLF注入"></a>CRLF注入</h4><h4 id="目录穿越漏洞"><a href="#目录穿越漏洞" class="headerlink" title="目录穿越漏洞"></a>目录穿越漏洞</h4><h3 id="Nginx越界读取缓存漏洞"><a href="#Nginx越界读取缓存漏洞" class="headerlink" title="Nginx越界读取缓存漏洞"></a>Nginx越界读取缓存漏洞</h3><h3 id="Nginx文件名逻辑漏洞"><a href="#Nginx文件名逻辑漏洞" class="headerlink" title="Nginx文件名逻辑漏洞"></a>Nginx文件名逻辑漏洞</h3><h3 id="Nginx解析漏洞"><a href="#Nginx解析漏洞" class="headerlink" title="Nginx解析漏洞"></a>Nginx解析漏洞</h3><h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a target="_blank" rel="noopener" href="https://www.geekby.site/2021/01/web%E5%AE%B9%E5%99%A8%E5%AE%89%E5%85%A8/#3-nginx-%E5%AE%89%E5%85%A8">Geekby</a></p>
+<p><a target="_blank" rel="noopener" href="http://t.csdn.cn/TYwHf">Nginx学习</a></p>
  
       <!-- reward -->
       

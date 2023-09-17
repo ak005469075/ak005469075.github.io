@@ -145,14 +145,14 @@
 <p>默认后台登录地址<a target="_blank" rel="noopener" href="http://ip:7001/console">http://ip:7001/console</a></p>
 <h2 id="CVE-2018-2894-任意文件上传漏洞"><a href="#CVE-2018-2894-任意文件上传漏洞" class="headerlink" title="CVE-2018-2894(任意文件上传漏洞)"></a>CVE-2018-2894(任意文件上传漏洞)</h2><h3 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h3><p>后台页面，点击<code>base_domain</code>的配置，在“高级”中开启“启用 Web 服务测试页”选项</p>
 <p>hrrp:&#x2F;&#x2F;ip:7001&#x2F;console&#x2F;login&#x2F;LoginForm.jsp</p>
-<p><img src="/../../../Typora/img111/image-20230722141302907.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230722141302907.png"></p>
 <p>不用登陆，直接url访问:7001&#x2F;ws_utc&#x2F;config.do</p>
 <p>来到后台，设置路径，该路径可以无权限访问</p>
 <blockquote>
 <p>&#x2F;u01&#x2F;oracle&#x2F;user_projects&#x2F;domains&#x2F;base_domain&#x2F;servers&#x2F;AdminServer&#x2F;tmp&#x2F;_WL_internal&#x2F;com.oracle.webservices.wls.ws-testclient-app-wls&#x2F;4mcj4y&#x2F;war&#x2F;css</p>
 </blockquote>
-<p><img src="/../../../Typora/img111/image-20230722141517874.png"></p>
-<p><img src="/../../../Typora/img111/image-20230722142032194.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230722141517874.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230722142032194.png"></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Date: Sat, 22 Jul 2023 06:38:32 GMT</span><br><span class="line">Content-Type: application/xml</span><br><span class="line">Connection: close</span><br><span class="line">Vary: Accept-Encoding</span><br><span class="line">Content-Length: 333</span><br><span class="line"></span><br><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;setting id=&quot;security&quot;&gt;&lt;section name=&quot;key_store_list&quot;&gt;&lt;options xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:type=&quot;securityOptions&quot;&gt;&lt;keyStoreItem&gt;&lt;id&gt;1690007912011&lt;/id&gt;&lt;name&gt;123&lt;/name&gt;&lt;keyStore&gt;shell.jsp&lt;/keyStore&gt;&lt;password&gt;123&lt;/password&gt;&lt;/keyStoreItem&gt;&lt;/options&gt;&lt;/section&gt;&lt;/setting&gt;</span><br></pre></td></tr></table></figure>
 
 <p>抓响应包，或者f12，发现有一个时间戳，可以构造路径</p>
@@ -165,7 +165,7 @@
 <p>状态明明是绿色，点进去失败，也没用，算了</p>
 <p>我生气啦。</p>
 <p>说是还有&#x2F;ws_utc&#x2F;begin.do</p>
-<p><img src="/../../../Typora/img111/image-20230722190514604.png" alt="image-20230722190514604"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230722190514604.png" alt="image-20230722190514604"></p>
 <p>上报出错，查看回显日志，但是是传进去了</p>
 <p>看响应包</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">encoding=&quot;UTF-8&quot;?&gt;&lt;errorMsgBean&gt;&lt;title&gt;Web服务测试运行期错误&lt;/title&gt;&lt;desc&gt;导入测试错误&lt;/desc&gt;&lt;details&gt;com.oracle.webservices.testclient.exception.WSTestRuntimeException: javax.xml.bind.UnmarshalException</span><br><span class="line"> - with linked exception:</span><br><span class="line">[Exception [EclipseLink-25004] (Eclipse Persistence Services - 2.5.2.v20140319-9ad6abd): org.eclipse.persistence.exceptions.XMLMarshalException</span><br><span class="line">Exception Description: An error occurred unmarshalling the document</span><br><span class="line">Internal Exception: org.xml.sax.SAXParseException; systemId: file:/u01/oracle/user_projects/domains/base_domain/servers/AdminServer/tmp/_WL_internal/com.oracle.webservices.wls.ws-testclient-app-wls/4mcj4y/war/css/upload/RS_Upload_2023-07-22_11-06-26_875/import_file_name_shell.jsp; lineNumber: 1; columnNumber: 2; The markup in the document preceding the root element must be well-formed.]</span><br></pre></td></tr></table></figure>

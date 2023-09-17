@@ -151,7 +151,7 @@
 <p>这个参数会影响测试的注入点，GET和POST的数据都会进行测试，<strong>HTTP cookie在level为2时就会测试</strong>，<strong>HTTP User-Agent&#x2F;Referer头在level为3时就会测试。</strong>总之，在不确定哪个Payload或参数为注入点时，为了保证全面性，建议使用高的level值。</p>
 <h2 id="2-–is-dba：当前用户是否为管理权限"><a href="#2-–is-dba：当前用户是否为管理权限" class="headerlink" title="2.–is-dba：当前用户是否为管理权限"></a>2.–is-dba：当前用户是否为管理权限</h2><p>该命令用于查看当前账户是否为数据库管理员账户，如下所示，在本案例中输入该命令，会返回Ture，如图3-15所示。</p>
 <p><code>sqlmap.py –u ... --is-dba</code>&#x2F;&#x2F;最后两个不要分开写</p>
-<p><img src="/../../../Typora/img111/image-20230620142942821.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230620142942821.png"></p>
 <h2 id="3-–roles：列出数据库管理员角色-oracle"><a href="#3-–roles：列出数据库管理员角色-oracle" class="headerlink" title="3.–roles：列出数据库管理员角色(oracle)"></a>3.–roles：列出数据库管理员角色(oracle)</h2><p>该命令用于查看数据库用户的角色。如果当前用户有权限读取包含所有用户的表，输入该命令会列举出每个用户的角色，也可以用-U参数指定想看哪个用户的角色。该命令仅适用于当前数据库是Oracle的时候。</p>
 <h2 id="4-–referer-HTTP-Referer头"><a href="#4-–referer-HTTP-Referer头" class="headerlink" title="4.–referer:HTTP Referer头"></a>4.–referer:HTTP Referer头</h2><p>SQLMap可以在请求中伪造HTTP中的referer，当–level参数设定为3或3以上时，会尝试对referer注入。可以使用referer命令来欺骗，如–referer <a target="_blank" rel="noopener" href="http://www.baidu.com./">http://www.baidu.com。</a></p>
 <h2 id="5-–sql-shell：运行自定义SQL语句"><a href="#5-–sql-shell：运行自定义SQL语句" class="headerlink" title="5.–sql-shell：运行自定义SQL语句"></a>5.–sql-shell：运行自定义SQL语句</h2><p>该命令用于执行指定的SQL语句，如下所示，假设执行select*from users limit 0,1语句，结果如图3-17所示。</p>

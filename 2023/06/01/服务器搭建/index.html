@@ -121,7 +121,7 @@
        
   <h1 id="一、win10"><a href="#一、win10" class="headerlink" title="一、win10"></a>一、win10</h1><h2 id="1-ftp服务器"><a href="#1-ftp服务器" class="headerlink" title="1.ftp服务器"></a>1.ftp服务器</h2><h3 id="a-作用"><a href="#a-作用" class="headerlink" title="a.作用"></a>a.作用</h3><p>互联网上提供文件存储和访问服务的计算机，用来传递、保存和分发文件给各个客户端。</p>
 <h3 id="b-配置步骤"><a href="#b-配置步骤" class="headerlink" title="b.配置步骤"></a>b.配置步骤</h3><h4 id="1）设置防火墙"><a href="#1）设置防火墙" class="headerlink" title="1）设置防火墙"></a>1）设置防火墙</h4><p>控制面板-&gt;windows defender-&gt;允许应用或功能通过windows defender，勾选ftp服务器即可</p>
-<p><img src="/../../../Typora/img111/image-20230612203153980.png" alt="image-20230612203153980"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230612203153980.png"></p>
 <h4 id="2-启用windows功能"><a href="#2-启用windows功能" class="headerlink" title="2)启用windows功能"></a>2)启用windows功能</h4><p>控制面板-&gt;程序和功能-&gt;启用或关闭windows功能-&gt;internet information services-&gt;勾选ftp服务器</p>
 <h4 id="3-本地建立存放文件的文件夹"><a href="#3-本地建立存放文件的文件夹" class="headerlink" title="3)本地建立存放文件的文件夹"></a>3)本地建立存放文件的文件夹</h4><ol>
 <li><p>建立文件夹，如我的E:\final</p>
@@ -139,16 +139,16 @@
 </li>
 </ol>
 <h4 id="4-搭建ftp服务器"><a href="#4-搭建ftp服务器" class="headerlink" title="4)搭建ftp服务器"></a>4)搭建ftp服务器</h4><p>打开win中s搜索iis并打开，</p>
-<p><img src="/../../../Typora/img111/image-20230612212130227.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230612212130227.png"></p>
 <p>IP地址设为本机IP地址</p>
-<p><img src="/../../../Typora/img111/image-20230612212236451.png"></p>
-<p><img src="/../../../Typora/img111/image-20230612213155655.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230612212236451.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230612213155655.png"></p>
 <p>然后去物理路径中，即E:&#x2F;final，设置下文件夹权限，添加组即可</p>
-<p><img src="/../../../Typora/img111/image-20230612213414869.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230612213414869.png"></p>
 <p>服务里要启动下micro…ftp服务，再去IIS启动ftp服务器</p>
 <p><img src="/../../../Typora/img111/image-20230612213728587.png" alt="image-20230612213728587"></p>
-<h4 id="5-验证"><a href="#5-验证" class="headerlink" title="5)验证"></a>5)验证</h4><p><img src="/../../../Typora/img111/image-20230612214423630.png" alt="image-20230612214423630"></p>
-<p><img src="/../../../Typora/img111/image-20230612214234726.png" alt="image-20230612214234726"></p>
+<h4 id="5-验证"><a href="#5-验证" class="headerlink" title="5)验证"></a>5)验证</h4><p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230612214423630.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230612214234726.png"></p>
 <p> 为什么在edge浏览器中输入ftp:&#x2F;&#x2F;本机IP 时，让打开360浏览器呢</p>
 <h2 id="2-总结"><a href="#2-总结" class="headerlink" title="2.总结"></a>2.总结</h2><p>搭建ftp服务器，使得局域网下的各主机可以传递、下载并存储文件。</p>
  

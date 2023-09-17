@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">17.3k</span>
+            <span class="post-count">17.5k</span>
         </span>
     </span>
 
@@ -135,7 +135,7 @@
 <blockquote>
 <p>1)当用户输入域名时，浏览器先检查自己的缓存中是否 这个域名映射的ip地址，有解析结束。<br>2）若没命中，则检查操作系统缓存（如Windows的hosts）中有没有解析过的结果，有解析结束。<br>3）若无命中，则请求本地域名服务器解析（ LDNS）。<br>4）若LDNS没有命中就直接跳到根域名服务器请求解析。根域名服务器返回给LDNS一个 主域名服务器<br>地址。<br>5） 此时LDNS再发送请求给上一步返回的gTLD（ 通用顶级域）， 接受请求的gTLD查找并返回这个域名<br>对应的Name Server的地址<br>6） Name Server根据映射关系表找到目标ip，返回给LDNS<br>7） LDNS缓存这个域名和对应的ip， 把解析的结果返回给用户，用户根据TTL值缓存到本地系统缓存<br>中，域名解析过程至此结束</p>
 </blockquote>
-<p><img src="/../../../Typora/img111/image-20230911195733656.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230911195733656.png"></p>
 <h3 id="本地HOSTS与DNS关系"><a href="#本地HOSTS与DNS关系" class="headerlink" title="本地HOSTS与DNS关系"></a>本地HOSTS与DNS关系</h3><p>Hosts在本地将一些常用的网址域名与其对应的IP地址建立一个关联“数据库”，当我们访问域名时，系统会首先自动从Hosts文件中寻找对应的IP地址，一旦找到，系统会立即打开对应网页，如果没有找到，则系统会再将网址提交DNS域名解析服务器进行IP地址的解析。<br>Hosts地址：C:\Windows\System32\drivers\etc\hosts </p>
 <p>作者：黑战士安全 <a target="_blank" rel="noopener" href="https://www.bilibili.com/read/cv19754086?spm_id_from=333.999.0.0&jump_opus=1">https://www.bilibili.com/read/cv19754086?spm_id_from=333.999.0.0&amp;jump_opus=1</a> 出处：bilibili</p>
 <h3 id="CDN"><a href="#CDN" class="headerlink" title="CDN"></a>CDN</h3><h3 id="CDN是什么"><a href="#CDN是什么" class="headerlink" title="CDN是什么"></a>CDN是什么</h3><p>Content Delivery Network：构建在网络数据上的分布式内容分发网络，提高系统响应速度，也可以一定程度地拦截攻击。</p>
@@ -228,7 +228,7 @@
 <p>对于当前页面来说，页面内存放JavaScript文件的域并不重要，重要的是加载JavaScript页面所在的域是什么。</p>
 <p>换言之，a.com通过以下代码：</p>
 <p><code>&lt;script src=http://b.com/b.js &gt;&lt;/script&gt;</code></p>
-<p><img src="/../../../Typora/img111/23410_42_2.jpg" alt="img"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/23410_42_2.jpg" alt="img"></p>
 <p>加载了 b.com 上的b.js，但是b.js <strong>是运行在a.com页面中的</strong>，因此对于当前打开的页面（a.com页面）来说，<strong>b.js的Origin 就应该是 a.com 而非 b.com</strong>。</p>
 <p>跨域访问方案的安全基础就是信任“JavaScript无法控制该HTTP头”</p>
 <h3 id="前端跨域技术"><a href="#前端跨域技术" class="headerlink" title="前端跨域技术"></a>前端跨域技术</h3><p>采取同源策略，浏览器可以有效地限制潜在的跨站点脚本攻击（XSS）和跨站请求伪造（CSRF）等安全威胁。</p>
@@ -250,6 +250,14 @@
 <blockquote>
 <p>WebSocket是一种在单个TCP连接上进行全双工通信的协议，可以在不受同源策略限制的情况下进行跨域通信。WebSocket建立的连接不受同源策略的限制，因此可以在不同源之间实现实时通信。</p>
 </blockquote>
+<h3 id="Cookie与DOM中的同源策略"><a href="#Cookie与DOM中的同源策略" class="headerlink" title="Cookie与DOM中的同源策略"></a>Cookie与DOM中的同源策略</h3><p>在同源策略的限制，非同源站点不能够互相读取cookie，比如两个子站之间</p>
+<p>但是，针对Cookie的同源策略可以指定请求包中的<code>Set-Cookie</code>：domain&#x3D;，允许不同站点间互相访问Cookie</p>
+<p>通过设置 domain 打破了浏览器对于 Cookie 的同源限制，可以通过子站点入手，通过子站获取子站的 Cookie</p>
+<blockquote>
+<p>cookie 的同源策略不区分协议与端口</p>
+</blockquote>
+<p>DOM同理</p>
+<p><a target="_blank" rel="noopener" href="https://www.geekby.site/2021/01/%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5/">同源策略拓展</a></p>
 <h2 id="7-windows命令"><a href="#7-windows命令" class="headerlink" title="7.windows命令"></a>7.windows命令</h2><blockquote>
 <p>cd</p>
 <p>dir</p>
@@ -323,7 +331,7 @@
 </blockquote>
 </li>
 </ol>
-<p><img src="/../../../Typora/img111/image-20230613203703899.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230613203703899.png"></p>
 <p>TCP&#x2F;IP准确来说，第一层应该是网络接口层</p>
 <h2 id="2-get与post区别"><a href="#2-get与post区别" class="headerlink" title="2.get与post区别"></a>2.get与post区别</h2><p>HTTP协议中的两种请求方法</p>
 <ol>
@@ -678,7 +686,7 @@
 <li>交互接口，如windows的cmd与linux的终端</li>
 </ol>
 </blockquote>
-<p>webshell:后门，木马</p>
+<p>webshell:以asp、aspx、php、jsp或者cgi等网页文件形式存在的一种命令执行环节，也可以称为一种网页后门</p>
 <h2 id="三种业务逻辑漏洞，以及修复方式"><a href="#三种业务逻辑漏洞，以及修复方式" class="headerlink" title="三种业务逻辑漏洞，以及修复方式"></a>三种业务逻辑漏洞，以及修复方式</h2><p>密码找回：密码可以暴力破解、通用型凭证比较简单、跳过验证步骤、找回凭证可以拦截等方式得到</p>
 <p>身份认证：cookie仿冒、会话固定攻击（得到session）</p>
 <p>验证漏洞：验证码暴力破解、重复利用、改包绕过等。</p>
@@ -761,6 +769,8 @@
 <p>execute在蚁剑中被打断混淆了，变成了拼接形式Ex”&amp;cHr(101)&amp;”cute</p>
 <p>蚁剑绕过特征流量：</p>
 <p>蚁剑混淆加密后还有一个比较明显的特征，即为参数名大多以“_0x…&#x3D;”这种形式<br>————————————————<br>版权声明：本文为CSDN博主「Buffedon」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_46684578/article/details/118725385">https://blog.csdn.net/weixin_46684578/article/details/118725385</a></p>
+<p><strong>冰蝎、蚁剑、哥斯拉的流量特征</strong></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/-andrea/p/17473499.html">https://www.cnblogs.com/-andrea/p/17473499.html</a></p>
 <h1 id="八、MySQL"><a href="#八、MySQL" class="headerlink" title="八、MySQL"></a>八、MySQL</h1><h2 id="写shell"><a href="#写shell" class="headerlink" title="写shell"></a>写shell</h2><ul>
 <li><code>select &#39;&lt;?php phpinfo()&gt; into outfile &#39;D:/shelltest.php&#39;</code></li>
 <li><code>dumpfile</code></li>

