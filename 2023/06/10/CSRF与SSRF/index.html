@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">7.5k</span>
+            <span class="post-count">8.1k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">28 分钟</span>
+            <span class="post-count">30 分钟</span>
         </span>
     </span>
 </div>
@@ -205,6 +205,7 @@
 <p>这类业务的核心问题在于服务器需根据用户提交的参数进行后续的业务流程，因此如果<strong>用户提交恶意的参数信息，并且服务器未对用户提交的参数进行合法性判断而直接执行后续请求业务，就会导致出现安全隐患，</strong>这也是SSRF漏洞的主要成因。</p>
 <p>SSRF攻击相对于CSRF攻击来说，攻击者需伪造的请求为<strong>服务器端发起的内容。</strong></p>
 <p><strong>前提：</strong></p>
+<p>“攻击者可能要知道，目标机<strong>内部使用的API</strong>(第三方Open API，如Google API、AWS API等等)——20230903”</p>
 <blockquote>
 <p>Web服务器存在<strong>向其他服务器发起请求并获取数据的功能</strong>，并且获取<strong>过程中并未</strong>对目标地址进行<strong>安全过滤或加以限制</strong>，<strong>导致服务器的请求被伪造</strong>，进而实现后续的攻击。</p>
 <p>在某种程度上，可认为SSRF漏洞本质上是利用服务器的高权限实现对当前系统敏感信息的访问。</p>
@@ -281,7 +282,7 @@
 <h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><p>1.排除法：浏览器f12查看源代码看是否是在本地进行了请求<br>比如：该资源地址类型为 <a target="_blank" rel="noopener" href="http://www.xxx.com/a.php?image=%EF%BC%88%E5%9C%B0%E5%9D%80%EF%BC%89%E7%9A%84%E5%B0%B1%E5%8F%AF%E8%83%BD%E5%AD%98%E5%9C%A8SSRF%E6%BC%8F%E6%B4%9E">http://www.xxx.com/a.php?image=（地址）的就可能存在SSRF漏洞</a><br>2.dnslog等工具进行测试，看是否被访问<br>–可以在盲打后台用例中将当前准备请求的uri 和参数编码成base64，这样盲打后台解码后就知道是哪台机器哪个cgi触发的请求。<br>3.抓包分析发送的请求是不是由服务器的发送的，如果不是客户端发出的请求，则有可能是，接着找存在HTTP服务的内网地址<br>–从漏洞平台中的历史漏洞寻找泄漏的存在web应用内网地址<br>–通过二级域名暴力猜解工具模糊猜测内网地址<br>4.直接返回的Banner、title、content等信息<br>5.留意bool型SSRF<br>————————————————<br>版权声明：本文为CSDN博主「Never say die _」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_45612828/article/details/126193765">https://blog.csdn.net/qq_45612828/article/details/126193765</a></p>
 <h2 id="绕过"><a href="#绕过" class="headerlink" title="绕过"></a>绕过</h2><h3 id="1-绕过IP"><a href="#1-绕过IP" class="headerlink" title="1.绕过IP"></a>1.绕过IP</h3><p>1）使用IPV6地址<br>2）对IP转化成十进制，八进制等，如0177.0.0.01（八进制）<br>3）利用特殊域名。xip.io可以指向任意域名，即127.0.0.1.xip.io，可解析为127.0.0.1<br>4）利用句号。如127。0。0。1<br>5）可以[::]。如http:&#x2F;&#x2F;[::]:80&#x2F;<br>6）利用短网址。比如百度短地址<br>————————————————<br>版权声明：本文为CSDN博主「Never say die _」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_45612828/article/details/126193765">https://blog.csdn.net/qq_45612828/article/details/126193765</a></p>
 <h3 id="2-绕过url解析限制"><a href="#2-绕过url解析限制" class="headerlink" title="2.绕过url解析限制"></a>2.绕过url解析限制</h3><ul>
-<li>1）使用@符号绕过：如<a href="mailto:&#49;&#50;&#x37;&#x2e;&#48;&#46;&#x30;&#46;&#x31;&#x40;&#101;&#118;&#105;&#x6c;&#x2e;&#99;&#x6f;&#x6d;">&#49;&#50;&#x37;&#x2e;&#48;&#46;&#x30;&#46;&#x31;&#x40;&#101;&#118;&#105;&#x6c;&#x2e;&#99;&#x6f;&#x6d;</a></li>
+<li>1）使用@符号绕过：如<a href="mailto:&#x31;&#x32;&#55;&#x2e;&#48;&#x2e;&#x30;&#x2e;&#x31;&#64;&#x65;&#x76;&#105;&#108;&#x2e;&#99;&#x6f;&#109;">&#x31;&#x32;&#55;&#x2e;&#48;&#x2e;&#x30;&#x2e;&#x31;&#64;&#x65;&#x76;&#105;&#108;&#x2e;&#99;&#x6f;&#109;</a></li>
 <li>2）利用302跳转，需要一个vps，把302转换的代码部署到vps上，然后去访问，就可跳转到内网中</li>
 </ul>
 <h3 id="3-DNS重绑定攻击"><a href="#3-DNS重绑定攻击" class="headerlink" title="3.DNS重绑定攻击"></a>3.DNS重绑定攻击</h3><p><a target="_blank" rel="noopener" href="https://www.geekby.site/2021/01/ssrf%E6%BC%8F%E6%B4%9E%E7%9B%B8%E5%85%B3/">Geekby’s Blog</a></p>
@@ -381,6 +382,49 @@
 <p>gopher:&#x2F;&#x2F;&lt;host&gt;:&lt;port&gt;&#x2F;&lt;gopher-path&gt;_&lt;两次url编码后的TCP数据流&gt;</p>
 </blockquote>
 <p>在bp的末尾加上即可。ip&#x3D;…</p>
+<h2 id="20230903"><a href="#20230903" class="headerlink" title="20230903"></a>20230903</h2><p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230917131209770.png"></p>
+<p>这个伪造请求的最终目的是为了给内网的服务器</p>
+<p><strong>如何伪造</strong></p>
+<p>根据第三方Open API有关的endpoint和payload，伪造一个符合API的endpoint和payload的请求</p>
+<p><strong>如何通过中间服务器去做</strong></p>
+<p>可通过<code>目录遍历</code>去指定中间服务器 去请求内部服务器的哪个API网址(endpoint)</p>
+<p><strong>实例</strong></p>
+<p>假设有一个留言板网址，后端API如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">新增留言：</span><br><span class="line">POST http://internal.corp.com/$&#123;userId&#125;/posts?message=$&#123;message&#125;&amp;token=$&#123;token&#125;</span><br><span class="line">管理者更新留言：</span><br><span class="line">POST http://internal.corp.com/admin/posts/$&#123;postId&#125;?message=$&#123;message&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于新增留言API：用了token，确认用户身份，userid为用户的编号，message为留言内容</p>
+<p>对于管理者更新留言API：这一个API可以使得管理者更新恶意的留言内容，postid为留言编号。 <strong>然后，开发者认为后端API是部署在内网的，就没有使用任何token验证，且不会有其他人得到[管理者更新留言API]</strong></p>
+<p>为了串接后端API和前端呢，又来了一个中间层，其使用的API为：</p>
+<p><code>POST http://example.com/api/$&#123;userid&#125;/posts?</code></p>
+<p>这个中间层是没有暴露[管理者更新留言]的API，internal.corp.com又在内网，开发者认为很安全！</p>
+<p>但是嘞，目录遍历漏洞的话，攻击者可以更新留言，已知留言的postid为1234，攻击者请求 <code>/api/$&#123;userid&#125;/posts</code>的时候，不是只传送<code>userid</code>，而是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">admin/posts/1234?message=hacked&amp;</span><br></pre></td></tr></table></figure>
+
+<p>可以编码一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">admin%2Fposts%2F1234%3Fmessage%3Dhacked%26</span><br></pre></td></tr></table></figure>
+
+<p>这串伪造请求，可以同时满足中间服务器和内部服务器，且目标是目的服务器。</p>
+<p>但是，攻击者怎么知道管理员的API？ <strong>字典够多，不断爆破</strong></p>
+<p>最终变成：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">internal.corp.com/admin/posts/1234?message=hacked&amp;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>防御</strong></p>
+<p>所以呢，服务器防御重点就是</p>
+<blockquote>
+<p> 阻挡伪造请求</p>
+<p>避免伪造请求生效</p>
+</blockquote>
+<ul>
+<li>避免目录遍历</li>
+<li>API权限</li>
+<li>内部API除了防火墙也要token保护</li>
+<li>内部文件避免 <code>files://</code>直接存取</li>
+</ul>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://medium.com/%E7%A8%8B%E5%BC%8F%E7%8C%BF%E5%90%83%E9%A6%99%E8%95%89/%E7%B6%B2%E7%AB%99%E5%AE%89%E5%85%A8-%E4%BC%BA%E6%9C%8D%E5%99%A8%E8%AB%8B%E6%B1%82%E5%81%BD%E9%80%A0-ssrf-%E6%94%BB%E6%93%8A-%E9%A0%85%E8%8E%8A%E8%88%9E%E5%8A%8D-%E6%84%8F%E5%9C%A8%E6%B2%9B%E5%85%AC-7a5524926362">https://medium.com/程式猿吃香蕉/網站安全-伺服器請求偽造-ssrf-攻擊-項莊舞劍-意在沛公-7a5524926362</a></p>
+</blockquote>
 <h3 id="xxe-暂略"><a href="#xxe-暂略" class="headerlink" title="xxe(暂略)"></a>xxe(暂略)</h3><h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a target="_blank" rel="noopener" href="https://www.sqlsec.com/2021/05/ssrf.html#SSRF-%E4%B9%8B-MySQL-%E6%8F%90%E6%9D%83">国光的博客</a></p>
  
       <!-- reward -->

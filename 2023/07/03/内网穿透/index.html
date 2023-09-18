@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">15 分钟</span>
+            <span class="post-count">16 分钟</span>
         </span>
     </span>
 </div>
@@ -119,7 +119,16 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h1 id="1-内网信息收集"><a href="#1-内网信息收集" class="headerlink" title="1.内网信息收集"></a>1.内网信息收集</h1><p>当我们渗透进内网环境后，对网络拓扑一无所知，测试人员应先对当前网络环境做出判断。对当前机器角色分析，对机器所处网络环境拓扑结构分析，对机器所处区域分析。</p>
+  <h1 id="1-内网信息收集"><a href="#1-内网信息收集" class="headerlink" title="1.内网信息收集"></a>1.内网信息收集</h1><p>ps:</p>
+<blockquote>
+<p>已知内网网段有：</p>
+<ul>
+<li>10.0.0.0 到 10.255.255.255：<strong>10.0.0.0&#x2F;8</strong></li>
+<li>172.16.0.0 到 172.31.255.255：<strong>172.16.0.0&#x2F;12</strong></li>
+<li>192.168.0.0 到 192.168.255.255：<strong>192.168.0.0&#x2F;16</strong></li>
+</ul>
+</blockquote>
+<p>当我们渗透进内网环境后，对网络拓扑一无所知，测试人员应先对当前网络环境做出判断。对当前机器角色分析，对机器所处网络环境拓扑结构分析，对机器所处区域分析。</p>
 <p>当前机器角色分析：</p>
 <blockquote>
 <p>判断当前主机是web服务器&#x2F;开发测试服务器&#x2F;公共服务器&#x2F;文件服务器&#x2F;代理服务器&#x2F;dns服务器&#x2F;还是存储服务器等。具体判断过程可根据主机名，文件，网络链接情况综合完成。</p>
