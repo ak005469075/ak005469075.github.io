@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">19k</span>
+            <span class="post-count">19.2k</span>
         </span>
     </span>
 
@@ -473,6 +473,23 @@
 <p>a+4</p>
 <p>b+6</p>
 </blockquote>
+<h2 id="14-权限掩码"><a href="#14-权限掩码" class="headerlink" title="14.权限掩码"></a>14.权限掩码</h2><p>r-4</p>
+<p>w-2</p>
+<p>x-1</p>
+<p><code>umask</code>决定了该用户创建文件的初始权限</p>
+<p>如果是root用户，umask值为022 （普通用户：002）</p>
+<p><code>drwxr-xr-x</code> </p>
+<p>表示该目录权限0777-0022&#x3D;0755</p>
+<p>这个掩码值可以去 <code>/etc/profile</code>更改</p>
+<h2 id="15-inode和block"><a href="#15-inode和block" class="headerlink" title="15.inode和block"></a>15.inode和block</h2><p>在硬盘中，inode存储的是索引(比如文件目录)</p>
+<p>block类似windows的簇，无论文件大小是多少，文件所占总是为一个簇的倍数，且未占够的地方，其他文件也不能共享。一个文件通常放在一个簇或多个簇中，至少要单独占据簇</p>
+<h2 id="16-linux的提权"><a href="#16-linux的提权" class="headerlink" title="16.linux的提权"></a>16.linux的提权</h2><h3 id="特殊权限"><a href="#特殊权限" class="headerlink" title="特殊权限"></a>特殊权限</h3><p><code>suid</code>标记，指的是某个可执行文件有超级管理员的权限，但普通用户也可以用，下面这个s就表示suid</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-rwsr-xr-x</span><br></pre></td></tr></table></figure>
+
+<p>比如 <code>passwd</code></p>
+<p>一般没s的可执行文件，只有超级用户可以使用</p>
+<h3 id="su"><a href="#su" class="headerlink" title="su"></a>su</h3><p>即switch user</p>
+<p><code>su -test</code> 或者<code>su -root</code></p>
 <h1 id="二、网安"><a href="#二、网安" class="headerlink" title="二、网安"></a>二、网安</h1><h2 id="1-OSI七层模型"><a href="#1-OSI七层模型" class="headerlink" title="1.OSI七层模型"></a>1.OSI七层模型</h2><ol>
 <li><p>物理层（Physical Layer）：<strong>将接收到的数据转化为比特流</strong>，主要关注传输媒介、电压、电缆规范、接口等问题。</p>
 <p><strong>比特</strong></p>

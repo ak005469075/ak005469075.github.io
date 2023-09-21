@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">637</span>
+            <span class="post-count">1.1k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">2 分钟</span>
+            <span class="post-count">4 分钟</span>
         </span>
     </span>
 </div>
@@ -146,7 +146,38 @@
 <h4 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_FILES</span>[<span class="string">&#x27;file&#x27;</span>])) &#123;</span><br><span class="line">    <span class="variable">$name</span> = <span class="title function_ invoke__">basename</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;name&#x27;</span>]);</span><br><span class="line">    <span class="variable">$ext</span> = <span class="title function_ invoke__">pathinfo</span>(<span class="variable">$name</span>, PATHINFO_EXTENSION);</span><br><span class="line">    <span class="keyword">if</span>(<span class="title function_ invoke__">in_array</span>(<span class="variable">$ext</span>, [<span class="string">&#x27;php&#x27;</span>, <span class="string">&#x27;php3&#x27;</span>, <span class="string">&#x27;php4&#x27;</span>, <span class="string">&#x27;php5&#x27;</span>, <span class="string">&#x27;phtml&#x27;</span>, <span class="string">&#x27;pht&#x27;</span>])) &#123;</span><br><span class="line">        <span class="keyword">exit</span>(<span class="string">&#x27;bad file&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="title function_ invoke__">move_uploaded_file</span>(<span class="variable">$_FILES</span>[<span class="string">&#x27;file&#x27;</span>][<span class="string">&#x27;tmp_name&#x27;</span>], <span class="string">&#x27;./&#x27;</span> . <span class="variable">$name</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>访问.. &#x2F;1.php%0a，发现不拦截</p>
-<h2 id="2-2-Tomcat"><a href="#2-2-Tomcat" class="headerlink" title="2.2.Tomcat"></a>2.2.Tomcat</h2><h3 id="Tomcat配置错误"><a href="#Tomcat配置错误" class="headerlink" title="Tomcat配置错误"></a>Tomcat配置错误</h3><h3 id="Tomcat弱口令"><a href="#Tomcat弱口令" class="headerlink" title="Tomcat弱口令"></a>Tomcat弱口令</h3><h2 id="2-3-Nginx"><a href="#2-3-Nginx" class="headerlink" title="2.3.Nginx"></a>2.3.Nginx</h2><h3 id="Nginx配置错误"><a href="#Nginx配置错误" class="headerlink" title="Nginx配置错误"></a>Nginx配置错误</h3><h4 id="CRLF注入"><a href="#CRLF注入" class="headerlink" title="CRLF注入"></a>CRLF注入</h4><h4 id="目录穿越漏洞"><a href="#目录穿越漏洞" class="headerlink" title="目录穿越漏洞"></a>目录穿越漏洞</h4><h3 id="Nginx越界读取缓存漏洞"><a href="#Nginx越界读取缓存漏洞" class="headerlink" title="Nginx越界读取缓存漏洞"></a>Nginx越界读取缓存漏洞</h3><h3 id="Nginx文件名逻辑漏洞"><a href="#Nginx文件名逻辑漏洞" class="headerlink" title="Nginx文件名逻辑漏洞"></a>Nginx文件名逻辑漏洞</h3><h3 id="Nginx解析漏洞"><a href="#Nginx解析漏洞" class="headerlink" title="Nginx解析漏洞"></a>Nginx解析漏洞</h3><h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a target="_blank" rel="noopener" href="https://www.geekby.site/2021/01/web%E5%AE%B9%E5%99%A8%E5%AE%89%E5%85%A8/#3-nginx-%E5%AE%89%E5%85%A8">Geekby</a></p>
+<h2 id="2-2-Tomcat"><a href="#2-2-Tomcat" class="headerlink" title="2.2.Tomcat"></a>2.2.Tomcat</h2><p><a target="_blank" rel="noopener" href="http://t.csdn.cn/Fe1Mn">Tomcat配置文件</a></p>
+<h3 id="Tomcat任意文件写入（CVE-2017-12615）"><a href="#Tomcat任意文件写入（CVE-2017-12615）" class="headerlink" title="Tomcat任意文件写入（CVE-2017-12615）"></a>Tomcat任意文件写入（CVE-2017-12615）</h3><h4 id="影响版本"><a href="#影响版本" class="headerlink" title="影响版本"></a>影响版本</h4><p>Apache Tomcat 7.0.0 - 7.0.81</p>
+<h4 id="原理-1"><a href="#原理-1" class="headerlink" title="原理"></a>原理</h4><p>配置文件&#x2F;conf&#x2F;web.xml中配置了可写，<code>readonly=false</code>，从而可以使用<code>PUT</code>方法上传远程命令执行代码jsp文件</p>
+<blockquote>
+<p>(tomcat服务器配置默认情况下readonly值为true无法触发漏洞)</p>
+</blockquote>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">servlet</span>&gt;</span></span><br><span class="line">    ...</span><br><span class="line"><span class="tag">&lt;<span class="name">init-param</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">param-name</span>&gt;</span>readonly<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">param-value</span>&gt;</span>false<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">init-param</span>&gt;</span></span><br><span class="line">    ...</span><br><span class="line"><span class="tag">&lt;/<span class="name">servlet</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>再构造一下payload(POST提交)，向服务器上传包含任意文件上传的JSP文件</p>
+<h5 id="法一"><a href="#法一" class="headerlink" title="法一"></a>法一</h5><p>使用<code>/</code></p>
+<p><em>斜杠在文件名中是非法的，所以会被去除（Linux和Windows中都适用）</em></p>
+<p><code>PUT /shell.jsp/ HTTP/1.1</code></p>
+<h5 id="法二"><a href="#法二" class="headerlink" title="法二"></a>法二</h5><p>使用空格<code>%20</code>(windows中适用)</p>
+<p><em>Windows下不允许文件名以<code>空格</code>结尾，会被去除</em></p>
+<p><code>PUT /shell.jsp%20 HTTP/1.1</code></p>
+<h5 id="法三"><a href="#法三" class="headerlink" title="法三"></a>法三</h5><p>NTFS流(windows中使用)</p>
+<p><code>PUT /x.jsp::$DATA HTTP/1.1</code></p>
+<p>将文件上传上去后，访问该文件，配合代码的参数进行获取敏感信息</p>
+<h5 id="修复"><a href="#修复" class="headerlink" title="修复"></a>修复</h5><ol>
+<li>配置readonly和VirtualDirContext值为True或注释参数，禁止使用PUT方法并重启tomcat</li>
+<li>升级补丁</li>
+</ol>
+<h3 id="远程代码执行（CVE-2019-0232）"><a href="#远程代码执行（CVE-2019-0232）" class="headerlink" title="远程代码执行（CVE-2019-0232）"></a>远程代码执行（CVE-2019-0232）</h3><h4 id="影响版本-1"><a href="#影响版本-1" class="headerlink" title="影响版本"></a>影响版本</h4><blockquote>
+<p>Apache Tomcat 9.0.0.M1 to 9.0.17</p>
+<p>Apache Tomcat 8.5.0 to 8.5.39</p>
+<p>Apache Tomcat 7.0.0 to 7.0.93</p>
+</blockquote>
+<h4 id="利用条件-1"><a href="#利用条件-1" class="headerlink" title="利用条件"></a>利用条件</h4><p>系统为windows</p>
+<p>启用了CGI Servlet（默认为关闭）</p>
+<p>启用了enableCmdLineArguments（Tomcat 9.0.*及官方未来发布版本默认为关闭）</p>
+<h4 id="原理-2"><a href="#原理-2" class="headerlink" title="原理"></a>原理</h4><p>由于使用enableCmdLineArguments在Windows上运行时，远程执行代码漏洞（CVE-2019-0232）驻留在公共网关接口（CGI）Servlet中，java运行时环境（JRE）将命令行参数传递给Windows的方式存在缺陷导致</p>
+<h3 id="Tomcat配置错误"><a href="#Tomcat配置错误" class="headerlink" title="Tomcat配置错误"></a>Tomcat配置错误</h3><h3 id="Tomcat弱口令"><a href="#Tomcat弱口令" class="headerlink" title="Tomcat弱口令"></a>Tomcat弱口令</h3><h2 id="2-3-Nginx"><a href="#2-3-Nginx" class="headerlink" title="2.3.Nginx"></a>2.3.Nginx</h2><h3 id="Nginx配置错误"><a href="#Nginx配置错误" class="headerlink" title="Nginx配置错误"></a>Nginx配置错误</h3><h4 id="CRLF注入"><a href="#CRLF注入" class="headerlink" title="CRLF注入"></a>CRLF注入</h4><h4 id="目录穿越漏洞"><a href="#目录穿越漏洞" class="headerlink" title="目录穿越漏洞"></a>目录穿越漏洞</h4><h3 id="Nginx越界读取缓存漏洞"><a href="#Nginx越界读取缓存漏洞" class="headerlink" title="Nginx越界读取缓存漏洞"></a>Nginx越界读取缓存漏洞</h3><h3 id="Nginx文件名逻辑漏洞"><a href="#Nginx文件名逻辑漏洞" class="headerlink" title="Nginx文件名逻辑漏洞"></a>Nginx文件名逻辑漏洞</h3><h3 id="Nginx解析漏洞"><a href="#Nginx解析漏洞" class="headerlink" title="Nginx解析漏洞"></a>Nginx解析漏洞</h3><h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a target="_blank" rel="noopener" href="https://www.geekby.site/2021/01/web%E5%AE%B9%E5%99%A8%E5%AE%89%E5%85%A8/#3-nginx-%E5%AE%89%E5%85%A8">Geekby</a></p>
 <p><a target="_blank" rel="noopener" href="http://t.csdn.cn/TYwHf">Nginx学习</a></p>
  
       <!-- reward -->

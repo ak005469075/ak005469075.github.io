@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>Wazuh预警MYSQL |  小张之栈</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-Wazuh预警Mysql"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  Wazuh预警MYSQL
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/09/21/Wazuh%E9%A2%84%E8%AD%A6Mysql/" class="article-date">
+  <time datetime="2023-09-20T16:21:20.000Z" itemprop="datePublished">2023-09-21</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">网络安全</a> / <a class="article-category-link" href="/categories/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/">日志分析</a> / <a class="article-category-link" href="/categories/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/Wazuh/">Wazuh</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">2.3k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">11 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="Wazuh预警MYSQL"><a href="#Wazuh预警MYSQL" class="headerlink" title="Wazuh预警MYSQL"></a>Wazuh预警MYSQL</h1><p>centos下去安装XAMPP，(一个php集成环境)</p>
+<blockquote>
+<p>xampp官网 <a target="_blank" rel="noopener" href="https://sourceforge.net/projects/xampp/files/XAMPP%20Linux/5.6.38/">https://sourceforge.net/projects/xampp/files/XAMPP%20Linux/5.6.38/</a> (wget不管用，就去下载离线包)</p>
+<p>安装XAMPP<a target="_blank" rel="noopener" href="https://www.xjx100.cn/news/418926.html?action=onClick">https://www.xjx100.cn/news/418926.html?action=onClick</a></p>
+<p>安装完不能启动的问题：<a target="_blank" rel="noopener" href="https://www.51c51.com/danpianji/xinxi/84/887073.html">https://www.51c51.com/danpianji/xinxi/84/887073.html</a></p>
+</blockquote>
+<p><del>为什么我每次都是wget下载连接超时后，下载离线包，离线包安装不上后，再次wget，又可以了，玩呢？</del></p>
+<p>参考上述第三个链接，解决xampp启动、远程访问的问题</p>
+<blockquote>
+<p>xampp相关命令：</p>
+<p>启动 XAMPP</p>
+<p>&#x2F;opt&#x2F;lampp&#x2F;lampp start</p>
+<p>停止 XAMPP</p>
+<p>&#x2F;opt&#x2F;lampp&#x2F;lampp stop</p>
+<p>重启 XAMPP</p>
+<p>&#x2F;opt&#x2F;lampp&#x2F;lampp restart</p>
+<p>安全设置</p>
+<p>&#x2F;opt&#x2F;lampp&#x2F;lampp security</p>
+<p>使用php4</p>
+<p>&#x2F;opt&#x2F;lampp&#x2F;lampp php4</p>
+<p>使用php5</p>
+<p>&#x2F;opt&#x2F;lampp&#x2F;lampp php5</p>
+<p>查看php版本</p>
+<p>&#x2F;opt&#x2F;lampp&#x2F;lampp phpstatus</p>
+<p>只启动 Apache</p>
+<p>&#x2F;opt&#x2F;lampp&#x2F;lampp startapache</p>
+<p>停止 Apache</p>
+<p>&#x2F;opt&#x2F;lampp&#x2F;lampp stopapache</p>
+<p>启动 Apache 的 SSL 支持</p>
+<p>&#x2F;opt&#x2F;lampp&#x2F;lampp startssl</p>
+<p>停止 Apache 的 SSL 支持</p>
+<p>&#x2F;opt&#x2F;lampp&#x2F;lampp stopssl</p>
+<p>只启动 MySQL 数据库</p>
+<p>&#x2F;opt&#x2F;lampp&#x2F;lampp startmysql</p>
+<p>停止 MySQL 数据库</p>
+<p>&#x2F;opt&#x2F;lampp&#x2F;lampp stopmysql</p>
+<p>启动 ProFTPD 服务器</p>
+<p>&#x2F;opt&#x2F;lampp&#x2F;lampp startftp</p>
+<p>停止 ProFTPD 服务器</p>
+<p>&#x2F;opt&#x2F;lampp&#x2F;lampp stopftp</p>
+<p>随系统自动启动</p>
+<p>ln -s &#x2F;opt&#x2F;lampp&#x2F;lampp &#x2F;etc&#x2F;rc.d&#x2F;rc3.d&#x2F;S99lampp</p>
+<p>ln -s &#x2F;opt&#x2F;lampp&#x2F;lampp &#x2F;etc&#x2F;rc.d&#x2F;rc4.d&#x2F;S99lampp</p>
+<p>ln -s &#x2F;opt&#x2F;lampp&#x2F;lampp &#x2F;etc&#x2F;rc.d&#x2F;rc5.d&#x2F;S99lampp</p>
+<p>取消随系统自动运行</p>
+<p>ln -s &#x2F;opt&#x2F;lampp&#x2F;lampp K01lampp</p>
+<p>卸载 XAMPP</p>
+<p>rm -rf &#x2F;opt&#x2F;lampp</p>
+<p>XAMPP 重要的文件和目录</p>
+<p>XAMPP 命令库。例如 &#x2F;opt&#x2F;lampp&#x2F;bin&#x2F;mysql 可执行 MySQL 监视器</p>
+<p>&#x2F;opt&#x2F;lampp&#x2F;bin&#x2F;</p>
+<p>Apache 文档根目录</p>
+<p>&#x2F;opt&#x2F;lampp&#x2F;htdocs&#x2F;</p>
+<p>Apache 配制文件</p>
+<p>&#x2F;opt&#x2F;lampp&#x2F;etc&#x2F;httpd.conf</p>
+<p>MySQL 配制文件</p>
+<p>&#x2F;opt&#x2F;lampp&#x2F;etc&#x2F;my.cnf</p>
+<p>PHP 配制文件</p>
+<p>&#x2F;opt&#x2F;lampp&#x2F;etc&#x2F;php.ini</p>
+<p>ProFTPD 配制文件。(从 0.9.5 版开始)</p>
+<p>&#x2F;opt&#x2F;lampp&#x2F;etc&#x2F;proftpd.conf</p>
+<p>phpMyAdmin 配制文件</p>
+<p>&#x2F;opt&#x2F;lampp&#x2F;phpmyadmin&#x2F;config.inc.php</p>
+</blockquote>
+<p>主机访问虚拟机地址</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230921105708861.png" alt="xampp欢迎页面"></p>
+<p>配置mysql，默认的是没密码的</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/opt/lampp/bin/mysqladmin -u root password “1234”</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">/opt/lampp/bin/mysql -u root -p1234 <span class="comment">#进入mysql</span></span><br><span class="line">CREATE USER <span class="string">&#x27;yuleiyun&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED BY <span class="string">&#x27;password&#x27;</span>; <span class="comment">#新建用户</span></span><br><span class="line">GRANT ALL PRIVILEGES ON *.* TO <span class="string">&#x27;yuleiyun&#x27;</span>@<span class="string">&#x27;%&#x27;</span> WITH GRANT OPTION; <span class="comment">#为新用户授予远程访问权限</span></span><br><span class="line"></span><br><span class="line">FLUSH PRIVILEGES;<span class="comment">#刷新权限表并退出</span></span><br><span class="line">EXIT;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="1-mysql配置"><a href="#1-mysql配置" class="headerlink" title="1.mysql配置"></a>1.mysql配置</h2><h3 id="1-mysql日志配置"><a href="#1-mysql日志配置" class="headerlink" title="1.mysql日志配置"></a><strong>1.mysql日志配置</strong></h3><p><code>vi /opt/lampp/etc/my.cnf</code>下的[mysqld]结点添加以下三行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"># Replication Master Server (default)</span><br><span class="line"># binary logging is required for replication</span><br><span class="line"># log-bin deactivated by default since XAMPP 1.4.11</span><br><span class="line">#log-bin=mysql-bin</span><br><span class="line"></span><br><span class="line">添加以下三行日志文件配置</span><br><span class="line">general_log=ON</span><br><span class="line">general_log_file=/opt/lampp/logs/mysql.log</span><br><span class="line">log_output=file</span><br><span class="line"></span><br><span class="line"># required unique id between 1 and 2^32 - 1</span><br><span class="line"># defaults to 1 if master-host is not set</span><br><span class="line"># but will not function as a master if omitted</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>保证logs目录有写权限</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chmod</span> o+w /opt/lampp/logs</span><br><span class="line"></span><br><span class="line">重启lampp</span><br><span class="line"><span class="built_in">cd</span> /opt/lampp/logs/</span><br><span class="line">存在mysql.log文件</span><br></pre></td></tr></table></figure>
+
+
+
+<p>然后嘞，</p>
+<h3 id="2-为虚拟机的mysql配置远程访问权限"><a href="#2-为虚拟机的mysql配置远程访问权限" class="headerlink" title="2.为虚拟机的mysql配置远程访问权限"></a><strong>2.为虚拟机的mysql配置远程访问权限</strong></h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [(<span class="keyword">none</span>)]<span class="operator">&gt;</span> <span class="keyword">CREATE</span> <span class="keyword">USER</span> <span class="string">&#x27;yuleiyun&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED <span class="keyword">BY</span> <span class="string">&#x27;password&#x27;</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.01</span> sec)</span><br><span class="line"></span><br><span class="line">MariaDB [(<span class="keyword">none</span>)]<span class="operator">&gt;</span> <span class="keyword">GRANT</span> <span class="keyword">ALL</span> PRIVILEGES <span class="keyword">ON</span> <span class="operator">*</span>.<span class="operator">*</span> <span class="keyword">TO</span> <span class="string">&#x27;yuleiyun&#x27;</span>@<span class="string">&#x27;%&#x27;</span> <span class="keyword">BY</span> <span class="string">&#x27;password&#x27;</span> <span class="keyword">WITH</span> <span class="keyword">GRANT</span> OPTION;</span><br><span class="line">ERROR <span class="number">1064</span> (<span class="number">42000</span>): You have an error <span class="keyword">in</span> your <span class="keyword">SQL</span> syntax; <span class="keyword">check</span> the manual that corresponds <span class="keyword">to</span> your MariaDB server version <span class="keyword">for</span> the <span class="keyword">right</span> syntax <span class="keyword">to</span> use near <span class="string">&#x27;BY &#x27;</span>password<span class="string">&#x27; WITH GRANT OPTION&#x27;</span> <span class="keyword">at</span> line <span class="number">1</span></span><br><span class="line">MariaDB [(<span class="keyword">none</span>)]<span class="operator">&gt;</span> <span class="keyword">GRANT</span> <span class="keyword">ALL</span> PRIVILEGES <span class="keyword">ON</span> <span class="operator">*</span>.<span class="operator">*</span> <span class="keyword">TO</span> <span class="string">&#x27;yuleiyun&#x27;</span>@<span class="string">&#x27;%&#x27;</span> <span class="keyword">WITH</span> <span class="keyword">GRANT</span> OPTION;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.01</span> sec)</span><br><span class="line"></span><br><span class="line">MariaDB [(<span class="keyword">none</span>)]<span class="operator">&gt;</span> FLUSH PRIVILEGES;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.01</span> sec)</span><br><span class="line"></span><br><span class="line">MariaDB [(<span class="keyword">none</span>)]<span class="operator">&gt;</span> EXIT</span><br><span class="line">Bye</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>用Xterm连接虚拟机，并输入</p>
+<p><code>cd /opt/lampp/logs</code></p>
+<p><code>tail -f mysql.log</code></p>
+<p>用主机的cmd，进入mysql文件夹，去远程连接mysql</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -uyuleiyun -ppassword -h192.168.1.89</span><br></pre></td></tr></table></figure>
+
+<p>Xterm这边看到了</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">230921 11:50:05     3 Connect   yuleiyun@LAPTOP-0KTTC8K5 as anonymous on</span><br><span class="line">                    3 Query     <span class="keyword">select</span> @@version_comment <span class="built_in">limit</span> 1</span><br></pre></td></tr></table></figure>
+
+<p>主机cmd端输入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select Host,Password,User from mysql.user;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230921115633214.png"></p>
+<p>%号呢，就是支持远程访问</p>
+<p>Xterm日志捕捉到 查询，以及查询语句</p>
+<blockquote>
+<p>21 11:53:50     3 Query     select Host,Password,User from mysql.user</p>
+</blockquote>
+<p>好，cmd退出，故意用错误密码连接</p>
+<p>Xterm会捕捉到访问拒绝，(用户名，ip，是否使用密码)</p>
+<blockquote>
+<p>… 4 Connect   Access denied for user …</p>
+</blockquote>
+<h3 id="3-添加mysql-log到ossec"><a href="#3-添加mysql-log到ossec" class="headerlink" title="3.添加mysql.log到ossec"></a><strong>3.添加mysql.log到ossec</strong></h3><p>以上已经证明mysql.log可以正常运行，配置到ossec中实现监控</p>
+<p>去ossec.conf末尾添加</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">localfile</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">log_format</span>&gt;</span>syslog<span class="tag">&lt;/<span class="name">log_format</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">location</span>&gt;</span>/opt/lampp/logs/mysql.log<span class="tag">&lt;/<span class="name">location</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">localfile</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>重启下</p>
+<p>Decoder下的文件，一般就是提取关键字段，正则获取对应的值</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">decoder</span> <span class="attr">name</span>=<span class="string">&quot;mysql_log&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">prematch</span>&gt;</span>^MySQL log:<span class="tag">&lt;/<span class="name">prematch</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">decoder</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>而0295-mysql-rules.xml中</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">group</span> <span class="attr">name</span>=<span class="string">&quot;mysql_log,&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">rule</span> <span class="attr">id</span>=<span class="string">&quot;50100&quot;</span> <span class="attr">level</span>=<span class="string">&quot;0&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">decoded_as</span>&gt;</span>mysql_log<span class="tag">&lt;/<span class="name">decoded_as</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">description</span>&gt;</span>MySQL messages grouped.<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">rule</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">rule</span> <span class="attr">id</span>=<span class="string">&quot;50105&quot;</span> <span class="attr">level</span>=<span class="string">&quot;3&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">if_sid</span>&gt;</span>50100<span class="tag">&lt;/<span class="name">if_sid</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">regex</span>&gt;</span>^MySQL log: \d+ \S+ \d+ Connect<span class="tag">&lt;/<span class="name">regex</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">description</span>&gt;</span>MySQL: authentication success.<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mitre</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">id</span>&gt;</span>T1078<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">mitre</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">group</span>&gt;</span>authentication_success,pci_dss_10.2.5,pci_dss_8.7,gpg13_7.1,gpg13_7.2,gdpr_IV_32.2,hipaa_164.312.b,hipaa_164.312.d,hipaa_164.312.e.1,hipaa_164.312.e.2.I,hipaa_164.312.e.2.II,nist_800_53_AU.14,nist_800_53_AC.7,nist_800_53_SC.2,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,tsc_PI1.4,tsc_PI1.5,<span class="tag">&lt;/<span class="name">group</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">rule</span>&gt;</span></span><br><span class="line">  ...</span><br></pre></td></tr></table></figure>
+
+<p>都是依赖于 解码器为mysql_log的组的，匹配了之后，才会触发后续规则，如id&#x3D;50105，进一步进行匹配</p>
+<p>看下后面有一个规则</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">rule</span> <span class="attr">id</span>=<span class="string">&quot;50106&quot;</span> <span class="attr">level</span>=<span class="string">&quot;9&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">if_sid</span>&gt;</span>50100<span class="tag">&lt;/<span class="name">if_sid</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">match</span>&gt;</span>Access denied for user<span class="tag">&lt;/<span class="name">match</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">description</span>&gt;</span>MySQL: authentication failure.<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">group</span>&gt;</span>authentication_failed,pci_dss_10.2.4,pci_dss_10.2.5,pci_dss_8.7,gpg13_7.1,gdpr_IV_35.7.d,gdpr_IV_32.2,hipaa_164.312.b,hipaa_164.312.d,hipaa_164.312.e.1,hipaa_164.312.e.2.I,hipaa_164.312.e.2.II,nist_800_53_AU.14,nist_800_53_AC.7,nist_800_53_SC.2,tsc_CC6.1,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,tsc_PI1.4,tsc_PI1.5,<span class="tag">&lt;/<span class="name">group</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">rule</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>match部分，正好对应数据库远程连接失败时的字段，如果连接失败，ossec中的alerts.log可以捕捉到不嘞，其实不行</p>
+<p>看正则部分</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">regex</span>&gt;</span>^MySQL log: \d+ \S+ \d+ Connect<span class="tag">&lt;/<span class="name">regex</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>^MySQL log:</code> ，在前面我们mysql.log捕捉到的远程访问失败时，并没有出现 <code>MySQL log</code>的关键字吧，反而是一长串的空格部分，所以捕捉不到</p>
+<h4 id="实例1"><a href="#实例1" class="headerlink" title="实例1"></a>实例1</h4><p>Xterm新开窗口去重启ossec</p>
+<p><code>systemctl restart wazuh-manager</code></p>
+<p><code>tail -f /var/ossec/logs/alerts/alerts.log</code></p>
+<p>主机cmd，去远程连接虚拟机的mysql，密码故意错误</p>
+<p>在mysql.log中是可以捕捉到Access denied的日志的，但是呢，alerts.log没有反应</p>
+<h4 id="新增解码器"><a href="#新增解码器" class="headerlink" title="新增解码器"></a>新增解码器</h4><p>去 <code>/etc/decoders/local_decoder.xml</code>去添加mysql的解码器</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">decoder</span> <span class="attr">name</span>=<span class="string">&quot;mysql_log&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">prematch</span>&gt;</span>\d+ Connect<span class="tag">&lt;/<span class="name">prematch</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">decoder</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>匹配为任意数字+空格+Connect</p>
+<p>因为mysql.log里的情况如下</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230921135811568.png"></p>
+<p>然后注释掉自带decoder中mysql的解码器</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- &lt;decoder name=&quot;mysql_log&quot;&gt;</span></span><br><span class="line"><span class="comment">  &lt;prematch&gt;^MySQL log:&lt;/prematch&gt;</span></span><br><span class="line"><span class="comment">&lt;/decoder&gt; --&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>当然了，将添加的规则加在这里也是可以的，**(好吧，就添加到这里，不然重启wazuh会报错的)**</p>
+<p>将mysql_rules.xml内容更改如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">group</span> <span class="attr">name</span>=<span class="string">&quot;mysql_log,&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">rule</span> <span class="attr">id</span>=<span class="string">&quot;50100&quot;</span> <span class="attr">level</span>=<span class="string">&quot;0&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">decoded_as</span>&gt;</span>mysql_log<span class="tag">&lt;/<span class="name">decoded_as</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">description</span>&gt;</span>MySQL messages grouped.<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">rule</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">rule</span> <span class="attr">id</span>=<span class="string">&quot;50105&quot;</span> <span class="attr">level</span>=<span class="string">&quot;3&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">if_sid</span>&gt;</span>50100<span class="tag">&lt;/<span class="name">if_sid</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- &lt;regex&gt;^MySQL log: \d+ \S+ \d+ Connect&lt;/regex&gt; --&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">regex</span>&gt;</span>\d+ Connect<span class="tag">&lt;/<span class="name">regex</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">description</span>&gt;</span>MySQL: authentication success.<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mitre</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">id</span>&gt;</span>T1078<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">mitre</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">group</span>&gt;</span>authentication_success,pci_dss_10.2.5,pci_dss_8.7,gpg13_7.1,gpg13_7.2,gdpr_IV_32.2,hipaa_164.312.b,hipaa_164.312.d,hipaa_164.312.e.1,hipaa_164.312.e.2.I,hipaa_164.312.e.2.II,nist_800_53_AU.14,nist_800_53_AC.7,nist_800_53_SC.2,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,tsc_PI1.4,tsc_PI1.5,<span class="tag">&lt;/<span class="name">group</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">rule</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">rule</span> <span class="attr">id</span>=<span class="string">&quot;50106&quot;</span> <span class="attr">level</span>=<span class="string">&quot;9&quot;</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- &lt;if_sid&gt;50100&lt;/if_sid&gt; --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">if_sid</span>&gt;</span>50105<span class="tag">&lt;/<span class="name">if_sid</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">match</span>&gt;</span>Access denied for user<span class="tag">&lt;/<span class="name">match</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">description</span>&gt;</span>MySQL: authentication failure.<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">group</span>&gt;</span>authentication_failed,pci_dss_10.2.4,pci_dss_10.2.5,pci_dss_8.7,gpg13_7.1,gdpr_IV_35.7.d,gdpr_IV_32.2,hipaa_164.312.b,hipaa_164.312.d,hipaa_164.312.e.1,hipaa_164.312.e.2.I,hipaa_164.312.e.2.II,nist_800_53_AU.14,nist_800_53_AC.7,nist_800_53_SC.2,tsc_CC6.1,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,tsc_PI1.4,tsc_PI1.5,<span class="tag">&lt;/<span class="name">group</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">rule</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>重启ossec</strong></p>
+<h5 id="实例2"><a href="#实例2" class="headerlink" title="实例2"></a>实例2</h5><p>来一次成功的mysql连接</p>
+<p>alerts.log捕捉到了</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230921141425425.png"></p>
+<p>来一次错误的，也捉到了</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230921141536141.png" alt="mysql登录错误预警"></p>
+<p>同时也触发了651规则，但不会被drop掉ip</p>
+<p>因为ssh_decoder.xml提取的关键字段有srcip，mysql解码器没有提取</p>
+<h3 id="实例-新增爆破规则"><a href="#实例-新增爆破规则" class="headerlink" title="实例-新增爆破规则"></a>实例-新增爆破规则</h3><p>去local_rules.xml加入</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">group</span> <span class="attr">name</span>=<span class="string">&quot;mysql,&quot;</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 检测暴力破解 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">rule</span> <span class="attr">id</span>=<span class="string">&quot;561001&quot;</span> <span class="attr">level</span>=<span class="string">&quot;12&quot;</span> <span class="attr">frequency</span>=<span class="string">&quot;5&quot;</span> <span class="attr">timeframe</span>=<span class="string">&quot;30&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">if_matched_sid</span>&gt;</span>50106<span class="tag">&lt;/<span class="name">if_matched_sid</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">description</span>&gt;</span>Too many fails,Maybe Force attack<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">group</span>&gt;</span>attack,<span class="tag">&lt;/<span class="name">group</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">rule</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">group</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>好的，restart-&gt;tail-&gt;cmd去多次试错mysql，触发5次</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230921143112897.png" alt="暴力破解预警"></p>
+<h2 id="正则知识补充"><a href="#正则知识补充" class="headerlink" title="正则知识补充"></a>正则知识补充</h2><p><strong>Supported expressions</strong></p>
+<table>
+<thead>
+<tr>
+<th>Expressions</th>
+<th>Valid characters</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>\w</td>
+<td>A-Z, a-z, 0-9, ‘-‘, ‘@’, ‘_’ characters</td>
+</tr>
+<tr>
+<td>\d</td>
+<td>0-9 character</td>
+</tr>
+<tr>
+<td>\s</td>
+<td>Spaces “ “</td>
+</tr>
+<tr>
+<td>\t</td>
+<td>Tabs</td>
+</tr>
+<tr>
+<td>\p</td>
+<td>()*+,-.:;&lt;&#x3D;&gt;?[]!”‘#$%&amp;|{}</td>
+</tr>
+<tr>
+<td>\W</td>
+<td>Anything not \w</td>
+</tr>
+<tr>
+<td>\D</td>
+<td>Anything not \d</td>
+</tr>
+<tr>
+<td>\S</td>
+<td>Anything not \s</td>
+</tr>
+<tr>
+<td>.</td>
+<td>Anything</td>
+</tr>
+</tbody></table>
+<p><strong>Modifiers</strong></p>
+<table>
+<thead>
+<tr>
+<th>Expressions</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>+</td>
+<td>To match one or more times</td>
+</tr>
+<tr>
+<td>*</td>
+<td>To match zero or more times</td>
+</tr>
+</tbody></table>
+<p><strong>Special characters</strong></p>
+<table>
+<thead>
+<tr>
+<th>Expressions</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>^</td>
+<td>To specify the beginning of the text</td>
+</tr>
+<tr>
+<td>$</td>
+<td>To specify the end of the text</td>
+</tr>
+<tr>
+<td>|</td>
+<td>To create a logical or between multiple patterns</td>
+</tr>
+</tbody></table>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/09/21/Wazuh%E9%A2%84%E8%AD%A6Mysql/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mysql/" rel="tag">Mysql</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+    
+      <a href="/2023/09/20/%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title"></div>
+      </a>
+    
+  </nav>
+
+  
+   
+  
+   
+    <script src="https://cdn.staticfile.org/twikoo/1.4.18/twikoo.all.min.js"></script>
+    <div id="twikoo" class="twikoo"></div>
+    <script>
+        twikoo.init({
+            envId: ""
+        })
+    </script>
+ 
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2023
+        <i class="ri-heart-fill heart_icon"></i> 是羽泪云诶
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/favicon.ico" alt="小张之栈"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+ 
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+ 
+<script src="/js/dz.js"></script>
+ 
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>
