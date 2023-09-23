@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">102</span>
+            <span class="post-count">270</span>
         </span>
     </span>
 
@@ -121,6 +121,14 @@
        
   <h1 id="一、就是单纯没网了"><a href="#一、就是单纯没网了" class="headerlink" title="一、就是单纯没网了"></a>一、就是单纯没网了</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">ssh: Could not resolve hostname github.com: Name or service not known</span><br><span class="line">fatal: Could not read from remote repository.</span><br><span class="line"></span><br><span class="line">Please make sure you have the correct access rights</span><br><span class="line">and the repository exists.</span><br><span class="line">FATAL Something&#x27;s wrong. Maybe you can find the solution here: https://hexo.io/docs/troubleshooting.html</span><br><span class="line">Error: Spawn failed</span><br><span class="line">    at ChildProcess.&lt;anonymous&gt; (E:\Myblog\node_modules\hexo-util\lib\spawn.js:51:21)</span><br><span class="line">    at ChildProcess.emit (node:events:513:28)</span><br><span class="line">    at cp.emit (E:\Myblog\node_modules\cross-spawn\lib\enoent.js:34:29)</span><br><span class="line">    at ChildProcess._handle.onexit (node:internal/child_process:291:12)</span><br></pre></td></tr></table></figure>
 
+<h1 id="二、多个免密怎么搞"><a href="#二、多个免密怎么搞" class="headerlink" title="二、多个免密怎么搞"></a>二、多个免密怎么搞</h1><p>我之前已经有一个git和github间的免密登录了；</p>
+<p>之后又配置了一个vscode和虚拟机之间的免密登录，把上面那个覆盖了，之后我git更新博客的时候，出错了</p>
+<p>生成的id_rsa不重名就行了</p>
+<p>之后改改主机上的.ssh&#x2F;config，配置如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Host github.com</span><br><span class="line">    HostName ssh.github.com</span><br><span class="line">    Port 443</span><br><span class="line">    User git</span><br><span class="line">    IdentityFile ~/.ssh/id_rsa</span><br><span class="line">#centos	</span><br><span class="line">Host 192.168.1.89</span><br><span class="line">    Hostname 192.168.1.89</span><br><span class="line">    User root</span><br><span class="line">    IdentityFile ~/.ssh/id_rsa_centos</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h1 id="三、git-T-103-x69-116-x40-103-x69-x74-x68-x75-x62-x2e-x63-x6f-x6d-出错"><a href="#三、git-T-103-x69-116-x40-103-x69-x74-x68-x75-x62-x2e-x63-x6f-x6d-出错" class="headerlink" title="三、git -T &#103;&#x69;&#116;&#x40;&#103;&#x69;&#x74;&#x68;&#x75;&#x62;&#x2e;&#x63;&#x6f;&#x6d;出错"></a>三、git -T <a href="mailto:&#103;&#x69;&#116;&#x40;&#103;&#x69;&#x74;&#x68;&#x75;&#x62;&#x2e;&#x63;&#x6f;&#x6d;">&#103;&#x69;&#116;&#x40;&#103;&#x69;&#x74;&#x68;&#x75;&#x62;&#x2e;&#x63;&#x6f;&#x6d;</a>出错</h1><p><code>kex_exchange_identification: Connection closed by remote host</code></p>
+<p>我的是因为上面config里，手写成了<code>HostName github.com</code>，少一个 <code>ssh.</code> 啊</p>
  
       <!-- reward -->
       

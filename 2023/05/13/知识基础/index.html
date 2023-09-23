@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">19.2k</span>
+            <span class="post-count">19.4k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">70 分钟</span>
+            <span class="post-count">72 分钟</span>
         </span>
     </span>
 </div>
@@ -483,14 +483,24 @@
 <p>这个掩码值可以去 <code>/etc/profile</code>更改</p>
 <h2 id="15-inode和block"><a href="#15-inode和block" class="headerlink" title="15.inode和block"></a>15.inode和block</h2><p>在硬盘中，inode存储的是索引(比如文件目录)</p>
 <p>block类似windows的簇，无论文件大小是多少，文件所占总是为一个簇的倍数，且未占够的地方，其他文件也不能共享。一个文件通常放在一个簇或多个簇中，至少要单独占据簇</p>
-<h2 id="16-linux的提权"><a href="#16-linux的提权" class="headerlink" title="16.linux的提权"></a>16.linux的提权</h2><h3 id="特殊权限"><a href="#特殊权限" class="headerlink" title="特殊权限"></a>特殊权限</h3><p><code>suid</code>标记，指的是某个可执行文件有超级管理员的权限，但普通用户也可以用，下面这个s就表示suid</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-rwsr-xr-x</span><br></pre></td></tr></table></figure>
+<h2 id="16-linux的提权"><a href="#16-linux的提权" class="headerlink" title="16.linux的提权"></a>16.linux的提权</h2><h3 id="特殊权限"><a href="#特殊权限" class="headerlink" title="特殊权限"></a>特殊权限</h3><p><code>suid</code>标记，指的是某个可执行文件有超级管理员的权限，但普通用户也可以用，比如 <code>passwd</code></p>
+<p>一般没s的可执行文件，只有超级用户可以使用，下面这个s就表示suid</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-rwsr-xr-x. 1 root root 27856 Apr  1  2020 /usr/bin/passwd</span><br></pre></td></tr></table></figure>
 
-<p>比如 <code>passwd</code></p>
-<p>一般没s的可执行文件，只有超级用户可以使用</p>
+
+
 <h3 id="su"><a href="#su" class="headerlink" title="su"></a>su</h3><p>即switch user</p>
-<p><code>su -test</code> 或者<code>su -root</code></p>
-<h1 id="二、网安"><a href="#二、网安" class="headerlink" title="二、网安"></a>二、网安</h1><h2 id="1-OSI七层模型"><a href="#1-OSI七层模型" class="headerlink" title="1.OSI七层模型"></a>1.OSI七层模型</h2><ol>
+<p><code>su test</code> 或者<code>su root</code></p>
+<h3 id="sudo"><a href="#sudo" class="headerlink" title="sudo"></a>sudo</h3><p>作用是来授权的，给普通用户高级权限(只有root做的话，太麻烦)</p>
+<p>在普通用户的时候，<code>sudo -l</code> 可以查看普通用户可以使用的一些命令(如果配置了的话)</p>
+<p>现在root用户下给普通用户配置一些权限吧</p>
+<p>直接输入 <code>visudo</code>，第100行下后添加 普通用户<code>xg</code>的权限</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">100 root    ALL=(ALL)       ALL</span><br><span class="line">101 xg      ALL=(ALL)       /bin/systemctl,/usr/bin/vim</span><br></pre></td></tr></table></figure>
+
+<p>切换到xg用户，sudo -l，看最后一行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Matching Defaults entries <span class="keyword">for</span> xg on xinguang:</span><br><span class="line">    !visiblepw, always_set_home, match_group_by_gid, always_query_group_plugin, env_reset,</span><br><span class="line">    env_keep=<span class="string">&quot;COLORS DISPLAY HOSTNAME HISTSIZE KDEDIR LS_COLORS&quot;</span>, env_keep+=<span class="string">&quot;MAIL PS1 PS2</span></span><br><span class="line"><span class="string">    QTDIR USERNAME LANG LC_ADDRESS LC_CTYPE&quot;</span>, env_keep+=<span class="string">&quot;LC_COLLATE LC_IDENTIFICATION</span></span><br><span class="line"><span class="string">    LC_MEASUREMENT LC_MESSAGES&quot;</span>, env_keep+=<span class="string">&quot;LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER</span></span><br><span class="line"><span class="string">    LC_TELEPHONE&quot;</span>, env_keep+=<span class="string">&quot;LC_TIME LC_ALL LANGUAGE LINGUAS _XKB_CHARSET XAUTHORITY&quot;</span>,</span><br><span class="line">    secure_path=/sbin\:/bin\:/usr/sbin\:/usr/bin</span><br><span class="line"></span><br><span class="line">User xg may run the following commands on xinguang:</span><br><span class="line">    (ALL) /bin/systemctl, /usr/bin/vim</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="提权部分我记在“提权方式”那一md去了"><a href="#提权部分我记在“提权方式”那一md去了" class="headerlink" title="提权部分我记在“提权方式”那一md去了"></a>提权部分我记在“提权方式”那一md去了</h3><h1 id="二、网安"><a href="#二、网安" class="headerlink" title="二、网安"></a>二、网安</h1><h2 id="1-OSI七层模型"><a href="#1-OSI七层模型" class="headerlink" title="1.OSI七层模型"></a>1.OSI七层模型</h2><ol>
 <li><p>物理层（Physical Layer）：<strong>将接收到的数据转化为比特流</strong>，主要关注传输媒介、电压、电缆规范、接口等问题。</p>
 <p><strong>比特</strong></p>
 </li>
