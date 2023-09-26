@@ -11,7 +11,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1"
       />
-      <title>python爬虫 |  小张之栈</title>
+      <title>scrapy爬虫 |  小张之栈</title>
   <meta name="generator" content="hexo-theme-ayer">
       
       <link rel="shortcut icon" href="/favicon.ico" />
@@ -75,7 +75,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  python爬虫
+  scrapy爬虫
 </h1>
  
 
@@ -87,7 +87,7 @@
   <time datetime="2023-09-21T23:12:30.000Z" itemprop="datePublished">2023-09-22</time>
 </a> 
   <div class="article-category">
-    <a class="article-category-link" href="/categories/%E7%88%AC%E8%99%AB/">爬虫</a>
+    <a class="article-category-link" href="/categories/%E7%88%AC%E8%99%AB/">爬虫</a> / <a class="article-category-link" href="/categories/%E7%88%AC%E8%99%AB/scrapy/">scrapy</a>
   </div>
   
 <div class="word_count">
@@ -218,7 +218,7 @@
 <p>所以内存为unicode编码，文件为utf-8编码</p>
 <h1 id="二、实例"><a href="#二、实例" class="headerlink" title="二、实例"></a>二、实例</h1><p>我用的vscode，新建一个文件夹，在终端下输入 <code>pip install scrapy</code></p>
 <h2 id="1-新建项目"><a href="#1-新建项目" class="headerlink" title="1.新建项目"></a>1.新建项目</h2><p>终端输入</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">scrapy startproject name kaipa  <span class="comment">#项目名</span></span><br><span class="line"><span class="built_in">cd</span> kaipa</span><br><span class="line">scrapy genspider example example.com <span class="comment">#生成eample.py的开始地址为example.com的基础模板</span></span><br><span class="line">scrapy crawl 项目名</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#scrapy startproject &lt;project_name&gt; [project_dir]</span></span><br><span class="line">scrapy startproject name kaipa </span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> kaipa</span><br><span class="line">scrapy genspider example example.com <span class="comment">#生成eample.py的开始地址为example.com的基础模板</span></span><br><span class="line">scrapy crawl 项目名</span><br></pre></td></tr></table></figure>
 
 <p>此处，我的项目名为 <code>name</code></p>
 <p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230922115033027.png"></p>
@@ -667,6 +667,15 @@
 
    
   <nav class="article-nav">
+    
+      <a href="/2023/09/23/scrapy%E5%AE%9E%E4%BE%8B2/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            scrapy实例2
+          
+        </div>
+      </a>
     
     
       <a href="/2023/09/21/Wazuh%E9%85%8D%E7%BD%AE%E8%A7%A3%E7%A0%81%E5%99%A8/" class="article-nav-link">
