@@ -87,7 +87,7 @@
   <time datetime="2023-09-23T14:25:25.000Z" itemprop="datePublished">2023-09-23</time>
 </a> 
   <div class="article-category">
-    <a class="article-category-link" href="/categories/%E8%B7%A8%E5%9F%9F%E8%AE%BF%E9%97%AE/">跨域访问</a> / <a class="article-category-link" href="/categories/%E8%B7%A8%E5%9F%9F%E8%AE%BF%E9%97%AE/mysql%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%BD%BF%E7%94%A8/">mysql命令行使用</a>
+    <a class="article-category-link" href="/categories/%E8%B7%A8%E5%9F%9F%E8%AE%BF%E9%97%AE/">跨域访问</a> / <a class="article-category-link" href="/categories/%E8%B7%A8%E5%9F%9F%E8%AE%BF%E9%97%AE/mysql%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%BD%BF%E7%94%A8/">mysql命令行使用</a> / <a class="article-category-link" href="/categories/%E8%B7%A8%E5%9F%9F%E8%AE%BF%E9%97%AE/mysql%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%BD%BF%E7%94%A8/jsonp/">jsonp</a> / <a class="article-category-link" href="/categories/%E8%B7%A8%E5%9F%9F%E8%AE%BF%E9%97%AE/mysql%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%BD%BF%E7%94%A8/jsonp/cors/">cors</a> / <a class="article-category-link" href="/categories/%E8%B7%A8%E5%9F%9F%E8%AE%BF%E9%97%AE/mysql%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%BD%BF%E7%94%A8/jsonp/cors/ajax%E8%AF%B7%E6%B1%82/">ajax请求</a>
   </div>
   
 <div class="word_count">
@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.3k</span>
+            <span class="post-count">2.7k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">5 分钟</span>
+            <span class="post-count">11 分钟</span>
         </span>
     </span>
 </div>
@@ -122,7 +122,7 @@
   <h1 id="跨域访问"><a href="#跨域访问" class="headerlink" title="跨域访问"></a>跨域访问</h1><h4 id="1-Http请求"><a href="#1-Http请求" class="headerlink" title="1.Http请求"></a>1.Http请求</h4><p>Host:目的域名和端口</p>
 <p>Referer:当前请求页面的<strong>来源页面的地址</strong>，组成元素(协议+域名+查询参数)</p>
 <p>Origin:这个请求原始从哪里发起的，包括当前请求的协议+域名；一般<strong>只</strong>存在于CORS<strong>跨域请求</strong>(不符合同源策略的就是)</p>
-<h4 id="2-同源策略"><a href="#2-同源策略" class="headerlink" title="2.同源策略"></a>2.同源策略</h4><p>即Same-Origin-Policy，SOP是一种约定，同源指两个或多个网页同时满足<code>同域名、同协议、同端口</code></p>
+<h4 id="2-同源策略"><a href="#2-同源策略" class="headerlink" title="2.同源策略"></a>2.同源策略</h4><p>即Same-Origin-Policy，SOP是一种约定，是浏览器内部的安全机制，用于限制浏览器中运行的JavaScript代码对不同源的访问；同源指两个或多个网页同时满足<code>同域名、同协议、同端口</code></p>
 <p>不同源的客户端脚本(js、ActionScrip)在没明确授权的情况下，不能读写对方的资源；</p>
 <p>当前页面是来自 <code>http://exmaple.com</code>，同源策略允许加载来自<code>同域名、同协议、同端口</code>的资源</p>
 <p>比如，浏览器在A网页设置的Cookie，B网页不能打开，除非同源</p>
@@ -135,8 +135,25 @@
 <p>&lt;link href&#x3D;”…”&gt; css文件</p>
 <p>&lt;iframe src&#x3D;””&gt; 任意资源</p>
 </blockquote>
+<p>再补充一点</p>
+<h5 id="受同源策略影响情况"><a href="#受同源策略影响情况" class="headerlink" title="受同源策略影响情况"></a>受同源策略影响情况</h5><blockquote>
+<ol>
+<li>XMLHttpRequest 和 Fetch API：当使用XMLHttpRequest或Fetch API进行HTTP请求时，同源策略会限制跨源请求。</li>
+<li>Web Fonts、图像和媒体资源：浏览器允许加载来自其他域的Web字体、图像和媒体资源，但服务器必须支持跨域资源共享（CORS）或包含适当的CORS头部。</li>
+<li>Cookie 和存储：同源策略限制了对不同源的Cookie和本地存储的访问。</li>
+<li>嵌入的内容：例如，使用<code>&lt;iframe&gt;</code>将来自不同源的网页嵌入到当前网页中，同源策略会对此进行限制。</li>
+</ol>
+</blockquote>
 <h4 id="3-跨域访问"><a href="#3-跨域访问" class="headerlink" title="3.跨域访问"></a>3.跨域访问</h4><p>做过开发的应该清楚，做项目时，前后端分离，前后端域名不同，端口也不同；请求时想获取数据就是POST&#x2F;GET请求</p>
-<h3 id="如何跨域"><a href="#如何跨域" class="headerlink" title="如何跨域"></a>如何跨域</h3><h4 id="1-JSONP"><a href="#1-JSONP" class="headerlink" title="1.JSONP"></a>1.JSONP</h4><h5 id="一、生成JSON响应"><a href="#一、生成JSON响应" class="headerlink" title="一、生成JSON响应"></a>一、生成JSON响应</h5><h6 id="1-php代码"><a href="#1-php代码" class="headerlink" title="1.php代码"></a>1.php代码</h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//连接数据库</span></span><br><span class="line"><span class="variable">$conn</span>=<span class="keyword">new</span> <span class="title function_ invoke__">mysqli</span>(<span class="string">&#x27;127.0.0.1&#x27;</span>,<span class="string">&#x27;root&#x27;</span>,<span class="string">&#x27;root&#x27;</span>,<span class="string">&#x27;pikachu&#x27;</span>) <span class="keyword">or</span> <span class="keyword">die</span>(<span class="string">&quot;数据库连接失败&quot;</span>);</span><br><span class="line"><span class="variable">$conn</span>-&gt;<span class="title function_ invoke__">set_charset</span>(<span class="string">&#x27;urf8&#x27;</span>);</span><br><span class="line"><span class="variable">$sql</span>=<span class="string">&quot;select id,username,password,level from users&quot;</span>;</span><br><span class="line"><span class="variable">$result</span>=<span class="variable">$conn</span>-&gt;<span class="title function_ invoke__">query</span>(<span class="variable">$sql</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//输出json数据到页面</span></span><br><span class="line"><span class="variable">$json</span> =<span class="title function_ invoke__">json_encode</span>(<span class="variable">$result</span>-&gt;<span class="title function_ invoke__">fetch_all</span>(MYSQLI_ASSOC));</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$json</span>;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="4-ajax请求"><a href="#4-ajax请求" class="headerlink" title="4.ajax请求"></a>4.ajax请求</h4><p>同步<em>请求是</em>指当前发出请求后,浏览器<em>什么</em>都不能做, 必须得等到请求完成返回数据之后,才会执行后续的代码</p>
+<p>AJAX 是一种用于创建快速动态网页的技术。它可以令开发者只向服务器获取数据</p>
+<p>而ajax请求是指，在不需要重新刷新页面的情况下，Ajax通过异步请求加载后台数据，并在网页上加载出来</p>
+<p>创建XMLHttpRequest对象,也就是创建一个异步调用对象。创建一个新的HTTP请求</p>
+<h3 id="如何跨域"><a href="#如何跨域" class="headerlink" title="如何跨域"></a>如何跨域</h3><h4 id="1-JSONP"><a href="#1-JSONP" class="headerlink" title="1.JSONP"></a>1.JSONP</h4><p>通常用于获取返回的数据是JSON格式的情况</p>
+<p>JSONP的工作原理是通过在客户端创建一个<code>&lt;script&gt;</code>标签，该标签的<code>src</code>属性指向包含JSON数据的服务器资源。</p>
+<p>服务器将JSON数据包装在一个JavaScript函数调用中，然后将其发送回客户端。</p>
+<p>客户端收到响应后，可以直接执行包含JSON数据的JavaScript函数，从而获取数据</p>
+<h5 id="一、生成JSON响应"><a href="#一、生成JSON响应" class="headerlink" title="一、生成JSON响应"></a>一、生成JSON响应</h5><h6 id="1-php代码"><a href="#1-php代码" class="headerlink" title="1.php代码"></a>1.php代码</h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//连接数据库</span></span><br><span class="line"><span class="variable">$conn</span>=<span class="keyword">new</span> <span class="title function_ invoke__">mysqli</span>(<span class="string">&#x27;127.0.0.1&#x27;</span>,<span class="string">&#x27;root&#x27;</span>,<span class="string">&#x27;root&#x27;</span>,<span class="string">&#x27;pikachu&#x27;</span>) <span class="keyword">or</span> <span class="keyword">die</span>(<span class="string">&quot;数据库连接失败&quot;</span>);</span><br><span class="line"><span class="variable">$conn</span>-&gt;<span class="title function_ invoke__">set_charset</span>(<span class="string">&#x27;urf8&#x27;</span>);</span><br><span class="line"><span class="variable">$sql</span>=<span class="string">&quot;select id,username,password,level from users&quot;</span>;</span><br><span class="line"><span class="variable">$result</span>=<span class="variable">$conn</span>-&gt;<span class="title function_ invoke__">query</span>(<span class="variable">$sql</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//输出json数据到页面</span></span><br><span class="line"><span class="variable">$json</span> =<span class="title function_ invoke__">json_encode</span>(<span class="variable">$result</span>-&gt;<span class="title function_ invoke__">fetch_all</span>(MYSQLI_ASSOC));</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$json</span>;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
 
 
 
@@ -145,6 +162,10 @@
 <h5 id="二、在另一个页面用AJAX访问"><a href="#二、在另一个页面用AJAX访问" class="headerlink" title="二、在另一个页面用AJAX访问"></a>二、在另一个页面用AJAX访问</h5><p>list_json.html访问上述php</p>
 <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;text/javascript&quot;</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">var</span> listurl=<span class="string">&quot;http://localhost:81/7/list_json.php&quot;</span>;</span></span><br><span class="line"><span class="language-javascript">        <span class="comment">//实例化XMLhttpRequest，用于发送Ajax请求</span></span></span><br><span class="line"><span class="language-javascript">        xmlhttp=<span class="keyword">new</span> <span class="title class_">XMLHttpRequest</span>();</span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">var</span> count=<span class="number">0</span>;</span></span><br><span class="line"><span class="language-javascript">        <span class="comment">//当请求的状态发生变化时，触发执行代码</span></span></span><br><span class="line"><span class="language-javascript">        xmlhttp.<span class="property">onreadystatechange</span>=<span class="keyword">function</span>(<span class="params"></span>)&#123;</span></span><br><span class="line"><span class="language-javascript">            <span class="keyword">if</span>(xmlhttp.<span class="property">readyState</span>==<span class="number">4</span>&amp;&amp;xmlhttp.<span class="property">status</span>==<span class="number">200</span>)&#123;</span></span><br><span class="line"><span class="language-javascript">                <span class="comment">//取得请求的相应，且通过正则获取token</span></span></span><br><span class="line"><span class="language-javascript">                <span class="keyword">var</span> text=xmlhttp.<span class="property">responseText</span>;</span></span><br><span class="line"><span class="language-javascript">                <span class="title function_">alert</span>(text);</span></span><br><span class="line"><span class="language-javascript">                </span></span><br><span class="line"><span class="language-javascript">            &#125;</span></span><br><span class="line"><span class="language-javascript">        &#125;;</span></span><br><span class="line"><span class="language-javascript">        xmlhttp.<span class="title function_">open</span>(<span class="string">&quot;GET&quot;</span>,listurl,<span class="literal">false</span>);</span></span><br><span class="line"><span class="language-javascript">        xmlhttp.<span class="title function_">send</span>();</span></span><br><span class="line"><span class="language-javascript">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>网页查看json数据<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        ....</span><br><span class="line">    <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
+<p>PS:</p>
+<blockquote>
+<p>XHR是一种用于在浏览器中发出HTTP请求的机制，它实际上是由浏览器提供的一种JavaScript对象</p>
+</blockquote>
 <p>这里的ip地址要一致，如果你浏览器url是localhost，你代码就要填localhost，填的是主机地址，那代码也主机地址</p>
 <p>浏览器访问</p>
 <p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230925201722696.png"></p>
@@ -198,9 +219,71 @@
 <p>2.再通过回调将值作为实参传给页面</p>
 </blockquote>
 <p>在我的localhost，是一个非89的ip，成功访问到了一个ip为89的数据</p>
+<p>客户端访问服务器(虚拟机)步骤：</p>
+<ol>
+<li><p>自定义同名一个回调函数</p>
+</li>
+<li><p>创建一个script元素</p>
+</li>
+<li><p>这个script呢，指定了要请求的url，并将回调函数的名称作为参数传递过去</p>
+</li>
+<li><p>由于script插入到了当前网页，请求开始(向服务器请求资源)</p>
+</li>
+<li><p>服务器接收传递过来的参数，然后将回调函数和数据呢，以调用的方式输出</p>
+<p><code>$_GET[&#39;callback&#39;].&quot;(&quot;.$json.&quot;)&quot;;</code></p>
+</li>
+</ol>
+<blockquote>
+<p>如果接收到callback&#x3D;test</p>
+<p>那么此时的形式为 test($json)</p>
+<p>客户端写好了的，funciton test(args){…}</p>
+<p>客户端会自己处理的</p>
+</blockquote>
+<p>最后，script元素接收到响应中的脚本代码后，会自动执行它们</p>
 <h6 id="限制"><a href="#限制" class="headerlink" title="限制"></a>限制</h6><p><strong>只能处理GET请求</strong>，且 <strong>必须经过回调</strong>，在真实场景中受限</p>
 <h6 id="拓展"><a href="#拓展" class="headerlink" title="拓展"></a>拓展</h6><p>有关JSONP漏洞方面，请搜索 <strong>“JSONP漏洞”</strong></p>
-<h4 id="2-CORS"><a href="#2-CORS" class="headerlink" title="2.CORS"></a>2.CORS</h4><h4 id="3-WebSocket"><a href="#3-WebSocket" class="headerlink" title="3.WebSocket"></a>3.WebSocket</h4> 
+<h4 id="2-CORS"><a href="#2-CORS" class="headerlink" title="2.CORS"></a>2.CORS</h4><p>跨域资源共享(Cross-Origin Resource Sharing)，该标头内容限制了源域之外的域请求web资源；当网站请求跨域资源时，服务器端将返回此Allow-Origin，并由浏览器添加标头Origin</p>
+<h5 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h5><p>1、在centos中，有以下代码，cors.php</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//连接数据库</span></span><br><span class="line"><span class="variable">$conn</span>=<span class="keyword">new</span> <span class="title function_ invoke__">mysqli</span>(<span class="string">&#x27;127.0.0.1&#x27;</span>,<span class="string">&#x27;root&#x27;</span>,<span class="string">&#x27;1234&#x27;</span>,<span class="string">&#x27;pikachu&#x27;</span>) <span class="keyword">or</span> <span class="keyword">die</span>(<span class="string">&quot;数据库连接失败&quot;</span>);</span><br><span class="line"><span class="variable">$conn</span>-&gt;<span class="title function_ invoke__">set_charset</span>(<span class="string">&#x27;urf8&#x27;</span>);</span><br><span class="line"><span class="variable">$sql</span>=<span class="string">&quot;select id,username,password,level from users&quot;</span>;</span><br><span class="line"><span class="variable">$result</span>=<span class="variable">$conn</span>-&gt;<span class="title function_ invoke__">query</span>(<span class="variable">$sql</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//输出json数据到页面</span></span><br><span class="line"><span class="variable">$json</span> =<span class="title function_ invoke__">json_encode</span>(<span class="variable">$result</span>-&gt;<span class="title function_ invoke__">fetch_all</span>(MYSQLI_ASSOC));</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$json</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">#echo $_GET[&#x27;callback&#x27;].&quot;(&quot;.$json.&quot;)&quot;;</span></span><br><span class="line"><span class="variable">$conn</span>-&gt;<span class="title function_ invoke__">close</span>();</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>2、在主机上实现以下html，去跨域访问虚拟机的cors.php</p>
+<p>上次的jsonp是用xhr方式，这次用jquery</p>
+<p>同文件夹下要有个jquery-3.4.1.min.js文件</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;jquery-3.4.1.min.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">  $.<span class="title function_">get</span>(<span class="string">&#x27;http://192.168.1.89/cors.php&#x27;</span>,<span class="keyword">function</span>(<span class="params">data</span>)&#123;</span></span><br><span class="line"><span class="language-javascript">           <span class="title function_">alert</span>(data);</span></span><br><span class="line"><span class="language-javascript">            &#125;);</span></span><br><span class="line"><span class="language-javascript">        </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        </span><br><span class="line">    <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>主机打开了phpstudy哈，访问</p>
+<p><code>http://localhost:81/7/cors.html</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230927115755518.png"></p>
+<p>3、同源策略的限制，主机访问不了虚拟机的文件</p>
+<p>请求是发出去了的，但是没有收到服务器的响应</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">看一下对cors.php的请求标头</span><br><span class="line">...</span><br><span class="line">Host:</span><br><span class="line">192.168.1.89</span><br><span class="line">Origin:</span><br><span class="line">http://localhost:81</span><br><span class="line">Referer:</span><br><span class="line">http://localhost:81/</span><br></pre></td></tr></table></figure>
+
+<p>4、去虚拟机的php文件中添加头部内容</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="title function_ invoke__">header</span>(<span class="string">&quot;Access-Control-Allow-Origin:*&quot;</span>);</span><br><span class="line"><span class="comment">//*代表任意主机</span></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>主机再次访问，成功弹窗</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230927121320800.png"></p>
+<p>f12可以看到php文件的响应标头</p>
+<blockquote>
+<p>Access-Control-Allow-Origin: *</p>
+<p>当然通常情况下不这样设置*，任意网站都能访问</p>
+</blockquote>
+<p>5、辅助的响应头</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Access-Control-Allow-Origin: *</span><br><span class="line">Access-Contro1-A11ow-Methods: POST,OPTIONS,GET	//请求的类型</span><br><span class="line">Accgss-Contro1-ax-Age: 3600		//生命周期</span><br><span class="line">Access-Contro1-Allow-Headers: accept, x-requested-with, Content-Type	//可以接受的请求头</span><br><span class="line">Access-Contro1-A11ow-Credentials： true		//是否允许发送Cookie</span><br><span class="line">Access-Contro1-A11ow-Origin: http://192.168.10.118:8070		//只允许哪个源访问</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="白名单防御"><a href="#白名单防御" class="headerlink" title="白名单防御"></a>白名单防御</h5><p>为了安全点</p>
+<p>可以在虚拟机的php文件这样添加白名单</p>
+<p>如果不是默认端口，需要额外加上端口</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="variable">$list</span>=<span class="keyword">array</span>(<span class="string">&#x27;http://xxx.ip&#x27;</span>,<span class="string">&#x27;http://yyy.ip&#x27;</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="title function_ invoke__">in_array</span>(<span class="variable">$_SERVER</span>[<span class="string">&#x27;HTTP_ORIGIN&#x27;</span>],<span class="variable">$list</span>))&#123;</span><br><span class="line">    <span class="title function_ invoke__">header</span>(<span class="string">&quot;Access-Control-Allow-Origin:&quot;</span>.<span class="variable">$_SERVER</span>[<span class="string">&#x27;HTTP_ORIGIN&#x27;</span>]);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">&quot;CS disallowed!&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<h5 id="非简单请求的预检过程"><a href="#非简单请求的预检过程" class="headerlink" title="非简单请求的预检过程"></a>非简单请求的预检过程</h5><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/wonyun/p/CORS_preflight.html">https://www.cnblogs.com/wonyun/p/CORS_preflight.html</a></p>
+<h5 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h5><h4 id="3-WebSocket"><a href="#3-WebSocket" class="headerlink" title="3.WebSocket"></a>3.WebSocket</h4><h2 id="总结-2"><a href="#总结-2" class="headerlink" title="总结"></a>总结</h2><p>1、我一开始纠结的是</p>
+<p><code>192.168.1.89/cors.php</code>，为什么我可以访问，这只是一个单纯的url地址，没有跨域。</p>
+<p>是用户在另一台主机上发送ajax请求，那么是因为从服务器A去访问服务器B，所以才会出现跨域的问题，浏览器才会去阻止</p>
+<p>2、跨域，浏览器拦截了，但是请求是发出去了的哈，这是因为服务器没有响应</p>
+ 
       <!-- reward -->
       
     </div>
@@ -287,9 +370,9 @@
       </a>
     
     
-      <a href="/2023/09/23/php%E4%BC%AA%E5%8D%8F%E8%AE%AE/" class="article-nav-link">
+      <a href="/2023/09/23/ThinkPHP/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">php伪协议</div>
+        <div class="article-nav-title">ThinkPHP</div>
       </a>
     
   </nav>

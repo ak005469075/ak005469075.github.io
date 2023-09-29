@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">2.4k</span>
+            <span class="post-count">2.9k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">10 分钟</span>
+            <span class="post-count">12 分钟</span>
         </span>
     </span>
 </div>
@@ -251,6 +251,31 @@
 <p>哦，不对，本机是可以访问127.0.0.1的</p>
 <p>emmm可以跳转那说明没问题噻，不知道</p>
 <p>待解决</p>
+<p>我在本机访问</p>
+<p><code>本机:81/7/jsonpuse.html</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jsonprecv.php?value=&#123;&quot;username&quot;:&quot;Vulkey_Chen&quot;,&quot;mobilephone&quot;:&quot;13188888888&quot;,&quot;email&quot;:&quot;admin@gh0st.cn&quot;,&quot;address&quot;:&quot;%26%2320013%3B%26%2321326%3B%26%2320154%3B%26%2327665%3B%26%2320849%3B%26%2321644%3B%26%2322269%3B&quot;,&quot;sex&quot;:&quot;Cool%20Man&quot;&#125;&amp;referer=undefined</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>这个可以写进数据库</p>
+</blockquote>
+<p>虚拟机访问时，</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.1.142:81/7/jsonprecv.php?value=&#123;%22username%22:%22Vulkey_Chen%22,%22mobilephone%22:%2213188888888%22,%22email%22:%22admin@gh0st.cn%22,%22address%22:%22%D6%D0%BB%AA%C8%CB%C3%F1%B9%B2%BA%CD%B9%FA%22,%22sex%22:%22Cool%20Man%22&#125;&amp;referer=undefined</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>这个是写不进数据库的</p>
+</blockquote>
+<p>我在本机里运行这行url，也写不进去</p>
+<p>好，我在虚拟机里访问</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jsonprecv.php?value=&#123;&quot;username&quot;:&quot;Vulkey_Chen&quot;,&quot;mobilephone&quot;:&quot;13188888888&quot;,&quot;email&quot;:&quot;admin@gh0st.cn&quot;,&quot;address&quot;:&quot;%26%2320013%3B%26%2321326%3B%26%2320154%3B%26%2327665%3B%26%2320849%3B%26%2321644%3B%26%2322269%3B&quot;,&quot;sex&quot;:&quot;Cool%20Man&quot;&#125;&amp;referer=undefined</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p> 数据库是写的进去的</p>
+</blockquote>
+<p>好，问题就出在了这里，虚拟机里的 <strong>火狐</strong>，浏览器似乎没有像 <strong>谷歌</strong> 自动解析的</p>
+<p>噢，在虚拟机里的那个value值，在chrom里出现 <code>无法解码值</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;username&quot;:&quot;Vulkey_Chen&quot;,&quot;mobilephone&quot;:&quot;13188888888&quot;,&quot;email&quot;:&quot;admin@gh0st.cn&quot;,&quot;address&quot;:&quot;&amp;#20013;&amp;#21326;&amp;#20154;&amp;#27665;&amp;#20849;&amp;#21644;&amp;#22269;&quot;,&quot;sex&quot;:&quot;Cool Man&quot;&#125;，这个是有效的</span><br><span class="line"></span><br><span class="line">&#123;&quot;username&quot;:&quot;Vulkey_Chen&quot;,&quot;mobilephone&quot;:&quot;13188888888&quot;,&quot;email&quot;:&quot;admin@gh0st.cn&quot;,&quot;address&quot;:&quot;%D6%D0%BB%AA%C8%CB%C3%F1%B9%B2%BA%CD%B9%FA&quot;,&quot;sex&quot;:&quot;Cool%20Man&quot;&#125; 这个无效</span><br></pre></td></tr></table></figure>
+
+<p>啧，看来后端要好好处理下json格式，不弄</p>
 <h2 id="三、JSONP攻击防御"><a href="#三、JSONP攻击防御" class="headerlink" title="三、JSONP攻击防御"></a>三、JSONP攻击防御</h2><p><strong>对调用方法进行校验</strong></p>
 <ol>
 <li>前后端约定jsonp请求的js回调函数名，不能自定义回调名称</li>
@@ -334,6 +359,15 @@
 
    
   <nav class="article-nav">
+    
+      <a href="/2023/09/24/CORS%E6%BC%8F%E6%B4%9E/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            CORS漏洞
+          
+        </div>
+      </a>
     
     
       <a href="/2023/09/23/%E8%B7%A8%E5%9F%9F%E8%AE%BF%E9%97%AE/" class="article-nav-link">
