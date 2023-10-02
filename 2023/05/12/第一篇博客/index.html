@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">167</span>
+            <span class="post-count">310</span>
         </span>
     </span>
 
@@ -125,11 +125,25 @@
 <p><a target="_blank" rel="noopener" href="https://shen-yu.gitee.io/2019/ayer/#%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE">Ayer中文说明 | 岛 (gitee.io)</a></p>
 <p>Gittalk配置 <a target="_blank" rel="noopener" href="http://t.csdnimg.cn/flZ5A">http://t.csdnimg.cn/flZ5A</a></p>
 <p>Gittalk <a target="_blank" rel="noopener" href="https://github.com/settings/developers">https://github.com/settings/developers</a></p>
-<p>配置github的时候，NOT Found</p>
-<p>发现网络下，访问了个请求为：<a target="_blank" rel="noopener" href="https://api.github.com/repos/owner%E5%90%8D%E5%AD%97?label=Github">https://api.github.com/repos/owner名字?label=Github</a>….</p>
-<p>但实际上应该是，<a target="_blank" rel="noopener" href="https://api.github.com/repos/owner%E5%90%8D%E5%AD%97/repo%E5%90%8D%E7%A7%B0/issues?labels=Gitalk,...%E6%89%8D%E5%AF%B9">https://api.github.com/repos/owner名字/repo名称/issues?labels=Gitalk,...才对</a></p>
-<p>嘶，为什么少一个呢</p>
-<p>而且调用api时的结果时有时无</p>
+<p>配置完成的时候，<strong>NOT Found</strong></p>
+<p>f12发现**”网络”**下，访问了个请求为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://api.github.com/repos/owner名字?label=Github....</span><br></pre></td></tr></table></figure>
+
+<p>但实际上应该是下面的url才对</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://api.github.com/repos/owner名字/repo名称/issues?labels=Gitalk,...</span><br></pre></td></tr></table></figure>
+
+
+
+<p>嘶，为什么少了参数呢？</p>
+<p>当我将<strong>主题的配置文件_config.yml文件</strong>中，注释与值之间间隔多个空格的时候，可以了</p>
+<blockquote>
+<p>repo: 仓库名 (中间尽可能多的空格) # Repository name</p>
+<p>其它的参数最好也这样</p>
+</blockquote>
+<p>但是又出现了另一个关于php资源请求的错误</p>
+<p>将你当初配置的gittalk中的 <strong>Homepage URL</strong>，配置成自己的github<strong>静态页面的路径</strong>即可</p>
+<p>就是找到自己的静态页面仓库，点进去，把上面的<strong>地址栏url</strong>复制过去即可</p>
+<p>以上是对我自己博客的解决方案</p>
  
       <!-- reward -->
       
@@ -199,7 +213,7 @@
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%8D%9A%E5%AE%A2%E7%BB%8F%E9%AA%8C%E6%9D%A5%E6%BA%90/" rel="tag">博客经验来源</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/gittalk/" rel="tag">gittalk</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%8D%9A%E5%AE%A2%E7%BB%8F%E9%AA%8C%E6%9D%A5%E6%BA%90/" rel="tag">博客经验来源</a></li></ul>
 
     </footer>
   </div>
