@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">8.3k</span>
+            <span class="post-count">8.4k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">30 分钟</span>
+            <span class="post-count">31 分钟</span>
         </span>
     </span>
 </div>
@@ -206,13 +206,24 @@
 <p>如果受害者也停留在了留言板上，点击了这个内容，嗯，就中招了</p>
 <p>这个就是一种<strong>跨域访问</strong></p>
 <h1 id="SSRF"><a href="#SSRF" class="headerlink" title="SSRF:"></a>SSRF:</h1><p>SSRF<br>    是什么<br>        SSRF(Server-Side Request Forgery 服务器请求伪造)<br>        目标 ：从外网无法访问的内部系统<br>        原因 ：服务器端提供了从其他服务器应用获取数据的功能且没有对目标地址过滤和限制<br>    挖掘<br>        web功能上<br>            分享<br>                URL地址分享网页内容<br>            转码服务<br>                通过url地址把原地址网页内容调优使其适合手机屏幕浏览<br>            在线翻译<br>                通过url地址翻译对应文本内容<br>            图片加载与下载<br>                通过url地址加载或下载图片<br>            图片、文章收藏功能<br>            未公开的api实现以及其他调用url功能<br>        URL关键字中找<br>            share<br>            wap<br>            url<br>            link<br>            src<br>            source<br>            target<br>            u<br>            3g<br>            display<br>            domain<br>            source(image)url<br>    验证<br>        基本判断<br>            burpsuite抓包<br>            右键打开图片<br>    绕过<br>        子主题 1<br>        子主题 2</p>
-<h2 id="解释：-1"><a href="#解释：-1" class="headerlink" title="解释："></a>解释：</h2><p>服务器端请求伪造（Server-Side Request Forgery，SSRF）是另一种服务器端请求伪造的形式，<strong>攻击者可构造由服务器端发起请求的安全漏洞</strong>。相对于跨站请求伪造，服务器端请求伪造可让服务器执行一些在用户侧无法实现的效果，如内网探测、加载特定图片和文件等。</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230617153505685.png"></p>
-<p>这种从其他服务器应用获取数据的功能，可以使用用户指定的URL，web应用可以获取图片，下载文件，读取文件内容等。这个功能如果被恶意使用，没有对目标地址做严格过滤与限制，导致攻击者可以传入任意的地址来让后端服务器对其发起请求,并返回对该目标地址请求的数据。<br>数据流:攻击者—–&gt;服务器—-&gt;目标地址</p>
-<p>SSRF虽然无法直接请求内网的其他主机信息，但是可以借助能访问的服务器，当做跳板，进而进行攻击。（用网站自己打自己内网）</p>
-<h2 id="ssrf攻击"><a href="#ssrf攻击" class="headerlink" title="ssrf攻击"></a>ssrf攻击</h2><p>在Web应用中，存在着大量需要<strong>由服务器端向第三方发起请求的业务</strong>。</p>
-<p>例如，大多数网站具备的天气显示功能，页面首先会获取当前用户的IP地址，并根据IP地址所在的地理位置信息，向<strong>第三方</strong>天气查询服务器发起请求，最后将结果回显给用户。</p>
-<p>这类业务的核心问题在于服务器需根据用户提交的参数进行后续的业务流程，因此如果<strong>用户提交恶意的参数信息，并且服务器未对用户提交的参数进行合法性判断而直接执行后续请求业务，就会导致出现安全隐患，</strong>这也是SSRF漏洞的主要成因。</p>
+<h2 id="解释：-1"><a href="#解释：-1" class="headerlink" title="解释："></a>解释：</h2><p><del>服务器端请求伪造（Server-Side Request Forgery，SSRF）是另一种服务器端请求伪造的形式，<strong>攻击者可构造由服务器端发起请求的安全漏洞</strong>。相对于跨站请求伪造，服务器端请求伪造可让服务器执行一些在用户侧无法实现的效果，如内网探测、加载特定图片和文件等。</del></p>
+<p><del><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230617153505685.png"></del></p>
+<p><del>这种从其他服务器应用获取数据的功能，可以使用用户指定的URL，web应用可以获取图片，下载文件，读取文件内容等。这个功能如果被恶意使用，没有对目标地址做严格过滤与限制，导致攻击者可以传入任意的地址来让后端服务器对其发起请求,并返回对该目标地址请求的数据。</del><br>数据流:攻击者—–&gt;服务器—-&gt;目标地址</p>
+<p><del>SSRF虽然无法直接请求内网的其他主机信息，但是可以借助能访问的服务器，当做跳板，进而进行攻击。（用网站自己打自己内网）</del></p>
+<p>20230928</p>
+<p>一般来说，服务器比较被动，有客户端请求它，它才给响应</p>
+<p>但有时候，服务器可以作为客户端的</p>
+<p>也就是说目标服务器a还是有<strong>访问公网</strong>能力的，只要攻击者构造一个恶意的公网服务器b，让a去访问b，那就被拿捏了呀</p>
+<p>以php为例，它的常见函数</p>
+<blockquote>
+<p>file_get_contents();</p>
+<p>fsockopen();</p>
+<p>curl_exec();</p>
+<p>通过网络协议去远程访问目标服务器的资源</p>
+</blockquote>
+<h2 id="ssrf攻击"><a href="#ssrf攻击" class="headerlink" title="ssrf攻击"></a>ssrf攻击</h2><p><del>在Web应用中，存在着大量需要<strong>由服务器端向第三方发起请求的业务</strong>。</del></p>
+<p><del>例如，大多数网站具备的天气显示功能，页面首先会获取当前用户的IP地址，并根据IP地址所在的地理位置信息，向<strong>第三方</strong>天气查询服务器发起请求，最后将结果回显给用户。</del></p>
+<p><del>这类业务的核心问题在于服务器需根据用户提交的参数进行后续的业务流程，因此如果<strong>用户提交恶意的参数信息，并且服务器未对用户提交的参数进行合法性判断而直接执行后续请求业务，就会导致出现安全隐患，</strong>这也是SSRF漏洞的主要成因。</del></p>
 <p>SSRF攻击相对于CSRF攻击来说，攻击者需伪造的请求为<strong>服务器端发起的内容。</strong></p>
 <p><strong>前提：</strong></p>
 <p>“攻击者可能要知道，目标机<strong>内部使用的API</strong>(第三方Open API，如Google API、AWS API等等)——20230903”</p>
@@ -292,7 +303,7 @@
 <h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><p>1.排除法：浏览器f12查看源代码看是否是在本地进行了请求<br>比如：该资源地址类型为 <a target="_blank" rel="noopener" href="http://www.xxx.com/a.php?image=%EF%BC%88%E5%9C%B0%E5%9D%80%EF%BC%89%E7%9A%84%E5%B0%B1%E5%8F%AF%E8%83%BD%E5%AD%98%E5%9C%A8SSRF%E6%BC%8F%E6%B4%9E">http://www.xxx.com/a.php?image=（地址）的就可能存在SSRF漏洞</a><br>2.dnslog等工具进行测试，看是否被访问<br>–可以在盲打后台用例中将当前准备请求的uri 和参数编码成base64，这样盲打后台解码后就知道是哪台机器哪个cgi触发的请求。<br>3.抓包分析发送的请求是不是由服务器的发送的，如果不是客户端发出的请求，则有可能是，接着找存在HTTP服务的内网地址<br>–从漏洞平台中的历史漏洞寻找泄漏的存在web应用内网地址<br>–通过二级域名暴力猜解工具模糊猜测内网地址<br>4.直接返回的Banner、title、content等信息<br>5.留意bool型SSRF<br>————————————————<br>版权声明：本文为CSDN博主「Never say die _」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_45612828/article/details/126193765">https://blog.csdn.net/qq_45612828/article/details/126193765</a></p>
 <h2 id="绕过"><a href="#绕过" class="headerlink" title="绕过"></a>绕过</h2><h3 id="1-绕过IP"><a href="#1-绕过IP" class="headerlink" title="1.绕过IP"></a>1.绕过IP</h3><p>1）使用IPV6地址<br>2）对IP转化成十进制，八进制等，如0177.0.0.01（八进制）<br>3）利用特殊域名。xip.io可以指向任意域名，即127.0.0.1.xip.io，可解析为127.0.0.1<br>4）利用句号。如127。0。0。1<br>5）可以[::]。如http:&#x2F;&#x2F;[::]:80&#x2F;<br>6）利用短网址。比如百度短地址<br>————————————————<br>版权声明：本文为CSDN博主「Never say die _」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_45612828/article/details/126193765">https://blog.csdn.net/qq_45612828/article/details/126193765</a></p>
 <h3 id="2-绕过url解析限制"><a href="#2-绕过url解析限制" class="headerlink" title="2.绕过url解析限制"></a>2.绕过url解析限制</h3><ul>
-<li>1）使用@符号绕过：如<a href="mailto:&#x31;&#x32;&#x37;&#x2e;&#x30;&#x2e;&#x30;&#46;&#49;&#x40;&#101;&#118;&#105;&#108;&#x2e;&#x63;&#111;&#109;">&#x31;&#x32;&#x37;&#x2e;&#x30;&#x2e;&#x30;&#46;&#49;&#x40;&#101;&#118;&#105;&#108;&#x2e;&#x63;&#111;&#109;</a></li>
+<li>1）使用@符号绕过：如<a href="mailto:&#x31;&#50;&#x37;&#46;&#48;&#46;&#48;&#46;&#x31;&#x40;&#101;&#118;&#105;&#108;&#46;&#99;&#111;&#x6d;">&#x31;&#50;&#x37;&#46;&#48;&#46;&#48;&#46;&#x31;&#x40;&#101;&#118;&#105;&#108;&#46;&#99;&#111;&#x6d;</a></li>
 <li>2）利用302跳转，需要一个vps，把302转换的代码部署到vps上，然后去访问，就可跳转到内网中</li>
 </ul>
 <h3 id="3-DNS重绑定攻击"><a href="#3-DNS重绑定攻击" class="headerlink" title="3.DNS重绑定攻击"></a>3.DNS重绑定攻击</h3><p><a target="_blank" rel="noopener" href="https://www.geekby.site/2021/01/ssrf%E6%BC%8F%E6%B4%9E%E7%9B%B8%E5%85%B3/">Geekby’s Blog</a></p>
@@ -532,6 +543,32 @@
 
   
    
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.css">
+
+
+<script src="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.js"></script>
+
+
+<script src="https://cdn.staticfile.org/blueimp-md5/2.19.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '93da8388ad1469a8be66',
+    clientSecret: '9dea6314b14ae1877632f2bcbe0a639dd4485bb1',
+    repo: 'blogtalk-Yuleiyun# Repository name',
+    owner: 'ak005469075# GitHub ID',
+    admin: ['ak005469075# GitHub ID'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
   
    
     <script src="https://cdn.staticfile.org/twikoo/1.4.18/twikoo.all.min.js"></script>

