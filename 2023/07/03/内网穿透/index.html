@@ -96,7 +96,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">4.1k</span>
+            <span class="post-count">4.9k</span>
         </span>
     </span>
 
@@ -105,7 +105,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">16 分钟</span>
+            <span class="post-count">18 分钟</span>
         </span>
     </span>
 </div>
@@ -268,7 +268,8 @@
 <p> 目的是坐飞机，但是要有机票(TGT)，去购票处(AS)先进行客户端认证一波，拿到TGT，登机时，检票口(TGS)要求出示机票(TGT)，之后，显示座位号(Ticket)，可以坐到座位上</p>
 </blockquote>
 <p>这个理解来自<a target="_blank" rel="noopener" href="http://t.csdn.cn/Ha6pl">CSDN思源湖的鱼</a></p>
-<h3 id="NTLM协议流程"><a href="#NTLM协议流程" class="headerlink" title="NTLM协议流程"></a>NTLM协议流程</h3><p>采用一种质询&#x2F;应答消息交换模式</p>
+<h3 id="NTLM协议流程"><a href="#NTLM协议流程" class="headerlink" title="NTLM协议流程"></a>NTLM协议流程</h3><p>当kerberos在某些情况无法对用户认证时，NTLM作为备份</p>
+<p>采用一种质询&#x2F;应答消息交换模式</p>
 <p>一、用户输入windows账号和密码登录客户端主机。客户端会缓存输入的密码哈希，原始密码被丢弃。成功登录的客户端windows的用户尝试访问服务器资源，发送请求，包含一个明文用户名。</p>
 <p>二、服务器接收该请求，生成16位的随机数，即Challenge，明文发送给对方，并自己保存。</p>
 <p>三、客户端收到challenge，用第一步保存的密码哈希值对其加密，将加密后的challenge发送给服务器。</p>
@@ -405,7 +406,33 @@
 <p>因为Silver Ticket 不与KDC产生交互产生的日志中，应该关注事件ID 4624（账户登录）、4634（账户注销)、4672（管理员登录)，并且域字段应该为Domain 时为空</p>
 <h4 id="黄金票据与白银票据参考"><a href="#黄金票据与白银票据参考" class="headerlink" title="黄金票据与白银票据参考"></a>黄金票据与白银票据参考</h4><p><a target="_blank" rel="noopener" href="http://t.csdn.cn/b7iDz">csdn彤彤学安全</a></p>
 <p><a target="_blank" rel="noopener" href="http://t.csdn.cn/Ha6pl">CSDN思源湖的鱼</a></p>
-<h3 id="热土豆提权"><a href="#热土豆提权" class="headerlink" title="热土豆提权"></a>热土豆提权</h3><h3 id="Responder-WPAD-提权"><a href="#Responder-WPAD-提权" class="headerlink" title="Responder -WPAD 提权"></a>Responder -WPAD 提权</h3><h1 id="5-跨域环境渗透"><a href="#5-跨域环境渗透" class="headerlink" title="5.跨域环境渗透"></a>5.跨域环境渗透</h1> 
+<h3 id="热土豆提权"><a href="#热土豆提权" class="headerlink" title="热土豆提权"></a>热土豆提权</h3><h3 id="Responder-WPAD-提权"><a href="#Responder-WPAD-提权" class="headerlink" title="Responder -WPAD 提权"></a>Responder -WPAD 提权</h3><h1 id="5-跨域环境渗透"><a href="#5-跨域环境渗透" class="headerlink" title="5.跨域环境渗透"></a>5.跨域环境渗透</h1><h1 id="知识补充"><a href="#知识补充" class="headerlink" title="知识补充"></a>知识补充</h1><h3 id="SAM-安全账户管理器"><a href="#SAM-安全账户管理器" class="headerlink" title="SAM(安全账户管理器)"></a>SAM(安全账户管理器)</h3><p>SAM数据库以NTLM哈希格式存储本地Windows凭证。本地登录期间，用户输入密码后，本地安全机构(LSA)通过根据存储在SAM中的数据验证凭证来验证登录尝试。</p>
+<p>从SAM中导出哈希，有多种方法</p>
+<h3 id="工具导出"><a href="#工具导出" class="headerlink" title="工具导出"></a>工具导出</h3><h4 id="mimikatz"><a href="#mimikatz" class="headerlink" title="mimikatz"></a>mimikatz</h4><p>这个工具可以导出SAM中的凭证，命令为:mimikatz lsadump::sam，本地账号</p>
+<h4 id="C2内置命令"><a href="#C2内置命令" class="headerlink" title="C2内置命令"></a>C2内置命令</h4><p>cs(cobalt strike)中的，hashdump命令</p>
+<h4 id="impacket-远程导出"><a href="#impacket-远程导出" class="headerlink" title="impacket 远程导出"></a>impacket 远程导出</h4><h3 id="离线导出"><a href="#离线导出" class="headerlink" title="离线导出"></a>离线导出</h3><h4 id="注册表复制"><a href="#注册表复制" class="headerlink" title="注册表复制"></a>注册表复制</h4><p>从注册表HKLM\SAM和HKTM\SYSTEM的位置拷贝SAM数据库和SYSTEM</p>
+<p>SAM包含了本地账户凭证，SYSTEM包含了解密所用信息(SAM和LSA机密)</p>
+<h3 id="LSA"><a href="#LSA" class="headerlink" title="LSA"></a>LSA</h3><p><strong>LSA</strong>：负责管理系统的交互式登录，给用户分发安全访问令牌、实施本地安全策略等</p>
+<p><strong>LSA机密</strong>： 就是LSA存储的一些敏感信息(用户密码、IE密码、服务账号密码、sqL密码、系统账户密码等)</p>
+<p>提取方式类似提取SAM中的凭证(证书&#x2F;密码&#x2F;PIN等)</p>
+<h3 id="LSASS"><a href="#LSASS" class="headerlink" title="LSASS"></a>LSASS</h3><p>即本地安全机构子系统服务，是windows上的一个进程，lsass.exe，攻击者的目标之一。</p>
+<p>它代表LSA去执行安全策略和处理用户身份验证请求。</p>
+<p>它以高权限运行，所以成为攻击者的常见目标</p>
+<p><strong>与LSA关系</strong></p>
+<p>它和LSA都是和windows中处理安全和用户身份认证的密切相关组件</p>
+<p><strong>AP&#x2F;SSP</strong></p>
+<p>即认证包&#x2F;安全支持提供程序，它通过分析登录数据来认证windows用户，以DLL形式存在。</p>
+<p>常见的AP&#x2F;SSP，有：NTLM，kerberos，Wdigest等</p>
+<p><strong>从lsass.exe中导出凭证</strong></p>
+<p>由于lsass用于处理用户身份认证，所以在内存中保留了凭证。攻击者获得提升特权后，可以从中提取明文或哈希的凭证。mimikatz中的 <code>sekurlsa::logonpasswords</code>就是从lsass中获取凭证的命令</p>
+<p>除了用mimikatz，也有系统内置方法，比如ProdDump64.exe 命令导出</p>
+<p>，导出后再用pypykatz进行解析</p>
+<h3 id="PPL"><a href="#PPL" class="headerlink" title="PPL"></a>PPL</h3><p>这是一种对 <code>攻击者导出凭证</code>的防御措施，即使是SYSTEM权限也无法访问被PPL保护的进程，所以对于启用了PPL保护的主机，那些工具都失效了</p>
+<p>当然，有对策，就有反对策，做攻击的人，往往熟悉的一个名词就是 “绕过”</p>
+<p><strong>绕过</strong></p>
+<p>PPL是驱动级别的，可以用 <code>加载签名的驱动来反制</code>。门槛高的话，可以自己去编写一个驱动为其签名；一般的方法是，去找系统中存在任意代码执行的脆弱驱动，比如 <strong>RTCore64.sys</strong>，它存在一个CVE-2019-16098的漏洞，由于允许用户读写任意内存、IO端口等，导致高特权下的代码执行，进而用于绕过微软的驱动签名策略</p>
+<p>还有一些github上的PPL利用工具</p>
+ 
       <!-- reward -->
       
     </div>
@@ -474,7 +501,7 @@
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kerberos/" rel="tag">kerberos</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/" rel="tag">内网穿透</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NTLM/" rel="tag">NTLM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kerberos/" rel="tag">kerberos</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/" rel="tag">内网穿透</a></li></ul>
 
     </footer>
   </div>
@@ -492,9 +519,9 @@
       </a>
     
     
-      <a href="/2023/07/02/%E9%93%BE%E8%A1%A8/" class="article-nav-link">
+      <a href="/2023/07/02/%E5%8A%9B%E6%89%A3/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">链表</div>
+        <div class="article-nav-title">力扣</div>
       </a>
     
   </nav>

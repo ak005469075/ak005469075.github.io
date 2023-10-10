@@ -11,7 +11,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1"
       />
-      <title>随谈 |  小张之栈</title>
+      <title>windows认证 |  小张之栈</title>
   <meta name="generator" content="hexo-theme-ayer">
       
       <link rel="shortcut icon" href="/favicon.ico" />
@@ -64,7 +64,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-无聊的想法"
+  id="post-windows认证"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -76,7 +76,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  随谈
+  windows认证
 </h1>
  
 
@@ -84,11 +84,11 @@
     </header>
      
     <div class="article-meta">
-      <a href="/2023/09/26/%E6%97%A0%E8%81%8A%E7%9A%84%E6%83%B3%E6%B3%95/" class="article-date">
-  <time datetime="2023-09-25T16:21:20.000Z" itemprop="datePublished">2023-09-26</time>
+      <a href="/2023/10/07/windows%E8%AE%A4%E8%AF%81/" class="article-date">
+  <time datetime="2023-10-06T16:01:23.000Z" itemprop="datePublished">2023-10-07</time>
 </a> 
   <div class="article-category">
-    <a class="article-category-link" href="/categories/%E6%B8%97%E9%80%8F/">渗透</a> / <a class="article-category-link" href="/categories/%E6%B8%97%E9%80%8F/%E7%BD%91%E7%BB%9C/">网络</a>
+    <a class="article-category-link" href="/categories/windows%E8%AE%A4%E8%AF%81/">windows认证</a>
   </div>
   
 <div class="word_count">
@@ -96,7 +96,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.4k</span>
+            <span class="post-count">842</span>
         </span>
     </span>
 
@@ -105,7 +105,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">4 分钟</span>
+            <span class="post-count">2 分钟</span>
         </span>
     </span>
 </div>
@@ -120,67 +120,48 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h2 id="随谈1"><a href="#随谈1" class="headerlink" title="随谈1"></a>随谈1</h2><p>已知，存储型xss的钓鱼原理，是使得受害者去主动访问攻击者的服务器上的文件，从而携带受害者的信息，存到攻击者的数据库上面</p>
-<p>那么这上面有一个问题，搭建渗透平台的时候，我是采用了主机作为攻击者，虚拟机作为受害者</p>
-<p>就拿最近的cors漏洞讲，假如我的虚拟机ip是78，我的主机ip是100</p>
-<p>我虚拟机和主机之间的文件是可以通过浏览器互相访问的</p>
-<p><strong>虚拟机：</strong></p>
-<p>​	“登录”了靶场后，”主动访问“了主机的1.html文件，导致一些信息被盗走</p>
-<p><strong>主机：</strong></p>
-<p>我主机作为攻击者怎么讲，写了一个1.html文件</p>
-<p>它带着一些参数值，去访问我本机的另一个2.php文件</p>
-<p>php文件接收到这些值后，写进本机的数据库中去</p>
-<p>完成了钓鱼操作</p>
-<p>那么这里，如果代入到真实环境中，是怎样的？</p>
-<p>如何使得<strong>受害者</strong>访问 <strong>攻击者</strong>的资源呢？</p>
+  <h1 id="Windows认证"><a href="#Windows认证" class="headerlink" title="Windows认证"></a>Windows认证</h1><p><strong>本地认证</strong>：本地(个人PC)登录时的认证，安全账户管理(SAM)去验证凭证。</p>
+<p><strong>域认证</strong>：通过分发的域账户登录工作站并访问内部资源，域控制器(DC)去验证凭证。</p>
+<p>认证的形式：<strong>物理认证</strong>、<strong>远程认证</strong></p>
+<p><strong>物理认证</strong>：用户在<strong>目标电脑前</strong>输入凭证登录，使用于本地用户和域用户；在AD域中，默认情况下，<strong>任何域用户</strong>可以<strong>物理</strong>登录<strong>任何域主机</strong>。</p>
+<p><strong>远程认证</strong>：默认情况下需要<code>特定权限</code>才能远程登录，比如 属于本地管理员分组、远程桌面用户分组。</p>
+<p><strong>AP&#x2F;SSP</strong>：通过分析登录数据来认证windows用户，它以DLL形式存在，已知常见的AP&#x2F;SSP有：NTLM、Kerberos、WDigest</p>
+<p><strong>AP</strong>：可以理解为一个接入点，为客户端和认证服务器提供了所需逻辑。</p>
+<p>对客户端来讲，要通过windows认证并连接到特定服务；</p>
+<p>对服务器来讲，让服务或应用程序支持windows认证</p>
+<p><strong>SSP接口</strong>：使得应用程序与认证系统可以无缝继承。</p>
+<p>应用层←→SSPI层←→SSP层</p>
+<p><strong>SSPI</strong>：用于安全包管理、凭证管理、安全上下文管理、消息支持。</p>
+<p><strong>交互式登录VS非交互式登录</strong>：<strong>交互式</strong>：在登录界面输入密码登录；<strong>非交互</strong>：发生在交互式之后，有缓存凭证的时候。</p>
+<p><strong>登录会话</strong>：在认证成功后建立的，同时会<strong>向LSA提供用户的安全信息</strong></p>
+<p><strong>令牌</strong>：登录会话创建后，向LSA提供的信息，就会被用于创建一个访问令牌；其包含了一个认证用户的本地安全上下文。每个 <strong>访问令牌</strong> 被绑定给一个 <strong>登录会话</strong>。</p>
+<p>其内容包括：用户SID，用户组归属，会话ID，令牌类型等。</p>
+<p>分类：主要令牌、模仿令牌</p>
+<h3 id="用户模仿"><a href="#用户模仿" class="headerlink" title="用户模仿"></a><strong>用户模仿</strong></h3><p>创建或劫持另一个用户的<strong>安全上下文</strong>以在网络中代表这个用户。</p>
+<p>创建的话，需要凭证；劫持的话，需要特权</p>
+<p>用户模仿实现途径：</p>
 <blockquote>
-<p>看来攻击者也需要一个<strong>部署在公网上的服务器</strong></p>
+<p>令牌操纵：</p>
+<p>SharpToken工具，在本地管理员或SYSTEM权限下，列举可用令牌并窃取</p>
+<p>Cobalt strike的内置命令steal_token也可实现窃取</p>
+<p>进程注入实现</p>
 </blockquote>
-<h2 id="随谈2"><a href="#随谈2" class="headerlink" title="随谈2"></a>随谈2</h2><p>当时和同学讨论外网内网问题，是在学习到跨域访问这一知识的时候想起来的</p>
-<p>跨域，涉及到一个前置知识叫，同源策略，该策略，大意是指，当前网页呢，会通过js去加载外部资源，这个外部资源必须和当前网页的 <strong>来源</strong>，<code>同协议、同域名、同端口</code>；</p>
-<p>如何跨域，除了已知的标签 script、iframe，等等</p>
-<p>还有jsonp方式，cors方式</p>
-<p>这里为了记忆深刻，再输出一下</p>
-<p>jsonp，顾名思义，针对的是有json格式输出的跨域</p>
-<p>jsonp的跨域原理，是基于回调函数，将json值通过函数处理输出出来的，它还特别用到了不受同源策略影响的script标签</p>
-<p>缺点就是 只能通过GET获取，然后是基于回调函数</p>
-<p>其漏洞呢，</p>
-<p>1.就是说攻击者知道其调用函数，构造一个同名函数，但函数体可能是恶意的方法，比如location.href到攻击者的服务器</p>
-<p>2.csrf，它这个漏洞在于，<strong>没有限定callback的函数名</strong>，让受害者在登录状态下触发，可能是超链接或其它方式，主动去访问攻击者预先写好的文件</p>
-<p>防御呢，对函数名白名单啊，限制url长度啊等等</p>
-<p>cors，跨域资源共享，怎么做的，需要用户所访问的后端文件有指明Allow-Origin，否则，浏览器是可以请求到，但是得不到服务器响应</p>
-<p>其漏洞也是一个csrf，它的漏洞在于，<strong>没有对Allow-Origin限制</strong>，<del>复现过程比jsonp感觉要简单点，我主机去获取数据写进数据库的时候反正是成功了，jsonp的那个json值不好处理，容易为空</del></p>
-<p>防御也是，指明允许的origin，白名单等</p>
-<p>这里当时在纠结个什么事情呢，</p>
-<p>我在主机的浏览器去访问虚拟机的靶场，比如我会 <code>xxx.ip/Dorabox</code>，然后就访问到了</p>
-<p>这个为什么不算是跨域呢，首先跨域问题主要针对的是：</p>
-<p><strong>前端js请求外部资源问题才会发生</strong></p>
-<p>噢，我好像确实访问虚拟机的时候，都是php文件，貌似没有访问过html文件呢</p>
-<p>这个行为就好像是 访问物理服务器上的文件，没有本质区别</p>
-<p>当然从技术层面讲，涉及到 <strong>网络通信</strong>、<strong>同源策略</strong></p>
-<p>比如http请求嘛，对吧，但访问自己的本地文件不需要，直接读取</p>
-<p><strong>！！！！主机和虚拟机是算作同一域名的，这个为什么，忘了，到时候再看看，标记一下</strong></p>
-<p>然后想说什么来着。。。</p>
-<h2 id="随谈3"><a href="#随谈3" class="headerlink" title="随谈3"></a>随谈3</h2><p>关于渗透这个东西</p>
-<p>攻击者可以渗透的东西，拿网页来说</p>
-<p>攻击者接触的第一个点就是web服务器，准确来说是部署在公网上的web前端</p>
-<p>而这个web服务器，有一点不清楚，通过开发的前后端分离，</p>
-<p>到底是前端后端都在同一个服务器呢，还是在两个不同服务器呢？</p>
-<p>好像也没什么影响，就拿<a target="_blank" rel="noopener" href="http://t.csdn.cn/GAfyy">webshell</a>来说</p>
-<p>找到一个文件上传的点，就把小马啊送到了服务器上面，那使用工具就可以去连接上去</p>
-<p>文件上传漏洞的前提哈：1.传的上去；2.文件会被解析；3.知道绝对路径</p>
-<p>这个路径，可以通过字典遍历枚举得到</p>
-<p>关于webshell工具为什么有这种效果</p>
-<p>嘶，没考虑过</p>
-<p>首先往后端php服务器放了个a.php</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> @<span class="keyword">eval</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;pass&#x27;</span>]);<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>这个效果就是：用post方法接收变量pass,把变量pass里面的字符串当做php代码来执行</p>
-<p>虚拟终端 其实也是调用系统命令 system 发送一次请求获取一次结果然后显示</p>
-<p><strong>！！！！！问题是为什么可以输入路径，加pass就可以得到webshell呢</strong></p>
-<p>传统的小马特征很明显，容易被检测到，后面都是搞不死马了，也即是内存马，无文件类型</p>
-<p><strong>！！！！！内存马</strong></p>
-<p>渗透只要拿到web服务器的权限，想办法提权，去渗内网</p>
+<blockquote>
+<p>密码</p>
+<p>NT哈希</p>
+<p>Kerberos票据等</p>
+</blockquote>
+<h4 id="有明文密码"><a href="#有明文密码" class="headerlink" title="有明文密码"></a>有明文密码</h4><p>有明文密码时实现用户模仿，用runas.exe工具，具体的我不知晓</p>
+<h4 id="有NT哈希"><a href="#有NT哈希" class="headerlink" title="有NT哈希"></a>有NT哈希</h4><p>获取了NTLM哈希时实现用户模仿</p>
+<p><strong>1.用Mimikatz完成基于LSA的哈希传递</strong></p>
+<p><strong>2.使用协议工具如，Impacket、CrackMapExec等</strong></p>
+<h4 id="有Kerberos票据"><a href="#有Kerberos票据" class="headerlink" title="有Kerberos票据"></a>有Kerberos票据</h4><p>如果是与LSA交互：</p>
+<p>将票据导入到<strong>当前会话</strong>不需要特权，导入到其他会话是要的</p>
+<blockquote>
+<p><strong>PTK</strong>：即票据传递，将其他用户的Kerberos票据（得到或伪造的），导入到攻击者所控制的登录会话技术。工具Rubeus</p>
+</blockquote>
+<p>如果在低权限情况下导入呢，可以用make_token(cs内置命令)创建一个新的登录会话，导入票据防止覆盖原有TGT</p>
+<p>高权限下，先 <strong>创建一个牺牲进程</strong>，导入票据；因为一个登录会话每次只能有一张TGT。将票据导入到该牺牲会话后，<strong>窃取令牌</strong>或在该进程 <strong>注入载荷</strong>。</p>
  
       <!-- reward -->
       
@@ -245,32 +226,21 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/09/26/%E6%97%A0%E8%81%8A%E7%9A%84%E6%83%B3%E6%B3%95/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/10/07/windows%E8%AE%A4%E8%AF%81/" alt="微信分享二维码">
     </div>
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B8%97%E9%80%8F/" rel="tag">渗透</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a></li></ul>
-
     </footer>
   </div>
 
    
   <nav class="article-nav">
     
-      <a href="/2023/09/26/%E8%9A%81%E5%89%91%E5%8E%9F%E7%90%86/" class="article-nav-link">
-        <strong class="article-nav-caption">上一篇</strong>
-        <div class="article-nav-title">
-          
-            蚁剑原理
-          
-        </div>
-      </a>
     
-    
-      <a href="/2023/09/24/CORS%E6%BC%8F%E6%B4%9E/" class="article-nav-link">
+      <a href="/2023/10/01/vpn%E5%8E%9F%E7%90%86/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">CORS漏洞</div>
+        <div class="article-nav-title">VPN原理浅谈</div>
       </a>
     
   </nav>
