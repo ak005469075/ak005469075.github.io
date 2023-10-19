@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>JWT |  小张之栈</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-JWT"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+  
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  JWT
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/10/07/JWT/" class="article-date">
+  <time datetime="2023-10-06T21:01:23.000Z" itemprop="datePublished">2023-10-07</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/JWT/">JWT</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">1.7k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">6 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="JWT"><a href="#JWT" class="headerlink" title="JWT"></a>JWT</h1><p>json web token，一种json数据传输的安全认证机制</p>
+<p>分为三部分，header、payload、signature</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</span><br><span class="line"><span class="comment">//header，签名算法，JWT的类型</span></span><br><span class="line">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9</span><br><span class="line">对应<span class="punctuation">:</span></span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;alg&quot;</span><span class="punctuation">:</span> <span class="string">&quot;HS256&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;typ&quot;</span><span class="punctuation">:</span> <span class="string">&quot;JWT&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br><span class="line"><span class="comment">//payload，传输的主要信息</span></span><br><span class="line">eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ</span><br><span class="line">对应：</span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;sub&quot;</span><span class="punctuation">:</span> <span class="string">&quot;1234567890&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;John Doe&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;iat&quot;</span><span class="punctuation">:</span> <span class="number">1516239022</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br><span class="line"><span class="comment">//signature，使用指定算法对Header和Payload进行签名生成</span></span><br><span class="line">SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</span><br><span class="line">对应：</span><br><span class="line">HMACSHA256(</span><br><span class="line">  base64UrlEncode(header) + <span class="string">&quot;.&quot;</span> +</span><br><span class="line">  base64UrlEncode(payload)<span class="punctuation">,</span></span><br><span class="line">  </span><br><span class="line">your<span class="number">-256</span>-bit-secret</span><br><span class="line"></span><br><span class="line">) </span><br></pre></td></tr></table></figure>
+
+<p>JWT 中的每一部分都是经过Base64编码的，所以可以Base64解码</p>
+<h2 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h2><p>和一般token差不多吧</p>
+<blockquote>
+<ol>
+<li>客户端将登录信息传送给服务器</li>
+<li>服务器用私钥对用户信息加密成JWT，返回给客户端</li>
+<li>客户端之后的每次请求，都携带JWT，供服务端检验和认证</li>
+<li>服务端收到JWT，用公钥解密，对用户信息进行检验和认证</li>
+<li>服务器响应给客户端，客户端有对应的响应</li>
+</ol>
+</blockquote>
+<h2 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h2><h3 id="签名未校验"><a href="#签名未校验" class="headerlink" title="签名未校验"></a>签名未校验</h3><p>目的：修改会话令牌以访问位于&#x2F;admin的管理面板然后删除用户carlos</p>
+<p>如果已知一个用户的账号和密码，登录进去，我们捕捉一下包</p>
+<p>获取如下数据</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Cookie: session=eyJraWQiOiI4ZmFiNjY4Ni02MmU2LTQyOTItYWFkMy1mZTk1Y2EwMjVhN2YiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJwb3J0c3dpZ2dlciIsInN1YiI6IndpZW5lciIsImV4cCI6MTY5NzU5OTMxNH0.Y_kO3WYAZQ7PiUxOiojCxeNkjW88NL-abM36qGU2lspHymMM7NrBVILMG4dvUV-XE6ZNqF-s0NSLDweuFDysXgV_h3BJe-s4-Kv9F5JWK48MV6Q-j2302sHfrMEAsh3tUrGQubJCi5q-0F2--tquNDD-4ZKCZ_qqC0J8yTWeJfjbBJEdXrmUa4eQcPlc73B9cdoJx-BE4f33i6wM9b_LOYtyRlMISm5L0gzEYLpFZnwSqZeEQ0JN7kVda3zfJLB-C0QznKG4Q-ZkjeQ5oRuLsos7ZHrB_lP5BtrSWW7Eli78Rm4nzUIWWI6FTbTP5uNfE0MIVHsfsku4OxOjDYyiCA</span><br></pre></td></tr></table></figure>
+
+<p>去解析JWT后，可以发现，payload部分内容</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;iss&quot;</span><span class="punctuation">:</span> <span class="string">&quot;portswigger&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;sub&quot;</span><span class="punctuation">:</span> <span class="string">&quot;wiener&quot;</span><span class="punctuation">,</span> <span class="comment">//更改为administrator</span></span><br><span class="line">  <span class="attr">&quot;exp&quot;</span><span class="punctuation">:</span> <span class="number">1697599314</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>base64加密处理一下后，替换payload</p>
+<blockquote>
+<p>eyJpc3MiOiAicG9ydHN3aWdnZXIiLCJzdWIiOiAiYWRtaW5pc3RyYXRvciIsImV4cCI6IDE2OTc1OTkzMTR9</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231018105426889.png" alt="进入admin面板"></p>
+<p>按题目要求访问 <code>/admin</code> 路径</p>
+<p>我在浏览器进行访问时，还是提示仅administrator用户访问</p>
+<blockquote>
+<p>Admin interface only available if logged in as an administrator</p>
+</blockquote>
+<p>那只能继续在bp中访问</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231018105545144.png" alt="访问成功"></p>
+<p>delete carlos用户</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231018105652494.png" alt="跳转"></p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>利用的漏洞原理是，因为JWT库会有验证(签名)方法和解码方法，如果开发人员的疏忽，只将JWT传进了解码方法，而没有用验证方法，那就可以绕过了</p>
+<h3 id="签名None"><a href="#签名None" class="headerlink" title="签名None"></a>签名None</h3><p>登录后，捕捉header部分</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;kid&quot;</span><span class="punctuation">:</span> <span class="string">&quot;48dbebfc-97c1-4f42-b1fa-b9232e598747&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;alg&quot;</span><span class="punctuation">:</span> <span class="string">&quot;RS256&quot;</span> <span class="comment">//替换为none</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br><span class="line"></span><br><span class="line">After：</span><br><span class="line"></span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;kid&quot;</span><span class="punctuation">:</span> <span class="string">&quot;48dbebfc-97c1-4f42-b1fa-b9232e598747&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;alg&quot;</span><span class="punctuation">:</span> <span class="string">&quot;none&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>ewogICJraWQiOiAiNDhkYmViZmMtOTdjMS00ZjQyLWIxZmEtYjkyMzJlNTk4NzQ3IiwKICAiYWxnIjogIm5vbmUiCn0&#x3D;</p>
+</blockquote>
+<p>再编译替换header部分(&#x3D;替换为%3d)，同时替换payload部分(与上一个漏洞步骤一样)，删除后面的签名部分</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231018112000066.png" alt="302，说明有戏"></p>
+<p>再把路径改为 <code>/admin</code> ，go</p>
+<p>401未授权 ！！！！！！！</p>
+<p>emmm</p>
+<p>将header部分改一下，再base64</p>
+<blockquote>
+<p>eyJraWQiOiAiNDhkYmViZmMtOTdjMS00ZjQyLWIxZmEtYjkyMzJlNTk4NzQ3IiwKImFsZyI6ICJub25lIn0&#x3D;</p>
+</blockquote>
+<p>注意小数点不要丢</p>
+<p>再试一次</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231018115032573.png" alt="访问/admin"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231018115308378.png" alt="删除carlos"></p>
+<h4 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h4><p>当对header部分的alg为none时，意味着不签名，导致了任何token都是有效的，一般是开发者为了调试设置的，因为疏忽没有关闭这个功能导致漏洞</p>
+<h3 id="密钥暴力猜解"><a href="#密钥暴力猜解" class="headerlink" title="密钥暴力猜解"></a>密钥暴力猜解</h3><p>一般加密密钥为对称密钥和非对称密钥</p>
+<p>对称：双方都知道这个密钥，是同一种密钥</p>
+<p>非对称：接收方有私钥，发送方有公钥</p>
+<p>然后前面已经说过，signature是对header和payload的签名</p>
+<p>用hashcat进行破解(渗透中用来破解哈希的一种工具)</p>
+<p>首先我们有一个<strong>字典</strong>，这些字典都是一些已知的密钥，比如!FWER!@#@!之类的</p>
+<p>hashcat遍历这字典里的每一个密钥，对JWT的header和payload进行签名，将结果签名与服务器的原始签名进行比较，匹配的话，说明破解成功。</p>
+<p>比如密钥为 **114514!!!**，知道了密钥</p>
+<p>重新构造一下payload，将name改为administrator，然后用 这个密钥对header和payload进行哈希即可，到时候就得到第三部分的签名</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231018121929315.png" alt="base64 to json"></p>
+<h4 id="总结-2"><a href="#总结-2" class="headerlink" title="总结"></a>总结</h4><p>如果开发者对签名进行了校验。尝试使用一些默认的、简单常见的密钥进行爆破，从而获得真正的密钥，进而伪造一个高权限账户。</p>
+<h3 id="JWT头部注入"><a href="#JWT头部注入" class="headerlink" title="JWT头部注入"></a>JWT头部注入</h3><h4 id="场景1"><a href="#场景1" class="headerlink" title="场景1"></a>场景1</h4><p>在实际场景中，header有更多的参数，比如有jwk，提供一个代表密钥的嵌入式JSON对象</p>
+<p>该参数以jwk格式将其公钥直接嵌入令牌本身</p>
+<blockquote>
+<p>理想情况下服务器应该只使用<strong>有限的公钥白名单</strong>来验证JWT签名，然而<strong>错误配置的服务器有时会使用jwk参数中嵌入的键值</strong>，攻击者可以<strong>通过使用自己的RSA私钥</strong>对修改后的JWT进行<strong>签名</strong>，然后在jwk头中嵌入匹配的公钥来利用这种行为</p>
+</blockquote>
+<p>bp有一个拓展叫 <code>JWT Editor</code>，2023年的版本，用该工具生成自己的RSA私钥，嵌入进去，达到越权的目的</p>
+<h4 id="场景2"><a href="#场景2" class="headerlink" title="场景2"></a>场景2</h4><p>有些服务器使用jku(jwk set url)引用包含密钥的JWK集，而不直接使用JWK头参数嵌入公钥，当验证签名时，服务器从这个URL获取相关的密钥，这里的JWK集其实是一个JSON对象</p>
+<h4 id="场景3"><a href="#场景3" class="headerlink" title="场景3"></a>场景3</h4><p>kid header path traversal</p>
+<p>服务器如果使用几个密钥来签署不同类型的数据的话，会有kid这种参数，帮助服务器验证签名时使用对应的密钥。这个kid<code>可能是数字，文件名称，或者路径</code></p>
+<p>比如</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;kid&quot;</span><span class="punctuation">:</span> <span class="string">&quot;../../path/to/file&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;typ&quot;</span><span class="punctuation">:</span> <span class="string">&quot;JWT&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;alg&quot;</span><span class="punctuation">:</span> <span class="string">&quot;HS256&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;k&quot;</span><span class="punctuation">:</span> <span class="string">&quot;asGsADas3421-dfh9DGN-AFDFDbasfd8-anfjkvc&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>如果服务器支持对称算法的话，那攻击者完全可以将kid指向一个知晓的静态文件，</p>
+<p>使用与该文件内容匹配的密钥对JWT签名。</p>
+<blockquote>
+<p>最简单的方法之一是使用**&#x2F;dev&#x2F;null**，这是一个空文件，读取它将返回一个空字符串，因此用空字符串对令牌进行签名将会产生有效的签名</p>
+</blockquote>
+<p>所以做法：</p>
+<p>先jwt editor生成一个对称密钥，这个密钥的值为null(AA&#x3D;&#x3D;)</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;kty&quot;</span><span class="punctuation">:</span> <span class="string">&quot;oct&quot;</span><span class="punctuation">,</span> <span class="comment">//密钥类型oct</span></span><br><span class="line">    <span class="attr">&quot;kid&quot;</span><span class="punctuation">:</span> <span class="string">&quot;38576880-33b7-4446-ade4-f1a78bb6d5c2&quot;</span><span class="punctuation">,</span> <span class="comment">//对应id</span></span><br><span class="line">    <span class="attr">&quot;k&quot;</span><span class="punctuation">:</span> <span class="string">&quot;AA==&quot;</span> <span class="comment">//密钥值为null</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>从而构造的header中，kid为 <code>../../../../../../../dev/null</code>，</p>
+<p>payload中sub 改为 <code>administrator</code></p>
+<p>用jwt editor对header和payload用oct签名，得到最终的JWT</p>
+<h3 id="JWT算法混淆"><a href="#JWT算法混淆" class="headerlink" title="JWT算法混淆"></a>JWT算法混淆</h3><p>攻击者可以用不同于服务器预期的算法去验证JWT的签名。</p>
+<p>如果后端上，总是传递一个 <strong>固定的公钥</strong> 给验证签名的方法。</p>
+<p>然后服务器会通过映射到&#x2F;jwks.json或&#x2F;.well-known&#x2F;jwks.json的端点将它们的公钥公开为JSON Web Key(JWK)对象，攻击者通过访问&#x2F;jwks.json去获取服务器公钥信息</p>
+<p>将公钥转换为合适的格式，创建恶意JWT，签名，达到攻击效果</p>
+<h3 id="令牌派生公钥"><a href="#令牌派生公钥" class="headerlink" title="令牌派生公钥"></a>令牌派生公钥</h3><p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/12906#toc-5">https://xz.aliyun.com/t/12906#toc-5</a></p>
+<h3 id="敏感信息泄露"><a href="#敏感信息泄露" class="headerlink" title="敏感信息泄露"></a>敏感信息泄露</h3><p>一般是攻击者抓到了JWT敏感信息，比如一个完整的JWT，然后攻击者base64解码，得到了里面的<strong>用户名</strong>，还有<strong>密码</strong>，密码可能还要进一步哈希解码。最终达到登录的目的。</p>
+<h1 id="参考网址"><a href="#参考网址" class="headerlink" title="参考网址"></a>参考网址</h1><p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/12906#toc-5">https://xz.aliyun.com/t/12906#toc-5</a></p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/10/07/JWT/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2023/10/08/Digdong/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            Digdong
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2023/10/07/TCP-IP/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">TCP/IP</div>
+      </a>
+    
+  </nav>
+
+  
+   
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.css">
+
+
+<script src="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.js"></script>
+
+
+<script src="https://cdn.staticfile.org/blueimp-md5/2.19.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '93da8388ad1469a8be66',
+    clientSecret: '9dea6314b14ae1877632f2bcbe0a639dd4485bb1',
+    repo: 'blogtalk',
+    owner: 'ak005469075',
+    admin: ['ak005469075'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+  
+    
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2023
+        <i class="ri-heart-fill heart_icon"></i> 是羽泪云诶
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/favicon.ico" alt="小张之栈"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+ 
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+ 
+<script src="/js/dz.js"></script>
+ 
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>

@@ -96,7 +96,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.8k</span>
+            <span class="post-count">2.8k</span>
         </span>
     </span>
 
@@ -105,7 +105,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">6 分钟</span>
+            <span class="post-count">9 分钟</span>
         </span>
     </span>
 </div>
@@ -200,6 +200,45 @@
 <p>根据域名来提供不同的网页内容</p>
 <p>所以使用域名访问时，仍然解析成ip地址，且建立http连接，只不过host中携带了域名，所以web服务器根据这个Host字段，选择相应的主机配置，呈现不同内容！</p>
 <p>ip地址与域名的关系，ip地址这种数字相对来说更容易记忆</p>
+<h2 id="bp二层代理原理"><a href="#bp二层代理原理" class="headerlink" title="bp二层代理原理"></a>bp二层代理原理</h2><p><strong>首先，我仅限理论上的讨论，没有做出违法的事情！！！一切以知识学习为主！！</strong></p>
+<p>上游代理，为了隐藏真实公网ip。</p>
+<p>为什么公网ip会显示非真实ip，达到隐藏目的？(当时讨论的好像不是这个呢？)</p>
+<p>流量流程如下：</p>
+<blockquote>
+<p>一般情况下，浏览器-&gt;服务器</p>
+<p>有了bp，浏览器-&gt;bp-&gt;服务器，(就起一个拦截作用)</p>
+<p>bp二层代理后，<strong>浏览器-&gt;bp-&gt;远程服务器-&gt;目标服务器</strong>，结果是会以远程服务器的公网ip去访问目标服务器</p>
+</blockquote>
+<p>这个流程已经说明白了，是通过远程服务器去访问的目标服务器，那么目标服务器肯定是，谁访问它，就记录谁的ip。</p>
+<p><strong>所以为什么呢？</strong>我知道是这个流程，底层原理是什么？我只知道它实现了这个，它怎么实现的呢？</p>
+<p>首先看，<strong>浏览器-&gt;bp-&gt;服务器</strong></p>
+<p>怎么理解，现在服务器的直接对象是谁，是bp，接收也好，返回响应也好，直接对象都是bp。这样说的话：</p>
+<p>那<strong>访问一个可以查询本机公网ip的网址时，为什么公网ip不是bp的地址，仍然是本机公网ip？</strong></p>
+<p>答：我们先看我们怎么操作的，先将代理设置为127.0.0.1:8080，然后再在bp上的 <strong>proxy Listeners</strong> 监听这个127.0.0.1:8080，用来监听、接收来自浏览器的http请求。</p>
+<p>这就是本地监听了，意味着代理服务器运行在本地计算机上嘛。</p>
+<p>这意味着，代理服务器并不会路由流量到外部网络，而是将流量留在本地计算机上，那么流出到互联网上的请求仍然会显示真实公网IP地址。</p>
+<p>这里有个重要的点，bp作为软件，它起一个<strong>监听</strong>的作用，监听的是本地的8080端口。</p>
+<p>好，在回答二层代理技术之前，先看一个流量路径：</p>
+<p><strong>浏览器-&gt;科学软件-&gt;?-&gt;服务器</strong></p>
+<p>怎么操作的？</p>
+<p>答：将本机的代理设置为一个127.0.0.1:1234端口；这个科学软件和bp一样，<strong>监听</strong>了本机的1234端口；所以由浏览器发出的流量，<strong>被路由</strong>到了科学软件上，科学软件接收到流量后，**(选择节点)** 将其路由到<strong>远程服务器</strong>，流量最终离开本机网络，通过远程服务器到达目标机</p>
+<p>这个过程，流量不是从浏览器直接发到目标机，目标机只会看到流量来自 <strong>科学软件或远程服务器的IP地址</strong>。</p>
+<p>如果科学软件里，你选择了个无效<strong>节点</strong>，那最终就没达到隐藏效果。</p>
+<p>经过上面两个流量路径，我们总结一个共同点：</p>
+<blockquote>
+<p>流量路由到本地计算机上的一个<strong>特定端口</strong>，这个特定端口是<strong>被软件监听</strong>到的</p>
+</blockquote>
+<p>然后分析一下：</p>
+<p>第一个路径，用来拦截；第二个路径用来隐藏。</p>
+<p>二者侧重点不同。</p>
+<p>那么作为一个贪心的人，能不能有一个 <strong>即要又要</strong> 的方法呢？</p>
+<p>所以最后讨论bp的二层代理原理：</p>
+<p>流量路径为：<strong>浏览器-&gt;bp-&gt;(科学软件)-&gt;远程服务器-&gt;目标服务器</strong></p>
+<p>这就清晰了。</p>
+<p><strong>浏览器-&gt;bp</strong>，正常的拦截</p>
+<p><strong>bp-&gt;(科学软件)<strong>，bp再设置一个上游代理，这个代理将bp发出的请求转发到另一个端口上，然后有另一个软件</strong>监听</strong>到该端口流量，并接收</p>
+<p>(科学软件)-&gt;节点，选择节点，嗯，懂？</p>
+<p>节点-&gt;目标服务器，skr！</p>
  
       <!-- reward -->
       
