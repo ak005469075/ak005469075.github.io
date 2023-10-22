@@ -96,7 +96,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">367</span>
+            <span class="post-count">386</span>
         </span>
     </span>
 
@@ -150,6 +150,8 @@
 <p><img src="/../../../Typora/img111/image-20231022130218792.png"></p>
 <p>f12，xml文件状态为 <strong>304</strong>，查看xml文件的响应内容，搜索到出现报错内容的字符，再去原md文件中删改即可</p>
 <p><img src="/../../../Typora/img111/image-20231022134918206.png"></p>
+<p>好好好，不成功是吧，我用json去</p>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1624646">https://cloud.tencent.com/developer/article/1624646</a></p>
 <p>以上是对我自己博客的解决方案</p>
  
       <!-- reward -->
@@ -370,7 +372,15 @@
   <div class="local-search local-search-plugin">
   <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
   <div id="local-search-result" class="local-search-result"></div>
+  <script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
 </div>
+
 </div>
     </aside>
     <div id="mask"></div>
