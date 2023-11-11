@@ -96,7 +96,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">3.1k</span>
+            <span class="post-count">4.2k</span>
         </span>
     </span>
 
@@ -105,7 +105,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">11 分钟</span>
+            <span class="post-count">14 分钟</span>
         </span>
     </span>
 </div>
@@ -257,8 +257,69 @@
 <p>windows：powershell、certutil等</p>
 <p>根据内置的下载命令，如果有一个漏洞是命令执行漏洞，那就可以通过该漏洞在目标机下载木马、反弹shell</p>
 <p><strong>反弹shell的正向连接、反向连接</strong></p>
-<p>对一个PC A来讲，<strong>它去监听一个端口，B通过端口去访问A，A监听到了</strong>，这叫正向</p>
-<p>对一个PC A来讲，如果A有了防火墙，A监听一个端口，B通过这个端口访问A，B访问不了，A也监听不到了，因为A的入站规则屏蔽了B；</p>
+<p>已知PC A，和PC B(有防火墙)</p>
+<p><strong>A去监听一个端口，B通过端口去访问A(公网地址)，A监听到了</strong></p>
+<p>对一个PC A来讲，<strong>它监听B的连接</strong>，这叫<strong>反向</strong></p>
+<blockquote>
+<p>A守株待兔，被动一方，对A来讲，这是一个反向连接</p>
+<p>比如，攻击者发现目标机有防火墙，或者目标机在内网，或目标机ip动态变化时用</p>
+</blockquote>
+<p>对一个PC B来讲，<strong>它主动通过端口访问A</strong>，这个行为，叫<strong>正向</strong></p>
+<blockquote>
+<p>B投怀送抱，主动一方，对B来讲，这是一个正向连接</p>
+<p>比如，ssh、远程桌面连接，这叫正向连接</p>
+</blockquote>
+<p>如果A有了防火墙，A监听一个端口，B通过这个端口访问A，B访问不了，A也监听不到了，因为A的入站规则屏蔽了B；</p>
+<p><strong>为什么要正向&#x2F;反向连接？</strong></p>
+<p>定义一个C(客户端)和一个S(服务端)，</p>
+<p>所谓正向连接，该连接就是要将 <strong>S能看到的东西，我C要主动去看</strong></p>
+<p>所谓反向连接，该连接就是要将 <strong>S能看到的东西，我等着让S给我看</strong></p>
+<p>反正所谓正向&#x2F;反向，是看你从A看，还是从B看；</p>
+<p>对于攻击者来说，只要它是<strong>正向连接的发起者</strong>，是<strong>反向连接的接收者</strong>即可</p>
+<p><strong>弹shell</strong>的正向这个问题，其实这样理解，</p>
+<p>如果S，<code>nc -lvp 233 -e /bin/bash</code></p>
+<p>而C，<code>nc S的ip 233</code>，那么C就获得了S的权限，如果没有nc工具，要么想办法让S下载一个，要么用 <strong>bash反弹</strong></p>
+<p>例子就是：pikachu靶场的命令执行漏洞</p>
+<p>假设B有个这个漏洞，A可以访问B这个有漏洞的页面，对A来讲，步骤如下：</p>
+<ol>
+<li>在B下载一个nc.exe</li>
+<li>在A本机去监听一个端口</li>
+<li>在B用这个nc去访问A的端口</li>
+<li>A监听到了B的shell</li>
+</ol>
+<p>对A来讲这是个什么连接，<strong>反向</strong>哈。</p>
+<h3 id="常见隧道"><a href="#常见隧道" class="headerlink" title="常见隧道"></a>常见隧道</h3><p><strong>网络层</strong>：</p>
+<blockquote>
+<p>icmp隧道，一般用icmpsh工具去代替ping命令</p>
+<p>ipv6</p>
+<p>gre</p>
+</blockquote>
+<p><strong>传输层</strong>：</p>
+<blockquote>
+<p>TCP协议，nc监听</p>
+<p>端口转发，lcx工具(绕防火墙)</p>
+</blockquote>
+<p><strong>应用层</strong>：</p>
+<blockquote>
+<p>DNS隧道</p>
+</blockquote>
+<p><strong>总结</strong></p>
+<p>所以个人计算机还是要开启防火墙，即使公网ip泄露也较为安全</p>
+<p>内网访问内网，都是<strong>去建立隧道</strong>，比如ssh，远程桌面连接啊，vpn之类的。</p>
+<h2 id="公网ip？！"><a href="#公网ip？！" class="headerlink" title="公网ip？！"></a>公网ip？！</h2><p>PC之所以可以上网，是因为ISP给路由器一个公网ip，这个公网ip使得我们可以进入互联网。</p>
+<p>那建站的时候，买个域名，云服务器肯定也分配了一个公网ip，这两个公网ip怎么说？</p>
+<p>对于普通家庭来讲，ISP分配的公网ip是<strong>动态</strong>的，当你有联网需要才会给你从闲置的ip池中分配一个，不需要了就回收</p>
+<p>ISP有静态的，但这个就用于商业或者专业用户了。</p>
+<p>！！！自己用ISP分配的公网ip，自建了一个IIS服务器，且关闭了防火墙，为什么在自己的浏览器上访问该服务器时，无法访问？</p>
+<p><strong>答</strong>：一般不会这样搞，首先关闭防火墙不安全；其次，普通用户的公网ip是动态分配的，不稳定。</p>
+<p>首先思路要这样捋一下，给一个设置情形吧：</p>
+<p>内网ip为192.168.1.49，我如果搭建了一个网站，域名叫hao123.com。去百度输入ip，回车，呈现出来的一个ip叫171.x.x.x；这个叫做<strong>外网出口</strong>，由于NAT协议的关系，可以使得一个内网下的多台电脑，共享同一个<strong>外网出口</strong>。如果要别人去访问<strong>网站</strong>怎么办：进到路由器的管理页面，有一个功能叫做<strong>端口映射</strong>，输入自己的内网ip，192.168.1.49，内网端口为80(可能不让用)，外网端口为80，添加这种映射关系。</p>
+<p>对于攻击者来讲：访问hao123.com，DNS解析的ip地址为171.x.x.x。实际上架设的web服务器在192.168.1.49下。那攻击者去扫描的是171.x.x.x的端口协议，真实网站是192.168.1.49，所以攻击者扫不到。攻击者就会知道，实际的网络架构应该是什么样子了。</p>
+<p>补充：</p>
+<blockquote>
+<p>有公网ip：登录路由器后台进行端口映射</p>
+<p>无公网ip：内网穿透工具去将内网端口映射到公网上，通过公网访问内网 (常用，不需要公网ip)</p>
+</blockquote>
  
       <!-- reward -->
       
@@ -336,11 +397,11 @@
    
   <nav class="article-nav">
     
-      <a href="/2023/09/26/%E8%9A%81%E5%89%91%E5%8E%9F%E7%90%86/" class="article-nav-link">
+      <a href="/2023/09/26/%E8%B8%A9%E7%82%B9/" class="article-nav-link">
         <strong class="article-nav-caption">上一篇</strong>
         <div class="article-nav-title">
           
-            蚁剑原理
+            渗透思想
           
         </div>
       </a>
