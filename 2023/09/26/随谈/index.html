@@ -96,7 +96,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">4.2k</span>
+            <span class="post-count">5.2k</span>
         </span>
     </span>
 
@@ -105,7 +105,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">14 分钟</span>
+            <span class="post-count">19 分钟</span>
         </span>
     </span>
 </div>
@@ -305,7 +305,7 @@
 </blockquote>
 <p><strong>总结</strong></p>
 <p>所以个人计算机还是要开启防火墙，即使公网ip泄露也较为安全</p>
-<p>内网访问内网，都是<strong>去建立隧道</strong>，比如ssh，远程桌面连接啊，vpn之类的。</p>
+<p>内网访问内网，都是<strong>去建立隧道</strong>，比如ssh，远程桌面连接啊，vpn、内网穿透之类的。</p>
 <h2 id="公网ip？！"><a href="#公网ip？！" class="headerlink" title="公网ip？！"></a>公网ip？！</h2><p>PC之所以可以上网，是因为ISP给路由器一个公网ip，这个公网ip使得我们可以进入互联网。</p>
 <p>那建站的时候，买个域名，云服务器肯定也分配了一个公网ip，这两个公网ip怎么说？</p>
 <p>对于普通家庭来讲，ISP分配的公网ip是<strong>动态</strong>的，当你有联网需要才会给你从闲置的ip池中分配一个，不需要了就回收</p>
@@ -319,6 +319,54 @@
 <blockquote>
 <p>有公网ip：登录路由器后台进行端口映射</p>
 <p>无公网ip：内网穿透工具去将内网端口映射到公网上，通过公网访问内网 (常用，不需要公网ip)</p>
+</blockquote>
+<h2 id="输入url并回车的过程"><a href="#输入url并回车的过程" class="headerlink" title="输入url并回车的过程"></a>输入url并回车的过程</h2><p>首先可以引入一个渲染</p>
+<ol>
+<li>浏览器访问html文件，并发送请求</li>
+<li>浏览器从头开始<strong>返回</strong>html文件，<strong>构建dom</strong>，遇到link标签，则<strong>返回</strong>css文件，<strong>去构建cssom</strong></li>
+<li>解析css文件的同时，继续解析html文件，遇到script标签，去<strong>下载js文件</strong></li>
+<li>**仅当cssom构建完毕，执行js <strong>；但</strong>此时html解析会停止(如果对js请求声明了异步则不会阻塞)**，因为js会阻塞html解析(表面现象可以这样想，因为js是可以操作dom和css的)</li>
+<li>js执行完之前什么内容都没有，<strong>执行完之后，且DOM构建完后</strong>，会形成渲染树</li>
+<li><strong>布局</strong>，获取渲染树的结构、节点位置和大小，就是对盒子的排列和嵌套</li>
+<li><strong>绘制</strong>，将渲染树以像素形式绘制在页面</li>
+</ol>
+<p>dom可以部分解析，cssom不能部分解析，一个例子可以说明</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">body</span> &#123;</span><br><span class="line">    <span class="attribute">font-size</span>:<span class="number">32px</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-tag">body</span> <span class="selector-tag">div</span>&#123;</span><br><span class="line">    <span class="attribute">font-size</span>:<span class="number">16px</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果css部分解析，只解析了32px的，那就乱套了</p>
+<blockquote>
+<p>参考：B站技术蛋老师</p>
+</blockquote>
+<p>对于整体的过程而言，要从浏览器与目标机开始，这个有些细节我老忘：</p>
+<ol>
+<li>对路由器来讲，它怎么将公网ip转化为对应的私有ip呢？它怎么知道是哪个私有ip(假设有多个)呢？</li>
+<li>从请求端的路由器将请求发到互联网，再到服务器路由器的过程？</li>
+<li>应用层干了什么事？</li>
+<li>互联网中的路由器之间的包只改变了MAC吗</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">我先回顾一下：</span><br><span class="line">1.我在浏览器输入一个example.com并回车</span><br><span class="line">2.浏览器去域名解析为对应ip</span><br><span class="line">(查找顺序:本地DNS缓存-&gt;hosts文件-&gt;本地DNS服务器(比如8.8.8.8/114.114.114.114)-&gt;根.-&gt;顶级.-&gt;权威)</span><br><span class="line">DNS具体起的作用，以四层模型为例</span><br><span class="line">应用层：由DNS去生成一个请求，类似于&quot;告诉我example.com的ip&quot; -&gt;</span><br><span class="line">传输层：源端口+目的端口封装头部</span><br><span class="line">网络层：源ip+目的ip(8.8.8.8)封装头部</span><br><span class="line">它找不到这个8.8.8.8，就去找网关，即路由器的ip,192.168.1.1</span><br><span class="line">网际层：数据链路层去头部添加源MAC+网关MAC(ARP协议)，后面也会封装一些校验值；物理层就通过网卡发送这个数据包</span><br></pre></td></tr></table></figure>
+
+<p>不行，还是要画个图</p>
+<p><img src="/../../../Typora/img111/image-20231123120737757.png" alt="图示"></p>
+<p>上面的数据包已经发到交换机了，交换机就两层</p>
+<blockquote>
+<p>数据链路层</p>
+<p>物理层</p>
+</blockquote>
+<p>流程为物理层-&gt;数据链路层，根据MAC地址，是找到了路由器MAC地址为CC的端口</p>
+<p>路由器三层</p>
+<blockquote>
+<p>网络层</p>
+<p>数据链路层</p>
+<p>物理层</p>
+</blockquote>
+<p>流量路径1：物理层-&gt;数据链路层(认出了CC是自己的MAC，去掉)-&gt;网络层(8.8.8.8不认识)，去发到互联网上(WAN口)，NAT转化一下源ip，源端口也随机改变，<strong>保留映射关系</strong></p>
+<p>流量路径2：数据链路层添加源MAC：DD 和下一条路由器的MAC</p>
+<p>互联网上的路由器之间重复上述操作，最终找到了DNS服务器，从下往上解封装，服务器处理这个请求，给个响应告诉对应IP，然后从上往下封装，之后就是一个往回传的过程了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">3.发送请求(把example.com的页面给我)</span><br><span class="line">应用层封装这个请求-&gt;</span><br><span class="line">传输层(源端口，目的端口，tcp传输)-&gt;</span><br><span class="line">网络层(源ip:192.168.1.4，目的ip：2.2.2.2)-&gt;</span><br><span class="line">网际层(源MAC、目的MAC)-&gt;</span><br><span class="line">传输到路由器(路由器知道有访问互联网的请求，问运营商服务器要公网ip，进行一次NAT转换，源ip变为：3.3.3.3)，源端口改变，保留映射关系</span><br><span class="line">4.该数据包发到互联网，互联网有很多路由器，直到目标机路由器接收到该报文</span><br><span class="line">5.目标机路由器将目的ip进行NAT，目的ip变为10.10.1.2</span><br><span class="line">6.解封装过程：网际层-&gt;网络层-&gt;传输层-&gt;应用层-&gt;返回</span><br><span class="line">7.封装，然后往回传</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>参考：ytb的不良林</p>
 </blockquote>
  
       <!-- reward -->
