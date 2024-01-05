@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>用户视角下的信息探测 |  小张之栈</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-用户视角下的信息探测"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+  
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  用户视角下的信息探测
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/06/11/%E7%94%A8%E6%88%B7%E8%A7%86%E8%A7%92%E4%B8%8B%E7%9A%84%E4%BF%A1%E6%81%AF%E6%8E%A2%E6%B5%8B/" class="article-date">
+  <time datetime="2023-06-11T01:12:30.000Z" itemprop="datePublished">2023-06-11</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E3%80%8AWEB%E5%AE%89%E5%85%A8%E5%9F%BA%E7%A1%80%E3%80%8B/">《WEB安全基础》</a> / <a class="article-category-link" href="/categories/%E3%80%8AWEB%E5%AE%89%E5%85%A8%E5%9F%BA%E7%A1%80%E3%80%8B/%E4%BF%A1%E6%81%AF%E6%8E%A2%E6%B5%8B/">信息探测</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">4.8k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">17 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="1-whois信息"><a href="#1-whois信息" class="headerlink" title="1.whois信息"></a>1.whois信息</h1><p>首先，获得了域名。比如<a target="_blank" rel="noopener" href="http://www.baidu.com./">www.baidu.com。</a></p>
+<blockquote>
+<p>域名由DNS服务器负责解析，并告知用户浏览器目标站点的IP地址。域名均由域名提供商对公众开放，可由个人或企业出资购买，获得域名的使用权。</p>
+</blockquote>
+<p>whois是用来查询域名的IP以及所有者等信息的传输协议。</p>
+<p>通过whois可以查出目标域名是否被注册以及注册域名所有人的详细信息。</p>
+<blockquote>
+<p>whois信息中包含了注册商、注册人、注册人邮箱、域名注册日期、域名到期日期等信息。可以看到，其中的大量信息均为真实信息，并且这些信息对外公开。但某些情况下，域名所有人并不希望自己的注册信息被他人获取，如从事部分灰色产业的人员或者个人特定应用等。这种情况下，域名所有人可开启隐私保护功能，实现对个人信息的保护。</p>
+</blockquote>
+<p>当然了，隐私保护是一项增殖业务，如果账户欠费或转让，当前域名状态就失去了保护，所以查询当前域名的历史whois信息，可能获取其中的有效内容。</p>
+<p>whois信息的作用非常大，比如可利用其对应的注册信息进行反向查询，发现当前域名所有者其他的域名情况，在针对某些站点进行特征追踪时效果良好。</p>
+<p>如利用注册人邮箱实现whois信息反查。</p>
+<p>也许可以看到，相同的邮箱注册了多个域名。再尝试访问这些域名。</p>
+<blockquote>
+<p>综上所述，针对要防护的目标站点，域名的whois信息作为攻击者最先获得的内容，可从中找到域名所有人的基础信息，如姓名、常用邮箱、电话等。以常用邮箱为例，攻击者有可能将邮箱信息放入<strong>社工库</strong>进行查询，以获得更广泛的信息，甚至可能发现此邮箱对应的活动内容以及当前邮箱在其他地点（很多站点支持邮箱作为用户名来注册）所用的密码等内容，这将对后续的攻击过程提供非常大的便利。</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230618153333278.png" alt="whois信息攻击方式"></p>
+<h1 id="2-利用搜索引擎发现敏感信息"><a href="#2-利用搜索引擎发现敏感信息" class="headerlink" title="2.利用搜索引擎发现敏感信息"></a>2.利用搜索引擎发现敏感信息</h1><p>这个过程中极少与站点产生交互行为，也就有了很好的隐蔽措施。</p>
+<p>通过搜索引擎的基本语法及搜索思路展开测试。</p>
+<h2 id="1-常用操作符"><a href="#1-常用操作符" class="headerlink" title="1.常用操作符"></a>1.常用操作符</h2><p>搜索引擎会支持多种类型的操作符，以方便用户对目标信息进行更精确的查找。这也就为攻击者提供了信息查询的方便。目前主流的搜索引擎的查询语法中，常用的操作符有以下几种：</p>
+<table>
+<thead>
+<tr>
+<th>操作符</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>+</td>
+<td>联合查询</td>
+</tr>
+<tr>
+<td>-</td>
+<td>忽略某个字</td>
+</tr>
+<tr>
+<td>*</td>
+<td>通配符，可代表多个字母</td>
+</tr>
+<tr>
+<td>.</td>
+<td>单一通配符</td>
+</tr>
+<tr>
+<td>“ ”</td>
+<td>精准查询</td>
+</tr>
+<tr>
+<td>~</td>
+<td>同义词</td>
+</tr>
+</tbody></table>
+<h2 id="2-inurl"><a href="#2-inurl" class="headerlink" title="2.inurl"></a>2.inurl</h2><p>用于搜索在目标URL中出现关键字的信息。</p>
+<blockquote>
+<p>想查询格式为php的管理页面，其关键字为“admin”“php”。这时，可利用空格方式进行连接，如“inurl php id”，从而实现匹配url中的所有关键字。</p>
+</blockquote>
+<p><code>inurl admin</code>这种一般就是找后台</p>
+<p>所以要么通过隐藏后台，要么添加允许连接IP的白名单等手段来提升安全性。</p>
+<h2 id="3-title"><a href="#3-title" class="headerlink" title="3.title"></a>3.title</h2><p>关键字“tittle管理后台”、“tittle人员信息”</p>
+<h2 id="4-filetype"><a href="#4-filetype" class="headerlink" title="4.filetype"></a>4.filetype</h2><p>用于指定查询文件的后缀名，如bak、sql、ini、xls、htaccess等。</p>
+<blockquote>
+<p>一般来说，这类信息涉及站点的备份信息、数据库信息、表格等内容。假设管理员没有及时删除，并且此信息恰好被搜索引擎收录，则会展示相应的结果。这类敏感信息会使攻击者更全面地了解目标站点的特征及有效内容。</p>
+</blockquote>
+<h2 id="5-site"><a href="#5-site" class="headerlink" title="5.site"></a>5.site</h2><p>site用于在指定网站内搜索有效信息，可直接使用“site：域名+关键字”来查找当前目标站点中指定的内容信息。</p>
+<blockquote>
+<p>如site:<a target="_blank" rel="noopener" href="http://www.baidu.com/">www.baidu.com</a> asddasads</p>
+</blockquote>
+<h2 id="6-cache"><a href="#6-cache" class="headerlink" title="6.cache"></a>6.cache</h2><p>利用搜索引擎之前缓存的信息进行查询。利用搜索引擎之前缓存的信息进行查询。</p>
+<h2 id="7-daterange"><a href="#7-daterange" class="headerlink" title="7.daterange"></a>7.daterange</h2><p>使用daterange关键词指定搜索的日期。但此方法使用起来比较麻烦，并且目前主流的搜索引擎均都自带时间控制，可在搜索引擎的筛选栏中选择所需要的部分。</p>
+<h2 id="综合利用搜索引擎"><a href="#综合利用搜索引擎" class="headerlink" title="综合利用搜索引擎"></a>综合利用搜索引擎</h2><h3 id="1-使用缓存匿名浏览"><a href="#1-使用缓存匿名浏览" class="headerlink" title="1.使用缓存匿名浏览"></a>1.使用缓存匿名浏览</h3><p>利用缓存可以看到更新之前的页面，也可以匿名获取到网站服务器的数据拷贝（在此必须要选择只查看文本，不然仍会向服务器发送访问请求）。</p>
+<p><code>cache:xxx.com/xxx.html</code></p>
+<p>这样做的优点是：目标网站并没有真实的访问记录，只是在搜索引擎缓存的数据中进行查询。在某些特定场景，如APT攻击中，可能会有较大的用途。</p>
+<h3 id="2-获取特殊信息"><a href="#2-获取特殊信息" class="headerlink" title="2.获取特殊信息"></a>2.获取特殊信息</h3><p>网站上线后并没有将原有的备份文件或SQL文件删除，还存在于网站的目录中。这样会导致网站的某些重要的信息隐藏在某个页面的角落里，使用搜索引擎可以高效地查找这些信息，使用filetype：sql或者ini、bak、log等还可以查找网站的隐私文件。</p>
+<p><code>site:XXX.cn fi letype:sql</code></p>
+<p>.bak这类属于备份文件</p>
+<blockquote>
+<p>site: xxx.com filetype:xls</p>
+<p>“site powered by limbo cms” site:”xxx.com”</p>
+</blockquote>
+<p>搜索引擎可帮助更多用户了解及访问网站，但是其中的信息也会被搜索引擎收录。</p>
+<p>作为系统管理员的话，也可以定期搜索网站特定内容，对重要信息进行处理，避免被攻击者发现。</p>
+<h3 id="3-后台管理页面、目录列表或特殊页面"><a href="#3-后台管理页面、目录列表或特殊页面" class="headerlink" title="3.后台管理页面、目录列表或特殊页面"></a>3.后台管理页面、目录列表或特殊页面</h3><h4 id="后台管理页面"><a href="#后台管理页面" class="headerlink" title="后台管理页面"></a>后台管理页面</h4><p>如果攻击者发现<strong>后台登录页面</strong>，第一反应就是采取<strong>爆破</strong>等手段进行攻击，或者在<strong>前台利用SQL注入、XSS存储跨站</strong>等手段获取管理员账号信息后进行登录。因此，后台管理页面应尽量不被攻击者发现。</p>
+<h4 id="目录列表"><a href="#目录列表" class="headerlink" title="目录列表"></a><strong>目录列表</strong></h4><p>正常情况下，访问一个网站会发起一个HTTP请求，Web服务器会根据请求中的URL路径来响应对应的页面。因此，用户每一次访问的页面应该只是服务器Web目录的某个页面或文件（如PDF等格式）。但是，如果Web服务器存在目录列举的问题，可<strong>导致用户端直接观察到当前目录的所有文件及结构</strong>，这样会极大暴露目标站点的信息。</p>
+<p><code>intitle:index of &quot;server at&quot;</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230618184526853.png"></p>
+<p>列目录在文件服务器中非常常见，可方便用户快速寻找所需要的文件并下载。但针对普通站点来说，如果可看到站点的相关的目录，攻击者就可快速了解站点结构，并且可对其中的重要文件或页面进行下载，</p>
+<h4 id="专项搜索用法汇总"><a href="#专项搜索用法汇总" class="headerlink" title="专项搜索用法汇总"></a>专项搜索用法汇总</h4><p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230618184743922.png"></p>
+<p>Zoome eye搜索</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230618185621268.png"></p>
+<h1 id="3-真实IP地址发现手段"><a href="#3-真实IP地址发现手段" class="headerlink" title="3.真实IP地址发现手段"></a>3.真实IP地址发现手段</h1><p>出现域名与真实IP不对应的情况。这主要是Web站点为了提高用户的访问速度，使用了CDN（内容分发网络）技术。</p>
+<blockquote>
+<p>CDN的特点是可以将内容在本地展示，并配合CDN的网络在全国各地做内容缓存分发。这样，用户直接访问的域名对应的IP地址为CDN地址，而非目标Web站点的真实地址。当初步获取到目标IP地址后，可利用目前互联网上的CDN地址段查询接口确认当前访问的地址是否为CDN。</p>
+</blockquote>
+<p>获取目标Web系统的真实IP地址经常利用的方式如下。</p>
+<h2 id="1-查找分站的IP"><a href="#1-查找分站的IP" class="headerlink" title="1.查找分站的IP"></a>1.查找分站的IP</h2><p>由于CDN为收费服务，部分网站的某些分站由于访问量较小，因此选择仅在主站上配置CDN服务器，而分站并不配置。因此，可以遍历目标站点的分站地址，并找到分站地址对应的IP，再通过扫描C段的80端口，从而找到主站的IP地址。</p>
+<blockquote>
+<p>C段是指IPv4地址中的第三个部分，通常用于标识特定的网络。例如，在地址192.168.0.0&#x2F;24中，C段是0，表示这个地址是一个属于C段的地址。子网掩码是24</p>
+<p>之所以是C段扫描，是因为范围更小，就2^8&#x3D;256-2&#x3D;254个主机地址，更具有针对性，资源消耗也少</p>
+</blockquote>
+<p>如果此网站有邮件服务器且没有使用公共SMTP服务器，也可以尝试DNS的MX记录，很多时候也会有相应收获。</p>
+<h2 id="2-尝试服务器主动发起联系"><a href="#2-尝试服务器主动发起联系" class="headerlink" title="2.尝试服务器主动发起联系"></a>2.尝试服务器主动发起联系</h2><p>让服务器主动联系，就可以轻松知道服务器的IP地址。比如，服务器发送注册或者验证码邮件，在邮件头就可以知道IP地址。但目前有很多第三方验证码及验证邮件发送平台，因此需对这种方式下得到的地址进行后续人工判断，确认地址归属。</p>
+<h2 id="3-ping-xxx"><a href="#3-ping-xxx" class="headerlink" title="3.ping xxx"></a>3.ping xxx</h2><p>很多人喜欢使用xxx.com（裸域）访问网站，所以部分网站为了给用户良好的体验并且不让搜索引擎认为域名已被劫持，通常都是给xxx.com（裸域）使用301重定向至<a target="_blank" rel="noopener" href="http://www.xxx.com.xxx.com与www.xxx.com是不同的两条解析记录,很可能存在xxx.com没有使用cdn的情况./">www.xxx.com。xxx.com与www.xxx.com是不同的两条解析记录，很可能存在xxx.com没有使用CDN的情况。</a></p>
+<blockquote>
+<p>C:\Users\67538&gt;ping <a target="_blank" rel="noopener" href="http://www.baidu.com/">www.baidu.com</a></p>
+<p>正在 Ping <a target="_blank" rel="noopener" href="http://www.a.shifen.com/">www.a.shifen.com</a> [36.152.44.96] 具有 32 字节的数据:<br>来自 36.152.44.96 的回复: 字节&#x3D;32 时间&#x3D;34ms TTL&#x3D;56<br>来自 36.152.44.96 的回复: 字节&#x3D;32 时间&#x3D;32ms TTL&#x3D;56</p>
+</blockquote>
+<blockquote>
+<p>C:\Users\67538&gt;ping baidu.com</p>
+<p>正在 Ping baidu.com [39.156.66.10] 具有 32 字节的数据:<br>来自 39.156.66.10 的回复: 字节&#x3D;32 时间&#x3D;51ms TTL&#x3D;53<br>来自 39.156.66.10 的回复: 字节&#x3D;32 时间&#x3D;51ms TTL&#x3D;53</p>
+</blockquote>
+<p>可看到直接ping <a target="_blank" rel="noopener" href="http://www.baidu.com返回的是www.a.shifen.com,这是百度的一个别名,用以提升各地用户的访问速度./">www.baidu.com返回的是www.a.shifen.com，这是百度的一个别名，用以提升各地用户的访问速度。</a></p>
+<h2 id="4-phpinfo"><a href="#4-phpinfo" class="headerlink" title="4.phpinfo"></a>4.phpinfo</h2><p>phpinfo包含了当前服务器的真实信息</p>
+<h2 id="5-XSS"><a href="#5-XSS" class="headerlink" title="5.XSS"></a>5.XSS</h2><p>如果目标站点存在存储型XSS攻击漏洞，那么就可利用XSS漏洞实现针对真实IP地址的发现。在实际情况中，如果管理员打开特殊构造的页面，且管理员与服务器在同一个网段，再结合扫描即可找到真实IP。</p>
+<p>但JavaScript本身并没有获取本地IP地址的能力，一般需要第三方软件来完成。比如，客户端安装了Java环境（JRE），那么XSS就可以通过调用Java Applet的接口获取客户端的本地IP地址。在XSS攻击框架“Attack API”中，就有一个获取本地IP地址的API。</p>
+<p>这样做的好处在于可以由服务器主动响应攻击代码，并自动发送真实IP地址。但是使用环境较为苛刻，必须要求有存储型XSS漏洞，且漏洞会被管理员或者内部人员触发。</p>
+<p>当然了，既然存储型XSS漏洞存在的话，一般是直接利用存储型XSS漏洞<strong>获取管理员权限</strong>，<strong>并寻找后台地址进行登录尝试</strong>。</p>
+<blockquote>
+<p>知道管理员的账号和密码的前提下，获取到cookie，然后放到请求头中，发给服务器。</p>
+</blockquote>
+<h2 id="6-全网扫描"><a href="#6-全网扫描" class="headerlink" title="6.全网扫描"></a>6.全网扫描</h2><p>利用分布式扫描工具进行全网扫描，并进行特征分析及提取，进而确定目标的真实地址。</p>
+<p>1）找到开启了80端口的主机。</p>
+<p>2）找到host为<a target="_blank" rel="noopener" href="http://www.xxx.com的ip./">www.xxx.com的IP。</a></p>
+<p>3）再扫一次抓取特征，通过去除错误页面、空页面等方法得到真实IP。</p>
+<p>在这个过程中，会进行大量的端口扫描，因此对带宽占用非常大，并且大量发包在现有网络中会被认为攻击行为。但这是一种有效寻找目标真实IP的方法。</p>
+<h2 id="7-CDN服务商"><a href="#7-CDN服务商" class="headerlink" title="7.CDN服务商"></a>7.CDN服务商</h2><p>如果知道目标站点的CND服务商，那么可想办法进入CDN服务商的管理后台得到真实IP，如利用管理员的弱密码等。通常的方式是利用管理员的公共信息，并在社工库中进行查询，以寻找是否有弱密码等。这种方式的成功率不高，但也确实存在此类场景。</p>
+<h2 id="方法总结"><a href="#方法总结" class="headerlink" title="方法总结"></a>方法总结</h2><p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230618191939335.png" alt="获取真实ip方法总结"></p>
+<h1 id="4-真实物理地址"><a href="#4-真实物理地址" class="headerlink" title="4.真实物理地址"></a>4.真实物理地址</h1><p>国内大量的IP地址只能分配到一个物理社区或单位，并在网关处利用私网地址来通过当前的物理地址进行网络访问。</p>
+<p>正是基于这种状况，目前真实地理位置查询仅能追查到公网IP地址的分配点上，也就是共用同一个IP地址的社区或单位。</p>
+<blockquote>
+<p>下面提供了一些目前有效的查询网址：</p>
+<p>·<a target="_blank" rel="noopener" href="http://ip.chacuo.net/">http://ip.chacuo.net</a></p>
+<p>·<a target="_blank" rel="noopener" href="http://www.ipip.net/">http://www.ipip.net</a></p>
+<p>·<a target="_blank" rel="noopener" href="http://ip.chinaz.com/">http://ip.chinaz.com</a></p>
+<p>·<a target="_blank" rel="noopener" href="http://ip.qq.com/cgi-bin">http://ip.qq.com/cgi-bin</a></p>
+<p>·<a target="_blank" rel="noopener" href="http://iptogeo.sinaapp.com/">http://iptogeo.sinaapp.com</a></p>
+<p>·<a target="_blank" rel="noopener" href="http://ip.taobao.com/index.php">http://ip.taobao.com/index.php</a></p>
+<p>·<a target="_blank" rel="noopener" href="http://ip.taobao.com/service/getIpInfo.php">http://ip.taobao.com/service/getIpInfo.php</a></p>
+<p>·<a target="_blank" rel="noopener" href="http://int.dpool.sina.com.cn/iplookup/iplookup.php">http://int.dpool.sina.com.cn/iplookup/iplookup.php</a></p>
+</blockquote>
+<p>当然弄了，实际攻击过程中，发现真实物理地址并没有太多价值。如果要跑到服务器所在地，当地连WIFI或社工手段的话，也不是不行。</p>
+<h1 id="5-目标端口开放情况"><a href="#5-目标端口开放情况" class="headerlink" title="5.目标端口开放情况"></a>5.目标端口开放情况</h1><p>这里所说的端口是指TCP&#x2F;IP协议支持的0～65535端口，可采用TCP UDP方式来传输数据。</p>
+<p>在Web应用中，HTTP协议默认利用TCP80端口，HTTPS协议默认利用443端口进行数据传输。</p>
+<p>一般情况下，常利用NMAP进行端口扫描。目前也有像ZMAP等新兴工具，metaspoilt也可用于端口扫描，大量漏洞扫描工具均有此类功能。</p>
+<p>NMAP比较常用，以NMAP为例</p>
+<blockquote>
+<p>利用NMAP可扫描目标的端口开放情况、对应版本、操作系统等多种信息。NMAP可扫描目标站点的端口开放情况及对应业务，</p>
+</blockquote>
+<h2 id="1-获取远程主机的系统类型及开放端口"><a href="#1-获取远程主机的系统类型及开放端口" class="headerlink" title="1.获取远程主机的系统类型及开放端口"></a>1.获取远程主机的系统类型及开放端口</h2><p><code>Nmap -sS -P0 -sV -O &lt;target&gt;</code></p>
+<blockquote>
+<p>这里的&lt;target&gt;可以是单一IP或主机名、域名、子网。其中参数的意义为：</p>
+<p>·-sS：进行TCP SYN扫描（又称半连接扫描）。</p>
+<p>·-P0：允许用户关闭ICMP pings。</p>
+<p>·-sV：打开系统版本检测。</p>
+<p>·-O：尝试识别远程操作系统。</p>
+<p>除此之外，还可以添加其他选项，实现信息的多方面输出：</p>
+<p>·-A：同时打开操作系统指纹和版本检测。</p>
+<p>·-v：详细输出扫描情况。</p>
+</blockquote>
+<h2 id="2-列出开放了指定端口的主机列表"><a href="#2-列出开放了指定端口的主机列表" class="headerlink" title="2.列出开放了指定端口的主机列表"></a>2.列出开放了指定端口的主机列表</h2><p><code>nmap -sT -p 80 -oG – 192.168.1.* | grep open</code></p>
+<h2 id="3-在局域网络寻找所有在线主机"><a href="#3-在局域网络寻找所有在线主机" class="headerlink" title="3.在局域网络寻找所有在线主机"></a>3.在局域网络寻找所有在线主机</h2><p><code>nmap -sP 192.168.0.*</code></p>
+<p>也可使用以下命令：</p>
+<p><code>nmap -sP 192.168.0.0/24</code></p>
+<p>这里的*（星号）表示该位为1～254，&#x2F;24代表子网掩码。</p>
+<h2 id="4-Ping指定范围内的IP地址"><a href="#4-Ping指定范围内的IP地址" class="headerlink" title="4.Ping指定范围内的IP地址"></a>4.Ping指定范围内的IP地址</h2><p><code>nmap -sP 192.168.1.100-254</code></p>
+<h2 id="5-在某段子网上查找未占用的IP"><a href="#5-在某段子网上查找未占用的IP" class="headerlink" title="5.在某段子网上查找未占用的IP"></a>5.在某段子网上查找未占用的IP</h2><p><code>nmap -T4 -sP 192.168.2.0/24 &amp;&amp; egrep &quot;00:00:00:00:00:00&quot; /proc/net/arp</code></p>
+<h2 id="6-使用诱饵扫描方法来扫描主机端口"><a href="#6-使用诱饵扫描方法来扫描主机端口" class="headerlink" title="6.使用诱饵扫描方法来扫描主机端口"></a>6.使用诱饵扫描方法来扫描主机端口</h2><p><code>nmap –sS 192.168.0.10 –D 192.168.0.2</code></p>
+<h2 id="常用端口扫描汇总"><a href="#常用端口扫描汇总" class="headerlink" title="常用端口扫描汇总"></a>常用端口扫描汇总</h2><p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230618192936959.png"></p>
+<h1 id="6-目标版本特征发现"><a href="#6-目标版本特征发现" class="headerlink" title="6.目标版本特征发现"></a>6.目标版本特征发现</h1><p>中间件版本等信息对攻击者来说非常重要，攻击者会利用获取的目标中间件信息来寻找合适的渗透手段。</p>
+<p>通常，攻击者在观察目标时，会利用非正常手段导致目标报错，诱使目标返回错误页面。中间件默认的错误页面中多包含中间版版本等信息。</p>
+<p>对用户而言，他们没有必要知道当前服务器的版本信息、报错等内容。因此不推荐输出这些内容。建议隐藏这类中间版本，报错直接给个404就完事了。</p>
+<p>多数情况下，运维人员会修改默认的错误页面，或者强制访问错误后直接跳转到首页或断开当前连接。这样就可以防止攻击者通过观察报错页面得到站点的基本信息。这种情况下，可利用扫描工具（如NMAP）进行尝试，也可发现目标的一些中间件特征。</p>
+<blockquote>
+<p>其原理就是获取目标服务器的响应包头，并针对其中的<strong>server字段</strong>信息进行判断。大多数中间件都会在server字段中填写当前服务器的版本内容。</p>
+</blockquote>
+<h1 id="7-web漏扫工具"><a href="#7-web漏扫工具" class="headerlink" title="7.web漏扫工具"></a>7.web漏扫工具</h1><p>使用Web漏洞扫描工具的好处在于其检查速度及范围远远高于人工检查，并且可同时针对多个站点进行扫描，对效率提升有极大帮助。</p>
+<p>其缺点在于，Web漏洞扫描器并不能完全发现所有漏洞，对很多隐藏很深的漏洞会出现误报及漏报的情况。因此，Web扫描器并非万能。攻击者通常<strong>先利用Web漏洞扫描器</strong>进行初步、全面的探测，之后再利用<strong>人工</strong>方式针对疑似点进行进一步渗透尝试。</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230618193311361.png"></p>
+<p>综上，Web漏洞扫描工具的用法非常简单，输入目标地址、配置相应参数后即可自动化开展扫描。针对Web扫描器的扫描行为，可通过识别http头的server信息进行阻断，或者对各类漏洞测试语句进行过滤。而避免漏洞出现是最根本的方式。</p>
+<h1 id="8-分站信息查找"><a href="#8-分站信息查找" class="headerlink" title="8.分站信息查找"></a>8.分站信息查找</h1><p>分站有助于清晰地划分业务逻辑及功能。很多情况下，由于主站访问量很大并且非常重要，运维人员会投入大量精力去管理主站，这在一定程度上会忽视<strong>分站安全</strong>。</p>
+<p>在各大互联网公司的SRC（应急响应中心）或漏洞提交平台，可看到其中的绝大部分漏洞均为分站下的漏洞情况。</p>
+<p>攻击者在面对对主站渗透攻击过程受阻时，会考虑针对分站的漏洞开展攻击，实现迂回攻击的效果。因此，分站极易成为网站整体安全的短板。</p>
+<p>下面是分站寻找方式的总结</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230618195351578.png"></p>
+<h2 id=""><a href="#" class="headerlink" title=""></a></h2><p>大量分站由于没有收录而无法被搜索引擎获取。如果需要获取详细信息，可利用各类子域名爆破类等工具进行自动化爆破尝试</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/06/11/%E7%94%A8%E6%88%B7%E8%A7%86%E8%A7%92%E4%B8%8B%E7%9A%84%E4%BF%A1%E6%81%AF%E6%8E%A2%E6%B5%8B/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E3%80%8AWEB%E5%AE%89%E5%85%A8%E5%9F%BA%E7%A1%80%E3%80%8B/" rel="tag">《WEB安全基础》</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%BF%A1%E6%81%AF%E6%8E%A2%E6%B5%8B/" rel="tag">信息探测</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2023/06/11/%E7%94%A8%E6%88%B7%E8%A7%86%E8%A7%92%E4%B8%8B%E7%9A%84%E9%98%B2%E6%8A%A4%E6%89%8B%E6%AE%B5%E8%AF%86%E5%88%AB/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            web防护及识别
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2023/06/10/CSRF%E4%B8%8ESSRF/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">CSRF与SSRF</div>
+      </a>
+    
+  </nav>
+
+  
+   
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.css">
+
+
+<script src="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.js"></script>
+
+
+<script src="https://cdn.staticfile.org/blueimp-md5/2.19.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '93da8388ad1469a8be66',
+    clientSecret: '9dea6314b14ae1877632f2bcbe0a639dd4485bb1',
+    repo: 'blogtalk',
+    owner: 'ak005469075',
+    admin: ['ak005469075'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+  
+    
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2023-2024
+        <i class="ri-heart-fill heart_icon"></i> 是羽泪云诶
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/favicon.ico" alt="小张之栈"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+  <script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+</div>
+
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+ 
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+ 
+<script src="/js/dz.js"></script>
+ 
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>

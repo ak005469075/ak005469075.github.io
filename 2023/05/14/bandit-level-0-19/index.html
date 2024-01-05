@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>bandit(level 0-19) |  小张之栈</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-bandit-level-0-19"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+  
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  bandit(level 0-19)
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/05/14/bandit-level-0-19/" class="article-date">
+  <time datetime="2023-05-14T14:25:25.000Z" itemprop="datePublished">2023-05-14</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/linux/">linux</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">1.7k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">6 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="bandit"><a href="#bandit" class="headerlink" title="bandit"></a>bandit</h1><h2 id="字符作用"><a href="#字符作用" class="headerlink" title="字符作用"></a>字符作用</h2><blockquote>
+<p>| 表示管道，上一条命令的输出，作为下一条命令参数，通常用来过滤&#x2F;汇总数据。</p>
+</blockquote>
+<blockquote>
+<p>&amp;&amp;表示前一条命令执行成功时，才执行后一条命令；反之，前面的命令执行失败，则&amp;&amp;后面的命令不会被执行。</p>
+</blockquote>
+<blockquote>
+<p>&amp;表示任务在后台执行，即使ssh窗口关闭，服务依然会在后台持续运行。</p>
+</blockquote>
+<blockquote>
+<p>||表示上一条命令执行失败后，才执行下一条命令。一旦执行到一条成功的命令，后面用****||****连接的命令，就不会再被执行。</p>
+</blockquote>
+<blockquote>
+<p>＞把正常信息（剔除错误信息）重定向到另一个文件内</p>
+<p><em><strong>*2&gt;*</strong></em> &#x2F;dev&#x2F;null意思就是把错误输出到“黑洞” ，不会显示在屏幕上。</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/succing/article/details/127355545?ops_request_misc=%7B%22request_id%22:%22168405323416800215011812%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=168405323416800215011812&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-1-127355545-null-null.142%5Ev87%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=linux">Linux技巧(六)：命令尾部&amp;的作用 &amp;&amp;、|、||、；、()、&amp;＞、 2＞&amp;1 的用法和区别，很实用_linux &amp;_血煞长虹的博客-CSDN博客</a></p>
+<h2 id="level-1"><a href="#level-1" class="headerlink" title="level 1"></a>level 1</h2><p>我用的windows，下载了mobaXterm用于进行ssh连接</p>
+<p>是说level 1的密码呢在readme文件中，用到cat 找出来即可</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230513211057882.png" alt="image-20230513211057882"></p>
+<h2 id="level-2"><a href="#level-2" class="headerlink" title="level 2"></a>level 2</h2><p>exit，然后r，重新建立连接，login as bandit1，密码是上级找到的</p>
+<p>密码在虚线文件名中，这时候cat -就不管用了。指定文件完整路径即可。</p>
+<p><img src="/image-20230513212947940.png" alt="image-20230513212947940"></p>
+<h2 id="level-3"><a href="#level-3" class="headerlink" title="level 3"></a>level 3</h2><p>文件名有空格</p>
+<p>使用引号括起来</p>
+<p><img src="/image-20230513214101452.png" alt="image-20230513214101452"></p>
+<p>aBZ0W5EmUfAf7kHTQeOwd8bauFJ2lAiG</p>
+<h2 id="level-4"><a href="#level-4" class="headerlink" title="level 4"></a>level 4</h2><p>说是在inhere目录下的隐藏文件中</p>
+<p>需要用到ls -a命令查看隐藏</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230513214557871.png" alt="image-20230513214557871"></p>
+<p>2EW7BBsr6aMMoJ2HjW067dm8EgX26xNe</p>
+<h2 id="level-5"><a href="#level-5" class="headerlink" title="level 5"></a>level 5</h2><p>在inhere目录下，只有一个唯一可读的文件</p>
+<p>由于文件名都有规律，且有特殊符号，于是我用了 cat .&#x2F;-file0{0,1,2…9}的方法，也就是在末尾3个之间，再cat .&#x2F;-file07试试，有了</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230513221122380.png" alt="image-20230513221122380"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230513221420135.png" alt="image-20230513221420135"></p>
+<p>lrIWWI6bB37kxfiCQZqUdOIYfr6eEeqR</p>
+<p>正解操作是：</p>
+<p>file .&#x2F;-file* 查看文件类型</p>
+<p>cat .&#x2F;-file07</p>
+<h2 id="level-6"><a href="#level-6" class="headerlink" title="level 6"></a>level 6</h2><p>密码存储文件在inhere目录下，且可读、1033bytes、不可执行</p>
+<p>inhere目录下有将近20个目录，一个个来不太现实，用到du命令</p>
+<p>du : 显示每个文件和目录的磁盘使用空间~~~文件的大小。</p>
+<p>命令参数：</p>
+<p>-a   #显示目录中文件的大小  单位 KB 。</p>
+<p>-b  #显示目录中文件的大小，以字节byte为单位。</p>
+<p>-c  #显示目录中文件的大小，同时也显示总和；单位KB。</p>
+<p>-k 、 -m  #显示目录中文件的大小，-k 单位KB，-m 单位MB.</p>
+<p>-s  #仅显示目录的总值，单位KB。</p>
+<p>-h  #以K  M  G为单位显示，提高可读性~~~（最常用的一个~也可能只用这一个就满足需求了）<br><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230513223236240.png" alt="image-20230513223236240"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230513223206962.png" alt="image-20230513223206962"></p>
+<p>du -a -b</p>
+<p>cat .&#x2F;maybehere07&#x2F;.file2</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230513223351281.png" alt="image-20230513223351281"></p>
+<p>P4L4vucdmLnm8I7Vl7jG1ApGSfjYKqJU</p>
+<h2 id="level-7"><a href="#level-7" class="headerlink" title="level 7"></a>level 7</h2><p>被存在服务器的某处，由用户bandit7所有，bandit6组所有，33bytes</p>
+<p>find基本用法：find [PATH] [option] [action]  </p>
+<p>-user name : 列出文件所有者为name的文件<br>        -group name : 列出文件所属用户组为name的文件<br>        -uid n : 列出文件所有者为用户ID为n的文件<br>        -gid n : 列出文件所属用户组为用户组ID为n的文件  </p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514112457648.png" alt="image-20230514112457648"></p>
+<p>可以使用 <strong>2&gt;&#x2F;dev&#x2F;null</strong> 将错误信息重定向</p>
+<p><code>find / -user bandit7 -group bandit6 -size 33c 2&gt;/dev/null</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514112752119.png" alt="image-20230514112752119"></p>
+<p>参考<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/bf8cc6b0efd1">【bandit】WarGame之bandit通关日志 - 简书 (jianshu.com)</a></p>
+<h2 id="level-8"><a href="#level-8" class="headerlink" title="level 8"></a>level 8</h2><p>在data.txt文件中内容为<strong>millionth</strong>的那一行中</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514114655477.png" alt="image-20230514114655477"></p>
+<p>TESKZC0XvTetK0S9xNwm25STk5iWrBvP</p>
+<h2 id="level-9"><a href="#level-9" class="headerlink" title="level 9"></a>level 9</h2><p>在data.txt中，仅出现一次的行文本中</p>
+<p>sort与uniq命令</p>
+<p>sort排序，</p>
+<p>uniq是去掉相邻的重复行，-c统计次数，-u显示不重复的行</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514115858357.png" alt="image-20230514115858357"></p>
+<p>-c找出现次数为1的即可</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514115916436.png" alt="image-20230514115916436"></p>
+<p>参考：<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/bf8cc6b0efd1">【bandit】WarGame之bandit通关日志 - 简书 (jianshu.com)</a></p>
+<h2 id="level-10"><a href="#level-10" class="headerlink" title="level 10"></a>level 10</h2><p>在data.txt文件中的少数几个人类可读的字符串中，前面有几个&#x3D;符号</p>
+<p>一般查看有乱码</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514121138624.png" alt="image-20230514121138624"></p>
+<p><code>用strings data.txt</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514121241304.png" alt="image-20230514121241304"></p>
+<h2 id="level-11"><a href="#level-11" class="headerlink" title="level 11"></a>level 11</h2><p>data.txt文件中，但是包含base64编码</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514121610805.png" alt="image-20230514121610805"></p>
+<h2 id="level-12"><a href="#level-12" class="headerlink" title="level 12"></a>level 12</h2><p>data.txt文件中，但是rot13加密</p>
+<p>tr命令：对输入字符进行替换、压缩和删除</p>
+<p>将所有的字符向后移动13位,但要保持大写和小写</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514122106548.png" alt="image-20230514122106548"></p>
+<p>参考：[使用ROT13加密解密_tr解rot13_apersonlikep的博客-CSDN博客](<a target="_blank" rel="noopener" href="https://blog.csdn.net/apersonlikep/article/details/89332063?ops_request_misc=%7B%22request_id%22:%22168403789316800182732613%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=168403789316800182732613&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-89332063-null-null.142%5Ev87%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=linux">https://blog.csdn.net/apersonlikep/article/details/89332063?ops_request_misc=%7B%22request%5Fid%22%3A%22168403789316800182732613%22%2C%22scm%22%3A%2220140713.130102334..%22%7D&amp;request_id=168403789316800182732613&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-89332063-null-null.142^v87^control_2,239^v2^insert_chatgpt&amp;utm_term=linux</a> rot13&amp;spm&#x3D;1018.2226.3001.4187)</p>
+<h2 id="level-13"><a href="#level-13" class="headerlink" title="level 13"></a>level 13</h2><p>是data.txt文件，但是反复压缩，十六进制转储。</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514122659959.png" alt="image-20230514122659959"></p>
+<p>xxd命令：转二级制、十六进制</p>
+<p>mv命令：重命名</p>
+<p>gzip&#x2F;bzip2 -d&#x2F;tar -xvf命令：解压缩</p>
+<p>先转二级制</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514123813942.png" alt="image-20230514123813942"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514123825354.png" alt="image-20230514123825354"></p>
+<p>重命名gz、解压</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514123946806.png" alt="image-20230514123946806"></p>
+<p>重命名bz2、解压</p>
+<p><img src="/image-20230514124152671.png" alt="image-20230514124152671"></p>
+<p>重命名gz、解压</p>
+<p><img src="/image-20230514124254797.png" alt="image-20230514124254797"></p>
+<p>重命名tar、解压</p>
+<p><img src="/image-20230514124423926.png" alt="image-20230514124423926"></p>
+<p><img src="/image-20230514124556058.png" alt="image-20230514124556058"></p>
+<p>重命名bz2，解压</p>
+<p><img src="/image-20230514124733776.png" alt="image-20230514124733776"></p>
+<p>重命名tar、解压</p>
+<p><img src="/image-20230514124850246.png" alt="image-20230514124850246"></p>
+<p>重命名gz、解压</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514124956549.png" alt="image-20230514124956549"></p>
+<h2 id="ssh、telnet、nc、openssl、nmap工具篇"><a href="#ssh、telnet、nc、openssl、nmap工具篇" class="headerlink" title="ssh、telnet、nc、openssl、nmap工具篇"></a>ssh、telnet、nc、openssl、nmap工具篇</h2><h2 id="level-14"><a href="#level-14" class="headerlink" title="level 14"></a>level 14</h2><p>在**&#x2F;etc&#x2F;bandit_pass&#x2F;bandit14**中，且只能由bandit14用户读取。且提供了一个私有SSH密钥。</p>
+<!--ssh -i 秘钥文件名称 root@远程IP地址-->
+
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514130400052.png" alt="image-20230514130400052"></p>
+<p>报错了，看不懂，但是看到绿字说22端口登录是不支持的，于是换个端口。</p>
+<p>加了个-p 2220，虽然也报错，但还是提示连到了</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514132248403.png" alt="image-20230514132248403"></p>
+<p>查看即可</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514132359501.png" alt="image-20230514132359501"></p>
+<p>fGrHPx402xGC7U7rXKDaxiWFTOiF0ENq</p>
+<h2 id="level-15"><a href="#level-15" class="headerlink" title="level 15"></a>level 15</h2><p>连接到本机，且端口为30000提交密码</p>
+<p>telnet ip地址 端口</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514133034901.png" alt="image-20230514133034901"></p>
+<p>jN2kgmIXJ6fShzhT2avhotn4Zcka6tnt</p>
+<h2 id="level-16"><a href="#level-16" class="headerlink" title="level 16"></a>level 16</h2><p>在localhost，端口为30001处提交上关密码，且有ssl加密</p>
+<p>openssl：多用途、跨平台密码工具</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514133923601.png" alt="image-20230514133923601"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230514133934323.png" alt="image-20230514133934323"></p>
+<p>JQttfApK4SeyHwDlI9SXGR50qclOAil1</p>
+<h2 id="level-17"><a href="#level-17" class="headerlink" title="level 17"></a>level 17</h2><p>目的是获取证书，将上一级的密码发送至端口范围为31000到32000的localhost上。1.找出有哪些端口是服务器监听着的；2.找出哪些是使用SSL的；3.只有一个服务器是会给你下一级证书的，其它的只会重复你发给它的。</p>
+<p>知识点：端口扫描</p>
+<p><code>nmap localhost -p310000-320000</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515113201632.png" alt="image-20230515113201632"></p>
+<p><code>openssl s_client -connect localhost:port</code>对上述端口依次尝试，并提交密码</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515114635689.png" alt="image-20230515114635689"></p>
+<p>port为31790时</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515114912840.png" alt="image-20230515114912840"></p>
+<p>可以知道，又是私钥登陆，与ssh -i有关</p>
+<p>存放该私钥。</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515120130800.png" alt="image-20230515120130800"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515120139520.png" alt="image-20230515120139520"></p>
+<p><code>ssh -i /tmp/my111/key bandit17@localhost -p2220</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515120357068.png" alt="image-20230515120357068"></p>
+<p>要设定权限，700，即只有拥有者可以读写。</p>
+<p><code>chmod 700 /tmp/my111/key</code></p>
+<p><img src="/../../../Typora/img111/image-20230515120619059.png" alt="image-20230515120619059"></p>
+<p>成功登入。</p>
+<h2 id="level-17-gt-18"><a href="#level-17-gt-18" class="headerlink" title="level 17-&gt;18"></a>level 17-&gt;18</h2><p>在主目录有两文件<strong>passwords.old and passwords.new</strong>. </p>
+<p>下一级的密码在 <strong>passwords.new</strong>里，并且这个old和new只有一行改动了的。</p>
+<p>​		注意：当登入bandit18时看到”Byebye!”，这和bandit19有关。</p>
+<p>diff命令，比较文件不同。</p>
+<ul>
+<li><p>“|”表示前后2个文件内容有不同</p>
+</li>
+<li><p>“&lt;”表示后面文件比前面文件少了1行内容</p>
+</li>
+<li><p>“&gt;”表示后面文件比前面文件多了1行内容</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515130247402.png" alt="image-20230515130247402"></p>
+</li>
+</ul>
+<p>hga5tuuCLF6fFzUpnagiMN8ssu9LFrdg</p>
+<p>exit -&gt;r</p>
+<p>登入bandit18，输入密码出现：<img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515130727349.png" alt="image-20230515130727349"></p>
+<h2 id="level-18-gt-19"><a href="#level-18-gt-19" class="headerlink" title="level 18-&gt;19"></a>level 18-&gt;19</h2><p>下一级密码在主目录的readme中，但是嘞，有人修改了.bashrc，使得在使用SSH登录时注销。</p>
+<p>考察点：ssh登陆后可以跟命令执行</p>
+<p>所以在bandit17时采用远程登录。</p>
+<p><code>ssh bandit18@localhost -p2220</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515133004926.png" alt="image-20230515133004926"></p>
+<p>上图中，rm和chmod也是不允许的操作，查找其他博主的wp，在后面加了“cat  readme”但没效果</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230515145336983-1684133695637-1.png"></p>
+<p>止步于此，没权限，不搞了。</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/14/bandit-level-0-19/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/bandit/" rel="tag">bandit</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/" rel="tag">linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ssh/" rel="tag">ssh</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2023/05/14/NATAS/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            NATAS
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2023/05/13/%E5%9C%A8%E7%BA%BF%E5%B7%A5%E5%85%B7/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">在线网址</div>
+      </a>
+    
+  </nav>
+
+  
+   
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.css">
+
+
+<script src="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.js"></script>
+
+
+<script src="https://cdn.staticfile.org/blueimp-md5/2.19.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '93da8388ad1469a8be66',
+    clientSecret: '9dea6314b14ae1877632f2bcbe0a639dd4485bb1',
+    repo: 'blogtalk',
+    owner: 'ak005469075',
+    admin: ['ak005469075'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+  
+    
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2023-2024
+        <i class="ri-heart-fill heart_icon"></i> 是羽泪云诶
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/favicon.ico" alt="小张之栈"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+  <script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+</div>
+
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+ 
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+ 
+<script src="/js/dz.js"></script>
+ 
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>

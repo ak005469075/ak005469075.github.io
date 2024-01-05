@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>程序设计 |  小张之栈</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-cxsj"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+  
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  程序设计
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/09/26/cxsj/" class="article-date">
+  <time datetime="2023-09-25T16:21:20.000Z" itemprop="datePublished">2023-09-26</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E3%80%8A%E6%BC%8F%E6%B4%9E%E5%8F%91%E6%8E%98%E8%89%BA%E6%9C%AF%E3%80%8B/">《漏洞发掘艺术》</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">1.8k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">6 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="程序设计"><a href="#程序设计" class="headerlink" title="程序设计"></a>程序设计</h1><h1 id="引入"><a href="#引入" class="headerlink" title="引入"></a>引入</h1><p>我们说，攻防都是相对的，一个好的攻击者它是知道怎么进攻的，那它也懂怎么防；一个好的防守者它是懂防守的，它可以去进攻。找程序漏洞，可以，但还是要多探究一个为什么，当一个工具猴子又什么乐趣，“虽说码头薯条”，但要去当一个聪明的猴子才更有竞争力；知识，还是要知其然并知其所以然，为了更好地理解，还是先回顾程序设计。</p>
+<h1 id="0x01-基本概念"><a href="#0x01-基本概念" class="headerlink" title="0x01 基本概念"></a>0x01 基本概念</h1><p>什么是程序设计；</p>
+<p>程序是用某种语言写出的一些语句。</p>
+<p>人有人的语言，机器有机器的语言，<strong>机器语言</strong>，0101对吧，但是这样设计程序很复杂；<strong>汇编程序</strong>是一种机器语言翻译程序，汇编语言如mov，add，但是还是比较难；再来一个 <strong>编译程序</strong>去翻译 <strong>汇编语言</strong>，这种 <strong>高级语言</strong>比起 <strong>汇编语言</strong>更直观，比如C、C++</p>
+<p>中文都是有语法的，那C++这种语言自然有其语法。</p>
+<p>还有一种是<strong>伪代码</strong>，就是只体现出其逻辑，但是不能直接运行。</p>
+<p>所以总结起来就是，机器-&gt;汇编-&gt;高级语言(C、C++)；这其实是一种简化，由难-&gt;易，但本质上还是遵循底层语言的，计算机执行的还是机器语言。</p>
+<p><strong>控制结构</strong></p>
+<p>好，我们已经知道这种语言了。我们写作的时候，是不是将就倒叙、插叙手法，剪视频还将就蒙太奇呢，这种就是 <strong>顺序</strong>，我们不可能一直从头到尾讲，所以为了控制语句的执行顺序，就有了控制结构，<code>if..else；while/for</code>之类的</p>
+<p><strong>变量、运算符、函数</strong>，这些基本概念也都知道了吧</p>
+<p><strong>全局思想</strong>：主要是讲到反汇编的汇编语言部分，x86的寄存器啊，指令啊这种汇编知识；总之就是，C语言代码在发挥作用之前都是先编译成机器指令</p>
+<p>之后讲到了：</p>
+<blockquote>
+<p>字符串</p>
+<p>有符号、无符号类型</p>
+<p>指针；就传递内存块的开始地址</p>
+<p>强制类型转换；临时改变一个变量的数据类型的方法；它强大的地方还是在于和指针搭配的时候，每个指针都要求有一个数据类型的</p>
+<p>变量作用域；局部呢，还是全局</p>
+</blockquote>
+<p><strong>存储器分段</strong></p>
+<p>每一段都是一块专用存储区，这五个段就是(text，data，bss，heap，stack)，就是代码段、数据段、全局变量&#x2F;静态变量、堆，栈，程序运行的时候，哪部分会存入相应的段呢，这里就不记了</p>
+<p><strong>程序构建</strong></p>
+<blockquote>
+<p>文件访问；2 ways：文件描述符和文件流</p>
+<p>数据结构；线性表，链表。。。</p>
+<p>结构：一般指结构体，类啊，封装了很多变量</p>
+<p>函数指针</p>
+<p>伪随机数</p>
+</blockquote>
+<p><strong>总结</strong>：以上这些只是为了说明那么多构成，是为了确保程序是遵照某个规则的。但是呢，有些东西可以打破规则，就是漏洞。</p>
+<h1 id="0x02-漏洞篇"><a href="#0x02-漏洞篇" class="headerlink" title="0x02 漏洞篇"></a><strong>0x02</strong> 漏洞篇</h1><p>一般与内存破坏有关，控制目标程序的执行流程，欺骗程序去执行一段植入内存的恶意代码。我记得上学时工程逆向这门课有过演示</p>
+<h2 id="一、缓冲区溢出"><a href="#一、缓冲区溢出" class="headerlink" title="一、缓冲区溢出"></a>一、缓冲区溢出</h2><p>典型的例子就是，给某个变量分配的内存不够存完输入的数据，那当把10字节的数据输入，存给8字节的缓冲区，那不崩溃啦，而且还会造成数据覆盖。</p>
+<p>一般就是比如有一个exe文件，你打开，它要密码，你又不知道，那你逆向工具，改一下内容，使得溢出后，无需正确密码也可访问。</p>
+<h3 id="例子1-溢出原理"><a href="#例子1-溢出原理" class="headerlink" title="例子1-溢出原理"></a>例子1-溢出原理</h3><p><img src="/../../../Typora/img111/image-20231103112310738.png" alt="image-20231103112310738"></p>
+<p>这个直接运行的话，只能输出</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Before:</span><br><span class="line">buffer_2 is at 000000000062FE00 and contains &#x27;two&#x27;</span><br><span class="line">buffer_1 is at 000000000062FE10 and contains &#x27;one&#x27;</span><br><span class="line">value is at 000000000062FE1C and 5 (0x00000005)</span><br></pre></td></tr></table></figure>
+
+<p>先输出成exe文件</p>
+<p><img src="/../../../Typora/img111/image-20231103112543045.png"></p>
+<p>咦，为什么这两个地址之间差的是16字节，而不是8字节；编译器的内存对齐吗？</p>
+<p>那，它实际上数组应该是8字节大小，但是，我输入了10字节的值，没有把buffer_1内容覆盖掉</p>
+<p>算了，这样搞的话，输入17字节的数据试试</p>
+<blockquote>
+<p>argv[]是存储命令行参数的</p>
+</blockquote>
+<p><img src="/../../../Typora/img111/image-20231103113928079.png"></p>
+<p>看，当命令行参数为17字节的时候，将这个值赋值给buffer_2，造成溢出，导致之后的buffer_1内容被占了</p>
+<p>呐，只要足够大，也把value的内容占据了</p>
+<p><img src="/../../../Typora/img111/image-20231103115046826.png" alt="image-20231103115046826"></p>
+<h3 id="例子2-绕过密码"><a href="#例子2-绕过密码" class="headerlink" title="例子2-绕过密码"></a>例子2-绕过密码</h3><p><strong>原理</strong></p>
+<p>数组越界后就有可能破坏栈中相邻变量的值</p>
+<p><img src="/../../../Typora/img111/image-20231103122355283.png" alt="image-20231103122355283"></p>
+<p>看主函数，它调用了密码检查函数，判断是否通过；两个密码二选一，即可通过</p>
+<p>生成exe文件后，尝试一下</p>
+<p><img src="/../../../Typora/img111/image-20231103122710069.png"></p>
+<p>然后，看看溢出会怎么样，输入30字节绕过了</p>
+<p><img src="/../../../Typora/img111/image-20231103122818036.png"></p>
+<p>调试下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PS E:\VS project\py\Debug&gt; gdb -q ./auth_overflow</span><br><span class="line">Reading symbols from ./auth_overflow...done.</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20231103123558438.png"></p>
+<p>list 1就可以了，一次十行，要看后续代码，回车就可以</p>
+<p>设置断点，第9行和第16行，并输入参数为那30字节的值</p>
+<p><img src="/../../../Typora/img111/image-20231103123705334.png"></p>
+<p>在执行到断点9的时候，password都还是未知数呢，而auth_flag也是空值，显示password_buffer之后的28个字节内容，auth_flag的值见红框处</p>
+<p>明显可以看到<strong>password_buffer的位置在auth_flag之前</strong></p>
+<p><a target="_blank" rel="noopener" href="https://www.python100.com/html/P060WGT4H17P.html">gdb调试</a>处，<code>gdb x</code>命令</p>
+<p><img src="/../../../Typora/img111/image-20231103123955695.png" alt="image-20231103123955695"></p>
+<blockquote>
+<p>x&#x2F;x x表示显示十六进制数据</p>
+<p>x&#x2F;s s表示显示字符</p>
+<p>x&#x2F;16xw 是显示16个地址的的数据，16进制显示，w代表数据单位为单词</p>
+</blockquote>
+<p>接下来，执行到第二个断点处，auth_flag的值是0x39，十六进制转化为十进制的值是3*16+9&#x3D;57，ascii码值对应的字符为9</p>
+<blockquote>
+<p>数字0<del>9对应<em>的ASCII码</em>(十进制)为“48”</del>“<em>57</em>” </p>
+<p>大写字母A<del>Z对应的ASCII码(十进制)为“65”</del>“90” </p>
+<p>小写字母a<del>z对应的百ASCII码(十进制)为”97”</del>“122” </p>
+</blockquote>
+<p>password_buffer的值，溢出到了auth_flag中，看下图，<code>90</code></p>
+<p><img src="/../../../Typora/img111/image-20231103124624879.png" alt="image-20231103124624879"></p>
+<blockquote>
+<p>x&#x2F;4cb 4个地址的数据， c是字符，b代表字节byte</p>
+<p>x&#x2F;dw d十进制，w是单词，0x3039的十进制就是12345</p>
+</blockquote>
+<p>溢出后，check_这个函数的返回值就是12345，而不是0，所以判断通过；</p>
+<p><code>auth_flag</code>是执行控制点，它的内容被覆盖，导致绕过</p>
+<p><img src="/../../../Typora/img111/image-20231103130348549.png" alt="image-20231103130348549"></p>
+<p><strong>然后，看一下，如果把password_buffer和auth_flag的声明交换位置呢，看9行和10行处</strong></p>
+<p>这样的话，内存中，<strong>auth_flag的位置在password_buffer之前</strong>，那么password_buffer溢出，怎样也影响不了auth_flag；</p>
+<p><strong>！！！！！！！！但是，这里有问题，更改语句声明位置，内存位置不变</strong></p>
+<blockquote>
+<p>按理说，局部变量，存储在栈中，那么J和K，J先声明，那么J的地址高；否则K的地址高</p>
+</blockquote>
+<p>还是和编译器有关系咯？</p>
+<p><strong>按理说，如果内存位置上，auth_flag的位置在password_buffer之前，那么无论如何也不会溢出绕过的</strong></p>
+<h3 id="bash篇"><a href="#bash篇" class="headerlink" title="bash篇"></a>bash篇</h3><p>bash shell和Perl</p>
+<h2 id="二、其它段溢出"><a href="#二、其它段溢出" class="headerlink" title="二、其它段溢出"></a>二、其它段溢出</h2><h3 id="基于堆的溢出"><a href="#基于堆的溢出" class="headerlink" title="基于堆的溢出"></a>基于堆的溢出</h3><h3 id="函数指针的溢出"><a href="#函数指针的溢出" class="headerlink" title="函数指针的溢出"></a>函数指针的溢出</h3><h2 id="三、格式化字符串"><a href="#三、格式化字符串" class="headerlink" title="三、格式化字符串"></a>三、格式化字符串</h2><h1 id="0x03-网络"><a href="#0x03-网络" class="headerlink" title="0x03 网络"></a>0x03 网络</h1> 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/09/26/cxsj/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B8%97%E9%80%8F/" rel="tag">渗透</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2023/09/26/%E8%9A%81%E5%89%91%E5%8E%9F%E7%90%86/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            蚁剑原理
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2023/09/26/%E8%B8%A9%E7%82%B9/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">渗透思想</div>
+      </a>
+    
+  </nav>
+
+  
+   
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.css">
+
+
+<script src="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.js"></script>
+
+
+<script src="https://cdn.staticfile.org/blueimp-md5/2.19.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '93da8388ad1469a8be66',
+    clientSecret: '9dea6314b14ae1877632f2bcbe0a639dd4485bb1',
+    repo: 'blogtalk',
+    owner: 'ak005469075',
+    admin: ['ak005469075'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+  
+    
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2023-2024
+        <i class="ri-heart-fill heart_icon"></i> 是羽泪云诶
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/favicon.ico" alt="小张之栈"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+  <script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+</div>
+
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+ 
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+ 
+<script src="/js/dz.js"></script>
+ 
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>

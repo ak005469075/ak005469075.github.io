@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>日志分析 |  小张之栈</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-日志分析"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+  
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  日志分析
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/09/20/%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/" class="article-date">
+  <time datetime="2023-09-19T16:21:20.000Z" itemprop="datePublished">2023-09-20</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">网络安全</a> / <a class="article-category-link" href="/categories/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/">日志分析</a> / <a class="article-category-link" href="/categories/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/wazuh/">wazuh</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">3.2k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">16 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="一、IDPS"><a href="#一、IDPS" class="headerlink" title="一、IDPS"></a>一、IDPS</h1><h2 id="IDS"><a href="#IDS" class="headerlink" title="IDS"></a>IDS</h2><p>Instrusion Detection System <strong>检测恶意行为，并预警</strong></p>
+<p>第一类：基于交换机或服务器流量(NIDS，基于<strong>网络流量</strong>的IDS)</p>
+<blockquote>
+<p>关注通信流量，对加密流量存在检测难题(但还是有特征&#x2F;指纹，尽可能识别)</p>
+<p>一般C语言编写的，懂得都懂；</p>
+<p>规则库算法设计，对于该条流量，先进行分类，比如SSH的流量、Oracle的流量、MYSQL流量、DNS流量，那分完类了，比如是MYSQL，去http找该规则即可</p>
+</blockquote>
+<p>第二类：基于操作系统文件或日志(HIDS，基于<strong>主机</strong>的IDS)</p>
+<blockquote>
+<p>只关心主机行为与日志信息</p>
+<p>关注文件的特征，有没有被修改之类的</p>
+</blockquote>
+<h2 id="IPS"><a href="#IPS" class="headerlink" title="IPS"></a>IPS</h2><p>…Protection..<strong>不仅检测攻击，还防御</strong></p>
+<p>第一类：基于网络流量的IPS </p>
+<blockquote>
+<p>不能旁挂，必须串联，发现非法流量，直接阻断</p>
+</blockquote>
+<p>第二类：基于Web服务器的或各类应用服务器</p>
+<blockquote>
+<p>如Apache、Nginx、PHP语言的WAF</p>
+</blockquote>
+<p>假设有一条配置线路为：</p>
+<p><code>路由器/交换机-&gt;防火墙-&gt;操作系统-&gt;应用服务器-&gt;</code></p>
+<p>越靠前的设备或系统呢，性能和通用性要求越高</p>
+<p>相反越靠后，是针对性越强，专注度越高，效率越高</p>
+<h2 id="开源产品"><a href="#开源产品" class="headerlink" title="开源产品"></a>开源产品</h2><p>HIDS：OSSEC(很久没维护)、**<a target="_blank" rel="noopener" href="https://documentation.wazuh.com/current/installation-guide/packages-list.html">Wazuh</a>（Unix系统）**</p>
+<p>NIDS：Snort(没办法支持应用层)、**<a target="_blank" rel="noopener" href="https://suricata.io/">Suricata</a>**、Zeek</p>
+<p>难点：规则库的建立和编写：黑名单</p>
+<p>规则有三大点</p>
+<blockquote>
+<p>分类(具体协议及特有行为)</p>
+<p>具体特征行为</p>
+<p>连续性的事件，如果有上百个404，上百个Failed，有理由怀疑是被扫描</p>
+</blockquote>
+<p>Elastic Stack 可视化，至少消耗6个G运存起步，<del>我反正带不动</del></p>
+<h2 id="拓展-基于AI的IDPS"><a href="#拓展-基于AI的IDPS" class="headerlink" title="拓展-基于AI的IDPS"></a>拓展-基于AI的IDPS</h2><p>让AI学习大量的合法访问数据(白名单)，一旦扫描到的流量或日志与已学习的特征库不匹配，认为是异常流量</p>
+<h2 id="EDR"><a href="#EDR" class="headerlink" title="EDR"></a>EDR</h2><p>endpoint detection and  response，端点检测与响应，<strong>端点</strong>：与网络有关的设备(移动设备，台式机，服务器)</p>
+<h2 id="日志分析与流量分析"><a href="#日志分析与流量分析" class="headerlink" title="日志分析与流量分析"></a>日志分析与流量分析</h2><ul>
+<li>两种方式：在线实时分析、离线分析(事后去看，比如取证、溯源)</li>
+<li>规则是核心：基于日志或者是流量的 <strong>特征</strong>去识别和编写规则，是在线实时分析的重点</li>
+<li>安全和性能本质上无法兼得</li>
+</ul>
+<h1 id="二、产品安装与使用"><a href="#二、产品安装与使用" class="headerlink" title="二、产品安装与使用"></a>二、产品安装与使用</h1><p>安装cenos虚拟机</p>
+<p><a target="_blank" rel="noopener" href="https://mirror.iscas.ac.cn/">国内源镜像分享</a>(下载速度快一点)</p>
+<p><a target="_blank" rel="noopener" href="http://t.csdn.cn/k01uv">centos安装</a></p>
+<p>桥接网络固定ip，如果是xhell等工具连接要网段一致</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi   /etc/sysconfig/network-scripts/ifcfg-ens33</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>TYPE&#x3D;”Ethernet”<br>PROXY_METHOD&#x3D;”none”<br>BROWSER_ONLY&#x3D;”no”<br>BOOTPROTO&#x3D;”dhcp”<br>DEFROUTE&#x3D;”yes”<br>IPV4_FAILURE_FATAL&#x3D;”no”<br>IPV6INIT&#x3D;”yes”<br>IPV6_AUTOCONF&#x3D;”yes”<br>IPV6_DEFROUTE&#x3D;”yes”<br>IPV6_FAILURE_FATAL&#x3D;”no”<br>IPV6_ADDR_GEN_MODE&#x3D;”stable-privacy”<br>NAME&#x3D;”ens33”<br>UUID&#x3D;”f2612a57-835d-4f4d-8f18-9beeb7901113”<br>DEVICE&#x3D;”ens33”<br>ONBOOT&#x3D;”yes”</p>
+</blockquote>
+<p>修改如下</p>
+<blockquote>
+<p>TYPE&#x3D;”Ethernet”   # 网络类型为以太网<br>BOOTPROTO&#x3D;”static”  # 手动分配ip<br>NAME&#x3D;”ens33”  # 网卡设备名，设备名一定要跟文件名一致<br>DEVICE&#x3D;”ens33”  # 网卡设备名，设备名一定要跟文件名一致<br>ONBOOT&#x3D;”yes”  # 该网卡是否随网络服务启动<br>IPADDR&#x3D;”192.168.220.101”  # 该网卡ip地址就是你要配置的固定IP，如果你要用xshell等工具连接，220这个网段最好和你自己的电脑网段一致，否则有可能用xshell连接失败<br>GATEWAY&#x3D;”192.168.220.2”   # 网关<br>NETMASK&#x3D;”255.255.255.0”   # 子网掩码<br>DNS1&#x3D;”8.8.8.8”    # DNS，8.8.8.8为Google提供的免费DNS服务器的IP地址</p>
+</blockquote>
+<p>配置静态ip为了ping通百度</p>
+<p>root-root123</p>
+<p>xg-test123</p>
+<h1 id="1-安装Wazuh"><a href="#1-安装Wazuh" class="headerlink" title="1.安装Wazuh"></a>1.安装Wazuh</h1><p>安装<a target="_blank" rel="noopener" href="http://t.csdn.cn/KRbIx">wazuh</a>参考</p>
+<h2 id="1-1安装必要的库"><a href="#1-1安装必要的库" class="headerlink" title="1.1安装必要的库"></a>1.1安装必要的库</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install curl unzip wget libcap net-tools</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-2安装RPM源"><a href="#1-2安装RPM源" class="headerlink" title="1.2安装RPM源"></a>1.2安装RPM源</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpm --import https://packages.wazuh.com/key/GPG-KEY-WAZUH</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="1-3添加Repo文件"><a href="#1-3添加Repo文件" class="headerlink" title="1.3添加Repo文件"></a>1.3添加Repo文件</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; /etc/yum.repos.d/wazuh.repo &lt;&lt;\EOF</span><br><span class="line"></span><br><span class="line">[wazuh]</span><br><span class="line">gpgcheck=1</span><br><span class="line">gpgkey=https://packages.wazuh.com/key/GPG-KEY-WAZUH</span><br><span class="line">enabled=1</span><br><span class="line">name=EL-\<span class="variable">$releasever</span> - Wazuh</span><br><span class="line">baseurl=https://packages.wazuh.com/4.x/yum/</span><br><span class="line">protect=1</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-4安装服务器端"><a href="#1-4安装服务器端" class="headerlink" title="1.4安装服务器端"></a>1.4安装服务器端</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install wazuh-manager</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-5-启动"><a href="#1-5-启动" class="headerlink" title="1.5 启动"></a>1.5 启动</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl start wazuh-manager</span><br></pre></td></tr></table></figure>
+
+<h1 id="2-Wazuh系统框架"><a href="#2-Wazuh系统框架" class="headerlink" title="2.Wazuh系统框架"></a>2.Wazuh系统框架</h1><p>Wazuh客户端(采集信息)-&gt;Wazuh服务端(分析信息)&lt;-Elastick Stack(可视化)</p>
+<h1 id="3-基础使用"><a href="#3-基础使用" class="headerlink" title="3.基础使用"></a>3.基础使用</h1><h2 id="1-文档结构"><a href="#1-文档结构" class="headerlink" title="1.文档结构"></a>1.文档结构</h2><p>默认路径: <code>/var/ossec</code></p>
+<p>主要关注文件为：<code>etc(配置文件)、logs(日志文件夹)、ruleset</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@xinguang ossec]<span class="comment"># cd active-response</span></span><br><span class="line">[root@xinguang active-response]<span class="comment"># ls</span></span><br><span class="line">bin</span><br><span class="line">[root@xinguang active-response]<span class="comment"># cd bin</span></span><br><span class="line">[root@xinguang bin]<span class="comment"># ls</span></span><br><span class="line">default-firewall-drop  firewall-drop   ipfw          npf         restart-wazuh</span><br><span class="line">disable-account        host-deny       kaspersky     pf          route-null</span><br><span class="line">firewalld-drop         ip-customblock  kaspersky.py  restart.sh  wazuh-slack</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@xinguang ossec]<span class="comment"># cd etc</span></span><br><span class="line">[root@xinguang etc]<span class="comment"># ls</span></span><br><span class="line">client.keys            lists                        ossec.conf  shared</span><br><span class="line">decoders               local_internal_options.conf  rootcheck   sslmanager.cert</span><br><span class="line">internal_options.conf  localtime                    rules       sslmanager.key</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>ossec&#x2F;etc呈现出来的decoders(识别分类)和、rules是<code>用户自定义</code>的规则</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@xinguang ossec]<span class="comment"># ls</span></span><br><span class="line">active-response  api     bin  framework     lib   queue    stats  var</span><br><span class="line">agentless        backup  etc  integrations  logs  ruleset  tmp    wodles</span><br><span class="line">[root@xinguang ossec]<span class="comment"># cd ruleset</span></span><br><span class="line">[root@xinguang ruleset]<span class="comment"># ls</span></span><br><span class="line">decoders  rules  sca</span><br><span class="line">[root@xinguang ruleset]<span class="comment"># cd rules</span></span><br><span class="line">[root@xinguang rules]<span class="comment"># ls</span></span><br><span class="line">0010-rules_config.xml            0410-imperva_rules.xml</span><br><span class="line">0015-ossec_rules.xml             0415-sophos_rules.xml</span><br><span class="line">0016-wazuh_rules.xml             0420-freeipa_rules.xml</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>自带了很多不同的规则</p>
+<h2 id="2-查看日志"><a href="#2-查看日志" class="headerlink" title="2.查看日志"></a>2.查看日志</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/var/ossec/logs/alerts/alerts.json <span class="comment">#不适合直接查看，适合分析和展示</span></span><br><span class="line">/var/ossec/logs/alerts/alerts.log <span class="comment">#适用于直接查看</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="3-vscode连接linux"><a href="#3-vscode连接linux" class="headerlink" title="3.vscode连接linux"></a>3.vscode连接linux</h2><p>由于那个 <code>vi</code>，对文件内容修改不方便啊，所以呢，用vscode去连接到linux，在windows上操作，会方便很多啊</p>
+<p>vscode安装了 <code>Remote ssh</code>扩展，然后点击左下角两个相对的箭头，去连接主机</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Host 随便一个名字</span><br><span class="line">Hostname 虚拟机ip</span><br><span class="line">#Port 443</span><br><span class="line">User root</span><br></pre></td></tr></table></figure>
+
+<p>最好还是设置免密登录，生成密钥和公钥什么的吧</p>
+<p><a target="_blank" rel="noopener" href="http://t.csdn.cn/ihDDP">http://t.csdn.cn/ihDDP</a></p>
+<h2 id="4-实例"><a href="#4-实例" class="headerlink" title="4.实例"></a>4.实例</h2><h3 id="SSH登录"><a href="#SSH登录" class="headerlink" title="SSH登录"></a>SSH登录</h3><p>看下sshd_rules.xml的内容</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">149	  &lt;rule <span class="built_in">id</span>=<span class="string">&quot;5716&quot;</span> level=<span class="string">&quot;5&quot;</span>&gt;</span><br><span class="line">  150	    &lt;if_sid&gt;5700&lt;/if_sid&gt;</span><br><span class="line">  151	    &lt;match&gt;^Failed|^error: PAM: Authentication&lt;/match&gt;</span><br><span class="line">  152	    &lt;description&gt;sshd: authentication failed.&lt;/description&gt;</span><br><span class="line">  153	    &lt;mitre&gt;</span><br><span class="line">  154	      &lt;<span class="built_in">id</span>&gt;T1110&lt;/id&gt;</span><br><span class="line">  155	    &lt;/mitre&gt;</span><br><span class="line">  156	    &lt;group&gt;authentication_failed,gdpr_IV_35.7.d,gdpr_IV_32.2,gpg13_7.1,hipaa_164.312.b,nist_800_53_AU.14,nist_800_53_AC.7,pci_dss_10.2.4,pci_dss_10.2.5,tsc_CC6.1,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,&lt;/group&gt;</span><br><span class="line">  157	  &lt;/rule&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>启动manager</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl start wazuh-manager</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-ssh登录失败"><a href="#1-ssh登录失败" class="headerlink" title="1.ssh登录失败"></a>1.ssh登录失败</h4><p>用ssh连接工具，我用的Mobaxterm，ssh连接到这台有服务的Centos后，</p>
+<p>输入</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">tail</span> -f /var/ossec/logs/alerts/alerts.log</span><br><span class="line"></span><br><span class="line">[root@xinguang ~]<span class="comment"># tail -f /var/ossec/logs/alerts/alerts.log</span></span><br><span class="line">User: root</span><br><span class="line">Sep 20 16:49:07 xinguang sshd[55273]: Accepted password <span class="keyword">for</span> root from xxxxxxx(发起ssh的ip地址) port 64868 ssh2</span><br><span class="line"></span><br><span class="line">** Alert 1695199758.565483: - pam,syslog,authentication_success,pci_dss_10.2.5,gpg13_7.8,gpg13_7.9,gdpr_IV_32.2,hipaa_164.312.b,nist_800_53_AU.14,nist_800_53_AC.7,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,</span><br><span class="line">2023 Sep 20 16:49:18 xinguang-&gt;/var/log/secure</span><br><span class="line">Rule: 5501 (level 3) -&gt; <span class="string">&#x27;PAM: Login session opened.&#x27;</span></span><br><span class="line">User: root</span><br><span class="line">Sep 20 16:49:18 xinguang sshd[55273]: pam_unix(sshd:session): session opened <span class="keyword">for</span> user root by (uid=0)</span><br><span class="line">uid: 0</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>新开一个ssh窗口</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">tail</span> /var/log/secure</span><br><span class="line"></span><br><span class="line">Sep 20 16:54:28 xinguang sshd[55388]: pam_unix(sshd:session): session opened <span class="keyword">for</span> user root by (uid=0)</span><br><span class="line">Sep 20 16:54:33 xinguang sshd[55400]: Accepted password <span class="keyword">for</span> root from xxxxx port 65005 ssh2</span><br><span class="line">Sep 20 16:54:44 xinguang sshd[55400]: pam_unix(sshd:session): session opened <span class="keyword">for</span> user root by (uid=0)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>我用主机的cmd窗口去尝试ssh该centos，故意输错密码，在log中出现</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">** Alert 1695200473.573148: - syslog,sshd,authentication_failed,gdpr_IV_35.7.d,gdpr_IV_32.2,gpg13_7.1,hipaa_164.312.b,nist_800_53_AU.14,nist_800_53_AC.7,pci_dss_10.2.4,pci_dss_10.2.5,tsc_CC6.1,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,</span><br><span class="line">2023 Sep 20 17:01:13 xinguang-&gt;/var/log/secure</span><br><span class="line">Rule: 5760 (level 5) -&gt; <span class="string">&#x27;sshd: authentication failed.&#x27;</span></span><br><span class="line">Src IP: 我的主机ip</span><br><span class="line">Src Port: 65145</span><br><span class="line">User: root</span><br><span class="line">Sep 20 17:01:13 xinguang sshd[55559]: Failed password <span class="keyword">for</span> root from 我的主机ip port 65145 ssh2</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>然后另一个窗口输入 <code>tail /var/log/secure</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">Sep 20 19:09:29 xinguang sshd[55784]: Failed password <span class="keyword">for</span> root from 我主机ip port 60205 ssh2</span><br></pre></td></tr></table></figure>
+
+<p>如果是普通用户嘞，故意输错密码</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">** Alert 1695208536.583519: - syslog,sshd,authentication_failed,gdpr_IV_35.7.d,gdpr_IV_32.2,gpg13_7.1,hipaa_164.312.b,nist_800_53_AU.14,nist_800_53_AC.7,pci_dss_10.2.4,pci_dss_10.2.5,tsc_CC6.1,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,</span><br><span class="line">2023 Sep 20 19:15:36 xinguang-&gt;/var/log/secure</span><br><span class="line">Rule: 5760 (level 5) -&gt; <span class="string">&#x27;sshd: authentication failed.&#x27;</span></span><br><span class="line">Src IP: 我ip</span><br><span class="line">Src Port: 60313</span><br><span class="line">User: xg</span><br><span class="line">Sep 20 19:15:35 xinguang sshd[55856]: Failed password <span class="keyword">for</span> xg from 我ip port 60313 ssh2</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>触发了5716规则，</p>
+</blockquote>
+<h4 id="2-ssh连续登录失败"><a href="#2-ssh连续登录失败" class="headerlink" title="2.ssh连续登录失败"></a>2.ssh连续登录失败</h4><p>看一下规则</p>
+<p>在&#x2F;var&#x2F;ossec&#x2F;ruleset&#x2F;rules中</p>
+<p><code>cat 0095*</code> </p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">rule</span> <span class="attr">id</span>=<span class="string">&quot;5720&quot;</span> <span class="attr">level</span>=<span class="string">&quot;10&quot;</span> <span class="attr">frequency</span>=<span class="string">&quot;8&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">if_matched_sid</span>&gt;</span>5716<span class="tag">&lt;/<span class="name">if_matched_sid</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">same_source_ip</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">description</span>&gt;</span>sshd: Multiple authentication failures.<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">mitre</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">id</span>&gt;</span>T1110<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">mitre</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">group</span>&gt;</span>authentication_failures,gdpr_IV_35.7.d,gdpr_IV_32.2,gpg13_7.1,hipaa_164.312.b,nist_800_53_AU.14,nist_800_53_AC.7,nist_800_53_SI.4,pci_dss_10.2.4,pci_dss_10.2.5,pci_dss_11.4,tsc_CC6.1,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,<span class="tag">&lt;/<span class="name">group</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">rule</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>frequency 8：触发频率</p>
+<p><same_soure_ip> 触发ip</p>
+<p>相同ip尝试，且失败了8次</p>
+</blockquote>
+<p>所以主机的cmd不停地故意连接失败</p>
+<blockquote>
+<p>emmmm反而触发了爆破规则</p>
+<p>Rule: 5763 (level 10) -&gt; ‘sshd: brute force trying to get access to the system. Authentication failed.’</p>
+</blockquote>
+<h2 id="5-核心配置文件"><a href="#5-核心配置文件" class="headerlink" title="5.核心配置文件"></a>5.核心配置文件</h2><p>看下</p>
+<p>&#x2F;var&#x2F;ossec&#x2F;etc&#x2F;ossec.conf的部分内容</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230920200032398.png" alt="监听内容:文件、木马、端口等"></p>
+<p>还有系统检查，漏洞检查，敏感目录检查、主动响应，启用命令等</p>
+<p>还可以去忽略目录、文件类型等</p>
+<p>具体的设置，搭配 使用手册<a target="_blank" rel="noopener" href="https://documentation.wazuh.com/current/user-manual/reference/ossec-conf/localfile.html#log-format">https://documentation.wazuh.com/current/user-manual/reference/ossec-conf/localfile.html#log-format</a></p>
+<p>操作系统自带审计日志 <code>audit</code></p>
+<h3 id="执行命令"><a href="#执行命令" class="headerlink" title="执行命令"></a>执行命令</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">localfile</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">log_format</span>&gt;</span>command<span class="tag">&lt;/<span class="name">log_format</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">command</span>&gt;</span>df -P<span class="tag">&lt;/<span class="name">command</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">frequency</span>&gt;</span>360<span class="tag">&lt;/<span class="name">frequency</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">localfile</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="监控文件"><a href="#监控文件" class="headerlink" title="监控文件"></a>监控文件</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">localfile</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">log_format</span>&gt;</span>syslog<span class="tag">&lt;/<span class="name">log_format</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">location</span>&gt;</span>/var/log/secure<span class="tag">&lt;/<span class="name">location</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">localfile</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="白名单"><a href="#白名单" class="headerlink" title="白名单"></a>白名单</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">global</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">white_list</span>&gt;</span>127.0.0.1<span class="tag">&lt;/<span class="name">white_list</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">white_list</span>&gt;</span>^localhost.localdomain$<span class="tag">&lt;/<span class="name">white_list</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">white_list</span>&gt;</span>192.168.1.1<span class="tag">&lt;/<span class="name">white_list</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">global</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="主动响应"><a href="#主动响应" class="headerlink" title="主动响应"></a>主动响应</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">command</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>host-deny<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">executable</span>&gt;</span>host-deny<span class="tag">&lt;/<span class="name">executable</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">timeout_allowed</span>&gt;</span>yes<span class="tag">&lt;/<span class="name">timeout_allowed</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">command</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="6-主动响应"><a href="#6-主动响应" class="headerlink" title="6.主动响应"></a>6.主动响应</h2><h3 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h3><p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230920204535318.png"></p>
+<h3 id="linux"><a href="#linux" class="headerlink" title="linux"></a>linux</h3><p><code>/var/ossec/active-response/bin</code> directory.</p>
+<table>
+<thead>
+<tr>
+<th>Name of script</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/wazuh/wazuh/blob/4.5/src/active-response/disable-account.c">disable-account</a></td>
+<td>Disables a user account</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/wazuh/wazuh/blob/4.5/src/active-response/firewalls/default-firewall-drop.c">firewall-drop</a></td>
+<td>Adds an IP address to the iptables deny list.</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/wazuh/wazuh/blob/4.5/src/active-response/firewalld-drop.c">firewalld-drop</a></td>
+<td>Adds an IP address to the firewalld drop list. Requires firewalld installed on the endpoint.</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/wazuh/wazuh/blob/4.5/src/active-response/host-deny.c">host-deny</a></td>
+<td>Adds an IP address to the <code>/etc/hosts.deny</code> file.</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/wazuh/wazuh/blob/4.5/src/active-response/ip-customblock.c">ip-customblock</a></td>
+<td>Custom Wazuh block, easily modifiable for a custom response.</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/wazuh/wazuh/blob/4.5/src/active-response/firewalls/ipfw.c">ipfw</a></td>
+<td>Firewall-drop response script created for IPFW. Requires IPFW installed on the endpoint.</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/wazuh/wazuh/blob/4.5/src/active-response/firewalls/npf.c">npf</a></td>
+<td>Firewall-drop response script created for NPF. Requires NPF installed on the endpoint.</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/wazuh/wazuh/blob/4.5/src/active-response/wazuh-slack.c">wazuh-slack</a></td>
+<td>Posts notifications on Slack. Requires a slack hook URL passed as an <code>extra_args</code>.</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/wazuh/wazuh/blob/4.5/src/active-response/firewalls/pf.c">pf</a></td>
+<td>Firewall-drop response script created for PF. Requires PF installed on the endpoint.</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/wazuh/wazuh/blob/master/src/active-response/restart.sh">restart.sh</a></td>
+<td>Restarts the Wazuh agent or manager.</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/wazuh/wazuh/blob/4.5/src/active-response/restart-wazuh.c">restart-wazuh</a></td>
+<td>Restarts the Wazuh agent or manager.</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/wazuh/wazuh/blob/4.5/src/active-response/route-null.c">route-null</a></td>
+<td>Adds an IP address to a null route.</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/wazuh/wazuh/blob/master/src/active-response/kaspersky.c">kaspersky</a></td>
+<td>Integration of Wazuh agents with Kaspersky endpoint security. This uses Kaspersky Endpoint Security for Linux CLI to execute relevant commands based on a trigger.</td>
+</tr>
+</tbody></table>
+<h3 id="windows"><a href="#windows" class="headerlink" title="windows"></a>windows</h3><p> <code>C:\Program Files (x86)\ossec-agent\active-response\bin</code> directory.</p>
+<table>
+<thead>
+<tr>
+<th>Name of script</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/wazuh/wazuh/blob/4.5/src/active-response/netsh.c">netsh.exe</a></td>
+<td>Blocks an IP address using <code>netsh</code>.</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/wazuh/wazuh/blob/4.5/src/active-response/restart-wazuh.c">restart-wazuh.exe</a></td>
+<td>Restarts the Wazuh agent.</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/wazuh/wazuh/blob/4.5/src/active-response/route-null.c">route-null.exe</a></td>
+<td>Adds an IP address to null route.</td>
+</tr>
+</tbody></table>
+<p>主动响应手册<a target="_blank" rel="noopener" href="https://documentation.wazuh.com/current/user-manual/capabilities/active-response/index.html">https://documentation.wazuh.com/current/user-manual/capabilities/active-response/index.html</a></p>
+<h3 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h3><p>添加如下</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment"> &lt;active-response&gt;</span></span><br><span class="line"><span class="comment">   active-response options here</span></span><br><span class="line"><span class="comment"> &lt;/active-response&gt;</span></span><br><span class="line"><span class="comment"> --&gt;</span></span><br><span class="line"></span><br><span class="line"> <span class="tag">&lt;<span class="name">active-response</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">command</span>&gt;</span>firewall-drop<span class="tag">&lt;/<span class="name">command</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">location</span>&gt;</span>local<span class="tag">&lt;/<span class="name">location</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">level</span>&gt;</span>7<span class="tag">&lt;/<span class="name">level</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">timeout</span>&gt;</span>600<span class="tag">&lt;/<span class="name">timeout</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">active-response</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id=""><a href="#" class="headerlink" title=""></a></h3><p>看下自带的规则</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&lt;rule <span class="built_in">id</span>=<span class="string">&quot;5710&quot;</span> level=<span class="string">&quot;5&quot;</span>&gt;</span><br><span class="line">   &lt;if_sid&gt;5700&lt;/if_sid&gt;</span><br><span class="line">   &lt;match&gt;illegal user|invalid user&lt;/match&gt;</span><br><span class="line">   &lt;description&gt;sshd: Attempt to login using a non-existent user&lt;/description&gt;</span><br><span class="line">   &lt;mitre&gt;</span><br><span class="line">     &lt;<span class="built_in">id</span>&gt;T1110.001&lt;/id&gt;</span><br><span class="line">     &lt;<span class="built_in">id</span>&gt;T1021.004&lt;/id&gt;</span><br><span class="line">     &lt;<span class="built_in">id</span>&gt;T1078&lt;/id&gt;</span><br><span class="line">   &lt;/mitre&gt;</span><br><span class="line">   &lt;group&gt;authentication_failed,gdpr_IV_35.7.d,gdpr_IV_32.2,gpg13_7.1,hipaa_164.312.b,invalid_login,nist_800_53_AU.14,nist_800_53_AC.7,nist_800_53_AU.6,pci_dss_10.2.4,pci_dss_10.2.5,pci_dss_10.6.1,tsc_CC6.1,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,&lt;/group&gt;</span><br><span class="line"> &lt;/rule&gt;</span><br><span class="line"> </span><br><span class="line"> ...</span><br><span class="line"> </span><br><span class="line">  &lt;rule <span class="built_in">id</span>=<span class="string">&quot;5712&quot;</span> level=<span class="string">&quot;10&quot;</span> frequency=<span class="string">&quot;8&quot;</span> timeframe=<span class="string">&quot;120&quot;</span> ignore=<span class="string">&quot;60&quot;</span>&gt;</span><br><span class="line">   &lt;if_matched_sid&gt;5710&lt;/if_matched_sid&gt;</span><br><span class="line">   &lt;same_source_ip /&gt;</span><br><span class="line">   &lt;description&gt;sshd: brute force trying to get access to the system. Non existent user.&lt;/description&gt;</span><br><span class="line">   &lt;mitre&gt;</span><br><span class="line">     &lt;<span class="built_in">id</span>&gt;T1110&lt;/id&gt;</span><br><span class="line">   &lt;/mitre&gt;</span><br><span class="line">   &lt;group&gt;authentication_failures,gdpr_IV_35.7.d,gdpr_IV_32.2,hipaa_164.312.b,nist_800_53_SI.4,nist_800_53_AU.14,nist_800_53_AC.7,pci_dss_11.4,pci_dss_10.2.4,pci_dss_10.2.5,tsc_CC6.1,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,&lt;/group&gt;</span><br><span class="line"> &lt;/rule&gt;</span><br><span class="line"> </span><br></pre></td></tr></table></figure>
+
+<p>使用主机的cmd 去 ssh一个无效的用户名rtrt，登录错误的密码</p>
+<p>触发效果：</p>
+<p>触发了5710</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Rule: 5710 (level 5) -&gt; <span class="string">&#x27;sshd: Attempt to login using a non-existent user&#x27;</span></span><br><span class="line">Src IP: xxxxx</span><br><span class="line">Sep 20 22:01:29 xinguang sshd[60200]: Failed password <span class="keyword">for</span> invalid user rtrt fro</span><br></pre></td></tr></table></figure>
+
+<p>触发了5712</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Rule: 5712 (level 10) -&gt; <span class="string">&#x27;sshd: brute force trying to get access to the system. Non existent user.&#x27;</span></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>触发了主动响应</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Rule: 651 (level 3) -&gt; <span class="string">&#x27;Host Blocked by firewall-drop Active Response&#x27;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>还额外触发了2502的规则</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">** Alert 1695218499.673513: - syslog,access_control,authentication_failed,pci_dss_10.2.4,pci_dss_10.2.5,gpg13_7.8,gdpr_IV_35.7.d,gdpr_IV_32.2,hipaa_164.312.b,nist_800_53_AU.14,nist_800_53_AC.7,tsc_CC6.1,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,</span><br><span class="line">2023 Sep 20 22:01:39 xinguang-&gt;/var/log/secure</span><br><span class="line">Rule: 2502 (level 10) -&gt; <span class="string">&#x27;syslog: User missed the password more than one time&#x27;</span></span><br><span class="line">Sep 20 22:01:39 xinguang sshd[60200]: PAM 2 more authentication failures; <span class="built_in">logname</span>= uid=0 euid=0 <span class="built_in">tty</span>=ssh ruser= rhost=laptop-0kttc8k5</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">这是后来在/var/log/secure找到的</span><br><span class="line">Sep 20 22:01:39 xinguang sshd[60200]: PAM 2 more authentication failures; <span class="built_in">logname</span>= uid=0 euid=0 <span class="built_in">tty</span>=ssh ruser= rhost=laptop-0kttc8k5</span><br></pre></td></tr></table></figure>
+
+<p><strong>之后甚至断开退出了alerts.log，断开了ssh链接。</strong></p>
+<p><strong>重新连接，也连不上嘞</strong></p>
+<p>去虚拟机</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@xinguang rules]<span class="comment"># systemctl status iptables</span></span><br><span class="line">Unit iptables.service could not be found.</span><br><span class="line">[root@xinguang rules]<span class="comment"># iptables -nL</span></span><br><span class="line"></span><br><span class="line">发现了我的主机IP被DROP了</span><br><span class="line">iptables -F 清空</span><br></pre></td></tr></table></figure>
+
+
+
+<p>为了了解额外的规则，可以在</p>
+<p>rules下时，<code>ls | xarg grep 2502</code> 进行查看其规则位置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@xinguang ossec]<span class="comment"># cd ruleset</span></span><br><span class="line">[root@xinguang ruleset]<span class="comment"># ls</span></span><br><span class="line">decoders  rules  sca</span><br><span class="line">[root@xinguang ruleset]<span class="comment"># cd rules</span></span><br><span class="line">[root@xinguang rules]<span class="comment"># ls | xargs grep 2502</span></span><br><span class="line">0020-syslog_rules.xml:  &lt;rule <span class="built_in">id</span>=<span class="string">&quot;2502&quot;</span> level=<span class="string">&quot;10&quot;</span>&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/09/20/%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/" rel="tag">日志分析</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2023/09/20/Lazysysadmin/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            Lazysysadmin
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2023/09/17/Lamp2/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">LAMPSECURITY:CTF7</div>
+      </a>
+    
+  </nav>
+
+  
+   
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.css">
+
+
+<script src="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.js"></script>
+
+
+<script src="https://cdn.staticfile.org/blueimp-md5/2.19.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '93da8388ad1469a8be66',
+    clientSecret: '9dea6314b14ae1877632f2bcbe0a639dd4485bb1',
+    repo: 'blogtalk',
+    owner: 'ak005469075',
+    admin: ['ak005469075'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+  
+    
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2023-2024
+        <i class="ri-heart-fill heart_icon"></i> 是羽泪云诶
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/favicon.ico" alt="小张之栈"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+  <script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+</div>
+
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+ 
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+ 
+<script src="/js/dz.js"></script>
+ 
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>

