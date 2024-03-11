@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>域——再回顾 |  小张之栈</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-yu"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+  
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  域——再回顾
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/02/28/yu/" class="article-date">
+  <time datetime="2023-02-27T16:21:20.000Z" itemprop="datePublished">2023-02-28</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%9F%9F%E6%B8%97%E9%80%8F/">域渗透</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">2.5k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">9 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="域由来"><a href="#域由来" class="headerlink" title="域由来"></a>域由来</h1><p>为了方便管理各个主机；比如有1000个主机需要安装某个软件，总比可能让工作人员对这1000个都安一般；或者说有人辞职了啊，TA平时的用的主机，那些信息是不是要处理一下，然后给新来的腾出空间。</p>
+<p>总之一句话，下发任务和统一管理</p>
+<h1 id="利用场景一览"><a href="#利用场景一览" class="headerlink" title="利用场景一览"></a>利用场景一览</h1><p>众所周知，域用户权限很低，安装个什么玩意儿都不行，比如弹出 <strong>用户账户控制</strong>，TA只能联系管理员去帮忙安装，管理员用域管理身份登录到域成员主机，这个时候TA搞点事情，切换到本地计算机的管理员身份并登录，用mimikatz直接从内存中爬取到域管理员密码</p>
+<p>一般思路就是，定位到域控IP和域管理员账号，找出域管理员登录过的其他主机IP，从这些其他主机IP的内存中dump除域管理员密码，拿下<strong>域控</strong></p>
+<h1 id="基础操作"><a href="#基础操作" class="headerlink" title="基础操作"></a>基础操作</h1><p>判断是否是域：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">net user /doamin</span><br><span class="line">net view /domain</span><br></pre></td></tr></table></figure>
+
+<p>定位域：</p>
+<p>在登录到<strong>域成员主机</strong>的情况下，进行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#得到域控名</span></span><br><span class="line">net time /domain <span class="comment">#或者 net group &quot;domain controllers&quot; /domain</span></span><br><span class="line"></span><br><span class="line">ping 域控名 <span class="comment">#得到域控ip</span></span><br></pre></td></tr></table></figure>
+
+<p>定位域管理员：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">net group <span class="string">&quot;domain admins&quot;</span> /domain <span class="comment">#一般是Administrator，后续的提权步骤也可以通过其他漏洞，添加域管理员</span></span><br></pre></td></tr></table></figure>
+
+<p>查看已启动服务：wmic startup get command,caption</p>
+<h1 id="工具介绍"><a href="#工具介绍" class="headerlink" title="工具介绍"></a>工具介绍</h1><p><code>敏感密码信息获取</code>——<strong>mimikatz</strong></p>
+<p>一般在使用工具之前，可以先使用 cmdkey &#x2F;list，查看是否有保存的凭据</p>
+<p>我看视频里，貌似都是用<strong>cs</strong>上线，它自带很多插件，这样抓取密码很方便，包括提权、横向渗透这种；cs我确实用得少，改天找个靶场练一练</p>
+<p><strong>BloodHound</strong>，<code>可视化AD环境中的关系</code>，了解用户对计算机的权限啊、组成员信息等；我记得htb赛季4，GPO漏洞利用时，有师傅用这个工具，筛选出来了GPO的成员，进而GPO提权。总之，类似于net group什么的命令啊，它都整合了，细节列的明明白白</p>
+<h1 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h1><p>域成员登录主机，软件安装，N，因为受到了域控的管制</p>
+<p>本地用户登录主机，软件安装，Y</p>
+<p>所以在域成员主机中尝试新建一个用户并登录，应该不受域规则影响了，但是出不出网不一定，你不知道它是仅用防火墙设置了，还是说有其他配置</p>
+<p>隧道技术，主要是协议问题，能登qq，但是不能访问网页，需要进行一个协议转换，一般是绕防火墙，就用隧道技术</p>
+<p>代理技术，解决网络不可达问题，网络通讯问题</p>
+<p>你比如一个msf后门，开放了所有端口，如果对于出站来讲，防火墙将所有端口禁用</p>
+<p>防火墙服务器搭建网站，别人访问，走的入站</p>
+<p>本机执行后门，走的入\出站，取决于正方向代理，是跳板&#x2F;反弹</p>
+<p>组策略对象同步，一般是域创建一个GPO链接到防火墙设置，禁用出站所有端口的规则；其下的域主机进行gpupdate &#x2F;force即可完成同步</p>
+<p>那怎么办呢，如果我们拿到了一个shell，想要上线控制，根据出站规则，所有tcp端口被禁用了。</p>
+<p>解决办法：正向连接 or 隧道技术，所以一般就是将tcp协议数据封装成icmp协议数据</p>
+<p>具体为：</p>
+<p>B出站TCP被禁用，但入站没有，且不出网？</p>
+<p>A：采用正向连接（首先拿到一台A(能与B通信，且有网)），通过A控制B</p>
+<p>B出站TCP被禁用，但入站没有，且出网？</p>
+<p>A：正向连接 or <strong>隧道技术</strong>(走其他协议啦)</p>
+<p>隧道技术的前提还是要：**拿到shell，且是系统管理员权限(所以要提权)**，所以隧道技术本质还是一个为了方便控制和上线的目的</p>
+<p>工具一般是pingtunnel，后门木马用msf和cs都可以</p>
+<p>需要注意的是生成的木马ip需要是<strong>127.0.0.1</strong>，端口为<strong>x</strong>；且监听时的端口为<strong>y</strong></p>
+<p>端口的转换是靠<strong>目标机运行</strong>pingtunnel工具将端口x转换到y上的</p>
+<h2 id="技术图解"><a href="#技术图解" class="headerlink" title="技术图解"></a>技术图解</h2><p>无墙情况下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">graph LR</span><br><span class="line">	Internet[互联网]--&gt;|&quot;A的外网出口为2.2.2.2&quot;| A[攻击机A] --&gt;|&quot;win7 外网出口192.168.1.7</span><br><span class="line">内网192.168.11.2&quot;| B[B]</span><br><span class="line"></span><br><span class="line">    B --&gt;|&quot;win10 192.168.1.8</span><br><span class="line">    192.168.22.5&quot;| C[C]</span><br><span class="line">    C --&gt;|&quot;win2008 192.168.22.6</span><br><span class="line">    192.168.33.4&quot;| D[D]--&gt; |&quot;win2012 192.168.33.5&quot;| E[E]</span><br></pre></td></tr></table></figure>
+
+<p>AB有外网</p>
+<p>CDE全内网的</p>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1Ay4y1K7X6?p=123">https://www.bilibili.com/video/BV1Ay4y1K7X6?p=123</a></p>
+<p>拿到权限后，一般要实现上线，cs&amp;msf</p>
+<p>这里拿到权限的细节不讲，只讲上线</p>
+<p>1.首先B这个webshell，已经拿到吧，cs上线成功；</p>
+<p>以B和C为例，为了上线C，是需要将<strong>工具</strong>传到C，再反弹过来，在B上做C的操作，但是嘞，有风险且复杂；上线的目的，就是一切操作都交给攻击机，而不是跳板</p>
+<p>2.通过B作为跳板建立<strong>正向连接</strong>，连到C</p>
+<p>假设用的是msf木马，这个时候因为c有两张卡，msf是需要<strong>做路由的</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#在kali下</span></span><br><span class="line">background</span><br><span class="line">run post/multi/manage/autoroute</span><br><span class="line">run autoroute -p  <span class="comment">#这个是将B的所有网卡都弄到手，其中有一个通向C的路由</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#建立socks节点</span></span><br><span class="line">use auxiliary/server/socks_proxy</span><br><span class="line"><span class="comment">#就像是kali里，为什么proxychains firefox ...就可以打开一样</span></span><br><span class="line"><span class="comment">#cs直接右键代理转发就行</span></span><br><span class="line"><span class="comment">#代理工具，windows用proxifier，kali用proxychains</span></span><br></pre></td></tr></table></figure>
+
+<p>3.现在就等于用代理工具可以访问到C了，通信问题解决，然后通过漏洞拿到C的shell忽略不计</p>
+<p>4.反正目前是kali的msf或者cs已经连到C了，接下来去D，不出网，只能 <strong>正向连接</strong></p>
+<p>所以重复第2步了，先确认通信(proxy)，再拿shell，再正向木马-&gt;更新路由-&gt;再建立新节点(确认通信)，再拿shell-&gt;再正向木马，循环即可</p>
+<p>这里再讲清楚一下正向：</p>
+<p>以A和B为例，B将流量转移到自己的<strong>本地</strong>x端口，而A去主动连接到B的x端口</p>
+<p>反向：</p>
+<p>B将流量转移到<strong>远程</strong>A的y端口，A去监听y端口</p>
+<p><a target="_blank" rel="noopener" href="http://t.csdnimg.cn/yJw0z">http://t.csdnimg.cn/yJw0z</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">graph LR</span><br><span class="line">	Internet[互联网]--&gt;|&quot;A的外网出口为2.2.2.2&quot;| A[攻击机A] --&gt;|&quot;win7 外网出口192.168.1.7</span><br><span class="line">内网192.168.11.2&quot;| B[B]</span><br><span class="line"></span><br><span class="line">    B --&gt;|&quot;win10 192.168.1.8</span><br><span class="line">    192.168.22.5&quot;| C[C]</span><br><span class="line">    C --&gt;|&quot;做入站规则限制，只让访问web服务，让正向连接失效</span><br><span class="line">    win2008 192.168.22.6</span><br><span class="line">    192.168.33.4&quot;| D[D]--&gt; |&quot;</span><br><span class="line">    做入站规则限制，只让访问打印机服务，让正向连接失效</span><br><span class="line">    win2012 192.168.33.5&quot;| E[E]</span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1Ay4y1K7X6?p=124">https://www.bilibili.com/video/BV1Ay4y1K7X6?p=124</a></p>
+<h2 id="ARP欺骗"><a href="#ARP欺骗" class="headerlink" title="ARP欺骗"></a>ARP欺骗</h2><p>kali告诉目标机说，别怕，我是网关！这是单向</p>
+<p>如果kali再告诉路由器说，别怕，我是靶机！这就是双向</p>
+<p>所以单向一般就是让目标机得不到响应</p>
+<p>双向可以起个中间人作用截获篡改数据</p>
+<p>工具：<strong>科来数据包生成器</strong></p>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1Ay4y1K7X6?p=139">https://www.bilibili.com/video/BV1Ay4y1K7X6?p=139</a></p>
+<h1 id="AD-活动目录"><a href="#AD-活动目录" class="headerlink" title="AD(活动目录)"></a>AD(活动目录)</h1><p>定义：AD存储了<strong>网络对象</strong>的信息，管理员和用户可以方便查找这些信息</p>
+<p><strong>网络对象</strong>：用户(组)、计算机、域、组织单位</p>
+<p>功能：计算机管理、用户服务、资源管理、桌面配置、应用系统</p>
+<p>AD只是用来管理，不是认证</p>
+<h1 id="windows两种认证机制"><a href="#windows两种认证机制" class="headerlink" title="windows两种认证机制"></a>windows两种认证机制</h1><h2 id="NTLM"><a href="#NTLM" class="headerlink" title="NTLM"></a>NTLM</h2><p>其加密过程，将明文密码十六进制-&gt;unicode编码-&gt;MD4加密</p>
+<h3 id="挑战-x2F-质询——认证方式"><a href="#挑战-x2F-质询——认证方式" class="headerlink" title="挑战&#x2F;质询——认证方式"></a>挑战&#x2F;质询——认证方式</h3><ol>
+<li><p>协商：这一步是版本兼容问题，双方交流各自的支持版本</p>
+</li>
+<li><p>质询：</p>
+<p>a.客户端将自己的主机信息(<strong>必须有用户名</strong>)请求发送给服务端</p>
+<p>b.服务端<code>根据这个用户名</code>去自己的数据库找对应的<strong>NTLM Hash</strong>；服务端生成一个16位随机数，称之为<strong>Challenge</strong>(挑战，16位随机字符)；用这个找到的Hash去加密Chanllenge生成了<strong>Challenge1</strong>；同时将，Challenge发送给客户端</p>
+<p>c.客户端拿到Challenge，在客户端输入完明文密码后，操作系统将明文密码转换成NTLM Hash，加密这个Challenge，作为<strong>Response</strong>(响应)，发回给服务端</p>
+<p>d.服务端将Challenge1和Response做比较，相等就通过</p>
+<p>PS:这个Challenge1和Response啊，都是一种Net-NTLM Hash形式</p>
+</li>
+</ol>
+<h3 id="Pass-the-Hash-哈希传递"><a href="#Pass-the-Hash-哈希传递" class="headerlink" title="Pass the Hash (哈希传递)"></a>Pass the Hash (哈希传递)</h3><p>定义：不需要<strong>明文密码</strong>完成认证的技术</p>
+<p>条件：知道被传递认证的用户名和NTML Hash</p>
+<p>原理：已知，最终认证通过是凭借Challenge1和Respoonse的比对；这边只要获取到发过来的一个<strong>Challenge</strong>，再利用<strong>已知的NTLM Hash加密</strong>，就可以通过认证</p>
+<p>工具:crackmapExec|smbexec</p>
+<h2 id="Kerberos域认证体系"><a href="#Kerberos域认证体系" class="headerlink" title="Kerberos域认证体系"></a>Kerberos域认证体系</h2><p>不怕中间人攻击，基于可信的第三方认证服务，通过类似于对称加密的共享密钥执行认证服务</p>
+<p>三主体：Client、Server、KDC(密钥分发系统)&#x3D;DC(域控)</p>
+<p>KDC包含：AD(账户数据库，存在于这个白名单的client，才会获得TGT)、AS(为client生成TGT的服务)、TGS(为client生成某个服务的ticket)</p>
+<p><strong>粗略的过程</strong>：client向KDC请求两次，向server请求一次</p>
+<ol>
+<li>client向kdc请求，想获取访问server的权限；这一步其实是访问AS，它需要通过AD判断client是否是白名单的，是的话，就返回给一个TGT；这一步是判断client是否值得信赖</li>
+<li>client继续向kdc请求；TGS通过这个上交的TGT啊，确认了这个client有权限，就给它一个访问server的权限ticket</li>
+<li>client拿到ticket，可以访问特定的server了</li>
+</ol>
+<p><strong>细分</strong>：</p>
+<h2 id="黄金白银票据"><a href="#黄金白银票据" class="headerlink" title="黄金白银票据"></a>黄金白银票据</h2><p>每次看kerberos协议的时候，我老头疼，看不进去</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>1.小迪</p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/cute-puli/p/15510271.html">https://www.cnblogs.com/cute-puli/p/15510271.html</a></p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/02/28/yu/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%9F%9F%E6%B8%97%E9%80%8F/" rel="tag">域渗透</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2023/05/12/%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            第一篇博客
+          
+        </div>
+      </a>
+    
+    
+  </nav>
+
+  
+   
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.css">
+
+
+<script src="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.js"></script>
+
+
+<script src="https://cdn.staticfile.org/blueimp-md5/2.19.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '93da8388ad1469a8be66',
+    clientSecret: '9dea6314b14ae1877632f2bcbe0a639dd4485bb1',
+    repo: 'blogtalk',
+    owner: 'ak005469075',
+    admin: ['ak005469075'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+  
+    
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2023-2024
+        <i class="ri-heart-fill heart_icon"></i> 是羽泪云诶
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/favicon.ico" alt="小张之栈"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+  <script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+</div>
+
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+ 
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+ 
+<script src="/js/dz.js"></script>
+ 
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>
