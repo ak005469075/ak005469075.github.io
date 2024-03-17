@@ -96,7 +96,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">874</span>
+            <span class="post-count">1.2k</span>
         </span>
     </span>
 
@@ -105,7 +105,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">3 分钟</span>
+            <span class="post-count">4 分钟</span>
         </span>
     </span>
 </div>
@@ -169,6 +169,28 @@
 <p>但是tcp的话，不开tcp端口，<strong>数据</strong>都发不出去的</p>
 <p>（双方是都是可以发消息的，我只是截图了单向的）</p>
 <p><a target="_blank" rel="noopener" href="https://whowin.gitee.io/post/blog/network/0005-send-udp-via-linux-cli/">https://whowin.gitee.io/post/blog/network/0005-send-udp-via-linux-cli/</a></p>
+<h1 id="经典问题"><a href="#经典问题" class="headerlink" title="经典问题"></a>经典问题</h1><h2 id="1-好，两次握手、四次握手为什么不行？"><a href="#1-好，两次握手、四次握手为什么不行？" class="headerlink" title="1.好，两次握手、四次握手为什么不行？"></a>1.好，两次握手、四次握手为什么不行？</h2><p>这里要深究的话，其实是要看看为什么是三次握手？即三次握手的目的是什么？</p>
+<p>从上图中可以明显看到：</p>
+<p>1.<strong>Seq序列号保持初始同步</strong></p>
+<p>2.<strong>双方既能接也能发</strong></p>
+<p>3.<strong>避免重复历史连接</strong></p>
+<p>好，两次握手的弊端就出现了：</p>
+<p>1.我能接，你能接吗？那，老师，我能发，你能发吗？</p>
+<p>2.Seq初始序列号同步问题</p>
+<p>四次握手呢？</p>
+<p>既然三次握手就能搞定的事情，第四次握手，肯定牵扯到发送和接收，这是一个等待过程，白白消耗资源</p>
+<h2 id="2-我三次挥手请战！"><a href="#2-我三次挥手请战！" class="headerlink" title="2.我三次挥手请战！"></a>2.我三次挥手请战！</h2><p>看一下四次挥手在干什么</p>
+<p>A-&gt;B：FIN，我不发东西啦</p>
+<p>B-&gt;A：ACK，好的</p>
+<p>B-&gt;A：FIN，我不发东西啦</p>
+<p>A-&gt;：好的</p>
+<p>这里和前面的握手中的SYN总结一下</p>
+<p>SYN是有双向性质的，而FIN只是单方面结束关系，可以说是单向性；</p>
+<p>FIN，只是说不再发数据了，但不代表它不能处理数据，即没有要求对方也不发数据；</p>
+<p>像第三次挥手存在的一种可能就是这样，你不发是吧？那我发！</p>
+<p>这里其实也解释了，为什么二三不能像握手时合并一样；</p>
+<p>握手就手拉手；挥手，各回各的手</p>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/2169717">https://cloud.tencent.com/developer/article/2169717</a></p>
 <h1 id="ICMP"><a href="#ICMP" class="headerlink" title="ICMP"></a>ICMP</h1><p>kali进行ping命令，wireshark抓到了16个</p>
 <p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20240311182507457.png" alt="icmp，没端口，说明不走传输层"></p>
 <p>可以理解为它在IP层和传输层之间，硬要说，那也是在网络层</p>
@@ -251,6 +273,15 @@
 
    
   <nav class="article-nav">
+    
+      <a href="/2024/03/12/daimashenji/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            代码审计
+          
+        </div>
+      </a>
     
     
       <a href="/2024/02/16/lyzfsc/" class="article-nav-link">

