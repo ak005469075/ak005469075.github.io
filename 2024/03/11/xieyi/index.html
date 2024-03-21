@@ -96,7 +96,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.2k</span>
+            <span class="post-count">1.7k</span>
         </span>
     </span>
 
@@ -105,7 +105,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">4 分钟</span>
+            <span class="post-count">6 分钟</span>
         </span>
     </span>
 </div>
@@ -197,6 +197,30 @@
 <p>它这里有意思的地方是，对于一次ping命令来讲，它发了四个包，前两个是发起方，后两个是目标方。</p>
 <p>而且第一个包永远是无回应的，好像只是为了确认能否到达；</p>
 <p>这里停会儿，以后再看看，还是要多实践，只记是记不住</p>
+<h2 id="关于localhost和127-0-0-1"><a href="#关于localhost和127-0-0-1" class="headerlink" title="关于localhost和127.0.0.1"></a>关于localhost和127.0.0.1</h2><p>之前在哪里读过，有一个区别是后者是走网卡的</p>
+<p>电脑一天没网了，刚好去实验一下</p>
+<p>分别ping下127.0.0.1和localhost；同时wireshark捕获回环流量</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20240320180256123.png"></p>
+<p>ping localhost给了一个ipv6地址，优先于ipv4</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20240320181011471.png" alt="ping 127.0.0.1时"></p>
+<p>除此之外，关于127.0.0.1的部分，不止于此，127.0.0.2&#x2F;127.1.1.1等等都可以</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20240320180440728.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20240320181110973.png" alt="ping非127.0.0.1时"></p>
+<p>这个时候断网了，明明wifi连接上，但没信号</p>
+<p>ping 自己ip时依然有效；我断开wifi，保持无连接状态，上述ip依然有效</p>
+<p>这个时候去连接上wifi，虽然没信号，wireshark抓包<strong>wlan</strong>；</p>
+<p>ping 192.168.1.x时，过滤为icmp，没抓到（但是在<strong>回环流量</strong>中出现）；</p>
+<p>但是ping 192.168.1.1时，抓到了</p>
+<p>这里可以认为127.0.0.1“等价于”自己的wlan分配的ip，毕竟它们都出现在了回环流量里</p>
+<p>localhost为什么没有出现在lo口，但是成功发送出去，这应该是一种更底层的协议，抓不到</p>
+<p>当用小皮搭建一个网站后</p>
+<p>127.0.0.1:81访问不谈</p>
+<p>localhost:81是可以在回环流量中抓到的，去IP层看看，ipv6版本，地址均为**::1**</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>0x01.ping命令时wlan分配的本机ip以及127.x.x.x存在于回环流量中，经过回环网卡；而localhost不经过该网卡</p>
+<p>那经过哪里呢？</p>
+<p>0x02.断网时，wlan监听依然有不停的数据包发送，应该是和运营商服务器在进行连接</p>
+<p>它都进行ARP广播了，消息内容为<code>Who has 192.168.1.1? Tell 192.168.1.x</code>，后面有一条说这个ip在哪个MAC地址</p>
+<p>同时，它也在发送几个TCP&#x2F;UDP&#x2F;TLS请求，我用的移动路由器，它的目的IP都是广东、天津、上海这些移动，<del>嘶，怎么还有一条美国的IP、韩国IP也有？</del></p>
  
       <!-- reward -->
       

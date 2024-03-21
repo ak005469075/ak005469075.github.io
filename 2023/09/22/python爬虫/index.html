@@ -320,7 +320,7 @@
 <h5 id="技巧"><a href="#技巧" class="headerlink" title="技巧"></a>技巧</h5><p>这里有个技巧，你看，上面两种写法，调试的时候，每次都要重新启动debug，别慌，在cmd下，cd到有scrapy脚本的地方，</p>
 <p>输入 <code>scrapy shell 爬取网址</code>  </p>
 <p><strong>But！！！</strong></p>
-<p>我的朋友，如果你和我一样，用的也是vscode，<del>那可真是，太酷啦！！！</del> 或者其它平台，就在你平台终端去启动就行了</p>
+<p>我的朋友，如果你和我一样，用的也是vscode，<del>那可真是，太酷啦！！！</del> 或者其它平台，就在<strong>下方的终端</strong>去启动就行了</p>
 <p>比如我的cd kaipa(我的项目名)，去启动scrapy shell</p>
 <p>然后 </p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">scrapy shell 爬取网址</span><br><span class="line">&gt;&gt;&gt; title=responses.xpath(<span class="string">&quot;...&quot;</span>)</span><br><span class="line">&gt;&gt;&gt; title  <span class="comment">#打印一下</span></span><br><span class="line">&gt;&gt;&gt; title.extract() <span class="comment">#提取数值元组</span></span><br><span class="line">&gt;&gt;&gt; title.extract()[0] <span class="comment">#提取第一个数值</span></span><br></pre></td></tr></table></figure>
