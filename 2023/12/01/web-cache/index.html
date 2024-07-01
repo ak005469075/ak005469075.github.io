@@ -159,23 +159,23 @@
 <h3 id="CL-TE"><a href="#CL-TE" class="headerlink" title="CL-TE"></a>CL-TE</h3><p>即前端CL优先，后端TE优先</p>
 <p>目的，前端只能用GET和POST请求，但要让后端处理GPOST请求</p>
 <p>构造如下请求，发送 <strong>2次</strong>，第二次结果如下：</p>
-<p><img src="/../../../Typora/img111/image-20231205123719354.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231205123719354.png"></p>
 <p>前端处理了6字节的消息</p>
 <p>到后端：</p>
 <p>后端处理第一个快，是 <strong>0长度</strong>，则终止请求</p>
 <p>后面的<strong>G</strong>，服务器作为下一个请求的开始</p>
 <h3 id="TE-CL"><a href="#TE-CL" class="headerlink" title="TE-CL"></a>TE-CL</h3><p>需要关闭，上方repeater模块的更新长度选项，发送两次，第二次响应如下：</p>
-<p><img src="/../../../Typora/img111/image-20231205131034226.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231205131034226.png"></p>
 <p>后端用CL，只验证到5c\r\n，不解析了，下一次请求从GPOST开始，所以下一次拼接预留内容会报错</p>
 <p>为什么要这样写呢？简单点不可以咩？</p>
 <p>分析一下下面这个：</p>
-<p><img src="/../../../Typora/img111/image-20231205214708042.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231205214708042.png"></p>
 <p>首先，</p>
 <p>第一次发送：前端TE，读到0，传输完毕，后端CL，读取4，内容为</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">5\r\n</span><br><span class="line">G</span><br></pre></td></tr></table></figure>
 
 <p>好，剩下的内容已知了，与第二次请求拼接，懂了，否则永远是G0POST，而不会是GPOST，所以要构造</p>
-<p><img src="/../../../Typora/img111/image-20231205215232479.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231205215232479.png"></p>
 <p>1.所以当只构造<code>GPOST / HTTP/1.1</code>时，连发两次为什么是正常的捏？？？？求告知</p>
 <p>2.为什么构造的CL要15啊</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">你看啊Content-Type下面那个</span><br><span class="line">Content-Type: 11 &gt;=11都可以</span><br><span class="line"></span><br><span class="line">x=1\r\n 5</span><br><span class="line">0\r\n 3</span><br><span class="line">\r\n 2</span><br><span class="line">\r\n 0</span><br></pre></td></tr></table></figure>
@@ -186,19 +186,19 @@
 </blockquote>
 <h3 id="TE-TE"><a href="#TE-TE" class="headerlink" title="TE-TE"></a>TE-TE</h3><p>有必要让只有一个前端或后端服务器处理它，而另一个服务器忽略它，即转变成</p>
 <p>TE-CL或CL-TE操作</p>
-<p><img src="/../../../Typora/img111/image-20231205135824008.png" alt="image-20231205135824008"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231205135824008.png"></p>
 <p>前端TE读取到0了，认为是完整的，传给后端</p>
 <p>后端由于那个TE识别不了，直接回退到CL处理，读取到12\r\n截止，后边的内容带到下次请求</p>
-<p><img src="/../../../Typora/img111/image-20231205140907903.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231205140907903.png"></p>
 <p>我有点看不懂TE计算方式了，<strong>讨论计数</strong></p>
 <p>如图所示，我定义CL为3，而TE，第一块长度为4，内容12，后接换行，然后第二个终止块，提交两次的结果</p>
-<p><img src="/../../../Typora/img111/image-20231205141653652.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231205141653652.png"></p>
 <p>前端第一块为4，那么计算方式为，前端读取第一块为4字节，12\r\n，后面的换行不计，遇到0，则传输完整，给后端</p>
 <p>后端，TE处理错误，回退到CL，为3，那么4&#x2F;r&#x2F;n为3，不再解析，剩下内容留到下一次请求，所以得到120POST，单独的换行始终不计入</p>
 <h3 id="讨论计数"><a href="#讨论计数" class="headerlink" title="讨论计数"></a>讨论计数</h3><p>怎么计数方式老忘嘞，记录一下：</p>
 <p>1.当CL&lt;实际长度：服务端就解析部分请求参数</p>
 <p>这里还是CL-TE为例</p>
-<p><img src="/../../../Typora/img111/image-20231205205836026.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231205205836026.png"></p>
 <p>这里实际上CL是10，但这里就读6字节，下一次解析跟着后面的来</p>
 <p>分析一下：前端读取6个消息长度，那就是下面这个样子</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">0\r\n  3</span><br><span class="line">\r\n  2</span><br><span class="line">4     1</span><br></pre></td></tr></table></figure>
@@ -208,10 +208,10 @@
 
 <p>2.第二次提交：你懂了，4和后面的新请求拼接了</p>
 <p>当CL&gt;实际长度：服务端等待，直到超时</p>
-<p><img src="/../../../Typora/img111/image-20231205204411869.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231205204411869.png"></p>
 <p>所以当无法精确知道消息长度时，TF登场</p>
 <p>TF-CL为例，这里实际的CL是103，各行CL长度如图，而TE长度，<strong>请参考CL的长度计算</strong>，只不过是十六进制表示了知道吧</p>
-<p><img src="/../../../Typora/img111/image-20231205213730133.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231205213730133.png"></p>
 <p><strong>总结</strong></p>
 <blockquote>
 <p>CL长度，永远记得，最后一行的\r\n的2字节不计数</p>
@@ -220,29 +220,29 @@
 <h2 id="猜测发现"><a href="#猜测发现" class="headerlink" title="猜测发现"></a>猜测发现</h2><p>根据时间延迟</p>
 <h2 id="证明存在"><a href="#证明存在" class="headerlink" title="证明存在"></a>证明存在</h2><h2 id="CL-TE-1"><a href="#CL-TE-1" class="headerlink" title="CL-TE"></a>CL-TE</h2><p>目的，去触发404</p>
 <p>参考答案</p>
-<p><img src="/../../../Typora/img111/image-20231205145011527.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231205145011527.png"></p>
 <p>很烦，我不理解；0后面除了跟两个回车换行，还可以加一些实体数据</p>
 <p>下面这种任意格式吧，好像必须跟一个，很烦，当做固定格式吧</p>
-<p><img src="/../../../Typora/img111/image-20231205150304175.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231205150304175.png"></p>
 <h2 id="TE-CL-1"><a href="#TE-CL-1" class="headerlink" title="TE-CL"></a>TE-CL</h2><p>标准答案：</p>
-<p><img src="/../../../Typora/img111/image-20231205151932334.png"></p>
-<p><img src="/../../../Typora/img111/image-20231205152334862.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231205151932334.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231205152334862.png"></p>
 <h2 id="前端绕过"><a href="#前端绕过" class="headerlink" title="前端绕过"></a>前端绕过</h2><p>目的：绕过&#x2F;admin权限，并删除用户carlos</p>
 <h3 id="CL-TE-2"><a href="#CL-TE-2" class="headerlink" title="CL-TE"></a>CL-TE</h3><p>都发送2次</p>
 <p>1.尝试访问目标url，未授权</p>
-<p><img src="/../../../Typora/img111/image-20231205160248586.png" alt="image-20231205160248586"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231205160248586.png" alt="image-20231205160248586"></p>
 <p>2.尝试添加host，提示重复了</p>
-<p><img src="/../../../Typora/img111/image-20231205160329573.png" alt="image-20231205160329573"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231205160329573.png" alt="image-20231205160329573"></p>
 <p>3.构造更多的标头，进入，注意构造的CL，不能大的太离谱</p>
-<p><img src="/../../../Typora/img111/image-20231205160434053.png" alt="image-20231205160434053"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231205160434053.png" alt="image-20231205160434053"></p>
 <p>4.构造删除链接</p>
-<p><img src="/../../../Typora/img111/image-20231206121202888.png" alt="触发重定向，删除成功"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231206121202888.png" alt="触发重定向，删除成功"></p>
 <h2 id="TE-CL-2"><a href="#TE-CL-2" class="headerlink" title="TE-CL"></a>TE-CL</h2><p>第一步，尝试访问，401</p>
-<p><img src="/../../../Typora/img111/image-20231206123233999.png" alt="image-20231206123233999"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231206123233999.png" alt="image-20231206123233999"></p>
 <p>第二步，加Host</p>
-<p><img src="/../../../Typora/img111/image-20231206124248441.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231206124248441.png"></p>
 <p>第三步要改回GET</p>
-<p><img src="/../../../Typora/img111/image-20231206124913777.png"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231206124913777.png"></p>
 <h2 id="演示"><a href="#演示" class="headerlink" title="演示"></a>演示</h2><p>来到登录窗口，随便输入一下账号密码抓包</p>
 <p><img src="/../../../Typora/img111/image-20231205120829661.png"></p>
 <blockquote>

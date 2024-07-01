@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>《计算机科学精粹》 |  小张之栈</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-jsjkxjc"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+  
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  《计算机科学精粹》
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2024/05/10/jsjkxjc/" class="article-date">
+  <time datetime="2024-05-10T01:21:20.000Z" itemprop="datePublished">2024-05-10</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%94%B5%E5%AD%90%E4%B9%A6/">电子书</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">1.5k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">5 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="逆向篇"><a href="#逆向篇" class="headerlink" title="逆向篇"></a>逆向篇</h1><p><a target="_blank" rel="noopener" href="https://0xinfection.github.io/reversing/pages/part-3-types-of-malware.html">https://0xinfection.github.io/reversing/pages/part-3-types-of-malware.html</a></p>
+<table>
+<thead>
+<tr>
+<th>32位</th>
+<th>16位</th>
+<th>8位</th>
+<th>名字</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>EAX</td>
+<td>AX</td>
+<td>AH、AL</td>
+<td>累加器</td>
+</tr>
+<tr>
+<td>EBX</td>
+<td>BX</td>
+<td>BH、BL</td>
+<td>基地址寄存器</td>
+</tr>
+<tr>
+<td>ECX</td>
+<td>CX</td>
+<td>CH、CL</td>
+<td>计数寄存器</td>
+</tr>
+<tr>
+<td>EDX</td>
+<td>DX</td>
+<td>DH、DL</td>
+<td>数据寄存器</td>
+</tr>
+<tr>
+<td>ESI</td>
+<td>SI</td>
+<td></td>
+<td>源索引寄存器</td>
+</tr>
+<tr>
+<td>EDI</td>
+<td>DI</td>
+<td></td>
+<td>目标索引寄存器</td>
+</tr>
+<tr>
+<td>ESP</td>
+<td>SP</td>
+<td></td>
+<td>基址针寄存器</td>
+</tr>
+<tr>
+<td>EBP</td>
+<td>BP</td>
+<td></td>
+<td>堆栈指针寄存器</td>
+</tr>
+<tr>
+<td>EIP</td>
+<td></td>
+<td></td>
+<td>存放当前代码段即将被执行的下一条指令的偏移</td>
+</tr>
+</tbody></table>
+<h2 id="堆栈-x2F-堆"><a href="#堆栈-x2F-堆" class="headerlink" title="堆栈&#x2F;堆"></a>堆栈&#x2F;堆</h2><p>关于堆栈问题，那个内存向上增长还是什么的我也不关心</p>
+<p>主要引入堆栈这个内存区域，其优点就是去管理内存</p>
+<p>当函数退出的时候，其所有变量就弹出来，这些局部变量的压入&#x2F;弹出，使得堆栈增长&#x2F;缩小</p>
+<p>堆栈(stack)：向下增长(地址从高到低)，局部变量，有边界的</p>
+<p>堆(heap)：向上增长，全局范围，只有物理上的限制，其内存读写速度较慢，因为必须用指针，相关函数<strong>malloc()<strong>、</strong>calloc()<strong>、</strong>realloc()<strong>和</strong>free()</strong></p>
+<h2 id="gdb"><a href="#gdb" class="headerlink" title="gdb"></a>gdb</h2><p>调试时有个东西就是</p>
+<p>在 AT&amp;T 语法中，源和目标是相反的</p>
+<p>AT&amp;T 语法：<strong>movl %esp, %ebp</strong> [这意味着将 esp 移动到 ebp。]</p>
+<p>Intel 语法：<strong>mov esp, ebp</strong> [这意味着将 ebp 移至 esp。]</p>
+<h1 id="查杀篇"><a href="#查杀篇" class="headerlink" title="查杀篇"></a>查杀篇</h1><p>一般遇到不确定的文件，也就是PE文件(windows下所有可执行文件的统称，间接执行的DLL也算)，都会放到沙箱，比如微步、奇安信那里运行一下，它们会提供一些报告</p>
+<p>但这样的话，我的疑惑点在于，它们判断的依据，它们肯定有一个黑名单特征数据库，如果匹配上了（某个关键字、某个规则文件）就当做恶意文件，那么，哪些行为或者具体到哪些函数才算作恶意呢？</p>
+<p>这里用cs生成了一个exe文件，丢进沙箱里</p>
+<p>沙箱告诉我<code>检测到CobaltStrike命名管道特征\\?\pipe\MSSE-208-server</code>  </p>
+<p>kali用strings分析一下</p>
+<p><img src="/../../../Typora/img111/image-20240517161054111.png" alt="image-20240517161054111"></p>
+<h1 id="算法基础篇"><a href="#算法基础篇" class="headerlink" title="算法基础篇"></a>算法基础篇</h1><h1 id="基本运算"><a href="#基本运算" class="headerlink" title="基本运算"></a>基本运算</h1><p>与、或、异或，真值表对逻辑的处理</p>
+<p><strong>乘法：</strong></p>
+<p>有23个人面试，仅有硬币正面时才让进，问有多少种可能，2^23</p>
+<p><strong>排列(包括有重复项的排列)：</strong></p>
+<p>1.我有n个数，随机给你m个，多少种可能？</p>
+<p>$$<br>\frac{(n!)}{(n-m)!}<br>$$<br>2.那如果里面有r个相同的数呢，我要最终不同排列的可能性<br>$$<br>\frac{n!}{r!}<br>$$<br><strong>组合:</strong></p>
+<p>我有n牌(仅一种色)，随机取m张，问组合方式：</p>
+<p>$$<br>这m种排列结果为：\frac{(n!)}{(n-m)!}\<br>但由于顺序无所谓：\frac{(n!)}{m!(n-m)!}<br>$$<br><strong>求和:</strong></p>
+<p>30天内要求购买机票随时往返某地，必须查看多少对出发&#x2F;返程日期，才能找到最便宜的机票<br>$$<br>这里的机票，要么在同一天买，要么返程票晚一天买\<br>那么第一天有30对有效出发&#x2F;返程日期、第2天29对…第30天就一对\<br>那就是30+29+…+1&#x3D;等差数列\frac{n(n+1)}{2}&#x3D;465\</p>
+<p>从组合来看，30天里任选2天(但不为同一天)，所以是\frac{(n!)}{m!(n-m)!}\<br>再加上可以同一天买的情况，30种<br>$$<br><strong>概率</strong></p>
+<p>独立、互斥、对立事件</p>
+<p>就像是硬币，前10次都正面朝上，第11次是否也会正面朝上，这个和过去的结果没关系，还是1&#x2F;2</p>
+<p>二项分布…巴拉巴拉</p>
+<h1 id="复杂度"><a href="#复杂度" class="headerlink" title="复杂度"></a>复杂度</h1><p>这里介绍说，洗牌，洗26张，还是52张，时间上的差别有没有，主要是当数量翻倍时，进行一个预测</p>
+<h2 id="时间复杂度"><a href="#时间复杂度" class="headerlink" title="时间复杂度"></a>时间复杂度</h2><p>算法在处理规模为n的输入时所执行的运算次数。</p>
+<p>最好情况(直接输入排好序的 )、最坏情况(输入倒序的)、平均情况(随机顺序)</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">vector&lt;<span class="type">int</span>&gt; a=&#123;<span class="number">9</span>,<span class="number">8</span>,<span class="number">7</span>,<span class="number">6</span>,<span class="number">5</span>&#125;;</span><br><span class="line">  <span class="type">int</span> temp=<span class="number">-1</span>;</span><br><span class="line">  <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;a.<span class="built_in">size</span>()<span class="number">-1</span>;i++)</span><br><span class="line">  &#123;</span><br><span class="line">      <span class="keyword">for</span>(<span class="type">int</span> j=i+<span class="number">1</span>;j&lt;a.<span class="built_in">size</span>();j++)</span><br><span class="line">      &#123;</span><br><span class="line">          <span class="keyword">if</span>(a[i]&gt;a[j])</span><br><span class="line">           &#123;</span><br><span class="line">             temp=a[i];</span><br><span class="line">              a[i]=a[j];</span><br><span class="line">              a[j]=temp;</span><br><span class="line">           &#125;   </span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>个人理解如下：</strong></p>
+<p>这里有5个数，所以n&#x3D;5</p>
+<p>外层for总是运行n-1次，即4次(因为i的取值为0-3)；而内层循环要执行n-1次，n-2次……：</p>
+<p>当i&#x3D;0时，内部的j&#x3D;1,2,3,4，这是n-1次，即4次</p>
+<p>当i&#x3D;1时，内部的j&#x3D;2,3,4，这是n-2次，即3次</p>
+<p>…</p>
+<p>当i&#x3D;3时，内部的j&#x3D;4，就1次了</p>
+<p>外层循环一共执行n-1次，即为T(n1)，那么内层循环将执行(n-1)+(n-2)+…+2+1次，那就是</p>
+<p>(n-1)n&#x2F;2，至于再加上这交换赋值的3次操作，那还得乘3哈，即<br>$$<br>T(n2)&#x3D;\frac{3(n²-n)}{2}<br>$$<br>那么最终T(n)&#x3D;T(n1)+T(n2)</p>
+<p>这里面还涉及一个增长的问题，即函数形式增长形式快的占大头，所以会有个比较，比如n²与nlogn相比，指数型增长总是很膨胀</p>
+<h2 id="空间复杂度"><a href="#空间复杂度" class="headerlink" title="空间复杂度"></a>空间复杂度</h2><p>空间和时间的权衡问题，有时候不得不空间换时间，有时候也不得不用O(n²)的时间复杂度算法</p>
+<h2 id="策略"><a href="#策略" class="headerlink" title="策略"></a>策略</h2><p><strong>迭代</strong></p>
+<p>就是循环重复某个过程</p>
+<p><strong>嵌套循环与幂集</strong></p>
+<p>即原集合中所有子集，类似于构建真值表</p>
+<p><strong>递归</strong></p>
+<p><strong>穷举</strong></p>
+<p>背包问题</p>
+<p><strong>回溯</strong></p>
+<p>8皇后问题，在8*8棋盘放置，如何使得它们无法互相攻击</p>
+<p>这里主要是考虑，当前两个后能相互攻击，那么接下来的后均无意义</p>
+<p>也就是后面的后只需要考虑前面的一个后，不在它的攻击范围即可</p>
+<p><strong>贪心</strong></p>
+<p><strong>分治</strong></p>
+<p>将原问题拆解为若干相似但更小的问题，再将它们变得易于求解，合并解集</p>
+<p>比如归并排序</p>
+<p><strong>动态规划</strong></p>
+<p>即重叠子问题，记忆化</p>
+<p><strong>分支界定</strong></p>
+<p>上界和下界</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2024/05/10/jsjkxjc/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2024/05/20/llmexp/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            LLM漏洞分析
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2024/04/27/jilu-1/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">杂项_记录</div>
+      </a>
+    
+  </nav>
+
+  
+   
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.css">
+
+
+<script src="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.js"></script>
+
+
+<script src="https://cdn.staticfile.org/blueimp-md5/2.19.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '93da8388ad1469a8be66',
+    clientSecret: '9dea6314b14ae1877632f2bcbe0a639dd4485bb1',
+    repo: 'blogtalk',
+    owner: 'ak005469075',
+    admin: ['ak005469075'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+  
+    
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2023-2024
+        <i class="ri-heart-fill heart_icon"></i> 是羽泪云诶
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/favicon.ico" alt="小张之栈"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+  <script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+</div>
+
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+ 
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+ 
+<script src="/js/dz.js"></script>
+ 
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>

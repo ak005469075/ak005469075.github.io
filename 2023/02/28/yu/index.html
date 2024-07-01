@@ -11,7 +11,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1"
       />
-      <title>域——再回顾 |  小张之栈</title>
+      <title>内网渗透 |  小张之栈</title>
   <meta name="generator" content="hexo-theme-ayer">
       
       <link rel="shortcut icon" href="/favicon.ico" />
@@ -76,7 +76,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  域——再回顾
+  内网渗透
 </h1>
  
 
@@ -88,7 +88,7 @@
   <time datetime="2023-02-27T16:21:20.000Z" itemprop="datePublished">2023-02-28</time>
 </a> 
   <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%9F%9F%E6%B8%97%E9%80%8F/">域渗透</a>
+    <a class="article-category-link" href="/categories/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a>
   </div>
   
 <div class="word_count">
@@ -96,7 +96,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">2.5k</span>
+            <span class="post-count">3.5k</span>
         </span>
     </span>
 
@@ -105,7 +105,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">9 分钟</span>
+            <span class="post-count">12 分钟</span>
         </span>
     </span>
 </div>
@@ -120,8 +120,31 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h1 id="域由来"><a href="#域由来" class="headerlink" title="域由来"></a>域由来</h1><p>为了方便管理各个主机；比如有1000个主机需要安装某个软件，总比可能让工作人员对这1000个都安一般；或者说有人辞职了啊，TA平时的用的主机，那些信息是不是要处理一下，然后给新来的腾出空间。</p>
-<p>总之一句话，下发任务和统一管理</p>
+  <h1 id="一、内网环境"><a href="#一、内网环境" class="headerlink" title="一、内网环境"></a>一、内网环境</h1><h1 id="工作组"><a href="#工作组" class="headerlink" title="工作组"></a>工作组</h1><p>首先，在cmd中输入systeminfo，会有这样一条命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">域:               WORKGROUP</span><br><span class="line">登录服务器:       \\LA...8K5</span><br><span class="line">修补程序:         安装了 .. 个修补程序。</span><br></pre></td></tr></table></figure>
+
+<p><strong>WORKGROUP</strong>该模式下意味着，任意一台计算机接入网络，都可以访问共享资源，主机间互不管理、关联。</p>
+<p>这种情况就是平时同一个局域网下的多台主机的样子，机房。</p>
+<p>当然了，如果内网中存在一台运维主机或者堡垒机，安装agent统筹管理也可以实现一个工作组主机的批量控制；类似于机房上课老师用红蜘蛛的那种控制吧。</p>
+<p>这个时候，内网渗透的时候就需要挨个对主机渗透</p>
+<h1 id="域由来"><a href="#域由来" class="headerlink" title="域由来"></a>域由来</h1><p>由于工作组的松散，需要找一个管理者，就引入了域，至少有一台主机（域控DC）对其他主机负责（存储它们的凭证、域计算机列表等信息）。</p>
+<p>这个时候呢，主机A想连入<strong>域范围</strong>，DC先通过 <strong>域计算机列表</strong>，看A在不在里面，在的话，进一步验证A提供的用户名是否在域内存在，以及密码是否正确；都通过了才可以允许A以登录用户身份去访问DC上<strong>有权限保护的资源</strong>；否则以域外普通主机访问域对外开放资源</p>
+<p>为了方便管理各个主机；比如有1000个主机需要安装某个软件，总不可能让工作人员对这1000个都安一边；或者说有人辞职了啊，TA平时的用的主机，那些信息是不是要处理一下，然后给新来的腾出空间。</p>
+<p>总之一句话，域是为了下发任务和统一管理</p>
+<p>此时渗透的话，拿到任意一台域内主机(非DC)，<code>net view</code>就可以知道其它域内主机名称，可以进一步横向，一般目的都是<strong>拿DC的权限</strong></p>
+<p>差点有个东西忘了写，那么什么样的主机可以用做域呢？win10？</p>
+<p>以前虚拟机搭建的时候，会遇到这样几个名字 <strong>Windows Server 2008 R2、Windows Server 2022</strong>，它们专门用来做域服务器的</p>
+<p>域的创建、加入 <a target="_blank" rel="noopener" href="https://www.cnblogs.com/lsdb/p/11412472.html">https://www.cnblogs.com/lsdb/p/11412472.html</a></p>
+<h2 id="域树和域森林"><a href="#域树和域森林" class="headerlink" title="域树和域森林"></a>域树和域森林</h2><p>不想细看，树的话理解为根域名和子域名的树关系（数据结构的那种树）；森林，嗯，树组成的；其主要作用就是一般通过DNS定位域控位置</p>
+<h2 id="安全域划分"><a href="#安全域划分" class="headerlink" title="安全域划分"></a>安全域划分</h2><p>以书中的安全域图为例</p>
+<p>3个网络区域：</p>
+<p>DMZ区：门户网站等web站点，处理内外交互</p>
+<p>网银区：为网上银行提供服务基础，根据不同交易需求进行相应数据处理与交互</p>
+<p>核心区：内网办公人员办公网络端区、内部研发生产区、管理信息系统（MIS）和决策支持系统（DSS）核心区</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20240520221913167.png"></p>
+<p>由图可知，DMZ区与网银区是两个子域，各自独立；仅允许外部网络访问DMZ区和网银区</p>
+<p>渗透内容一般都是通过DMZ或网银区某个主机进行横向、扩展到其它域环境</p>
+<p>难度嘛，大大滴，APT这种高级持续威胁针对的一般就是内网环境</p>
 <h1 id="利用场景一览"><a href="#利用场景一览" class="headerlink" title="利用场景一览"></a>利用场景一览</h1><p>众所周知，域用户权限很低，安装个什么玩意儿都不行，比如弹出 <strong>用户账户控制</strong>，TA只能联系管理员去帮忙安装，管理员用域管理身份登录到域成员主机，这个时候TA搞点事情，切换到本地计算机的管理员身份并登录，用mimikatz直接从内存中爬取到域管理员密码</p>
 <p>一般思路就是，定位到域控IP和域管理员账号，找出域管理员登录过的其他主机IP，从这些其他主机IP的内存中dump除域管理员密码，拿下<strong>域控</strong></p>
 <h1 id="基础操作"><a href="#基础操作" class="headerlink" title="基础操作"></a>基础操作</h1><p>判断是否是域：</p>
@@ -194,6 +217,7 @@
 <p><strong>网络对象</strong>：用户(组)、计算机、域、组织单位</p>
 <p>功能：计算机管理、用户服务、资源管理、桌面配置、应用系统</p>
 <p>AD只是用来管理，不是认证</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20240520220126089.png" alt="图来源https://www.cnblogs.com/lsdb/p/11412472.html"></p>
 <h1 id="windows两种认证机制"><a href="#windows两种认证机制" class="headerlink" title="windows两种认证机制"></a>windows两种认证机制</h1><h2 id="NTLM"><a href="#NTLM" class="headerlink" title="NTLM"></a>NTLM</h2><p>其加密过程，将明文密码十六进制-&gt;unicode编码-&gt;MD4加密</p>
 <h3 id="挑战-x2F-质询——认证方式"><a href="#挑战-x2F-质询——认证方式" class="headerlink" title="挑战&#x2F;质询——认证方式"></a>挑战&#x2F;质询——认证方式</h3><ol>
 <li><p>协商：这一步是版本兼容问题，双方交流各自的支持版本</p>
@@ -221,8 +245,19 @@
 </ol>
 <p><strong>细分</strong>：</p>
 <h2 id="黄金白银票据"><a href="#黄金白银票据" class="headerlink" title="黄金白银票据"></a>黄金白银票据</h2><p>每次看kerberos协议的时候，我老头疼，看不进去</p>
+<h1 id="二、攻击流程"><a href="#二、攻击流程" class="headerlink" title="二、攻击流程"></a>二、攻击流程</h1><h2 id="2x01-入侵手段"><a href="#2x01-入侵手段" class="headerlink" title="2x01 入侵手段"></a>2x01 入侵手段</h2><p>网络杀伤链：</p>
+<p>侦察、武器化、载荷投递、漏洞利用、安装植入、命令和控制，目标达成</p>
+<p>上面也不需要解释了，就是漏洞发现、漏洞利用的细化</p>
+<p>攻击面的手段 ：</p>
+<p><a target="_blank" rel="noopener" href="https://attack.mitre.org/">https://attack.mitre.org/</a> ATT&amp;CK </p>
+<p> <a target="_blank" rel="noopener" href="https://media.defense.gov/">https://media.defense.gov/</a> NTCTF</p>
+<p>入侵声明周期：探索发现(poc)、入侵感染(exp)、探索感知(熟悉shell)、传播(横向)、持久化(后门)、攻击和利用(破坏+窃取)、恢复(痕迹清理)</p>
+<p>后门：方便下次快速登录</p>
+<h1 id="反虚拟机、反沙箱检测"><a href="#反虚拟机、反沙箱检测" class="headerlink" title="反虚拟机、反沙箱检测"></a>反虚拟机、反沙箱检测</h1><p>文件检测、延迟启动（时间对抗）、进程检测等</p>
+<p><a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/system/202717.html">https://www.freebuf.com/articles/system/202717.html</a></p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>1.小迪</p>
 <p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/cute-puli/p/15510271.html">https://www.cnblogs.com/cute-puli/p/15510271.html</a></p>
+<p>2.《内网渗透实战攻略》<a target="_blank" rel="noopener" href="https://chuangshi.qq.com/read/49070865/10">https://chuangshi.qq.com/read/49070865/10</a></p>
  
       <!-- reward -->
       
@@ -292,8 +327,6 @@
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%9F%9F%E6%B8%97%E9%80%8F/" rel="tag">域渗透</a></li></ul>
-
     </footer>
   </div>
 

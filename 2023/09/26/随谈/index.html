@@ -96,7 +96,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">5.2k</span>
+            <span class="post-count">5.9k</span>
         </span>
     </span>
 
@@ -105,7 +105,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">19 分钟</span>
+            <span class="post-count">21 分钟</span>
         </span>
     </span>
 </div>
@@ -136,6 +136,14 @@
 <blockquote>
 <p>看来攻击者也需要一个<strong>部署在公网上的服务器</strong></p>
 </blockquote>
+<p>——————2024.5.25补充——————</p>
+<p>上面的服务器也叫做C2，即命令控制服务器</p>
+<p>存储型xss，有一个可以溯源真实ip的点，不管是绕CDN，还是蓝队溯源都有帮助</p>
+<p>那就是浏览器的WebRTC，无关代理，这个技术允许浏览器之间建立点对点连接，实时通信</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://ip8.com/webrtc-test">https://ip8.com/webrtc-test</a></li>
+</ul>
+<p>参考<a target="_blank" rel="noopener" href="https://blog.gm7.org/%E4%B8%AA%E4%BA%BA%E7%9F%A5%E8%AF%86%E5%BA%93/01.%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/06.%E4%BF%9D%E6%8A%A4%E8%87%AA%E5%B7%B1/05.WebRTC%20%E7%9C%9F%E5%AE%9EIP%E6%B3%84%E9%9C%B2%E9%98%B2%E8%8C%83.html">https://blog.gm7.org/%E4%B8%AA%E4%BA%BA%E7%9F%A5%E8%AF%86%E5%BA%93/01.%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/06.%E4%BF%9D%E6%8A%A4%E8%87%AA%E5%B7%B1/05.WebRTC%20%E7%9C%9F%E5%AE%9EIP%E6%B3%84%E9%9C%B2%E9%98%B2%E8%8C%83.html</a></p>
 <h2 id="跨域"><a href="#跨域" class="headerlink" title="跨域"></a>跨域</h2><p>当时和同学讨论外网内网问题，是在学习到跨域访问这一知识的时候想起来的</p>
 <p>跨域，涉及到一个前置知识叫，同源策略，该策略，大意是指，当前网页呢，会通过js去加载外部资源，这个外部资源必须和当前网页的 <strong>来源</strong>，<code>同协议、同域名、同端口</code>；</p>
 <p>如何跨域，除了已知的标签 script、iframe，等等</p>
@@ -368,6 +376,28 @@
 <blockquote>
 <p>参考：ytb的不良林</p>
 </blockquote>
+<h2 id="关于前端文件信息讨论"><a href="#关于前端文件信息讨论" class="headerlink" title="关于前端文件信息讨论"></a>关于前端文件信息讨论</h2><p>2024&#x2F;4&#x2F;14</p>
+<p>自己部署jeecgboot这项开源项目的时候，f12，发现泄露了很多js文件，其中包括了敏感接口路径之类的。</p>
+<p>嘶，那我在平时遇见的同框架网站怎么就没有那些信息呢？</p>
+<h1 id="ip相关"><a href="#ip相关" class="headerlink" title="ip相关"></a>ip相关</h1><p>已知一台vps有一个公网IP，那么能否拥有多个公网IP？</p>
+<p>可以加钱，如果绑几百的之类的，那要依靠BGP(边界网关协议)</p>
+<blockquote>
+<p>BGP，让不同AS(自治域)之间传递路由信息</p>
+<p>ASN(自治号)，就是查ip的时候我们看到的：</p>
+<p>(中国电信)asn4134、(中国联通)asn4837</p>
+<p>办了谁的宽带就有了谁的ip，这个ip分属于这个asn</p>
+<p>那我电信的和联通的要一起通信怎么办，这两个不同的AS，相当于两个不同的“局域网”，BGP就负责这个</p>
+</blockquote>
+<p>由于呢，vps节点过于廉价，导致滥用，微步等情报平台都记录了类似有攻击行为的ip</p>
+<p>那么有没有一种可能，可以自己申请asn(可以不买，租用ip时会提供)，给自己分配ip，再通过BGP接入其它AS呢，可以，但asn注册、ip租用要钱，这里不考虑，后面还要用IP transit，用于BGP广播</p>
+<p>总之通过<a target="_blank" rel="noopener" href="http://ipinfo.io,可以查看到ip归属地/">http://ipinfo.io，可以查看到ip归属地</a></p>
+<p>一般的说法都是：如果真实的机房位置和IP归属地在同一地区，就叫做原生IP；反之广播IP</p>
+<p>参考：不lianglin</p>
+<h1 id="DNS泄露"><a href="#DNS泄露" class="headerlink" title="DNS泄露"></a>DNS泄露</h1><p><a target="_blank" rel="noopener" href="https://ipleak.net/">https://ipleak.net/</a> 检测网站</p>
+<p>相当于DNS请求发送给了真实IP所属的ISP(运营商)DNS，这样的话，你访问了什么，是被记录到的</p>
+<p>当网站检测不到DNS泄露时，尝试访问google浏览器时，wireshark抓包，过滤dns，看是否发送给了ISP的DNS的包</p>
+<p><a target="_blank" rel="noopener" href="https://bulianglin.com/archives/dns.html#google_vignette">https://bulianglin.com/archives/dns.html#google_vignette</a></p>
+<p>参考：不lianglin</p>
  
       <!-- reward -->
       

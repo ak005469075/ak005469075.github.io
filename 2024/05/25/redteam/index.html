@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>红队部分 |  小张之栈</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-redteam"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+  
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  红队部分
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2024/05/25/redteam/" class="article-date">
+  <time datetime="2024-05-25T13:21:20.000Z" itemprop="datePublished">2024-05-25</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%BA%A2%E9%98%9F/">红队</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">3k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">11 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="来源"><a href="#来源" class="headerlink" title="来源"></a>来源</h1><h1 id="一、立足点"><a href="#一、立足点" class="headerlink" title="一、立足点"></a>一、立足点</h1><h1 id="0x01-DNS枚举"><a href="#0x01-DNS枚举" class="headerlink" title="0x01 DNS枚举"></a>0x01 DNS枚举</h1><h2 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h2><p>手头上的资产不是目标方管理的，所以需要确认这些资产的归属方</p>
+<p>aiodnsbrute工具+vps而不是ISP</p>
+<p>这样的话，配置错误的DNS也许会泄露内部的IP，或者说公共记录中的服务器</p>
+<p>由于DNS递归查询，会被traceroute到，所以最好在不是自己的系统上使用DNS查询</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dig +trace www.baidu.com</span><br><span class="line">这条命令呢，使得从一个根域查询起，一直查到最终结果，输出整个过程</span><br></pre></td></tr></table></figure>
+
+<p>以<a target="_blank" rel="noopener" href="https://www.cnblogs.com/mainos/p/15932160.html%E7%BB%99%E7%9A%84%E6%9F%A5%E8%AF%A2%E4%BF%A1%E6%81%AF%E4%B8%BA%E4%BE%8B">https://www.cnblogs.com/mainos/p/15932160.html给的查询信息为例</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">.                       682     IN      NS      j.root-servers.net.</span><br><span class="line">.                       682     IN      NS      b.root-servers.net.</span><br><span class="line">.                       682     IN      NS      f.root-servers.net.</span><br><span class="line">.                       682     IN      NS      i.root-servers.net.</span><br><span class="line">;; Received 397 bytes from 192.168.130.1<span class="comment">#53(192.168.130.1) in 4 ms</span></span><br><span class="line"><span class="comment">#这个是说从本地DNS查找根域的DNS列表</span></span><br><span class="line">...</span><br><span class="line">com.                    172800  IN      NS      m.gtld-servers.net.</span><br><span class="line">com.                    86400   IN      DS      30909 8 2 </span><br><span class="line">...</span><br><span class="line">;; Received 1173 bytes from 198.41.0.4<span class="comment">#53(a.root-servers.net) in 204 ms</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#这个就表示，选择了a.root-servers.net这台DNS服务器查找了*.gtld-servers的DNS列表</span></span><br><span class="line"></span><br><span class="line">...</span><br><span class="line">baidu.com.              172800  IN      NS      ns1.baidu.com.</span><br><span class="line">baidu.com.              172800  IN      NS      ns7.baidu.com.</span><br><span class="line">...</span><br><span class="line">;; Received 817 bytes from 192.43.172.30<span class="comment">#53(i.gtld-servers.net) in 212 ms</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#这个就表示，选择了i.gtld-servers.net这台DNS服务器查找了*.baidu.com的DNS列表</span></span><br><span class="line">www.baidu.com.          1200    IN      CNAME   www.a.shifen.com.</span><br><span class="line">a.shifen.com.           1200    IN      NS      ns2.a.shifen.com.</span><br><span class="line">a.shifen.com.           1200    IN      NS      ns5.a.shifen.com.</span><br><span class="line">a.shifen.com.           1200    IN      NS      ns1.a.shifen.com.</span><br><span class="line">a.shifen.com.           1200    IN      NS      ns4.a.shifen.com.</span><br><span class="line">a.shifen.com.           1200    IN      NS      ns3.a.shifen.com.</span><br><span class="line">;; Received 295 bytes from 14.215.178.80<span class="comment">#53(ns4.baidu.com) in 28 ms</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#这个ip 14.215.178.80是最终的A记录结果</span></span><br></pre></td></tr></table></figure>
+
+<p>有的时候根DNS，会返回AAAA记录，<a target="_blank" rel="noopener" href="https://wenku.baidu.com/view/3b1e6c76482fb4daa58d4b9f.html?_wkts_=1716643212746">https://wenku.baidu.com/view/3b1e6c76482fb4daa58d4b9f.html?_wkts_=1716643212746</a></p>
+<p>视频为什么不建议用自己的系统，是因为本地DNS的缘故吗，从而导致所谓的<strong>DNS泄露</strong>？</p>
+<p>即DNS请求发送给了真实IP所属的ISP的DNS服务器，这样的话，运营商是知道你访问了那个网站的</p>
+<p>额外补充一下，如果DNS请求发送给了不安全的DNS服务器，那也会导致 <strong>DNS劫持</strong>，即进行一个访问重定向</p>
+<p><a target="_blank" rel="noopener" href="https://blog.browserscan.net/zh/docs/what-is-dns-leak-and-how-to-prevent-it">https://blog.browserscan.net/zh/docs/what-is-dns-leak-and-how-to-prevent-it</a></p>
+<h1 id="0x02-证书枚举"><a href="#0x02-证书枚举" class="headerlink" title="0x02 证书枚举"></a>0x02 证书枚举</h1><p>相当于证书也会泄露额外的DNS吧（可能是旧的）</p>
+<p>利用方式也是用Dig吧，它可以额外指定dnsserver，再对特定的域名查询A记录</p>
+<p>另外，根据我的实际操作，证书的搜索也是会给出额外的ipv4记录的</p>
+<h1 id="0x03-引擎"><a href="#0x03-引擎" class="headerlink" title="0x03 引擎"></a>0x03 引擎</h1><p>谷歌引擎：</p>
+<p>找域名&#x2F;子域名，inurl、intext、site</p>
+<p>github：找源码，找issue，找历史评论之类的</p>
+<p>google搭配一个google-hacking，里面有各种搜索语法可供参考</p>
+<p>找pdf、word，找用户名、密码等，当我在edu相关搜索的时候，貌似并没有什么特别的发言</p>
+<p>同时搭配github里的issue(泄露弱密码什么的)、源码泄露</p>
+<p>当google搜索的word、pdf、excel文件大多时候不存在，这个时候可以尝试利用google的cache功能，貌似可以看历史数据？</p>
+<h1 id="0x04-枚举工具"><a href="#0x04-枚举工具" class="headerlink" title="0x04 枚举工具"></a>0x04 枚举工具</h1><p>信息收集的方式：DNS、爬虫、证书、APIs、web archives(我理解为何web有关的资源吧，js、cms、其它框架)</p>
+<h2 id="ASN"><a href="#ASN" class="headerlink" title="ASN"></a>ASN</h2><p>这个不陌生了，AS(自治系统)，ASN就是自治号，就是说某一类ip网段的集合吧，比如192.168.1.0&#x2F;24被归属为ASN1234</p>
+<p>知道目标ip属于某个ASN，通过这个ASN尝试找其它的ip或者说公司名</p>
+<p>这里是认为公司的域名会有别名，看似不相关的域名（不是子域关系），实际上是归属于一个公司</p>
+<h2 id="shodon"><a href="#shodon" class="headerlink" title="shodon"></a>shodon</h2><p>通过 <code>net:10.10.10.10/20</code>命令，发现服务，比如http,smtp、mysql这种，版本指纹啊之类，还有一些门户网站、VPN什么的</p>
+<p>有https的话，一般意味着可能泄露新的CName用来进一步枚举</p>
+<h2 id="nmap"><a href="#nmap" class="headerlink" title="nmap"></a>nmap</h2><p>nmap扫描外部子网中，常见的web端口，这里注意代理，隐藏ip</p>
+<p>有的防御措施会打开所有的端口，为了进一步判别web端口是否开放，可能就是用python脚本，去对特定端口进行get请求，观察响应信息</p>
+<p>同时也提到了，nmap这些原生工具可能有指纹，需要做一些处理</p>
+<p>什么时候用TCP完整扫描，什么时候用SYN半连接扫描</p>
+<p>视频提到代理链隧道扫描的时候用-sT</p>
+<p>同时对proxyresolv文件进行配置，修改DNS服务，避免使用公共的DNS？</p>
+<h2 id="aquatone"><a href="#aquatone" class="headerlink" title="aquatone"></a>aquatone</h2><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/401344901">https://zhuanlan.zhihu.com/p/401344901</a></p>
+<p>一个子域名枚举工具，和oneforall差不多的搜集方式，在收集完子域名后，还可以得到开放端口，响应报头等信息</p>
+<p>比如有一个上次修改时间的细节，如果是老年份，可能存在历史漏洞</p>
+<p>一般是尝试找门户站点（可登录的），进行暴力破解这种</p>
+<p>邮件方面，泄露内部域名、暴露身份验证端点</p>
+<p>通过<strong>EWS端点</strong>发送邮件访问暴露的<strong>OWA</strong>(outlook网页版)，绕过<strong>MFA</strong>（多重身份验证）</p>
+<p>这个意思就是即使有验证，也可以代表某员工发送电子邮件</p>
+<blockquote>
+<p>EWS :<a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/exchange/client-developer/exchange-web-services/email-and-ews-in-exchange">https://learn.microsoft.com/zh-cn/exchange/client-developer/exchange-web-services/email-and-ews-in-exchange</a></p>
+<p>貌似需要一个Exchange服务器</p>
+<p>该端点通常位于 target.ip&#x2F;EWS&#x2F;Exchange.asmx</p>
+</blockquote>
+<p>反正是一个钓鱼的点吧</p>
+<h1 id="0x05-敏感数据搜索"><a href="#0x05-敏感数据搜索" class="headerlink" title="0x05 敏感数据搜索"></a>0x05 敏感数据搜索</h1><p>求职平台的招聘要求，比如IT公司，它们有一些要求，可能会暴露自身的技术列表、了解整个安全态势</p>
+<p>敏感数据包括：</p>
+<ul>
+<li>用户名&#x2F;密码</li>
+<li>资产列表(web、app、小程序、其它服务)</li>
+<li>安全产品如waf、云</li>
+</ul>
+<p>视频里是得到密码之后使用password-spray技术，去爆破邮箱网站</p>
+<p>主要是与其密码爆破，不如钓鱼</p>
+<p><strong>SPF</strong>，Sender Policy Framework，即发件人策略框架：防止发件人伪造</p>
+<p>有关钓鱼的部分我都跳过了(它这里甚至还伪造了电子邮件网页，尽可能的伪造已存在的，常用的邮件网站)</p>
+<p><a target="_blank" rel="noopener" href="https://www.renfei.org/blog/introduction-to-spf.html">https://www.renfei.org/blog/introduction-to-spf.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cloudflare-cn.com/learning/email-security/dmarc-dkim-spf/">https://www.cloudflare-cn.com/learning/email-security/dmarc-dkim-spf/</a></p>
+<p>简单的钓鱼方式，html里放a标签，容易被工具检测到</p>
+<p>进阶的会用js代码，再来点混淆</p>
+<p>html电子邮件</p>
+<p>因为对钓鱼没什么实际应用的地方，所以不打算细纠</p>
+<h1 id="0x06-shellcode"><a href="#0x06-shellcode" class="headerlink" title="0x06 shellcode"></a>0x06 shellcode</h1><p>一般称为操作码的汇编代码</p>
+<p>形如为：<code>\xac\x3e\xc3...</code></p>
+<p>操作码和汇编码的转换是可以的，一个机器读，一个给人读</p>
+<p>一般通过C程序执行</p>
+<p>常见的msf马、CS马都有一个特征值，容易被检测到，因此呢，采取混淆或代码包装的方式躲避检测</p>
+<p>混淆一般是避免静态检测，躲正则、或模式匹配</p>
+<h1 id="0x07-内部侦查"><a href="#0x07-内部侦查" class="headerlink" title="0x07 内部侦查"></a>0x07 内部侦查</h1><ul>
+<li><p>进程列表，ps&#x2F;tasklist，wmic，主要是为了得知进程有哪些，比如查杀软件、自定义服务</p>
+<p>​	这些自定义服务呢，类似于二进制文件，逆向后可能会泄露些什么东西</p>
+<p>.NET文件就用dnSpy，可执行文件就ida、xdbg64</p>
+<p>调试时注意跟踪变量，断点的位置比较重要，根据关键函数定位</p>
+</li>
+<li><p>转储用户和电子邮件列表</p>
+<p>​	这样的目的是尝试密码爆破，认为至少有存在弱口令用户的情况，或作为钓鱼对象</p>
+<p>钓鱼一般是使用了键盘敲击记录、截图捕捉、剪贴板提取信息</p>
+<p>这些一般都是C或C#写的，它们总是有一些系统命令替代cmd之类的</p>
+<p>windows中，.bat的脚本执行</p>
+<p>socks代理横向等技巧</p>
+</li>
+<li><p>其它命令</p>
+<p>​	比如route print ，netstat -an，nslookup DOMAIN</p>
+<p>​	实际上，做查询和搜集的过程就是一个大量的循环</p>
+<p>​	有两个主要工具：	</p>
+<p>​	BloodHound，但是生成了json文件，json处理比较耗时</p>
+<p>​	PowerView给的信息虽然多，但动静比较大</p>
+<p>​	</p>
+<p>​	PowerView枚举域名信息的用法，和SharpView一样，都是使用了相同的WindowsAPI</p>
+</li>
+</ul>
+<h1 id="0x08-内网横向"><a href="#0x08-内网横向" class="headerlink" title="0x08 内网横向"></a>0x08 内网横向</h1><p>凭证获取、横向移动、隧道</p>
+<p>​		</p>
+<p>​	</p>
+<h1 id="侦查技术"><a href="#侦查技术" class="headerlink" title="侦查技术"></a>侦查技术</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nslookup www.google.com #找ip</span><br><span class="line">traceroute www.google.com #路由器过程</span><br></pre></td></tr></table></figure>
+
+<p><strong>dnsrecon</strong>：云查询吧，比如是否使用了cloudflare这种</p>
+<p><strong>wafw00f</strong>: 防火墙检测</p>
+<p><strong>dig</strong> dns及A记录查询</p>
+<p><strong>whois</strong> 域名注册商</p>
+<p><strong>微步，fofa，whatweb</strong> 找网站使用的组件情况</p>
+<p><strong>subfinder、google</strong></p>
+<h1 id="WAF相关"><a href="#WAF相关" class="headerlink" title="WAF相关"></a>WAF相关</h1><p>常见的waf-bypass不讨论</p>
+<h2 id="请求大小限制"><a href="#请求大小限制" class="headerlink" title="请求大小限制"></a>请求大小限制</h2><p>针对于 POST、PUSH、PATCH，不能在get里，其中一个原因我认为是get，是有字符限制的</p>
+<p>为了用户的体验着想，waf一定要及时给出响应，所以会有一个检查最大body size检查</p>
+<p>那么说如果payload在限制的大小之后，WAF可能会进行忽略</p>
+<p>缓解措施就是，针对哪些地方才阻止超过一定规模的请求，哪些不需要(比如文件上传，请求体内容很多；或者其它确实需要大量请求内容的请求)</p>
+<p>我用了下安全狗作为演示，发现确实啊，是有效果的</p>
+<p><img src="/../../../Typora/img111/image-20240526102028865.png" alt="POST注入"></p>
+<h2 id="fuzz工具提供"><a href="#fuzz工具提供" class="headerlink" title="fuzz工具提供"></a>fuzz工具提供</h2><p>模糊测试需要大量的爆破，所以防止ip被封禁呢</p>
+<p>这里宣传了一下AWS提供的网关服务，配合<strong>ip-rotate插件</strong>，使得进行爆破时，可以有动态的出口ip，减少被封ip的风险；是的，代理池。</p>
+<p>类似的还有 <strong>fireprox插件</strong></p>
+<p><strong>ShadowClone</strong>：</p>
+<p>也是和AWS合作，可以将长时间执行的任务分配到几千个<strong>AWS无服务器</strong>上，从而达到短时间得出结果的目的</p>
+<blockquote>
+<p>PS：AWS无服务器，也是物理服务器，但这个技术就是用户只需要付费就行，即可运行代码，部署和管理服务器就不需要操心</p>
+<p><a target="_blank" rel="noopener" href="https://flexa.cloud/zh-CN/aws-%E6%97%A0%E6%9C%8D%E5%8A%A1%E5%99%A8/">https://flexa.cloud/zh-CN/aws-%E6%97%A0%E6%9C%8D%E5%8A%A1%E5%99%A8/</a></p>
+</blockquote>
+<p>就是说现在有一个9万的资产列表，如果判断存活(httpx工具)，你只能在自己的一个主机上跑；但是这个工具，假设是在3000个AWS服务器上运行，每个AWS服务器只用跑30个资产就可以了</p>
+<p>或者说httpx工具也可以用来-path，跑路径，所以可以用来跑路径穿越漏洞</p>
+<p>这样的话，漏扫工具什么的都可以用了，但是最好是针对某个特定漏洞进行扫描，类似于批量刷sql洞或批量刷springboot未授权</p>
+<h2 id="waf绕waf"><a href="#waf绕waf" class="headerlink" title="waf绕waf"></a>waf绕waf</h2><p><a target="_blank" rel="noopener" href="https://certitude.consulting/blog/en/using-cloudflare-to-bypass-cloudflare/">https://certitude.consulting/blog/en/using-cloudflare-to-bypass-cloudflare/</a></p>
+<h2 id="H2C走私技术"><a href="#H2C走私技术" class="headerlink" title="H2C走私技术"></a>H2C走私技术</h2><p>视频作者貌似也成功过几次，算是一种思路拓展，了解一下</p>
+<p><a target="_blank" rel="noopener" href="https://www.assetnote.io/resources/research/h2c-smuggling-in-the-wild">https://www.assetnote.io/resources/research/h2c-smuggling-in-the-wild</a></p>
+<h1 id="更新部分24-6-13"><a href="#更新部分24-6-13" class="headerlink" title="更新部分24-6-13"></a>更新部分24-6-13</h1><h1 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h1><p>这里在主要是后渗透时，wmic的部分，它和cmd、powershell差不多，都可以交互使用，获取系统环境变量、软件安装情况等</p>
+<h2 id="进入内网的打点部分"><a href="#进入内网的打点部分" class="headerlink" title="进入内网的打点部分"></a>进入内网的打点部分</h2><h3 id="0x01-菠萝攻击"><a href="#0x01-菠萝攻击" class="headerlink" title="0x01 菠萝攻击"></a>0x01 菠萝攻击</h3><p>一个设备吧，用于无线攻击，它自带几个模块实现中间人攻击、网站钓鱼、getshell</p>
+<p>DWAll、Evil Portal、DNSMasq Spoofv</p>
+<p>几个例子：</p>
+<p>dns欺骗，其原理就是拦截对目的DNS的请求包，伪造响应包；防御的话，用静态、安全的DNS</p>
+<h1 id="java有关"><a href="#java有关" class="headerlink" title="java有关"></a>java有关</h1><h2 id="命令执行"><a href="#命令执行" class="headerlink" title="命令执行"></a>命令执行</h2><p>命令执行，java已经很避免这种情况了，提到了</p>
+<p>getRuntime().exec(payload)，提到payload尽量避免传入空格，因为这样的字符串会被处理分割(以空格分隔)，改变原有效果，</p>
+<p>例如</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/bin/sh -c <span class="string">&quot;echo 123&quot;</span> &gt;&gt; 1.txt</span><br></pre></td></tr></table></figure>
+
+<p>所以linux下用base64编码，windows下用powershell的base64</p>
+<h2 id="shiro"><a href="#shiro" class="headerlink" title="shiro"></a>shiro</h2><p>原理就那样，硬编码问题，爆破解密成功后，构造payload</p>
+<p>一般都是用ysoserial-master-SNAPSHOT.jar框架</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>某百科全书</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2024/05/25/redteam/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2024/06/05/yunsec/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            云安全渗透
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2024/05/22/javavuln/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">java漏洞</div>
+      </a>
+    
+  </nav>
+
+  
+   
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.css">
+
+
+<script src="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.js"></script>
+
+
+<script src="https://cdn.staticfile.org/blueimp-md5/2.19.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '93da8388ad1469a8be66',
+    clientSecret: '9dea6314b14ae1877632f2bcbe0a639dd4485bb1',
+    repo: 'blogtalk',
+    owner: 'ak005469075',
+    admin: ['ak005469075'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+  
+    
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2023-2024
+        <i class="ri-heart-fill heart_icon"></i> 是羽泪云诶
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/favicon.ico" alt="小张之栈"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+  <script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+</div>
+
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+ 
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+ 
+<script src="/js/dz.js"></script>
+ 
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>

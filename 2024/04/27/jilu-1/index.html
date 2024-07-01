@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>杂项_记录 |  小张之栈</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-jilu-1"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+  
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  杂项_记录
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2024/04/27/jilu-1/" class="article-date">
+  <time datetime="2024-04-27T01:21:20.000Z" itemprop="datePublished">2024-04-27</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">代码审计</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">1.6k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">6 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="安全产品"><a href="#安全产品" class="headerlink" title="安全产品"></a>安全产品</h1><p>这里从一种简单的模型入手，输入-&gt;检测-&gt;输出</p>
+<p>一切都是在检测<strong>输入</strong>！</p>
+<p>攻击者的入口点，也都是 <strong>输入</strong> 着手</p>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>输入</th>
+<th>检测</th>
+<th>输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>NDR</td>
+<td>pcap、流量</td>
+<td>waf&#x2F;正则&#x2F;流量解析&#x2F;文件分析&#x2F;威胁情报等</td>
+<td>阻断恶意流量</td>
+</tr>
+<tr>
+<td>EDR(终端检测及响应)</td>
+<td>进程事件&#x2F;文件事件&#x2F;主机API调用</td>
+<td>父子进程关系异常&#x2F;非常规api调用&#x2F;敏感文件读取</td>
+<td>异常阻断&#x2F;杀死进程</td>
+</tr>
+<tr>
+<td>WAF</td>
+<td>api调用</td>
+<td>xss、sql注入等关键字检测&#x2F;AI检测</td>
+<td>中断异常连接</td>
+</tr>
+<tr>
+<td>webshell查杀</td>
+<td>文本文件</td>
+<td>恶意关键字、数据进入敏感函数</td>
+<td>隔离&#x2F;删除</td>
+</tr>
+</tbody></table>
+<h1 id="输入类型"><a href="#输入类型" class="headerlink" title="输入类型"></a>输入类型</h1><h2 id="控制流与数据流"><a href="#控制流与数据流" class="headerlink" title="控制流与数据流"></a>控制流与数据流</h2><p>控制流走向控制代码走向、或者改变原代码结构；</p>
+<p>所谓走向和结构：</p>
+<p>sql注入、xss、SSTI、命令执行等可以生效的原因，攻击者得手的原因</p>
+<p>数据流就是被展示、存储、处理，同时也是程序员希望用户输入的部分</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?name=id</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="业务流程问题"><a href="#业务流程问题" class="headerlink" title="业务流程问题"></a>业务流程问题</h2><p>sql注入、xss、文件上传，一般被框架解决差不多了，预编译、白名单什么的</p>
+<p>这里主要是逻辑、越权问题</p>
+<p>校验(鉴权)缺陷</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">session_start</span>();</span><br><span class="line"><span class="keyword">if</span>(<span class="variable">$_SESSION</span>[<span class="string">&#x27;is_login&#x27;</span>]==<span class="variable">$_GET</span>[<span class="string">&#x27;is_login&#x27;</span>])&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;登录了&quot;</span>;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line">    这里直接COOKIE为空，url访问?is_login=</span><br><span class="line">    造成的效果是<span class="literal">NULL</span>==<span class="literal">NULL</span>实现绕过</span><br></pre></td></tr></table></figure>
+
+<h1 id="技巧"><a href="#技巧" class="headerlink" title="技巧"></a>技巧</h1><p>1.所有的漏洞都是根据脆弱输入-&gt;污点函数关键字-&gt;传播链这条规律</p>
+<p>2.参考可能的触发点、容易忽视的输入点，引发绕过；</p>
+<p>3.不行就上工具一把梭</p>
+<p>数据流能否到控制流里？</p>
+<p>业务逻辑可能的点-&gt;快速代码审计</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>漏洞与语言无关，主要是代码越来越规范，传统漏洞不好产生了</p>
+<p>输入-&gt;控制流-&gt;交互处</p>
+<h1 id="RCE"><a href="#RCE" class="headerlink" title="RCE"></a>RCE</h1><p>什么时候可以rce</p>
+<p>这里有一个对比</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sh -c &#x27;/usr/bin/echo $input&#x27;</span><br><span class="line">/usr/bin/echo $input</span><br><span class="line">比如php里的system等函数都是调用的sh -c</span><br></pre></td></tr></table></figure>
+
+<p>这里的sh -c是允许有管道符存在的，比如<code>;、|</code>，可以导致拼接型命令执行</p>
+<p>这个叫做<strong>system类</strong></p>
+<p>还有一种叫<strong>execve类</strong>，不调用sh -c的，输入只能作为固定参数，但是还可以绕过</p>
+<p>但是还是有现成的<strong>黑魔法</strong>绕过</p>
+<p>你比如 curl $url</p>
+<p>访问时是curl?url&#x3D;<a target="_blank" rel="noopener" href="http://www.baidu.com/">www.baidu.com</a></p>
+<p>其实可以用curl?url&#x3D;file:&#x2F;&#x2F;&#x2F;etc&#x2F;passwd这种</p>
+<p>主要是知道了可以利用的命令函数curl，虽然不能自定义其它命令比如id、whoami，但可以去搜一些curl本身函数支持的参数去进行精心构造，达到目的</p>
+<p><a href="#app1">具体见此</a></p>
+<h1 id="文件上传"><a href="#文件上传" class="headerlink" title="文件上传"></a>文件上传</h1><p>传统的就，黑名单绕过，后缀绕过，中间件解析绕过</p>
+<p>进阶的压缩包相关部分呢</p>
+<p>和之前的webshell绕过一样，就是将路径当做压缩包名，进行拼接</p>
+<p>或者说是将压缩包名改为87949.zip，然后代码对这个文件名的数字作为处理，转化成高危函数</p>
+<h1 id="序列化反序列化"><a href="#序列化反序列化" class="headerlink" title="序列化反序列化"></a>序列化反序列化</h1><p>这个已经记了好几遍，就是一种数据转换和存储的方式，一般将对象转化为字节流或字符串，再换原</p>
+<p>对于python和php来讲，和魔法函数有关(即自动调用的函数，如构造函数&#x2F;析构函数)</p>
+<p>这个一般有自动化工具进行挖掘了</p>
+<p>以php反序列化为例，检查方式为：</p>
+<p>1.已存在的类中，是否有某个类A，该类的魔术方法中是否有可利用点</p>
+<p>2.没有的话，这个魔术方法能否引入其它类B，重复1</p>
+<p>java反序列化，一般是在重写上出的问题</p>
+<h1 id="代审"><a href="#代审" class="headerlink" title="代审"></a>代审</h1><h2 id="1-命令执行"><a href="#1-命令执行" class="headerlink" title="1.命令执行"></a>1.命令执行</h2><p><a name="app1"></a></p>
+<p>这个在vscode里有app.py的情况下，python -m flask run即可</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cmd = [<span class="string">&#x27;curl&#x27;</span>, url]</span><br><span class="line">process = subprocess.Popen(cmd, shell=<span class="literal">False</span>, stdin=subprocess.PIPE, stdout=subprocess.PIPE,stderr=subprocess.STDOUT)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20240428084713270.png"></p>
+<p><img src="/../../../Typora/img111/image-20240428085305409.png"></p>
+<p>命令查询：<a target="_blank" rel="noopener" href="https://gtfobins.github.io/">https://gtfobins.github.io/</a></p>
+<h1 id="逻辑"><a href="#逻辑" class="headerlink" title="逻辑"></a>逻辑</h1><p>小程序：</p>
+<p>1.一个校验手机号的功能，主要是信息泄露：授权手机号功能处抓个包，如果响应包回显了些重要信息，也许可以遍历手机号，当然这个比较少</p>
+<p>2.意见反馈：</p>
+<p>文件上传（上传附件），得到了secret和appid，就可以去微信公共平台使用并获取token接口，构造接口实现访问测试</p>
+<p>3.验证码不过期重用，遍历爆破即可</p>
+<p>4.当响应包内容为 data:[]，这个一般意味着有越权？如果post请求参数携带了token，尝试删除token，回显数据</p>
+<p>5.js审计</p>
+<p>知道了修改密码的接口，新密码和旧密码的参数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">POST xxx/usr/modify/admin</span><br><span class="line">...</span><br><span class="line">oldpss=123123123&amp;confirmpss=123123123</span><br></pre></td></tr></table></figure>
+
+<p>6.修改密码</p>
+<p>未绑定手机号，但是可以发送验证码，那就抓包构造为自定义的手机号，那不就改密码了？</p>
+<p>7.js泄露、js加解密</p>
+<p>拼接目录时404，那么就要考虑有没有根目录、二级目录等再次拼接</p>
+<p>加密解密，尝试找到加密函数上断点调试，还原出整个加密流程</p>
+<p>8.文件上传时，抓包上传html文件，内容为xss语句，尝试弹cookie</p>
+<p>如果上传就可以下载下来，那就尝试任意文件下载</p>
+<p>9.空密码登录，直接爆破用户名即可</p>
+<p>10.修改信息时，不用手机验证，不用旧密码，而且让输入用户名；这个存在越权改他人用户密码，但它是靠id鉴权的，所以需要保证id正确；只要知道id，可以实现任意密码修改</p>
+<p>11.登录接口，短信登录优先测短信，手机不存在都可能收到短信</p>
+<p>12.有的文件上传，响应包回显路径，考虑请求包尝试构造路径拼接</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">user_file # &#123;&quot;data&quot;:&quot;user_file/2023/4/6/90..232&quot;&#125;</span><br><span class="line"></span><br><span class="line">1/11/1123/user_file # &#123;&quot;data&quot;:&quot;/media/1/11/1123/user_file/2023/4/6/90..232&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>危害的话，可能会覆盖原文件</p>
+<p>13.同一资产，不同域名，但公用默认token</p>
+<p>14.对于添加、删除功能都可以尝试是否鉴权</p>
+<p>15.A站点登录成功的返回包，给到B站点，尝试绕过</p>
+<p>16.修改请求包中，已登录用户的role权限的字段实现越权</p>
+<p>17.api&#x2F;web.rar</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2024/04/27/jilu-1/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2024/05/10/jsjkxjc/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            《计算机科学精粹》
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2024/04/22/nginx-conf/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">nginx配置</div>
+      </a>
+    
+  </nav>
+
+  
+   
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.css">
+
+
+<script src="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.js"></script>
+
+
+<script src="https://cdn.staticfile.org/blueimp-md5/2.19.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '93da8388ad1469a8be66',
+    clientSecret: '9dea6314b14ae1877632f2bcbe0a639dd4485bb1',
+    repo: 'blogtalk',
+    owner: 'ak005469075',
+    admin: ['ak005469075'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+  
+    
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2023-2024
+        <i class="ri-heart-fill heart_icon"></i> 是羽泪云诶
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/favicon.ico" alt="小张之栈"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+  <script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+</div>
+
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+ 
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+ 
+<script src="/js/dz.js"></script>
+ 
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>

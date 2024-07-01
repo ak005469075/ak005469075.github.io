@@ -88,7 +88,7 @@
   <time datetime="2023-09-25T16:21:20.000Z" itemprop="datePublished">2023-09-26</time>
 </a> 
   <div class="article-category">
-    <a class="article-category-link" href="/categories/%E3%80%8A%E9%BB%91%E5%AE%A2%E5%A4%A7%E6%9B%9D%E5%85%89%E3%80%8B/">《黑客大曝光》</a>
+    <a class="article-category-link" href="/categories/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/">信息收集</a>
   </div>
   
 <div class="word_count">
@@ -96,7 +96,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.8k</span>
+            <span class="post-count">5.7k</span>
         </span>
     </span>
 
@@ -105,7 +105,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">6 分钟</span>
+            <span class="post-count">22 分钟</span>
         </span>
     </span>
 </div>
@@ -123,6 +123,7 @@
   <h1 id="渗透思想"><a href="#渗透思想" class="headerlink" title="渗透思想"></a>渗透思想</h1><h1 id="引入"><a href="#引入" class="headerlink" title="引入"></a>引入</h1><p>技术总是很多，更新也快，有的东西学一辈子也学不完；所以人要有所取舍。</p>
 <p>学习本身不重要，学习能力才重要，一个人的学习能力体现了他的学习程度。</p>
 <p>今天我学数学，明天我学语文，后天我峡谷出击，这些都属于学习；但如何快速适应这三种不同的学习对象，我需要有一个基本大纲，这玩意儿就是思想。所以还是从书籍中看看渗透思路吧，为了备忘，故做出以下记录，但是我尽量按照自己的话来讲，如果只是照搬，我直接粘一个链接就得了。所以由于有些个人理解，难免有不妥之处，望自行辨别。</p>
+<p>直接看这篇即可 <a target="_blank" rel="noopener" href="https://forum.butian.net/share/1976">https://forum.butian.net/share/1976</a></p>
 <h1 id="0x01-踩点"><a href="#0x01-踩点" class="headerlink" title="0x01 踩点"></a>0x01 踩点</h1><p>这个就是信息收集的一部分，根据书中列举筛选了一些。</p>
 <p>内、外网都有：</p>
 <ol>
@@ -233,10 +234,129 @@
 <p>WHOIS查询结果中的记录创建时间和记录修改时间可以让我们推测出WHOIS信息的准确性</p>
 <p><strong>IP相关信息</strong></p>
 <p>这个一般是在安全日志中，对某个IP溯源时查的</p>
+<p><strong>IP反查</strong></p>
+<p>这个一般就是考虑到单IP多域名情况，反查找到旁站也未尝不可；这个一般去多个不同站点去反查</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://s.tool.chinaz.com/same">同IP网站查询，同服务器网站查询 - 站长工具</a></li>
+<li><a target="_blank" rel="noopener" href="https://dnslytics.com/">Dnslytics</a></li>
+<li><a target="_blank" rel="noopener" href="https://site.ip138.com/">iP或域名查询</a></li>
+</ul>
 <p><strong>DNS查询</strong></p>
 <p>主机名和ip间的映射</p>
 <p>它主要有一个问题在于区域传送，就是说备用服务器对主服务器的DNS信息进行拷贝，但由于配置问题，可能会把内部IP地址信息提供给因特网上不受信任的用户</p>
 <p>nslookup就是其中一个执行区域传送的工具，还有host命令，这里不细讲，以后用到了再查吧</p>
+<p>————————2024&#x2F;3&#x2F;21补充——————</p>
+<h2 id="关键资产收集"><a href="#关键资产收集" class="headerlink" title="关键资产收集"></a>关键资产收集</h2><ol>
+<li>找真实IP，相邻网段</li>
+<li>目标机是否是蜜罐（蜜罐的话会爬取浏览器cookie与本地文件，所以避免用主机被溯源）</li>
+<li>定位内网IP和系统（这个没什么好说的，内网目标+有nday打nday）</li>
+<li>定位关键应用系统</li>
+<li>定位关键企业信息</li>
+</ol>
+<h2 id="主域名信息"><a href="#主域名信息" class="headerlink" title="主域名信息"></a>主域名信息</h2><p>知道公司名，去爱企查找它的域名；如果没有域名</p>
+<p>1.谷歌搜公司名，看是否有url；</p>
+<p>2.爱企查的邮箱后缀看是否能访问 <a href="mailto:&#49;&#x32;&#x33;&#64;&#x78;&#x78;&#120;&#46;&#99;&#x6f;&#109;">&#49;&#x32;&#x33;&#64;&#x78;&#x78;&#120;&#46;&#99;&#x6f;&#109;</a></p>
+<p>3.不能访问就fofa搜索host&#x3D;”xxx.com”</p>
+<p>IPC备案查询 <a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">https://beian.miit.gov.cn/#/Integrated/index</a></p>
+<p>SEO综合查询 </p>
+<p>未备案域名，可以通过网站的友链导航</p>
+<p>fofa</p>
+<p>主站虽然防护强，可以先看看，不行就fofa找找登录页面之类，无果再子域名</p>
+<h2 id="指纹识别"><a href="#指纹识别" class="headerlink" title="指纹识别"></a>指纹识别</h2><p>主要是架构、cms什么的</p>
+<p><a target="_blank" rel="noopener" href="https://www.whatweb.net/">https://www.whatweb.net/</a></p>
+<h2 id="常用工具"><a href="#常用工具" class="headerlink" title="常用工具"></a>常用工具</h2><p>抄了抄了，来自<a target="_blank" rel="noopener" href="https://forum.butian.net/share/1976">https://forum.butian.net/share/1976</a></p>
+<table>
+<thead>
+<tr>
+<th align="left">工具、网站</th>
+<th align="left">备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://www.aizhan.com/">爱站</a>、<a target="_blank" rel="noopener" href="https://tool.chinaz.com/">站长工具</a></td>
+<td align="left">Whois、备案号、权重、公司名称等</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://www.tianyancha.com/">天眼查</a>、<a target="_blank" rel="noopener" href="https://www.qichacha.com/">企查查</a>、<a target="_blank" rel="noopener" href="https://wx.sogou.com/">搜狗搜索引擎</a></td>
+<td align="left">公司注册域名、微信公众号、APP、软件著作权等</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://www.zoomeye.org/">ZoomEye</a>、<a target="_blank" rel="noopener" href="https://shodan.io/">Shodan</a>、<a target="_blank" rel="noopener" href="https://fofa.so/">FOFA</a>、<a target="_blank" rel="noopener" href="https://0.zone/">0.Zone</a>、<a target="_blank" rel="noopener" href="https://quake.360.cn/quake/#/index">quake</a></td>
+<td align="left">网络空间资产搜索引擎</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://github.com/wgpsec/ENScan_GO">ENScanGo</a>、<a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">ICP备案</a></td>
+<td align="left">主域名收集</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://github.com/shmilylty/OneForAll">OneForAll</a>、<a target="_blank" rel="noopener" href="https://github.com/euphrat1ca/LayerDomainFinder">Layer</a>、<a target="_blank" rel="noopener" href="https://opendata.rapid7.com/">Rapid7的开源数据项目</a>、<a target="_blank" rel="noopener" href="https://github.com/UnaPibaGeek/ctfr">ctfr</a>、<a target="_blank" rel="noopener" href="https://github.com/FortyNorthSecurity/EyeWitness">EyeWitness</a></td>
+<td align="left">子域名收集</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://github.com/lcvvvv/kscan">Kscan</a>、<a target="_blank" rel="noopener" href="https://github.com/0x727/ShuiZe_0x727">ShuiZe_0x727</a>、<a target="_blank" rel="noopener" href="https://github.com/TophantTechnology/ARL">ARL灯塔</a>、<a target="_blank" rel="noopener" href="https://gobies.org/">Goby</a></td>
+<td align="left">自动化、批量信息收集</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://github.com/dr0op/bufferfly">Bufferfly</a>、<a target="_blank" rel="noopener" href="https://github.com/EdgeSecurityTeam/EHole">Ehole</a>、httpx</td>
+<td align="left">资产处理、信息筛选</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://dnsdb.io/zh-cn/">dnsdb</a>、<a target="_blank" rel="noopener" href="https://github.com/christophetd/CloudFlair">CloudFlair</a></td>
+<td align="left">CDN相关</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://www.virustotal.com/">VirusTotal</a>、<a target="_blank" rel="noopener" href="https://x.threatbook.cn/">微步</a>、<a target="_blank" rel="noopener" href="https://github.com/Sma11New/ip2domain">ip2domain</a></td>
+<td align="left">C段、域名&#x2F;ip情报信息</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://nmap.org/">Nmap</a>、<a target="_blank" rel="noopener" href="https://github.com/robertdavidgraham/masscan">Masscan</a></td>
+<td align="left">端口服务信息</td>
+</tr>
+<tr>
+<td align="left">Google Hacking、<a target="_blank" rel="noopener" href="https://github.com/maurosoria/dirsearch">dirsearch</a>、<a target="_blank" rel="noopener" href="https://github.com/pingc0y/URLFinder">URLFinder</a></td>
+<td align="left">WEB站点信息、api接口等</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://github.com/EnableSecurity/wafw00f">wafw00f</a></td>
+<td align="left">waf识别</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="http://www.yunsee.cn/">云悉</a>、<a target="_blank" rel="noopener" href="http://finger.tidesec.net/home/index/index.html">潮汐</a>、<a target="_blank" rel="noopener" href="https://www.whatweb.net/">WhatWeb</a></td>
+<td align="left">在线CMS识别</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://www.qimai.cn/">七麦</a>、<a target="_blank" rel="noopener" href="https://www.xiaolanben.com/pc">小蓝本</a></td>
+<td align="left">APP资产</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://github.com/TheKingOfDuck/ApkAnalyser">ApkAnalyser</a></td>
+<td align="left">App敏感信息</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://wy.zone.ci/">乌云漏洞库</a>、<a target="_blank" rel="noopener" href="http://www.cnnvd.org.cn/">CNVD</a>、<a target="_blank" rel="noopener" href="https://github.com/tomnomnom/waybackurls"><strong>waybackurls</strong></a></td>
+<td align="left">历史漏洞、历史资产等</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://github.com/n0tr00t/Sreg">n0tr00t&#x2F;Sreg</a>、reg007</td>
+<td align="left">个人隐私信息</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://github.com/obheda12/GitDorker">GitDorker</a></td>
+<td align="left">资产信息、源码泄露</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://github.com/laramies/theHarvester">theHarvester</a>、<a target="_blank" rel="noopener" href="https://app.snov.io/">Snov.io</a></td>
+<td align="left">邮箱信息收集</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://start.me/p/GE7JQb/osint">OSINT开源情报和侦擦工具</a></td>
+<td align="left">开源情报资源导航</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://github.com/cnrstar/anti-honeypot">anti-honeypot</a>、<a target="_blank" rel="noopener" href="https://send-safe-honeypot-hunter.apponic.com/">Honeypot Hunter</a></td>
+<td align="left">蜜罐识别</td>
+</tr>
+</tbody></table>
 <h1 id="0x02扫描"><a href="#0x02扫描" class="headerlink" title="0x02扫描"></a>0x02扫描</h1><p><strong>1.确定目标主机在线</strong></p>
 <p>arp主机发现</p>
 <blockquote>
@@ -268,7 +388,1091 @@
 <p><strong>3.操作系统类型</strong></p>
 <p>从现有端口猜测，一般linux系统端口有22端口，当然windows也有，还有445端口</p>
 <p>namp为什么可以探查到操作系统类型，源于一种技术叫做 <strong>协议栈指纹分析技术</strong>，这是因为厂家在编写协议栈的时候，要对特定的RFC文档规定做出不同解释。</p>
+<h2 id="端口扫描表"><a href="#端口扫描表" class="headerlink" title="端口扫描表"></a>端口扫描表</h2><p><a target="_blank" rel="noopener" href="https://forum.butian.net/share/1976">https://forum.butian.net/share/1976</a></p>
+<p>抄过来</p>
+<table>
+<thead>
+<tr>
+<th align="left">端口</th>
+<th align="left">服务</th>
+<th align="left">渗透用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">tcp 20,21</td>
+<td align="left">FTP</td>
+<td align="left">允许匿名的上传下载,爆破,嗅探,win提权,远程执行(proftpd 1.3.5),各类后门(proftpd,vsftp 2.3.4)</td>
+</tr>
+<tr>
+<td align="left">tcp 22</td>
+<td align="left">SSH</td>
+<td align="left">可根据已搜集到的信息尝试爆破,v1版本可中间人,ssh隧道及内网代理转发,文件传输等等</td>
+</tr>
+<tr>
+<td align="left">tcp 23</td>
+<td align="left">Telnet</td>
+<td align="left">爆破,嗅探,一般常用于路由,交换登陆,可尝试弱口令</td>
+</tr>
+<tr>
+<td align="left">tcp 25</td>
+<td align="left">SMTP</td>
+<td align="left">邮件伪造,vrfy&#x2F;expn查询邮件用户信息,可使用smtp-user-enum工具来自动跑</td>
+</tr>
+<tr>
+<td align="left">tcp&#x2F;udp 53</td>
+<td align="left">DNS</td>
+<td align="left">允许区域传送,dns劫持,缓存投毒,欺骗以及各种基于dns隧道的远控</td>
+</tr>
+<tr>
+<td align="left">tcp&#x2F;udp 69</td>
+<td align="left">TFTP</td>
+<td align="left">尝试下载目标及其的各类重要配置文件</td>
+</tr>
+<tr>
+<td align="left">tcp 80-89,443,8440-8450,8080-8089</td>
+<td align="left">各种常用的Web服务端口</td>
+<td align="left">可尝试经典的topn,vpn,owa,webmail,目标oa,各类Java控制台,各类服务器Web管理面板,各类Web中间件漏洞利用,各类Web框架漏洞利用等等……</td>
+</tr>
+<tr>
+<td align="left">tcp 110</td>
+<td align="left">POP3</td>
+<td align="left">可尝试爆破,嗅探</td>
+</tr>
+<tr>
+<td align="left">tcp 111,2049</td>
+<td align="left">NFS</td>
+<td align="left">权限配置不当</td>
+</tr>
+<tr>
+<td align="left">tcp 137,139,445</td>
+<td align="left">Samba</td>
+<td align="left">可尝试爆破以及smb自身的各种远程执行类漏洞利用,如,ms08-067,ms17-010,嗅探等……</td>
+</tr>
+<tr>
+<td align="left">tcp 143</td>
+<td align="left">IMAP</td>
+<td align="left">可尝试爆破</td>
+</tr>
+<tr>
+<td align="left">udp 161</td>
+<td align="left">SNMP</td>
+<td align="left">爆破默认团队字符串,搜集目标内网信息</td>
+</tr>
+<tr>
+<td align="left">tcp 389</td>
+<td align="left">LDAP</td>
+<td align="left">ldap注入,允许匿名访问,弱口令</td>
+</tr>
+<tr>
+<td align="left">tcp 512,513,514</td>
+<td align="left">Linux rexec</td>
+<td align="left">可爆破,rlogin登陆</td>
+</tr>
+<tr>
+<td align="left">tcp 873</td>
+<td align="left">Rsync</td>
+<td align="left">匿名访问,文件上传</td>
+</tr>
+<tr>
+<td align="left">tcp 1194</td>
+<td align="left">OpenVPN</td>
+<td align="left">想办法钓VPN账号,进内网</td>
+</tr>
+<tr>
+<td align="left">tcp 1352</td>
+<td align="left">Lotus</td>
+<td align="left">弱口令,信息泄漏,爆破</td>
+</tr>
+<tr>
+<td align="left">tcp 1433</td>
+<td align="left">SQL Server</td>
+<td align="left">注入,提权,sa弱口令,爆破</td>
+</tr>
+<tr>
+<td align="left">tcp 1521</td>
+<td align="left">Oracle</td>
+<td align="left">tns爆破,注入,弹shell…</td>
+</tr>
+<tr>
+<td align="left">tcp 1500</td>
+<td align="left">ISPmanager</td>
+<td align="left">弱口令</td>
+</tr>
+<tr>
+<td align="left">tcp 1723</td>
+<td align="left">PPTP</td>
+<td align="left">爆破,想办法钓VPN账号,进内网</td>
+</tr>
+<tr>
+<td align="left">tcp 2082,2083</td>
+<td align="left">cPanel</td>
+<td align="left">弱口令</td>
+</tr>
+<tr>
+<td align="left">tcp 2181</td>
+<td align="left">ZooKeeper</td>
+<td align="left">未授权访问</td>
+</tr>
+<tr>
+<td align="left">tcp 2601,2604</td>
+<td align="left">Zebra</td>
+<td align="left">默认密码zerbra</td>
+</tr>
+<tr>
+<td align="left">tcp 3128</td>
+<td align="left">Squid</td>
+<td align="left">弱口令</td>
+</tr>
+<tr>
+<td align="left">tcp 3312,3311</td>
+<td align="left">kangle</td>
+<td align="left">弱口令</td>
+</tr>
+<tr>
+<td align="left">tcp 3306</td>
+<td align="left">MySQL</td>
+<td align="left">注入,提权,爆破</td>
+</tr>
+<tr>
+<td align="left">tcp 3389</td>
+<td align="left">Windows rdp</td>
+<td align="left">shift后门[需要03以下的系统],爆破,ms12-020</td>
+</tr>
+<tr>
+<td align="left">tcp 3690</td>
+<td align="left">SVN</td>
+<td align="left">svn泄露,未授权访问</td>
+</tr>
+<tr>
+<td align="left">tcp 4848</td>
+<td align="left">GlassFish</td>
+<td align="left">弱口令</td>
+</tr>
+<tr>
+<td align="left">tcp 5000</td>
+<td align="left">Sybase&#x2F;DB2</td>
+<td align="left">爆破,注入</td>
+</tr>
+<tr>
+<td align="left">tcp 5432</td>
+<td align="left">PostgreSQL</td>
+<td align="left">爆破,注入,弱口令</td>
+</tr>
+<tr>
+<td align="left">tcp 5900,5901,5902</td>
+<td align="left">VNC</td>
+<td align="left">弱口令爆破</td>
+</tr>
+<tr>
+<td align="left">tcp 5984</td>
+<td align="left">CouchDB</td>
+<td align="left">未授权导致的任意指令执行</td>
+</tr>
+<tr>
+<td align="left">tcp 6379</td>
+<td align="left">Redis</td>
+<td align="left">可尝试未授权访问,弱口令爆破</td>
+</tr>
+<tr>
+<td align="left">tcp 7001,7002</td>
+<td align="left">WebLogic</td>
+<td align="left">Java反序列化,弱口令</td>
+</tr>
+<tr>
+<td align="left">tcp 7778</td>
+<td align="left">Kloxo</td>
+<td align="left">主机面板登录</td>
+</tr>
+<tr>
+<td align="left">tcp 8000</td>
+<td align="left">Ajenti</td>
+<td align="left">弱口令</td>
+</tr>
+<tr>
+<td align="left">tcp 8009</td>
+<td align="left">tomcat Ajp</td>
+<td align="left">Tomcat-Ajp协议漏洞</td>
+</tr>
+<tr>
+<td align="left">tcp 8443</td>
+<td align="left">Plesk</td>
+<td align="left">弱口令</td>
+</tr>
+<tr>
+<td align="left">tcp 8069</td>
+<td align="left">Zabbix</td>
+<td align="left">远程执行,SQL注入</td>
+</tr>
+<tr>
+<td align="left">tcp 8080-8089</td>
+<td align="left">Jenkins,JBoss</td>
+<td align="left">反序列化,控制台弱口令</td>
+</tr>
+<tr>
+<td align="left">tcp 9080-9081,9090</td>
+<td align="left">WebSphere</td>
+<td align="left">Java反序列化&#x2F;弱口令</td>
+</tr>
+<tr>
+<td align="left">tcp 9200,9300</td>
+<td align="left">ElasticSearch</td>
+<td align="left">远程执行</td>
+</tr>
+<tr>
+<td align="left">tcp 11211</td>
+<td align="left">Memcached</td>
+<td align="left">未授权访问</td>
+</tr>
+<tr>
+<td align="left">tcp 27017,27018</td>
+<td align="left">MongoDB</td>
+<td align="left">爆破,未授权访问</td>
+</tr>
+<tr>
+<td align="left">tcp 50070,50030</td>
+<td align="left">Hadoop</td>
+<td align="left">默认端口未授权访问</td>
+</tr>
+</tbody></table>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="left"><strong>端口号</strong></th>
+<th align="left"><strong>端口说明</strong></th>
+<th align="left"><strong>渗透思路</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">21&#x2F;69</td>
+<td align="left">FTP&#x2F;TFTP：文件传输协议</td>
+<td align="left">爆破、内网嗅探</td>
+</tr>
+<tr>
+<td align="left">22</td>
+<td align="left">SSH：远程连接</td>
+<td align="left">用户名枚举、爆破</td>
+</tr>
+<tr>
+<td align="left">23</td>
+<td align="left">Telnet：远程连接</td>
+<td align="left">爆破、内网嗅探</td>
+</tr>
+<tr>
+<td align="left">25</td>
+<td align="left">SMTP：邮件服务</td>
+<td align="left">邮件伪造</td>
+</tr>
+<tr>
+<td align="left">53</td>
+<td align="left">DNS：域名系统</td>
+<td align="left">DNS域传送\DNS缓存投毒\DNS欺骗\利用DNS隧道技术刺透防火墙</td>
+</tr>
+<tr>
+<td align="left">389</td>
+<td align="left">LDAP</td>
+<td align="left">未授权访问（通过LdapBrowser工具直接连入）</td>
+</tr>
+<tr>
+<td align="left">443</td>
+<td align="left">https服务</td>
+<td align="left">OpenSSL 心脏滴血（nmap -sV –script&#x3D;ssl-heartbleed 目标）</td>
+</tr>
+<tr>
+<td align="left">445</td>
+<td align="left">SMB服务</td>
+<td align="left">ms17_010远程代码执行</td>
+</tr>
+<tr>
+<td align="left">873</td>
+<td align="left">rsync服务</td>
+<td align="left">未授权访问</td>
+</tr>
+<tr>
+<td align="left">1090&#x2F;1099</td>
+<td align="left">Java-rmi</td>
+<td align="left">JAVA反序列化远程命令执行漏洞</td>
+</tr>
+<tr>
+<td align="left">1352</td>
+<td align="left">Lotus Domino邮件服务</td>
+<td align="left">爆破：弱口令、信息泄漏：源代码</td>
+</tr>
+<tr>
+<td align="left">1433</td>
+<td align="left">MSSQL</td>
+<td align="left">注入、SA弱口令爆破、提权</td>
+</tr>
+<tr>
+<td align="left">1521</td>
+<td align="left">Oracle</td>
+<td align="left">注入、TNS爆破</td>
+</tr>
+<tr>
+<td align="left">2049</td>
+<td align="left">NFS</td>
+<td align="left">配置不当</td>
+</tr>
+<tr>
+<td align="left">2181</td>
+<td align="left">ZooKeeper服务</td>
+<td align="left">未授权访问</td>
+</tr>
+<tr>
+<td align="left">3306</td>
+<td align="left">MySQL</td>
+<td align="left">注入、爆破、写shell、提权</td>
+</tr>
+<tr>
+<td align="left">3389</td>
+<td align="left">RDP</td>
+<td align="left">爆破、Shift后门、CVE-2019-0708远程代码执行</td>
+</tr>
+<tr>
+<td align="left">4848</td>
+<td align="left">GlassFish控制台</td>
+<td align="left">爆破：控制台弱口令、认证绕过</td>
+</tr>
+<tr>
+<td align="left">5000</td>
+<td align="left">Sybase&#x2F;DB2数据库</td>
+<td align="left">爆破、注入</td>
+</tr>
+<tr>
+<td align="left">5432</td>
+<td align="left">PostgreSQL</td>
+<td align="left">爆破弱口令、高权限执行系统命令</td>
+</tr>
+<tr>
+<td align="left">5632</td>
+<td align="left">PcAnywhere服务</td>
+<td align="left">爆破弱口令</td>
+</tr>
+<tr>
+<td align="left">5900</td>
+<td align="left">VNC</td>
+<td align="left">爆破：弱口令、认证绕过</td>
+</tr>
+<tr>
+<td align="left">6379</td>
+<td align="left">Redis</td>
+<td align="left">未授权访问、爆破弱口令</td>
+</tr>
+<tr>
+<td align="left">7001</td>
+<td align="left">WebLogic中间件</td>
+<td align="left">反序列化、控制台弱口令+部署war包、SSRF</td>
+</tr>
+<tr>
+<td align="left">8000</td>
+<td align="left">jdwp</td>
+<td align="left">JDWP 远程命令执行漏洞（<a target="_blank" rel="noopener" href="https://github.com/IOActive/jdwp-shellifier">工具</a>）</td>
+</tr>
+<tr>
+<td align="left">8080&#x2F;8089</td>
+<td align="left">Tomcat&#x2F;JBoss&#x2F;Resin&#x2F;Jetty&#x2F;Jenkins</td>
+<td align="left">反序列化、控制台弱口令、未授权</td>
+</tr>
+<tr>
+<td align="left">8161</td>
+<td align="left">ActiveMQ</td>
+<td align="left">admin&#x2F;admin、任意文件写入、反序列化</td>
+</tr>
+<tr>
+<td align="left">8069</td>
+<td align="left">Zabbix</td>
+<td align="left">远程命令执行</td>
+</tr>
+<tr>
+<td align="left">9043</td>
+<td align="left">WebSphere控制台</td>
+<td align="left">控制台弱口令<a target="_blank" rel="noopener" href="https://blog.gm7.org/%E4%B8%AA%E4%BA%BA%E7%9F%A5%E8%AF%86%E5%BA%93/01.%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/01.%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/1.%E8%B5%84%E4%BA%A7%E6%94%B6%E9%9B%86/03.IP%E6%AE%B5%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/07.%E7%AB%AF%E5%8F%A3%E5%AF%B9%E5%BA%94%E6%B8%97%E9%80%8F%EF%BC%88%E7%AB%AF%E5%8F%A3%E6%B8%97%E9%80%8F%E5%A4%87%E5%BF%98%E5%BD%95%EF%BC%89.html">https:&#x2F;&#x2F;:9043&#x2F;ibm&#x2F;console&#x2F;logon.jsp、远程代码执行</a></td>
+</tr>
+<tr>
+<td align="left">9200&#x2F;9300</td>
+<td align="left">Elasticsearch服务</td>
+<td align="left">远程代码执行</td>
+</tr>
+<tr>
+<td align="left">11211</td>
+<td align="left">Memcache</td>
+<td align="left">未授权访问（nc -vv 目标 11211）</td>
+</tr>
+<tr>
+<td align="left">27017</td>
+<td align="left">MongoDB</td>
+<td align="left">未授权访问、爆破弱口令</td>
+</tr>
+<tr>
+<td align="left">50000</td>
+<td align="left">SAP</td>
+<td align="left">远程代码执行</td>
+</tr>
+<tr>
+<td align="left">50070</td>
+<td align="left">hadoop</td>
+<td align="left">未授权访问</td>
+</tr>
+</tbody></table>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="left"><strong>端口号</strong></th>
+<th align="left"><strong>服务</strong></th>
+<th align="left"><strong>渗透思路</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">21</td>
+<td align="left">FTP&#x2F;TFTP&#x2F;VSFTPD</td>
+<td align="left">爆破&#x2F;嗅探&#x2F;溢出&#x2F;后门</td>
+</tr>
+<tr>
+<td align="left">22</td>
+<td align="left">ssh远程连接</td>
+<td align="left">爆破&#x2F;openssh漏洞</td>
+</tr>
+<tr>
+<td align="left">23</td>
+<td align="left">Telnet远程连接</td>
+<td align="left">爆破&#x2F;嗅探&#x2F;弱口令</td>
+</tr>
+<tr>
+<td align="left">25</td>
+<td align="left">SMTP邮件服务</td>
+<td align="left">邮件伪造</td>
+</tr>
+<tr>
+<td align="left">53</td>
+<td align="left">DNS域名解析系统</td>
+<td align="left">域传送&#x2F;劫持&#x2F;缓存投毒&#x2F;欺骗</td>
+</tr>
+<tr>
+<td align="left">67&#x2F;68</td>
+<td align="left">dhcp服务</td>
+<td align="left">劫持&#x2F;欺骗</td>
+</tr>
+<tr>
+<td align="left">110</td>
+<td align="left">pop3</td>
+<td align="left">爆破&#x2F;嗅探</td>
+</tr>
+<tr>
+<td align="left">139</td>
+<td align="left">Samba服务</td>
+<td align="left">爆破&#x2F;未授权访问&#x2F;远程命令执行</td>
+</tr>
+<tr>
+<td align="left">143</td>
+<td align="left">Imap协议</td>
+<td align="left">爆破161SNMP协议爆破&#x2F;搜集目标内网信息</td>
+</tr>
+<tr>
+<td align="left">389</td>
+<td align="left">Ldap目录访问协议</td>
+<td align="left">注入&#x2F;未授权访问&#x2F;弱口令</td>
+</tr>
+<tr>
+<td align="left">445</td>
+<td align="left">smb</td>
+<td align="left">ms17-010&#x2F;端口溢出</td>
+</tr>
+<tr>
+<td align="left">512&#x2F;513&#x2F;514</td>
+<td align="left">Linux Rexec服务</td>
+<td align="left">爆破&#x2F;Rlogin登陆</td>
+</tr>
+<tr>
+<td align="left">873</td>
+<td align="left">Rsync服务</td>
+<td align="left">文件上传&#x2F;未授权访问</td>
+</tr>
+<tr>
+<td align="left">1080</td>
+<td align="left">socket</td>
+<td align="left">爆破</td>
+</tr>
+<tr>
+<td align="left">1352</td>
+<td align="left">Lotus domino邮件服务</td>
+<td align="left">爆破&#x2F;信息泄漏</td>
+</tr>
+<tr>
+<td align="left">1433</td>
+<td align="left">mssql</td>
+<td align="left">爆破&#x2F;注入&#x2F;SA弱口令</td>
+</tr>
+<tr>
+<td align="left">1521</td>
+<td align="left">oracle</td>
+<td align="left">爆破&#x2F;注入&#x2F;TNS爆破&#x2F;反弹shell2049Nfs服务配置不当</td>
+</tr>
+<tr>
+<td align="left">2181</td>
+<td align="left">zookeeper服务</td>
+<td align="left">未授权访问</td>
+</tr>
+<tr>
+<td align="left">2375</td>
+<td align="left">docker remote api</td>
+<td align="left">未授权访问</td>
+</tr>
+<tr>
+<td align="left">3306</td>
+<td align="left">mysql</td>
+<td align="left">爆破&#x2F;注入</td>
+</tr>
+<tr>
+<td align="left">3389</td>
+<td align="left">Rdp远程桌面链接</td>
+<td align="left">爆破&#x2F;shift后门</td>
+</tr>
+<tr>
+<td align="left">4848</td>
+<td align="left">GlassFish控制台</td>
+<td align="left">爆破&#x2F;认证绕过</td>
+</tr>
+<tr>
+<td align="left">5000</td>
+<td align="left">sybase&#x2F;DB2数据库</td>
+<td align="left">爆破&#x2F;注入&#x2F;提权</td>
+</tr>
+<tr>
+<td align="left">5432</td>
+<td align="left">postgresql</td>
+<td align="left">爆破&#x2F;注入&#x2F;缓冲区溢出</td>
+</tr>
+<tr>
+<td align="left">5632</td>
+<td align="left">pcanywhere服务</td>
+<td align="left">抓密码&#x2F;代码执行</td>
+</tr>
+<tr>
+<td align="left">5900</td>
+<td align="left">vnc</td>
+<td align="left">爆破&#x2F;认证绕过</td>
+</tr>
+<tr>
+<td align="left">6379</td>
+<td align="left">Redis数据库</td>
+<td align="left">未授权访问&#x2F;爆破</td>
+</tr>
+<tr>
+<td align="left">7001&#x2F;7002</td>
+<td align="left">weblogic</td>
+<td align="left">java反序列化&#x2F;控制台弱口令</td>
+</tr>
+<tr>
+<td align="left">80&#x2F;443</td>
+<td align="left">http&#x2F;https</td>
+<td align="left">web应用漏洞&#x2F;心脏滴血</td>
+</tr>
+<tr>
+<td align="left">8069</td>
+<td align="left">zabbix服务</td>
+<td align="left">远程命令执行&#x2F;注入</td>
+</tr>
+<tr>
+<td align="left">8161</td>
+<td align="left">activemq</td>
+<td align="left">弱口令&#x2F;写文件</td>
+</tr>
+<tr>
+<td align="left">8080&#x2F;8089</td>
+<td align="left">Jboss&#x2F;Tomcat&#x2F;Resin</td>
+<td align="left">爆破&#x2F;PUT文件上传&#x2F;反序列化</td>
+</tr>
+<tr>
+<td align="left">8083&#x2F;8086</td>
+<td align="left">influxDB</td>
+<td align="left">未授权访问</td>
+</tr>
+<tr>
+<td align="left">9000</td>
+<td align="left">fastcgi</td>
+<td align="left">远程命令执行</td>
+</tr>
+<tr>
+<td align="left">9090</td>
+<td align="left">Websphere</td>
+<td align="left">控制台爆破&#x2F;java反序列化&#x2F;弱口令</td>
+</tr>
+<tr>
+<td align="left">9200&#x2F;9300</td>
+<td align="left">elasticsearch</td>
+<td align="left">远程代码执行</td>
+</tr>
+<tr>
+<td align="left">11211</td>
+<td align="left">memcached</td>
+<td align="left">未授权访问</td>
+</tr>
+<tr>
+<td align="left">27017&#x2F;27018</td>
+<td align="left">mongodb</td>
+<td align="left">未授权访问&#x2F;爆破</td>
+</tr>
+</tbody></table>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="left"><strong>端口号</strong></th>
+<th align="left"><strong>服务</strong></th>
+<th align="left"><strong>渗透思路</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">20</td>
+<td align="left">ftp_data</td>
+<td align="left">爆破、嗅探、溢出、后门</td>
+</tr>
+<tr>
+<td align="left">21</td>
+<td align="left">ftp_control</td>
+<td align="left">爆破、嗅探、溢出、后门</td>
+</tr>
+<tr>
+<td align="left">23</td>
+<td align="left">telnet</td>
+<td align="left">爆破、嗅探</td>
+</tr>
+<tr>
+<td align="left">25</td>
+<td align="left">smtp</td>
+<td align="left">邮件伪造</td>
+</tr>
+<tr>
+<td align="left">53</td>
+<td align="left">DNS</td>
+<td align="left">DNS区域传输、DNS劫持、DNS缓存投毒、DNS欺骗、深度利用：利用DNS隧道技术刺透防火墙</td>
+</tr>
+<tr>
+<td align="left">67</td>
+<td align="left">dhcp</td>
+<td align="left">劫持、欺骗</td>
+</tr>
+<tr>
+<td align="left">68</td>
+<td align="left">dhcp</td>
+<td align="left">劫持、欺骗</td>
+</tr>
+<tr>
+<td align="left">110</td>
+<td align="left">pop3</td>
+<td align="left">爆破</td>
+</tr>
+<tr>
+<td align="left">139</td>
+<td align="left">samba</td>
+<td align="left">爆破、未授权访问、远程代码执行</td>
+</tr>
+<tr>
+<td align="left">143</td>
+<td align="left">imap</td>
+<td align="left">爆破</td>
+</tr>
+<tr>
+<td align="left">161</td>
+<td align="left">snmp</td>
+<td align="left">爆破</td>
+</tr>
+<tr>
+<td align="left">389</td>
+<td align="left">ldap</td>
+<td align="left">注入攻击、未授权访问</td>
+</tr>
+<tr>
+<td align="left">512</td>
+<td align="left">linux r</td>
+<td align="left">直接使用rlogin</td>
+</tr>
+<tr>
+<td align="left">513</td>
+<td align="left">linux r</td>
+<td align="left">直接使用rlogin</td>
+</tr>
+<tr>
+<td align="left">514</td>
+<td align="left">linux r</td>
+<td align="left">直接使用rlogin</td>
+</tr>
+<tr>
+<td align="left">873</td>
+<td align="left">rsync</td>
+<td align="left">未授权访问</td>
+</tr>
+<tr>
+<td align="left">888</td>
+<td align="left">BTLINUX</td>
+<td align="left">宝塔Linux主机管理后台&#x2F;默认帐户：admin｜默认密码：admin</td>
+</tr>
+<tr>
+<td align="left">999</td>
+<td align="left">PMA</td>
+<td align="left">护卫神佩带的phpmyadmin管理后台，默认帐户：root｜默认密码：huweishen.com</td>
+</tr>
+<tr>
+<td align="left">1080</td>
+<td align="left">socket</td>
+<td align="left">爆破：进行内网渗透</td>
+</tr>
+<tr>
+<td align="left">1352</td>
+<td align="left">lotus</td>
+<td align="left">爆破：弱口令、信息泄露：源代码</td>
+</tr>
+<tr>
+<td align="left">1433</td>
+<td align="left">mssql</td>
+<td align="left">爆破：使用系统用户登录、注入攻击</td>
+</tr>
+<tr>
+<td align="left">1521</td>
+<td align="left">oracle</td>
+<td align="left">爆破：TNS、注入攻击</td>
+</tr>
+<tr>
+<td align="left">2049</td>
+<td align="left">nfs</td>
+<td align="left">配置不当</td>
+</tr>
+<tr>
+<td align="left">2181</td>
+<td align="left">zookeeper</td>
+<td align="left">未授权访问</td>
+</tr>
+<tr>
+<td align="left">3306</td>
+<td align="left">mysql</td>
+<td align="left">爆破、拒绝服务、注入</td>
+</tr>
+<tr>
+<td align="left">3389</td>
+<td align="left">rdp</td>
+<td align="left">爆破、Shift后门</td>
+</tr>
+<tr>
+<td align="left">4848</td>
+<td align="left">glassfish</td>
+<td align="left">爆破：控制台弱口令、认证绕过</td>
+</tr>
+<tr>
+<td align="left">5000</td>
+<td align="left">sybase&#x2F;DB2</td>
+<td align="left">爆破、注入</td>
+</tr>
+<tr>
+<td align="left">5432</td>
+<td align="left">postgresql</td>
+<td align="left">缓冲区溢出、注入攻击、爆破：弱口令</td>
+</tr>
+<tr>
+<td align="left">5632</td>
+<td align="left">pcanywhere</td>
+<td align="left">拒绝服务、代码执行</td>
+</tr>
+<tr>
+<td align="left">5900</td>
+<td align="left">vnc</td>
+<td align="left">爆破：弱口令、认证绕过</td>
+</tr>
+<tr>
+<td align="left">5901</td>
+<td align="left">vnc</td>
+<td align="left">爆破：弱口令、认证绕过</td>
+</tr>
+<tr>
+<td align="left">5902</td>
+<td align="left">vnc</td>
+<td align="left">爆破：弱口令、认证绕过</td>
+</tr>
+<tr>
+<td align="left">6379</td>
+<td align="left">redis</td>
+<td align="left">未授权访问、爆破：弱口令</td>
+</tr>
+<tr>
+<td align="left">7001</td>
+<td align="left">weblogic</td>
+<td align="left">JAVA反序列化、控制台弱口令、控制台部署webshell</td>
+</tr>
+<tr>
+<td align="left">7002</td>
+<td align="left">weblogic</td>
+<td align="left">JAVA反序列化、控制台弱口令、控制台部署webshell</td>
+</tr>
+<tr>
+<td align="left">80</td>
+<td align="left">web</td>
+<td align="left">常见Web攻击、控制台爆破、对应服务器版本漏洞</td>
+</tr>
+<tr>
+<td align="left">443</td>
+<td align="left">web</td>
+<td align="left">常见Web攻击、控制台爆破、对应服务器版本漏洞</td>
+</tr>
+<tr>
+<td align="left">8080</td>
+<td align="left">web｜Tomcat｜..</td>
+<td align="left">常见Web攻击、控制台爆破、对应服务器版本漏洞、Tomcat漏洞</td>
+</tr>
+<tr>
+<td align="left">8069</td>
+<td align="left">zabbix</td>
+<td align="left">远程命令执行</td>
+</tr>
+<tr>
+<td align="left">9090</td>
+<td align="left">websphere</td>
+<td align="left">文件泄露、爆破：控制台弱口令、Java反序列</td>
+</tr>
+<tr>
+<td align="left">9200</td>
+<td align="left">elasticsearch</td>
+<td align="left">未授权访问、远程代码执行</td>
+</tr>
+<tr>
+<td align="left">9300</td>
+<td align="left">elasticsearch</td>
+<td align="left">未授权访问、远程代码执行</td>
+</tr>
+<tr>
+<td align="left">11211</td>
+<td align="left">memcacache</td>
+<td align="left">未授权访问</td>
+</tr>
+<tr>
+<td align="left">27017</td>
+<td align="left">mongodb</td>
+<td align="left">爆破、未授权访问</td>
+</tr>
+<tr>
+<td align="left">27018</td>
+<td align="left">mongodb</td>
+<td align="left">爆破、未授权访问</td>
+</tr>
+<tr>
+<td align="left">50070</td>
+<td align="left">Hadoop</td>
+<td align="left">爆破、未授权访问</td>
+</tr>
+<tr>
+<td align="left">50075</td>
+<td align="left">Hadoop</td>
+<td align="left">爆破、未授权访问</td>
+</tr>
+<tr>
+<td align="left">14000</td>
+<td align="left">Hadoop</td>
+<td align="left">爆破、未授权访问</td>
+</tr>
+<tr>
+<td align="left">8480</td>
+<td align="left">Hadoop</td>
+<td align="left">爆破、未授权访问</td>
+</tr>
+<tr>
+<td align="left">8088</td>
+<td align="left">web</td>
+<td align="left">爆破、未授权访问</td>
+</tr>
+<tr>
+<td align="left">50030</td>
+<td align="left">Hadoop</td>
+<td align="left">爆破、未授权访问</td>
+</tr>
+<tr>
+<td align="left">50060</td>
+<td align="left">Hadoop</td>
+<td align="left">爆破、未授权访问</td>
+</tr>
+<tr>
+<td align="left">60010</td>
+<td align="left">Hadoop</td>
+<td align="left">爆破、未授权访问</td>
+</tr>
+<tr>
+<td align="left">60030</td>
+<td align="left">Hadoop</td>
+<td align="left">爆破、未授权访问</td>
+</tr>
+<tr>
+<td align="left">10000</td>
+<td align="left">Virtualmin&#x2F;Webmin</td>
+<td align="left">服务器虚拟主机管理系统</td>
+</tr>
+<tr>
+<td align="left">10003</td>
+<td align="left">Hadoop</td>
+<td align="left">爆破、未授权访问</td>
+</tr>
+<tr>
+<td align="left">5984</td>
+<td align="left">couchdb</td>
+<td align="left">未授权访问</td>
+</tr>
+<tr>
+<td align="left">445</td>
+<td align="left">SMB</td>
+<td align="left">弱口令爆破，检测是否有ms_08067等溢出</td>
+</tr>
+<tr>
+<td align="left">1025</td>
+<td align="left">111</td>
+<td align="left">NFS</td>
+</tr>
+<tr>
+<td align="left">2082</td>
+<td align="left"></td>
+<td align="left">cpanel主机管理系统登陆 （国外用较多）</td>
+</tr>
+<tr>
+<td align="left">2083</td>
+<td align="left"></td>
+<td align="left">cpanel主机管理系统登陆 （国外用较多）</td>
+</tr>
+<tr>
+<td align="left">2222</td>
+<td align="left"></td>
+<td align="left">DA虚拟主机管理系统登陆 （国外用较多）</td>
+</tr>
+<tr>
+<td align="left">2601</td>
+<td align="left"></td>
+<td align="left">zebra路由</td>
+</tr>
+<tr>
+<td align="left">2604</td>
+<td align="left"></td>
+<td align="left">zebra路由</td>
+</tr>
+<tr>
+<td align="left">3128</td>
+<td align="left"></td>
+<td align="left">代理默认端口,如果没设置口令很可能就直接漫游内网了</td>
+</tr>
+<tr>
+<td align="left">3311</td>
+<td align="left"></td>
+<td align="left">kangle主机管理系统登陆</td>
+</tr>
+<tr>
+<td align="left">3312</td>
+<td align="left"></td>
+<td align="left">kangle主机管理系统登陆</td>
+</tr>
+<tr>
+<td align="left">4440</td>
+<td align="left"></td>
+<td align="left">参考WooYun: 借用新浪某服务成功漫游新浪内网</td>
+</tr>
+<tr>
+<td align="left">6082</td>
+<td align="left"></td>
+<td align="left">参考WooYun: Varnish HTTP accelerator CLI 未授权访问易导致网站被直接篡改或者作为代理进入内网</td>
+</tr>
+<tr>
+<td align="left">7778</td>
+<td align="left"></td>
+<td align="left">主机控制面板登录</td>
+</tr>
+<tr>
+<td align="left">8083</td>
+<td align="left"></td>
+<td align="left">主机管理系统 （国外用较多）</td>
+</tr>
+<tr>
+<td align="left">8649</td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">8888</td>
+<td align="left"></td>
+<td align="left">主机管理系统默认端口</td>
+</tr>
+<tr>
+<td align="left">9000</td>
+<td align="left"></td>
+<td align="left">fcgi php执行</td>
+</tr>
+<tr>
+<td align="left">50000</td>
+<td align="left">SAP</td>
+<td align="left">命令执行</td>
+</tr>
+</tbody></table>
+<p><strong>Web端口：</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">80</span>,<span class="number">81</span>,<span class="number">82</span>,<span class="number">443</span>,<span class="number">5000</span>,<span class="number">7001</span>,<span class="number">7010</span>,<span class="number">7100</span>,<span class="number">7547</span>,<span class="number">7777</span>,<span class="number">7801</span>,<span class="number">8000</span>,<span class="number">8001</span>,<span class="number">8002</span>,<span class="number">8003</span>,<span class="number">8005</span>,<span class="number">8009</span>,<span class="number">8010</span>,<span class="number">8011</span>,<span class="number">8060</span>,<span class="number">8069</span>,<span class="number">8070</span>,<span class="number">8080</span>,<span class="number">8081</span>,<span class="number">8082</span>,<span class="number">8083</span>,<span class="number">8085</span>,<span class="number">8086</span>,<span class="number">8087</span>,<span class="number">8088</span>,<span class="number">8089</span>,<span class="number">8090</span>,<span class="number">8091</span>,<span class="number">8161</span>,<span class="number">8443</span>,<span class="number">8880</span>,<span class="number">8888</span>,<span class="number">8970</span>,<span class="number">8989</span>,<span class="number">9000</span>,<span class="number">9001</span>,<span class="number">9002</span>,<span class="number">9043</span>,<span class="number">9090</span>,<span class="number">9200</span>,<span class="number">9300</span>,<span class="number">9443</span>,<span class="number">9898</span>,<span class="number">9900</span>,<span class="number">9998</span>,<span class="number">10002</span>,<span class="number">50000</span>,<span class="number">50070</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>服务器：</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">21</span>,<span class="number">22</span>,<span class="number">445</span>,<span class="number">3389</span>,<span class="number">5900</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>数据库：</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1433</span>,<span class="number">1521</span>,<span class="number">3306</span>,<span class="number">6379</span>,<span class="number">11211</span>,<span class="number">27017</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Fuzz案例"><a href="#Fuzz案例" class="headerlink" title="Fuzz案例"></a>Fuzz案例</h2><p>即模糊测试，所说的目录爆破也是其中之一；Fuzz，不仅是目录，隐藏参数&#x2F;值(arjun工具)、子域名、多重FUZZ都可以</p>
+<p>比如，<a target="_blank" rel="noopener" href="http://xxx/?m=index%EF%BC%8C%E8%BF%99%E4%B8%AA%E6%97%B6%E5%80%99%E5%8F%AF%E4%BB%A5%E5%AF%B9index%E8%BF%99%E4%B8%AA%E4%BD%8D%E7%BD%AE%E7%9A%84%E5%80%BC%E9%81%8D%E5%8E%86%E4%B8%80%E4%B8%8B%EF%BC%8C%E6%89%BE%E5%88%B0m=view%E8%BF%99%E7%A7%8D">http://xxx?m=index，这个时候可以对index这个位置的值遍历一下，找到m=view这种</a></p>
+<p>再有，测业务的密码重置功能时，<a target="_blank" rel="noopener" href="http://xxx/forget/pwd?userid=123&token=xxxx%EF%BC%8C%E5%88%A0%E9%99%A4token%E5%8F%82%E6%95%B0%E5%90%8E%EF%BC%8C%E5%8D%B3%E5%8F%AF%E7%BB%95%E8%BF%87">http://xxx/forget/pwd?userid=123&amp;token=xxxx，删除token参数后，即可绕过</a></p>
+<p><a target="_blank" rel="noopener" href="https://gh0st.cn/archives/2019-11-11/1">https://gh0st.cn/archives/2019-11-11/1</a></p>
+<h2 id="js信息爬取"><a href="#js信息爬取" class="headerlink" title="js信息爬取"></a>js信息爬取</h2><p><a target="_blank" rel="noopener" href="https://www.bulkdachecker.com/url-extractor/">https://www.bulkdachecker.com/url-extractor/</a> 爬取url的在线网站 </p>
+<p><a target="_blank" rel="noopener" href="http://www.pcitc.com/">http://www.pcitc.com/</a> 这个可以体现出目标站的目录</p>
+<p>bp对js中的links进行抓取</p>
+<p><a target="_blank" rel="noopener" href="https://usersearch.org/%E8%BF%99%E4%B8%AA%E7%AE%97%E7%A4%BE%E5%B7%A5%E7%B1%BB%E7%9A%84%EF%BC%8C%E5%AF%B9%E7%94%A8%E6%88%B7%E5%90%8D%E7%AD%89%E8%BF%9B%E8%A1%8C%E4%B8%80%E4%B8%AA%E6%9F%A5%E8%AF%A2">https://usersearch.org/这个算社工类的，对用户名等进行一个查询</a></p>
+<p>有效js文件判断：一般打开f12，点击功能时，看看网络中-&gt;数据包的启动器，看它加载了哪些js文件</p>
+<h2 id="登录"><a href="#登录" class="headerlink" title="登录"></a>登录</h2><p>弱口令（凭证重用）、未授权接口、改响应包</p>
+<p>登录框xss</p>
+<p>fofa查域名，最好按时间查看新添端口</p>
 <h1 id="0x03-查点"><a href="#0x03-查点" class="headerlink" title="0x03 查点"></a>0x03 查点</h1><p>搜集相应的漏洞poc、弱口令、错误的共享资源、已知漏洞的软件</p>
+<h2 id="host碰撞"><a href="#host碰撞" class="headerlink" title="host碰撞"></a>host碰撞</h2><p>一般是访问ip时，出现nginx、4xx、500、503或其它提示</p>
+<p>这里就要考虑做个域名映射，将爆破到的可能域名与ip进行一一比对，即修改hosts文件，查看访问结果的变化即可；有很多host_scan脚本了其实</p>
+<h2 id="DNS共享记录"><a href="#DNS共享记录" class="headerlink" title="DNS共享记录"></a>DNS共享记录</h2><p>常用DNS记录：</p>
+<table>
+<thead>
+<tr>
+<th align="left">记录类型</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">A 记录</td>
+<td align="left">将域名指向一个 IP 地址（外网地址）。</td>
+</tr>
+<tr>
+<td align="left">CNAME 记录</td>
+<td align="left">将域名指向另一个域名，再由另一个域名提供 IP 地址（外网地址）。</td>
+</tr>
+<tr>
+<td align="left">MX 记录</td>
+<td align="left">电子邮件交换记录，记录一个邮件域名对应的IP地址，设置邮箱，让邮箱能收到邮件。</td>
+</tr>
+<tr>
+<td align="left">NS 记录</td>
+<td align="left">域名服务器记录，记录该域名由哪台域名服务器解析。如将子域名交给其他 DNS 服务商解析。</td>
+</tr>
+<tr>
+<td align="left">AAAA 记录</td>
+<td align="left">将域名指向一个 IPv6 地址。</td>
+</tr>
+<tr>
+<td align="left">SRV 记录</td>
+<td align="left">用来标识某台服务器使用了某个服务，常见于微软系统的目录管理。</td>
+</tr>
+<tr>
+<td align="left">TXT 记录</td>
+<td align="left">对域名进行标识和说明，绝大多数的 TXT 记录是用来做 SPF 记录（反垃圾邮件）。</td>
+</tr>
+</tbody></table>
+<p>这里是利用查询共享DNS服务器的主机(自建的)获取相关域名</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nslookup -query=ns baidu.com 8.8.8.8 <span class="comment">#获得NS记录</span></span><br></pre></td></tr></table></figure>
+
+<p>再去 <a target="_blank" rel="noopener" href="https://hackertarget.com/find-shared-dns-servers/">https://hackertarget.com/find-shared-dns-servers/</a> 通过自建DNS查询域名即可</p>
+<h2 id="WAF识别"><a href="#WAF识别" class="headerlink" title="WAF识别"></a>WAF识别</h2><p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1872310">https://cloud.tencent.com/developer/article/1872310</a></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>参考自《黑客大曝光》</p>
+<p><a target="_blank" rel="noopener" href="https://forum.butian.net/share/1976">https://forum.butian.net/share/1976</a></p>
+<p>我也不总结了，想看的时候去这个链接看看，挺全的</p>
  
       <!-- reward -->
       
@@ -338,7 +1542,7 @@
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B8%97%E9%80%8F/" rel="tag">渗透</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" rel="tag">信息收集</a></li></ul>
 
     </footer>
   </div>

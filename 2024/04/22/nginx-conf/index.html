@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>nginx配置 |  小张之栈</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-nginx-conf"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+  
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  nginx配置
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2024/04/22/nginx-conf/" class="article-date">
+  <time datetime="2024-04-22T01:21:20.000Z" itemprop="datePublished">2024-04-22</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/nginx%E9%85%8D%E7%BD%AE/">nginx配置</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">1.7k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">7 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="nginx配置"><a href="#nginx配置" class="headerlink" title="nginx配置"></a>nginx配置</h1><p>参考自，B站技术蛋老师</p>
+<p>环境:win10+nginx1.15.11，nginx1.24.0(后面主动换了高版本，不然正则有问题)</p>
+<p>nginx的配置每次改动，需要重复加载</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">nginx</span> -t &amp;&amp; nginx -s reload</span><br></pre></td></tr></table></figure>
+
+<h2 id="基础格式"><a href="#基础格式" class="headerlink" title="基础格式"></a>基础格式</h2><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">events&#123;&#125; <span class="comment">#events模块必须有</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">http&#123;	<span class="comment">#http块允许多个server块</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">#全局设置包含文件</span></span><br><span class="line">    <span class="comment">#避免css引用时为text/plain形式</span></span><br><span class="line">    <span class="attribute">include</span> D:\phpstudy_pro\Extensions\Nginx1.<span class="number">15</span>.<span class="number">11</span>\conf\mime.types;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#服务文件夹块</span></span><br><span class="line">    server&#123;</span><br><span class="line">        <span class="attribute">listen</span> <span class="number">82</span>;</span><br><span class="line">        <span class="attribute">server_name</span> localhost;</span><br><span class="line"></span><br><span class="line">        <span class="comment"># return 200 &quot;sysyly.\n&quot;;</span></span><br><span class="line">        <span class="comment">#指定根目录路径</span></span><br><span class="line">        <span class="attribute">root</span> D:\phpstudy_pro\Extensions\Nginx1.<span class="number">15</span>.<span class="number">11</span>\html;<span class="comment">#html是自建的，1.24.0会默认有，可以新建就是了，不管它</span></span><br><span class="line">        <span class="attribute">index</span> yly.html;<span class="comment">#指定文件(当默认名不为index时)</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>html内容</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">&quot;stylesheet&quot;</span> <span class="attr">href</span>=<span class="string">&quot;style.css&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">pre</span>&gt;</span> asdsadsadsadsadasdylysadsadsadsadqweqwe <span class="tag">&lt;/<span class="name">pre</span>&gt;</span> </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>events事件必须要有，这个为什么先不纠结</p>
+<p>之后在http模块后写入Server块，指定监听<strong>端口</strong>，<strong>服务名</strong>，以及<strong>根路径名</strong></p>
+<p>若未写入Server块：（会出现无法访问情况）</p>
+<p>若仅写入端口和服务名：（由于无响应数据，故404页面，后来又测试一遍成了403页面）</p>
+<p>默认会去访问根路径下的index.html，除非用index指定别名文件，否则会是403页面</p>
+<p>而include允许我们去包含不同文件，可以将nginx的配置看做多个文件</p>
+<p>新增一个文件夹如conf.d文件夹，且默认文件default.conf</p>
+<p>那么此时，<strong>nginx.conf</strong>的配置为：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">events&#123;&#125;</span><br><span class="line"></span><br><span class="line">http&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 全局设置包含文件</span></span><br><span class="line">    <span class="comment"># 避免css引用时为text/plain形式</span></span><br><span class="line">    <span class="attribute">include</span> D:/phpstudy_pro/Extensions/Nginx1.<span class="number">15</span>.<span class="number">11</span>/conf/mime.types;</span><br><span class="line">    </span><br><span class="line">    <span class="attribute">include</span> D:/phpstudy_pro/Extensions/Nginx1.<span class="number">15</span>.<span class="number">11</span>/conf/conf.d/<span class="regexp">*.conf</span>;</span><br><span class="line">  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>default.conf的配置为：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#服务文件夹块</span></span><br><span class="line">server&#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">82</span>;</span><br><span class="line">    <span class="attribute">server_name</span> localhost;</span><br><span class="line"></span><br><span class="line">    <span class="comment">#return 200 &quot;sysyly.\n&quot;;</span></span><br><span class="line">    <span class="attribute">root</span> D:/phpstudy_pro/Extensions/Nginx1.<span class="number">15</span>.<span class="number">11</span>/html;</span><br><span class="line">    <span class="attribute">index</span> yly.html;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>那么以后只需要改动default.conf的配置即可</p>
+<h2 id="location"><a href="#location" class="headerlink" title="location"></a>location</h2><p>location的目的在于可以自定义路径；</p>
+<p>而根路径root是要包含location指定目录的一个上级目录</p>
+<p>下面实现的效果是只访问localhost，就相当于访问根目录的index.html文件(注意要有index.html文件)</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">...  </span><br><span class="line"></span><br><span class="line"><span class="section">location</span> / &#123;</span><br><span class="line">    	<span class="attribute">root</span> D:/phpstudy_pro/Extensions/Nginx1.<span class="number">15</span>.<span class="number">11</span>/html;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">html&gt; <span class="attribute">mkdir</span> /yly <span class="comment">#新建文件夹</span></span><br><span class="line">&gt; move index.html yly/ <span class="comment">#移动文件</span></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">location /yly &#123;</span><br><span class="line">    	<span class="attribute">root</span> D:/phpstudy_pro/Extensions/Nginx1.<span class="number">15</span>.<span class="number">11</span>/html;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>去浏览器访问倒是可以 <code>localhost:82/yly</code>即可</p>
+<p>但是curl时</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">curl localhost:82/yly <span class="comment">#301</span></span><br><span class="line">curl localhost:82/yly/ <span class="comment">#200</span></span><br></pre></td></tr></table></figure>
+
+<p>之所以会这样，是因为它将 <code>yly</code>视为了一个文件，导致出错</p>
+<p>而第二条语句添加了一个斜杠，意味着将 <code>yly</code>视为了一个文件夹</p>
+<p>这样有一个好处是nginx帮你自动访问其中的文件，只要文件名匹配了即可，你比如 <code>yly/index.html</code>，只要知道文件夹的名字为 <code>yly</code>即可</p>
+<p>这样的话，存在暴露的风险，那么还有一条完全匹配的格式</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">location</span> = /yly/index.html &#123;</span><br><span class="line">    	<span class="attribute">root</span> D:/phpstudy_pro/Extensions/Nginx1.<span class="number">15</span>.<span class="number">11</span>/html;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>也就是要求必须访问 <code>localhost:82/yly/index.html</code>才可以访问到页面</p>
+<p>（但是我同样的操作，为什么仅仅 <code>/yly/</code>就可以访问成功了？）</p>
+<p>这里将index的名字改了改，比如 <code>yly.html</code>，就可以了，这个默认index.html，它自动帮你找，很烦</p>
+<p>这里先不管，往下走</p>
+<p>为了灵活地进行匹配，引入了正则</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">location</span> <span class="regexp">~ /movies/m[2-3].txt</span> &#123;</span><br><span class="line">    	<span class="attribute">root</span> D:/phpstudy_pro/Extensions/Nginx1.<span class="number">15</span>.<span class="number">11</span>/html;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>之后根据 <strong>curl -i localhost&#x2F;movies&#x2F;m1.txt、m3.txt</strong>的结果来看，我十分怀疑，正则没有起到任何效果</p>
+<p>我干脆换了nginx版本(1.24.0)，正则有效</p>
+<p>对于movies来说，由于只匹配m2,m3，m1.txt即使存在，也会显示 <strong>404</strong></p>
+<h2 id="重定向"><a href="#重定向" class="headerlink" title="重定向"></a>重定向</h2><p>临时重定向，会在响应包给一个Loation</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">location</span> /movies &#123;</span><br><span class="line">    <span class="attribute">return</span> <span class="number">307</span> /yly/index.html;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">D:\phpstudy_pro\Extensions\nginx-1.24.0\nginx-1.24.0&gt;curl -i localhost:82/movies</span><br><span class="line">HTTP/1.1 307 Temporary Redirect</span><br><span class="line">Server: nginx/1.24.0</span><br><span class="line">Date: Mon, 22 Apr 2024 09:13:13 GMT</span><br><span class="line">Content-Type: text/html</span><br><span class="line">Content-Length: 171</span><br><span class="line">Location: http://localhost:82/yly/index.html</span><br><span class="line">Connection: keep-alive</span><br><span class="line"></span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;<span class="built_in">head</span>&gt;&lt;title&gt;307 Temporary Redirect&lt;/title&gt;&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;center&gt;&lt;h1&gt;307 Temporary Redirect&lt;/h1&gt;&lt;/center&gt;</span><br><span class="line">&lt;hr&gt;&lt;center&gt;nginx/1.24.0&lt;/center&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="重写"><a href="#重写" class="headerlink" title="重写"></a>重写</h2><p>为了更丝滑，更隐蔽，使用rewrite</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">rewrite</span> /movies /yly/index.html;</span><br></pre></td></tr></table></figure>
+
+<p>这样直接就是200状态码了</p>
+<h2 id="多文件"><a href="#多文件" class="headerlink" title="多文件"></a>多文件</h2><p>上面的重定向&#x2F;重写是针对单路径的，对于多路径</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">root</span> D:/phpstudy_pro/Extensions/nginx-<span class="number">1</span>.<span class="number">24</span>.<span class="number">0</span>/nginx-<span class="number">1</span>.<span class="number">24</span>.<span class="number">0</span>/local;</span><br><span class="line"><span class="attribute">index</span> index.html;</span><br><span class="line"></span><br><span class="line"><span class="attribute">rewrite</span> /movies /yly/index.html;</span><br><span class="line"><span class="section">location</span> / &#123;</span><br><span class="line">    <span class="attribute">add_header</span> X-<span class="literal">debug</span>-uri <span class="string">&quot;<span class="variable">$uri</span>&quot;</span>;</span><br><span class="line">    <span class="attribute">try_files</span> <span class="variable">$uri</span> <span class="variable">$uri</span>/ =<span class="number">404</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#访问存在的指定文件时</span></span><br><span class="line">curl -i localhost:82/yly/yly.html</span><br><span class="line"></span><br><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Server: nginx/1.24.0</span><br><span class="line">Date: Mon, 22 Apr 2024 09:24:08 GMT</span><br><span class="line">Content-Type: text/html</span><br><span class="line">Content-Length: 28</span><br><span class="line">Last-Modified: Mon, 22 Apr 2024 09:20:07 GMT</span><br><span class="line">Connection: keep-alive</span><br><span class="line">ETag: <span class="string">&quot;66262bc7-1c&quot;</span></span><br><span class="line">X-debug-uri: /yly/yly.html</span><br><span class="line">Accept-Ranges: bytes</span><br><span class="line"></span><br><span class="line">&lt;pre&gt;this is ylyl !!!!&lt;/pre&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment">#访问文件夹，这个和设定的index有关</span></span><br><span class="line">curl -i localhost:82/yly/</span><br><span class="line"></span><br><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Server: nginx/1.24.0</span><br><span class="line">Date: Mon, 22 Apr 2024 09:24:27 GMT</span><br><span class="line">Content-Type: text/html</span><br><span class="line">Content-Length: 114</span><br><span class="line">Last-Modified: Mon, 22 Apr 2024 03:38:35 GMT</span><br><span class="line">Connection: keep-alive</span><br><span class="line">ETag: <span class="string">&quot;6625dbbb-72&quot;</span></span><br><span class="line">X-debug-uri: /yly/index.html</span><br><span class="line">Accept-Ranges: bytes</span><br><span class="line"></span><br><span class="line">&lt;<span class="built_in">head</span>&gt;</span><br><span class="line">&lt;<span class="built_in">link</span> rel=<span class="string">&quot;stylesheet&quot;</span> href=<span class="string">&quot;style.css&quot;</span>/&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line"></span><br><span class="line">&lt;pre&gt; asdsadsadsadsadasdsadsadsadsadqweqwe &lt;/pre&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment">#访问不存在的文件时</span></span><br><span class="line">curl -i localhost:82/342</span><br><span class="line"></span><br><span class="line">HTTP/1.1 404 Not Found</span><br><span class="line">Server: nginx/1.24.0</span><br><span class="line">Date: Mon, 22 Apr 2024 09:24:50 GMT</span><br><span class="line">Content-Type: text/html</span><br><span class="line">Content-Length: 153</span><br><span class="line">Connection: keep-alive</span><br><span class="line"></span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;<span class="built_in">head</span>&gt;&lt;title&gt;404 Not Found&lt;/title&gt;&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;center&gt;&lt;h1&gt;404 Not Found&lt;/h1&gt;&lt;/center&gt;</span><br><span class="line">&lt;hr&gt;&lt;center&gt;nginx/1.24.0&lt;/center&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
+<p>nginx 配置 <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/130819099">https://zhuanlan.zhihu.com/p/130819099</a></p>
+<h2 id="自定义配置页面"><a href="#自定义配置页面" class="headerlink" title="自定义配置页面"></a>自定义配置页面</h2><p>对404,500等默认配置页面自定义</p>
+<p>在root的路径下，写一个即可</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">error_page</span> <span class="number">404</span> /<span class="number">404</span>.html;</span><br></pre></td></tr></table></figure>
+
+<h1 id="反向代理"><a href="#反向代理" class="headerlink" title="反向代理"></a>反向代理</h1><p>proxy_pass</p>
+<p>相当于是后端地址吧，比如两个后端项目</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="section">location</span> /p1 &#123;</span><br><span class="line"><span class="attribute">proxy_pass</span> http://localhost:1234;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="section">location</span> /p2 &#123;</span><br><span class="line"><span class="attribute">proxy_pass</span> http://localhost:4321;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h1><p>分流作用</p>
+<p>上游服务器 upstream</p>
+<p>让nginx把流量导到指定的服务器集群，再负载均衡分配到集群里面的服务器。</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">http&#123;</span><br><span class="line">   	</span><br><span class="line">    <span class="section">upstream</span> backend-servers&#123;</span><br><span class="line">        <span class="attribute">server</span> localhost:<span class="number">1234</span>;</span><br><span class="line">        <span class="attribute">server</span> localhost:<span class="number">4321</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    server&#123;  </span><br><span class="line">        ...</span><br><span class="line">            <span class="section">location</span> / &#123; </span><br><span class="line">            <span class="attribute">proxy_pass</span> http://backend-servers;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">#看起来很像随机代理池的用法</span></span><br></pre></td></tr></table></figure>
+
+<p>这个时候反复刷新的话，可以看到有概率会被分配到不同的服务器(设置不同的网页内容)</p>
+<p>最后高配置服务器可以分配多一点流量，低的呢就低一点，这个时候需要用到weight，进行一个权重的分配</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">upstream</span> backend-servers&#123;</span><br><span class="line">    <span class="attribute">server</span> localhost:<span class="number">1234</span> weight=<span class="number">2</span>;</span><br><span class="line">    <span class="attribute">server</span> localhost:<span class="number">4321</span> weight=<span class="number">6</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="安全漏洞"><a href="#安全漏洞" class="headerlink" title="安全漏洞"></a>安全漏洞</h1><p><a target="_blank" rel="noopener" href="https://book.hacktricks.xyz/v/cn/network-services-pentesting/pentesting-web/nginx">https://book.hacktricks.xyz/v/cn/network-services-pentesting/pentesting-web/nginx</a></p>
+<h1 id="踩坑"><a href="#踩坑" class="headerlink" title="踩坑"></a>踩坑</h1><p>nginx启动成功，浏览器无法访问？</p>
+<p>A：我那个确实是include，还有root的路径配置错误导致的，细心点</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2024/04/22/nginx-conf/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx-WEB%E6%9C%8D%E5%8A%A1%E5%99%A8-%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86-%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/" rel="tag">nginx_WEB服务器&#x2F;反向代理&#x2F;负载均衡</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2024/04/27/jilu-1/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            杂项_记录
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2024/03/21/php-webshell/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">php_webshell_bypass</div>
+      </a>
+    
+  </nav>
+
+  
+   
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.css">
+
+
+<script src="https://cdn.staticfile.org/gitalk/1.7.2/gitalk.min.js"></script>
+
+
+<script src="https://cdn.staticfile.org/blueimp-md5/2.19.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '93da8388ad1469a8be66',
+    clientSecret: '9dea6314b14ae1877632f2bcbe0a639dd4485bb1',
+    repo: 'blogtalk',
+    owner: 'ak005469075',
+    admin: ['ak005469075'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+  
+    
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2023-2024
+        <i class="ri-heart-fill heart_icon"></i> 是羽泪云诶
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/favicon.ico" alt="小张之栈"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+  <script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+</div>
+
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.staticfile.org/animejs/3.2.1/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+ 
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+ 
+<script src="/js/dz.js"></script>
+ 
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>

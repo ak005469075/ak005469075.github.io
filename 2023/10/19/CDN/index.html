@@ -96,7 +96,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">608</span>
+            <span class="post-count">1.2k</span>
         </span>
     </span>
 
@@ -105,7 +105,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">2 分钟</span>
+            <span class="post-count">4 分钟</span>
         </span>
     </span>
 </div>
@@ -162,6 +162,23 @@
 <p>7.以上都不起作用时，全网扫描FuckCDN工具</p>
 <h2 id="绑定"><a href="#绑定" class="headerlink" title="绑定"></a><strong>绑定</strong></h2><p>前面绕过的方法，是在干什么，找真实ip啊，有什么用，hosts文件域名绑定啊</p>
 <h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><p>漏洞是不会发生在CDN上的啊，它是一个虚构的节点，只是缓存了主机的内容，漏洞本身还是在服务器上；就算拿到了CDN的webshell，也会发现没有内容</p>
+<h1 id="CND检测和绕过"><a href="#CND检测和绕过" class="headerlink" title="CND检测和绕过"></a>CND检测和绕过</h1><p>检测，nslookup，或者多地ping，ip多种多样那就不是了</p>
+<p>还可以去微步，某个ip解析出来是CDN，或者解析域名达上千个，那也是用了CDN</p>
+<p>一般真实ip和备案的地区归属一致</p>
+<p>常见的绕过方式看下面就行了：</p>
+<p>主要是DNS历史解析，证书，国外ping、利用网站自身ssrf这些漏洞，或者邮件系统，对方发送过来也可以(主动邮件)</p>
+<p>主要是讲一个自己主动发的例子，比如已知一个邮箱为<a href="mailto:&#49;&#50;&#x33;&#x40;&#x79;&#108;&#x79;&#x2e;&#99;&#111;&#109;">&#49;&#50;&#x33;&#x40;&#x79;&#108;&#x79;&#x2e;&#99;&#111;&#109;</a>，那尝试构造目标方为<a href="mailto:&#97;&#119;&#x66;&#97;&#117;&#104;&#x75;&#113;&#x61;&#x66;&#x61;&#64;&#121;&#x6c;&#x79;&#x2e;&#x63;&#111;&#109;">&#97;&#119;&#x66;&#97;&#117;&#104;&#x75;&#113;&#x61;&#x66;&#x61;&#64;&#121;&#x6c;&#x79;&#x2e;&#x63;&#111;&#109;</a>，即一个不存在的邮箱，发送失败时，会收到真实ip反馈</p>
+<p>这里邮件方，有安全意识的，可能都会用第三方代发，这个需要具体判断一下</p>
+<p>此外，这里发送邮件一定要<strong>自己搭建的邮件服务器</strong>，这样才可能接收到真实的服务器ip</p>
+<p><a target="_blank" rel="noopener" href="https://blog.gm7.org/%E4%B8%AA%E4%BA%BA%E7%9F%A5%E8%AF%86%E5%BA%93/01.%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/01.%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/1.%E8%B5%84%E4%BA%A7%E6%94%B6%E9%9B%86/03.ip%E6%AE%B5%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/01.%E7%BB%95%E8%BF%87cdn%E5%AF%BB%E6%89%BE%E7%9C%9F%E5%AE%9Eip">https://blog.gm7.org/%E4%B8%AA%E4%BA%BA%E7%9F%A5%E8%AF%86%E5%BA%93/01.%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/01.%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/1.%E8%B5%84%E4%BA%A7%E6%94%B6%E9%9B%86/03.ip%E6%AE%B5%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/01.%E7%BB%95%E8%BF%87cdn%E5%AF%BB%E6%89%BE%E7%9C%9F%E5%AE%9Eip</a></p>
+<p>实际上都是以量打量吧，我以前还有一个想法，直接把某省某市的网段都hosts碰撞一遍嘞，能访问就算成功</p>
+<p>如果目标是一个云服务器，找它的真实ip</p>
+<p>小迪的绕过思路为：</p>
+<p>判断加速厂商：阿里云还是腾讯云</p>
+<p>-&gt;IP库筛选地址段：ip段有很多，一般可能是全网扫，或者锁定到某个范围（也可能是备案号上的归属地）</p>
+<p>-&gt;配置范围扫描(fuckcdnmaster，如果不支持ip访问，可以尝试bypass_cnd，它用域名访问)</p>
+<p>就是直接访问IP+端口(一般是80)，匹配关键字</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/2201_75772809/article/details/130527517">https://blog.csdn.net/2201_75772809/article/details/130527517</a></p>
  
       <!-- reward -->
       

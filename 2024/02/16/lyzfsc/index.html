@@ -96,7 +96,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.5k</span>
+            <span class="post-count">2.6k</span>
         </span>
     </span>
 
@@ -105,7 +105,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">5 分钟</span>
+            <span class="post-count">10 分钟</span>
         </span>
     </span>
 </div>
@@ -229,6 +229,58 @@
 <p>那就是说通过改源地址和目的地址的方式。</p>
 <p>但这里已经看出来了，kali和主机是桥接模式，不是NAT模式；貌似只能看单纯的流量转发</p>
 <p>而且桥接模式下，kali必须做个代理，不然bp抓不到的，还是用NAT模式吧，一般是监听出口网卡如vmet8</p>
+<h1 id="桥接模式补充"><a href="#桥接模式补充" class="headerlink" title="桥接模式补充"></a>桥接模式补充</h1><p>2024&#x2F;4&#x2F;30</p>
+<p>那么桥接模式意味着，虚拟机和主机是同一局域网下独立的两台机子，无非就是主机A去获取B的流量</p>
+<p><strong>yakit的远程劫持</strong>，就是解决抓桥接模式虚拟机流量的问题</p>
+<p>远程模式介绍 <a target="_blank" rel="noopener" href="https://yaklang.io/products/connection/">https://yaklang.io/products/connection/</a></p>
+<p>这里适用于虚拟机适用了openvpn连接htb的情况，只需要虚拟机搭建gRPC服务器，主机用yakit工具进行连接就可以实现抓包</p>
+<p>RPC都熟悉，即远程过程调用；这种和一般的内网穿透工具效果差不多</p>
+<p>只不过协议上内网工具有的是TCP、UDP等、而gRPC是HTTP&#x2F;2作为底层通信协议；</p>
+<p>而且gRPC部署有要求(支持加密)，不像那些工具即传即用；</p>
+<p>gRPC这种主要是用于分布式的需求，而内网工具一般用于绕过网络限制</p>
+<p>我只能理解为建立了一种隧道通信方式</p>
+<p>服务器会打开本地端口 8087</p>
+<p>那么kali和主机走的是eth0网卡，抓个包，emmm，tlsv1.2协议，那我只好把grpc的tls关掉，不然还要解密</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yak grpc --host 0.0.0.0 --port 8087</span><br><span class="line">#否则（--secret 1234 --tls）</span><br></pre></td></tr></table></figure>
+
+<p>建立完后</p>
+<table>
+<thead>
+<tr>
+<th>主机ip</th>
+<th>192.168.1.103</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>kali ip</td>
+<td>192.168.1.104</td>
+</tr>
+</tbody></table>
+<p>主机的端口情况</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">TCP    192.168.1.103:23188    192.168.1.104:8087     ESTABLISHED     24176</span><br><span class="line">这个就是grpc客户端和服务器之间通信，它们不停地互通</span><br></pre></td></tr></table></figure>
+
+<p>先在kali的浏览器进行一次登录，主机这边获得的数据包就两个</p>
+<p><img src="/../../../Typora/img111/image-20240430144838344.png"></p>
+<p>对于htb与kali，很简单，无非是2次的请求与响应</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20240430145244380.png"></p>
+<p>对于kali的eth0，或者主机的wlan讲，都是kali先发过来的一个请求</p>
+<p>红色的是kali流量(以源ip为准)；蓝色的是主机流量</p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20240430145346346.png" alt="片段1"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20240430145404065.png" alt="片段2"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20240430145432349.png" alt="302会重复，后面的200也重复"></p>
+<p>wireshark…说实话我有点看不懂这个tcp追踪流</p>
+<p>从观感上来讲，kali的流量要多一些，主机给的比较被动</p>
+<p>当kali给了一大堆流量后，主机才回复很少一段；</p>
+<p>这里从全局看一下流量走向，我姑且认为是这样的</p>
+<p><strong>kali中浏览器访问(tun0网卡)-&gt;kali的eth0网卡8087端口-&gt;主机的23188端口</strong></p>
+<p>嗯没了，其实这里面还牵扯到浏览器的8080代理，以及yakit工具的8080劫持端口，这样设置了才会有效，但是让我疑惑的就是，没有看到这里的流量</p>
+<p>端口开启倒是知道，kali有8080端口，是因为设置了代理服务器，而yakit工具虽然劫持8080端口，但是没在代理服务器设置</p>
+<p>噢，查看kali的gRPC服务器的消息可知，当<strong>主机</strong>的yakit设置的时候，就已经指明了一个代理服务器了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[INFO] 2024-04-30 15:30:09 [grpc_mitm:1696] start serve mitm server for 127.0.0.1:8098</span><br><span class="line">[INFO] 2024-04-30 15:30:09 [mitm:343] start to server mitm server: tcp://127.0.0.1:8098</span><br></pre></td></tr></table></figure>
+
+<p>本来是8080，这个无所谓，也就是我主机设置的127.0.0.1:8098，实际上是针对于kali的127.0.0.1:8098</p>
+<p>那么本地的8098-&gt;eth0的8087，表面上看是这样的，实际上我也不确定，这个具体原理我就不深究了</p>
+<p>主要是yakit的远程劫持模式对桥接模式流量的抓包提供了便利</p>
 <h2 id="iptables"><a href="#iptables" class="headerlink" title="iptables"></a>iptables</h2><p>NAT表</p>
 <table>
 <thead>
@@ -250,11 +302,52 @@
 <td align="center">定义对本地产生的数据包的目的NAT规则</td>
 </tr>
 </tbody></table>
+<p>————————2024&#x2F;3&#x2F;22补充——————————</p>
+<h3 id="引入"><a href="#引入" class="headerlink" title="引入"></a>引入</h3><p>根据蛋老师的讲解，以linux服务器为例，分为三部分</p>
+<p>硬件(网卡) -&gt;内核空间(linux内核) -&gt;用户空间(网络应用)</p>
+<p>在硬件与软件之间的流量，想要进行干预&#x2F;处理，可以使用linux内核的netfilter机制，用iptables命令操纵即可</p>
+<h3 id="详解"><a href="#详解" class="headerlink" title="详解"></a>详解</h3><p>iptables，四表五链</p>
+<p>四表：filter、nat、(不常见的三表：mangle、raw、security)，每个表管理的链又不同</p>
+<p>五链：PREROUTING、INPUT、OUTPUT、FORWARD、POSTROUTING</p>
+<p>这里为了讲清五链的位置，蛋老师讲linux系统作为路由器讲解</p>
+<table>
+<thead>
+<tr>
+<th>网卡</th>
+<th>—&gt;(prerouting)</th>
+<th align="center">linux路由</th>
+<th>—&gt;(input)</th>
+<th>网络应用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td></td>
+<td></td>
+<td align="center"><strong>↑(forward)</strong></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td><strong>&lt;—(postrouting)</strong></td>
+<td align="center"></td>
+<td><strong>&lt;—(output)</strong></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>这里清晰地指明了，流量一到达系统就由PREROUTING链负责；数据包的目标是本机，就走INPUT链；从本机出去走OUT链；经过本机路由，则FORWARD链；离开本机，走POSTROUTING链</p>
+<p>使用filter表，只需要管理input、forward、output链即可，负责数据包的目标为本机、转发或其他地址</p>
+<p>语法格式：iptables 表 链 规则</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">iptables --table filter --list</span><br><span class="line"></span><br><span class="line"><span class="comment">#这个是拒绝源地址为xip的访问</span></span><br><span class="line">iptables --table filter --append INPUT --<span class="built_in">source</span> 192.168.1.x --jump REJECT</span><br></pre></td></tr></table></figure>
+
 <p>保存规则</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo iptables-save</span><br><span class="line"><span class="comment">#或，保存为文件</span></span><br><span class="line">sudo iptables-save &gt; /etc/iptables/rules.v4</span><br><span class="line">iptables-restore &lt; /etc/iptables/rules.v4</span><br></pre></td></tr></table></figure>
 
+
+
 <p>参考：</p>
 <p>一口linux <a target="_blank" rel="noopener" href="http://t.csdnimg.cn/rnmaB">http://t.csdnimg.cn/rnmaB</a></p>
+<p>B站 技术蛋老师</p>
  
       <!-- reward -->
       
