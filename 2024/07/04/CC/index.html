@@ -126,8 +126,13 @@
 <p>在学之前我认为，原因就是没有严格限制输入内容，导致漏洞；当然，废话一个</p>
 <p>这里的CC链啊，有CC1、CC2、…、CC7</p>
 <p>这个组件呢，一般是<code>org.apache.commons.collections.?</code></p>
-<h1 id="0x02-CC1"><a href="#0x02-CC1" class="headerlink" title="0x02.CC1"></a>0x02.CC1</h1><h2 id="a-环境准备"><a href="#a-环境准备" class="headerlink" title="a.环境准备"></a>a.环境准备</h2><p>这里需要用到jdk的源码，首先jdk8中的src.zip解压到同名src文件夹中，进入后，导入一个从<a target="_blank" rel="noopener" href="https://hg.openjdk.org/jdk8u/jdk8u/jdk/rev/af660750b2f4%E7%9A%84%E5%8E%8B%E7%BC%A9%E5%8C%85%E4%B8%AD%E8%A7%A3%E5%8E%8B%E7%9A%84src/share/classes/sun%E6%96%87%E4%BB%B6%E5%A4%B9">https://hg.openjdk.org/jdk8u/jdk8u/jdk/rev/af660750b2f4的压缩包中解压的src\share\classes\sun文件夹</a></p>
-<p>（具体步骤参考<a target="_blank" rel="noopener" href="https://blog.csdn.net/Jayjay___/article/details/133621214%EF%BC%89%EF%BC%8C%E6%93%8D%E4%BD%9C%E4%B9%8B%E5%90%8E%E5%B0%B1%E5%8F%AF%E4%BB%A5%E7%9C%8B%E5%88%B0jdk8%E7%9A%84jar%E5%8C%85%E6%BA%90%E7%A0%81">https://blog.csdn.net/Jayjay___/article/details/133621214），操作之后就可以看到jdk8的jar包源码</a></p>
+<h1 id="0x02-CC1"><a href="#0x02-CC1" class="headerlink" title="0x02.CC1"></a>0x02.CC1</h1><h2 id="a-环境准备"><a href="#a-环境准备" class="headerlink" title="a.环境准备"></a>a.环境准备</h2><p>这里需要用到jdk的源码，首先jdk8中的src.zip解压到同名src文件夹中，进入后，导入一个从</p>
+<p><a target="_blank" rel="noopener" href="https://hg.openjdk.org/jdk8u/jdk8u/jdk/rev/af660750b2f4">https://hg.openjdk.org/jdk8u/jdk8u/jdk/rev/af660750b2f4</a></p>
+<p>下载的压缩包中解压的src\share\classes\sun文件夹</p>
+<blockquote>
+<p>具体步骤参考：<a target="_blank" rel="noopener" href="https://blog.csdn.net/Jayjay___/article/details/133621214">https://blog.csdn.net/Jayjay___/article/details/133621214</a></p>
+</blockquote>
+<p>操作之后就可以看到jdk8的jar包源码</p>
 <p>新建一个空项目，pom导入依赖</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependencies&gt;</span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">        &lt;groupId&gt;commons-collections&lt;/groupId&gt;</span><br><span class="line">        &lt;artifactId&gt;commons-collections&lt;/artifactId&gt;</span><br><span class="line">        &lt;version&gt;3.2.1&lt;/version&gt;</span><br><span class="line">    &lt;/dependency&gt;</span><br><span class="line">    &lt;/dependencies&gt;</span><br></pre></td></tr></table></figure>
 
@@ -295,7 +300,7 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2024/07/04/CC/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://ak005469075.github.io/2024/07/04/CC/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -424,6 +429,10 @@
     </li>
     
     <li class="nav-item">
+      <a class="nav-item-link" href="/categories/htb">HTB</a>
+    </li>
+    
+    <li class="nav-item">
       <a class="nav-item-link" href="/archives">归档</a>
     </li>
     
@@ -477,13 +486,13 @@ $(function () {
   <div class="reward-box">
     
     <div class="reward-item">
-      <img class="reward-img" src="/images/alipay.jpg">
+      <img class="reward-img" src="/images/">
       <span class="reward-type">支付宝</span>
     </div>
     
     
     <div class="reward-item">
-      <img class="reward-img" src="/images/wechat.jpg">
+      <img class="reward-img" src="/images/">
       <span class="reward-type">微信</span>
     </div>
     
