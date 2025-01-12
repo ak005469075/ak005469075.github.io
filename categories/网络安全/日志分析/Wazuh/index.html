@@ -137,7 +137,7 @@
     <ul>
       <li>
         Copyrights &copy;
-        2023-2024
+        2023-2025
         <i class="ri-heart-fill heart_icon"></i> 是羽泪云诶
       </li>
     </ul>
@@ -442,50 +442,6 @@ $(function () {
         $span[0].innerText = 'COPIED';
         
         wait(function () { // 等待两秒钟后恢复
-          $icon.removeClass('ri-checkbox-circle-line');
-          $icon.addClass('ri-file-copy-2-line');
-          $span[0].innerText = 'COPY';
-        }, 2000);
-      });
-      clipboard.on('error', function(e) {
-        e.clearSelection();
-        let $btn = $(e.trigger);
-        $btn.addClass('copy-failed');
-        let $icon = $($btn.find('i'));
-        $icon.removeClass('ri-file-copy-2-line');
-        $icon.addClass('ri-time-line');
-        let $span = $($btn.find('span'));
-        $span[0].innerText = 'COPY FAILED';
-        
-        wait(function () { // 等待两秒钟后恢复
-          $icon.removeClass('ri-time-line');
-          $icon.addClass('ri-file-copy-2-line');
-          $span[0].innerText = 'COPY';
-        }, 2000);
-      });
-    }
-    initCopyCode();
-  }(window, document);
-</script>
- 
-<!-- CanvasBackground -->
- 
-<script src="/js/dz.js"></script>
- 
-<script>
-  if (window.mermaid) {
-    mermaid.initialize({ theme: "forest" });
-  }
-</script>
-
-
-    
-    
-
-  </div>
-</body>
-
-</html>��复
           $icon.removeClass('ri-checkbox-circle-line');
           $icon.addClass('ri-file-copy-2-line');
           $span[0].innerText = 'COPY';
